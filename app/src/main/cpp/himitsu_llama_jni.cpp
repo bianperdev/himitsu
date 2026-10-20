@@ -9,6 +9,8 @@
 // - A Session is used from a single thread (the engine's dispatcher); only `abort` is touched
 //   from other threads.
 
+#include <dirent.h>
+#include <dlfcn.h>
 #include <jni.h>
 
 #include <algorithm>
@@ -231,6 +233,37 @@ bool deliver(JNIEnv * env, jobject sink, std::string & pending, bool flush) {
     return !env->ExceptionCheck() && keep_going == JNI_TRUE;
 }
 
+// Loads the best CPU variant, scored like ggml_backend_load_all_from_path does. That function also
+// loads every other backend in the directory, and OpenCL's loads the vendor GPU driver, which can
+// crash on broken drivers: the GPU backend is loaded only when the user turns the GPU on.
+void load_best_cpu_backend(const std::string & dir) {
+    const std::string prefix = "libggml-cpu-";
+    const std::string suffix = ".so";
+    int best_score = 0;
+    std::string best_path;
+    if (DIR * entries = opendir(dir.c_str())) {
+        while (const dirent * entry = readdir(entries)) {
+            const std::string name = entry->d_name;
+            if (name.rfind(prefix, 0) != 0 || name.size() < prefix.size() + suffix.size() ||
+                name.compare(name.size() - suffix.size(), suffix.size(), suffix) != 0) continue;
+            const std::string path = dir + "/" + name;
+            void * handle = dlopen(path.c_str(), RTLD_NOW | RTLD_LOCAL);
+            if (handle == nullptr) continue;
+            // A variant built for instructions this processor lacks scores 0
+            auto score = reinterpret_cast<int (*)()>(dlsym(handle, "ggml_backend_score"));
+            const int value = score != nullptr ? score() : 0;
+            dlclose(handle);
+            if (value > best_score) {
+                best_score = value;
+                best_path = path;
+            }
+        }
+        closedir(entries);
+    }
+    // Builds without CPU variants ship a single library
+    ggml_backend_load((best_path.empty() ? dir + "/libggml-cpu.so" : best_path).c_str());
+}
+
 // ---- Native methods ------------------------------------------------------------------------
 
 void native_init_impl(JNIEnv * env, jclass, jstring native_lib_dir, jstring kernel_cache_dir) {
@@ -246,10 +279,18 @@ void native_init_impl(JNIEnv * env, jclass, jstring native_lib_dir, jstring kern
     setenv("GGML_OPENCL_KERNEL_CACHE_DIR", cache, 1);
     env->ReleaseStringUTFChars(kernel_cache_dir, cache);
     const char * dir = env->GetStringUTFChars(native_lib_dir, nullptr);
-    // Loads the CPU backend variant that best matches this processor
-    ggml_backend_load_all_from_path(dir);
+    const std::string lib_dir = dir;
     env->ReleaseStringUTFChars(native_lib_dir, dir);
+    load_best_cpu_backend(lib_dir);
     llama_backend_init();
+}
+
+// Loads the OpenCL backend, which loads the vendor driver. Returns whether the backend registered.
+jboolean native_load_gpu_impl(JNIEnv * env, jclass, jstring native_lib_dir) {
+    const char * dir = env->GetStringUTFChars(native_lib_dir, nullptr);
+    const std::string path = std::string(dir) + "/libggml-opencl.so";
+    env->ReleaseStringUTFChars(native_lib_dir, dir);
+    return ggml_backend_load(path.c_str()) != nullptr ? JNI_TRUE : JNI_FALSE;
 }
 
 jlong native_load_impl(JNIEnv * env, jclass, jstring path, jint context_tokens, jint threads, jint batch_threads,
@@ -473,6 +514,15 @@ void native_init(JNIEnv * env, jclass c, jstring native_lib_dir, jstring kernel_
     }
 }
 
+jboolean native_load_gpu(JNIEnv * env, jclass c, jstring native_lib_dir) {
+    try {
+        return native_load_gpu_impl(env, c, native_lib_dir);
+    } catch (...) {
+        // No GPU offload rather than no engine
+        return JNI_FALSE;
+    }
+}
+
 jlong native_load(JNIEnv * env, jclass c, jstring path, jint context_tokens, jint threads, jint batch_threads,
                   jboolean vocab_only, jint gpu_layers, jboolean quantized_kv) {
     try {
@@ -539,6 +589,7 @@ void native_abort(JNIEnv *, jclass, jlong handle) {
 const JNINativeMethod kMethods[] = {
     {"nativeInit", "(Ljava/lang/String;Ljava/lang/String;)V", reinterpret_cast<void *>(native_init)},
     {"nativeLoad", "(Ljava/lang/String;IIIZIZ)J", reinterpret_cast<void *>(native_load)},
+    {"nativeLoadGpu", "(Ljava/lang/String;)Z", reinterpret_cast<void *>(native_load_gpu)},
     {"nativeGpuDevices", "()[[B", reinterpret_cast<void *>(native_gpu_devices)},
     {"nativeFree", "(J)V", reinterpret_cast<void *>(native_free)},
     {"nativeInfo", "(J)[[B", reinterpret_cast<void *>(native_info)},

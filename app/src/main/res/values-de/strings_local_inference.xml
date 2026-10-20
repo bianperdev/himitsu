@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">Automatisch</string>
     <string name="local_models_gpu">GPU verwenden</string>
     <string name="local_models_gpu_desc">%1$s, über OpenCL. Experimentell: auf neueren Snapdragon-Handys meist schneller.</string>
+    <string name="local_models_gpu_desc_not_loaded">Über OpenCL, falls dein Handy es unterstützt. Experimentell: Der GPU-Treiber wird erst geladen, wenn du dies einschaltest.</string>
+    <string name="local_models_gpu_driver_failed">Ausgeschaltet, weil der GPU-Treiber Himitsu beim letzten Mal geschlossen hat. Du kannst es erneut versuchen.</string>
     <string name="local_models_kv">Kompakter Kontextspeicher</string>
     <string name="local_models_kv_desc">Speichert den Kontext in 8 Bit: halber Speicher, leicht geringere Qualität.</string>
     <string name="local_models_unload">Modell im Hintergrund freigeben</string>

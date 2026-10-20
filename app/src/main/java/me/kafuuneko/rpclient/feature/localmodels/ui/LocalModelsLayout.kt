@@ -55,6 +55,7 @@ import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsImportS
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsUiIntent
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsUiState
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalPerformanceState
+import me.kafuuneko.rpclient.libs.llm.local.LocalGpuStatus
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloadFailure
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelMemoryFit
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelSource
@@ -324,10 +325,16 @@ private fun PerformanceCard(state: LocalPerformanceState, emit: LocalModelsUiInt
             label = { if (it == 0) stringResource(R.string.local_models_threads_auto) else it.toString() },
             onSelect = { LocalModelsUiIntent.ChangeThreads(it).emit() }
         )
-        state.gpuName?.let { gpu ->
+        val gpuDescription = when (val gpu = state.gpu) {
+            LocalGpuStatus.None -> null
+            LocalGpuStatus.NotLoaded -> stringResource(R.string.local_models_gpu_desc_not_loaded)
+            is LocalGpuStatus.Ready -> stringResource(R.string.local_models_gpu_desc, gpu.name)
+            LocalGpuStatus.DriverFailed -> stringResource(R.string.local_models_gpu_driver_failed)
+        }
+        gpuDescription?.let { description ->
             SwitchSetting(
                 title = stringResource(R.string.local_models_gpu),
-                description = stringResource(R.string.local_models_gpu_desc, gpu),
+                description = description,
                 checked = state.useGpu,
                 onChange = { LocalModelsUiIntent.ToggleGpu(it).emit() }
             )

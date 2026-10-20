@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">Automatique</string>
     <string name="local_models_gpu">Utiliser le GPU</string>
     <string name="local_models_gpu_desc">%1$s, via OpenCL. Expérimental : généralement plus rapide sur les téléphones Snapdragon récents.</string>
+    <string name="local_models_gpu_desc_not_loaded">Via OpenCL, si votre téléphone le prend en charge. Expérimental : le pilote GPU n\'est chargé que lorsque vous activez cette option.</string>
+    <string name="local_models_gpu_driver_failed">Désactivé, car le pilote GPU a fermé Himitsu la dernière fois. Vous pouvez réessayer.</string>
     <string name="local_models_kv">Mémoire de contexte compacte</string>
     <string name="local_models_kv_desc">Stocke le contexte sur 8 bits : moitié moins de mémoire, avec une légère perte de qualité.</string>
     <string name="local_models_unload">Libérer le modèle en arrière-plan</string>

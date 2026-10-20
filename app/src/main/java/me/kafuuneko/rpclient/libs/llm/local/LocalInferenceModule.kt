@@ -56,7 +56,11 @@ private fun availableEngines(context: Context): List<LocalInferenceEngine> {
         if (isDebuggable) add(FakeLocalInferenceEngine())
         if (hasLlamaCppAbi) {
             val kernelCache = File(context.cacheDir, "opencl-kernels").apply { mkdirs() }
-            add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir, kernelCache.path))
+            val gpuMarker = File(context.noBackupFilesDir, GPU_LOAD_MARKER_FILE)
+            add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir, kernelCache.path, gpuMarker))
         }
     }
 }
+
+/** Exists only while the GPU driver loads; see [LlamaCppEngine]. Not backed up, like the models. */
+private const val GPU_LOAD_MARKER_FILE = "llama_gpu_loading"

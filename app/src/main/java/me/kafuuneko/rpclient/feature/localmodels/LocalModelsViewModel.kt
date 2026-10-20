@@ -23,6 +23,7 @@ import me.kafuuneko.rpclient.libs.core.UiIntentObserver
 import me.kafuuneko.rpclient.libs.disguise.isDisguiseActive
 import me.kafuuneko.rpclient.libs.llm.local.LocalEngineKind
 import me.kafuuneko.rpclient.libs.llm.local.LocalEngineRegistry
+import me.kafuuneko.rpclient.libs.llm.local.LocalGpuStatus
 import me.kafuuneko.rpclient.libs.llm.local.LocalInferencePrefs
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelCatalog
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDetails
@@ -68,11 +69,10 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
     @UiIntentObserver(LocalModelsUiIntent.Init::class)
     private suspend fun onInit() {
         if (!isStateOf<LocalModelsUiState.None>()) return
-        LocalModelsUiState.Normal(models = emptyList(), catalog = emptyList(), performance = readPerformance(null)).setup()
+        LocalModelsUiState.Normal(models = emptyList(), catalog = emptyList(), performance = readPerformance(LocalGpuStatus.None)).setup()
         refresh()
-        // Initializing the engine to list GPUs loads native code, so it happens after the first frame
-        val gpuName = mEngines.find(LocalEngineKind.LlamaCpp)?.gpuDevices()?.firstOrNull()
-        getOrNull<LocalModelsUiState.Normal>()?.let { it.copy(performance = readPerformance(gpuName)).setup() }
+        // Asking the engine may load native code, so it happens after the first frame
+        refreshGpu()
         viewModelScope.launch {
             mTracker.states.collect { states ->
                 // A download that leaves the tracker finished or was cancelled: the list may have changed
@@ -195,9 +195,20 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
     private fun onChangeThreads(intent: LocalModelsUiIntent.ChangeThreads) =
         updatePerformance { LocalInferencePrefs.threads = intent.threads }
 
+    /** Turning the GPU on is the only way its driver gets loaded, also to retry after a failure. */
     @UiIntentObserver(LocalModelsUiIntent.ToggleGpu::class)
-    private fun onToggleGpu(intent: LocalModelsUiIntent.ToggleGpu) =
-        updatePerformance { LocalInferencePrefs.useGpu = intent.enabled }
+    private suspend fun onToggleGpu(intent: LocalModelsUiIntent.ToggleGpu) {
+        updatePerformance {
+            LocalInferencePrefs.useGpu = intent.enabled
+            if (intent.enabled) LocalInferencePrefs.gpuDriverFailed = false
+        }
+        if (intent.enabled) refreshGpu()
+    }
+
+    private suspend fun refreshGpu() {
+        val gpu = mEngines.find(LocalEngineKind.LlamaCpp)?.gpuStatus() ?: LocalGpuStatus.None
+        getOrNull<LocalModelsUiState.Normal>()?.let { it.copy(performance = readPerformance(gpu)).setup() }
+    }
 
     @UiIntentObserver(LocalModelsUiIntent.ToggleQuantizedKvCache::class)
     private fun onToggleQuantizedKvCache(intent: LocalModelsUiIntent.ToggleQuantizedKvCache) =
@@ -210,12 +221,12 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
     private fun updatePerformance(change: () -> Unit) {
         val uiState = getOrNull<LocalModelsUiState.Normal>() ?: return
         change()
-        uiState.copy(performance = readPerformance(uiState.performance.gpuName)).setup()
+        uiState.copy(performance = readPerformance(uiState.performance.gpu)).setup()
     }
 
-    private fun readPerformance(gpuName: String?) = LocalPerformanceState(
+    private fun readPerformance(gpu: LocalGpuStatus) = LocalPerformanceState(
         threads = LocalInferencePrefs.threads,
-        gpuName = gpuName,
+        gpu = gpu,
         useGpu = LocalInferencePrefs.useGpu,
         quantizedKvCache = LocalInferencePrefs.quantizedKvCache,
         unloadDelaySeconds = LocalInferencePrefs.unloadDelaySeconds

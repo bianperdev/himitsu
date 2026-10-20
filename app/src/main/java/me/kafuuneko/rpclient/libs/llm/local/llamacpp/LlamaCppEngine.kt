@@ -25,7 +25,9 @@ import me.kafuuneko.rpclient.libs.llm.local.LocalEngineUnavailableException
 import me.kafuuneko.rpclient.libs.llm.local.LocalFinishReason
 import me.kafuuneko.rpclient.libs.llm.local.LocalGenerationEvent
 import me.kafuuneko.rpclient.libs.llm.local.LocalGenerationException
+import me.kafuuneko.rpclient.libs.llm.local.LocalGpuStatus
 import me.kafuuneko.rpclient.libs.llm.local.LocalInferenceEngine
+import me.kafuuneko.rpclient.libs.llm.local.LocalInferencePrefs
 import me.kafuuneko.rpclient.libs.llm.local.LocalLoadConfig
 import me.kafuuneko.rpclient.libs.llm.local.LocalModelDescriptor
 import me.kafuuneko.rpclient.libs.llm.local.LocalModelLoadException
@@ -54,10 +56,13 @@ import java.util.concurrent.atomic.AtomicLong
  * - The KV cache keeps the previous prompt, so a follow-up message only evaluates the new tokens.
  * - A GGUF's chat template is untrusted code: it renders on its own thread, with a size limit and a
  *   time limit.
+ * - The GPU driver loads only after the user turned the GPU on. [mGpuMarker] exists while it
+ *   loads, so a driver that kills the process is found at the next start and the GPU turned off.
  */
 class LlamaCppEngine(
     private val mNativeLibDir: String,
-    private val mKernelCacheDir: String
+    private val mKernelCacheDir: String,
+    private val mGpuMarker: File
 ) : LocalInferenceEngine {
     private val mDispatcher = Executors.newSingleThreadExecutor { runnable ->
         Thread(runnable, THREAD_NAME).apply { isDaemon = true }
@@ -65,9 +70,12 @@ class LlamaCppEngine(
     private val mState = MutableStateFlow<LocalEngineState>(LocalEngineState.Idle)
     private var mInitialized = false
 
-    // Known after the native library is initialized; null before
+    // Known after the GPU backend was loaded; null before
     @Volatile
     private var mGpuDevices: List<String>? = null
+
+    // Whether loading the GPU backend was attempted in this process; engine thread only
+    private var mGpuLoadTried = false
 
     // Written only on the engine thread, under mHandleLock; other threads abort through it while
     // holding the lock, so the session cannot be freed under them
@@ -96,6 +104,10 @@ class LlamaCppEngine(
 
     override suspend fun load(model: LocalModelDescriptor, config: LocalLoadConfig) = withContext(mDispatcher) {
         ensureInitialized()
+        if (config.backend == LocalComputeBackend.Gpu) {
+            checkGpuCrash()
+            if (!LocalInferencePrefs.gpuDriverFailed) ensureGpuLoaded()
+        }
         releaseCurrent()
         val path = model.filePath ?: throw LocalModelLoadException()
         mState.value = LocalEngineState.Loading(model.id)
@@ -206,9 +218,31 @@ class LlamaCppEngine(
         worker.join()
     }.buffer(Channel.UNLIMITED)
 
-    override suspend fun gpuDevices(): List<String> = withContext(mDispatcher) {
-        runCatching { ensureInitialized() }.getOrNull() ?: return@withContext emptyList()
-        mGpuDevices.orEmpty()
+    override suspend fun gpuStatus(): LocalGpuStatus = withContext(mDispatcher) {
+        checkGpuCrash()
+        when {
+            LocalInferencePrefs.gpuDriverFailed -> LocalGpuStatus.DriverFailed
+            !hasOpenClDriver() -> {
+                // Nothing to offer; a retry from the warning must not leave the setting on
+                LocalInferencePrefs.useGpu = false
+                LocalGpuStatus.None
+            }
+            !mGpuLoadTried && !LocalInferencePrefs.useGpu -> LocalGpuStatus.NotLoaded
+            else -> {
+                runCatching {
+                    ensureInitialized()
+                    ensureGpuLoaded()
+                }
+                val name = mGpuDevices?.firstOrNull()
+                if (name != null) {
+                    LocalGpuStatus.Ready(name)
+                } else {
+                    // A driver without a usable device: nothing to offer, and loads stay on the CPU
+                    LocalInferencePrefs.useGpu = false
+                    LocalGpuStatus.None
+                }
+            }
+        }
     }
 
     override fun abortGeneration() {
@@ -257,9 +291,36 @@ class LlamaCppEngine(
         if (mInitialized) return
         if (!LlamaCppNative.loadLibrary()) throw LocalEngineUnavailableException()
         LlamaCppNative.nativeInit(mNativeLibDir, mKernelCacheDir)
-        mGpuDevices = LlamaCppNative.nativeGpuDevices().map { String(it) }
         mInitialized = true
     }
+
+    /**
+     * Loads the GPU backend once per process. The marker file brackets the native call: only a
+     * process killed inside it leaves the file behind.
+     */
+    private fun ensureGpuLoaded() {
+        if (mGpuLoadTried) return
+        mGpuLoadTried = true
+        if (!hasOpenClDriver()) {
+            mGpuDevices = emptyList()
+            return
+        }
+        runCatching { mGpuMarker.createNewFile() }
+        val loaded = LlamaCppNative.nativeLoadGpu(mNativeLibDir)
+        mGpuDevices = if (loaded) LlamaCppNative.nativeGpuDevices().map { String(it) } else emptyList()
+        mGpuMarker.delete()
+    }
+
+    /** Turns the GPU off when an earlier process died while loading its driver. */
+    private fun checkGpuCrash() {
+        if (mGpuLoadTried || !mGpuMarker.exists()) return
+        mGpuMarker.delete()
+        LocalInferencePrefs.useGpu = false
+        LocalInferencePrefs.gpuDriverFailed = true
+    }
+
+    /** Whether the vendor OpenCL driver exists, checked without loading it. */
+    private fun hasOpenClDriver(): Boolean = OPENCL_DRIVER_PATHS.any { File(it).exists() }
 
     private fun releaseCurrent() {
         val handle = synchronized(mHandleLock) { mHandle.also { mHandle = 0L } }
@@ -309,6 +370,13 @@ class LlamaCppEngine(
 
     private companion object {
         const val THREAD_NAME = "himitsu-llama"
+
+        // Where vendors install the OpenCL driver; the app may load it through <uses-native-library>
+        val OPENCL_DRIVER_PATHS = listOf(
+            "/vendor/lib64/libOpenCL.so",
+            "/system/vendor/lib64/libOpenCL.so",
+            "/system/lib64/libOpenCL.so"
+        )
         const val DEFAULT_TEMPERATURE = 0.8f
         const val RANDOM_SEED = -1L
         const val MIN_THREADS = 2

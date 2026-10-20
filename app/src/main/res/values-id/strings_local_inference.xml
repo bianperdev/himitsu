@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">Otomatis</string>
     <string name="local_models_gpu">Gunakan GPU</string>
     <string name="local_models_gpu_desc">%1$s, melalui OpenCL. Eksperimental: biasanya lebih cepat di ponsel Snapdragon terbaru.</string>
+    <string name="local_models_gpu_desc_not_loaded">Melalui OpenCL, jika ponsel ini mendukungnya. Eksperimental: driver GPU hanya dimuat saat Anda mengaktifkannya.</string>
+    <string name="local_models_gpu_driver_failed">Dinonaktifkan karena driver GPU menutup Himitsu terakhir kali. Anda dapat mencoba lagi.</string>
     <string name="local_models_kv">Memori konteks ringkas</string>
     <string name="local_models_kv_desc">Menyimpan konteks dalam 8 bit: setengah memori, dengan sedikit penurunan kualitas.</string>
     <string name="local_models_unload">Lepaskan model di latar belakang</string>

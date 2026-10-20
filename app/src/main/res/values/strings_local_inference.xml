@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">Auto</string>
     <string name="local_models_gpu">Use the GPU</string>
     <string name="local_models_gpu_desc">%1$s, through OpenCL. Experimental: usually faster on recent Snapdragon phones.</string>
+    <string name="local_models_gpu_desc_not_loaded">Through OpenCL, if this phone supports it. Experimental: the GPU driver is only loaded when you turn this on.</string>
+    <string name="local_models_gpu_driver_failed">Turned off because the GPU driver closed Himitsu last time. You can try again.</string>
     <string name="local_models_kv">Compact context memory</string>
     <string name="local_models_kv_desc">Stores the context in 8 bits: half the memory, with a small loss of quality.</string>
     <string name="local_models_unload">Release the model in the background</string>

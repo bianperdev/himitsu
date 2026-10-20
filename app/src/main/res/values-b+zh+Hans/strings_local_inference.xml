@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">自动</string>
     <string name="local_models_gpu">使用 GPU</string>
     <string name="local_models_gpu_desc">%1$s，通过 OpenCL。实验性功能：在较新的骁龙手机上通常更快。</string>
+    <string name="local_models_gpu_desc_not_loaded">通过 OpenCL，前提是手机支持。实验性功能：只有在你开启后才会加载 GPU 驱动。</string>
+    <string name="local_models_gpu_driver_failed">上次 GPU 驱动导致 Himitsu 关闭，因此已关闭此选项。你可以再试一次。</string>
     <string name="local_models_kv">紧凑上下文内存</string>
     <string name="local_models_kv_desc">以 8 位存储上下文：内存减半，质量略有下降。</string>
     <string name="local_models_unload">在后台释放模型</string>

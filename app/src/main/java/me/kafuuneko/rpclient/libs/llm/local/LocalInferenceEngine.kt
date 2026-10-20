@@ -26,8 +26,11 @@ interface LocalInferenceEngine {
     /** What this engine can do on this device. */
     fun capabilities(): LocalEngineCapabilities
 
-    /** Names of the GPUs this engine can offload to on this device; empty when there are none. */
-    suspend fun gpuDevices(): List<String> = emptyList()
+    /**
+     * What the GPU setting can offer. May load the GPU driver, but only once the user turned the
+     * GPU on.
+     */
+    suspend fun gpuStatus(): LocalGpuStatus = LocalGpuStatus.None
 
     /**
      * Loads [model] and makes it ready for [generate]. Loading another model first releases the

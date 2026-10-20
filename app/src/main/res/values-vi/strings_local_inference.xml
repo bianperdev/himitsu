@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">Tự động</string>
     <string name="local_models_gpu">Dùng GPU</string>
     <string name="local_models_gpu_desc">%1$s, qua OpenCL. Thử nghiệm: thường nhanh hơn trên điện thoại Snapdragon mới.</string>
+    <string name="local_models_gpu_desc_not_loaded">Qua OpenCL, nếu điện thoại hỗ trợ. Thử nghiệm: trình điều khiển GPU chỉ được tải khi bạn bật tùy chọn này.</string>
+    <string name="local_models_gpu_driver_failed">Đã tắt vì lần trước trình điều khiển GPU làm Himitsu bị đóng. Bạn có thể thử lại.</string>
     <string name="local_models_kv">Bộ nhớ ngữ cảnh gọn</string>
     <string name="local_models_kv_desc">Lưu ngữ cảnh ở 8 bit: tốn một nửa bộ nhớ, chất lượng giảm nhẹ.</string>
     <string name="local_models_unload">Giải phóng mô hình khi chạy nền</string>

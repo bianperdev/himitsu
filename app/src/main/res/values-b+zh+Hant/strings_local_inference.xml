@@ -64,6 +64,8 @@
     <string name="local_models_threads_auto">自動</string>
     <string name="local_models_gpu">使用 GPU</string>
     <string name="local_models_gpu_desc">%1$s，透過 OpenCL。實驗性功能：在較新的 Snapdragon 手機上通常更快。</string>
+    <string name="local_models_gpu_desc_not_loaded">透過 OpenCL，前提是手機支援。實驗性功能：只有在你開啟後才會載入 GPU 驅動程式。</string>
+    <string name="local_models_gpu_driver_failed">上次 GPU 驅動程式導致 Himitsu 關閉，因此已關閉此選項。你可以再試一次。</string>
     <string name="local_models_kv">精簡上下文記憶體</string>
     <string name="local_models_kv_desc">以 8 位元儲存上下文：記憶體減半，品質略為下降。</string>
     <string name="local_models_unload">在背景釋放模型</string>
