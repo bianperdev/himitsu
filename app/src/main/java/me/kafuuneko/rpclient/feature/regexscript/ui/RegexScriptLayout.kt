@@ -466,7 +466,7 @@ private fun EmptyScriptsCard() {
                 modifier = Modifier.size(44.dp)
             )
             Text(
-                text = stringResource(R.string.regex_no_scripts),
+                text = stringResource(R.string.himitsu_empty_regex_scripts),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

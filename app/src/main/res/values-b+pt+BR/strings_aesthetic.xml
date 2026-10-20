@@ -4,4 +4,15 @@
 <resources>
     <string name="appearance_dynamic_color">Cor dinâmica</string>
     <string name="appearance_dynamic_color_desc">Usa as cores do seu papel de parede em vez da paleta do Himitsu</string>
+    <string name="himitsu_empty_characters_title">A estante está vazia</string>
+    <string name="himitsu_empty_characters_desc">Importe um cartão de personagem ou crie alguém para conversar.</string>
+    <string name="himitsu_empty_recent_title">O cursor está piscando</string>
+    <string name="himitsu_empty_recent_desc">Comece um chat, chat em grupo ou história. Ninguém mais está olhando.</string>
+    <string name="himitsu_empty_chats_title">A tela está esperando</string>
+    <string name="himitsu_empty_chats_desc">Crie uma sessão e diga a primeira palavra.</string>
+    <string name="himitsu_empty_provider_title">Nenhum modelo conectado</string>
+    <string name="himitsu_empty_provider_desc">Nem o roteador sabe que você existe. Abra o gerenciador de modelos para configurar um.</string>
+    <string name="himitsu_empty_world_books_title">Nenhum livro do mundo ainda</string>
+    <string name="himitsu_empty_world_books_desc">Toda boa história começa com uma entrada. Crie um livro do mundo para o seu lore.</string>
+    <string name="himitsu_empty_regex_scripts">Nenhum script neste escopo. O texto chega exatamente como o modelo escreve.</string>
 </resources>

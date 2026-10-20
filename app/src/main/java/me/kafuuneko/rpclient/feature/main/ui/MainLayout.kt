@@ -162,6 +162,7 @@ import me.kafuuneko.rpclient.ui.theme.ProviderAvailableColor
 import me.kafuuneko.rpclient.ui.theme.ProviderDisabledColor
 import me.kafuuneko.rpclient.ui.theme.ProviderPendingColor
 import me.kafuuneko.rpclient.ui.theme.getMacaronColor
+import me.kafuuneko.rpclient.ui.widgets.HimitsuPictograms
 import me.kafuuneko.rpclient.ui.widgets.RpAvatar
 import me.kafuuneko.rpclient.ui.widgets.RpIconBubble
 import me.kafuuneko.rpclient.ui.widgets.RpInfoCard
@@ -886,9 +887,9 @@ private fun LazyListScope.homeContentSection(
                 item {
                     RpInfoCard(
                         modifier = Modifier.fillMaxWidth(),
-                        icon = Icons.Rounded.ChatBubble,
-                        title = stringResource(R.string.no_recent_content),
-                        subtitle = stringResource(R.string.no_recent_content_desc)
+                        icon = HimitsuPictograms.Monitor,
+                        title = stringResource(R.string.himitsu_empty_recent_title),
+                        subtitle = stringResource(R.string.himitsu_empty_recent_desc)
                     )
                 }
             } else {
@@ -906,9 +907,9 @@ private fun LazyListScope.homeContentSection(
                 MainRecentChatsState.Empty -> item {
                     RpInfoCard(
                         modifier = Modifier.fillMaxWidth(),
-                        icon = Icons.Rounded.ChatBubble,
-                        title = stringResource(R.string.no_recent_chats),
-                        subtitle = stringResource(R.string.no_recent_chats_desc)
+                        icon = HimitsuPictograms.Monitor,
+                        title = stringResource(R.string.himitsu_empty_chats_title),
+                        subtitle = stringResource(R.string.himitsu_empty_chats_desc)
                     )
                 }
 
@@ -1978,11 +1979,11 @@ private fun EmptyProviderCard(
 ) {
     RpSettingsGroup {
         RpSettingsTile(
-            icon = Icons.Rounded.Storage,
+            icon = HimitsuPictograms.Unplugged,
             iconColor = AccentAmberColor,
             iconContainerColor = AccentAmberColor.copy(alpha = 0.14f),
-            title = stringResource(R.string.no_enabled_model),
-            subtitle = stringResource(R.string.go_to_model_manager),
+            title = stringResource(R.string.himitsu_empty_provider_title),
+            subtitle = stringResource(R.string.himitsu_empty_provider_desc),
             onClick = onClick,
             trailing = {
                 Icon(

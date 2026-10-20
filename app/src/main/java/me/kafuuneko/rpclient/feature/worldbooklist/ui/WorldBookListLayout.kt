@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.automirrored.rounded.MenuBook
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Book
@@ -50,6 +49,7 @@ import me.kafuuneko.rpclient.feature.worldbooklist.presentation.WorldBookListUiI
 import me.kafuuneko.rpclient.feature.worldbooklist.presentation.WorldBookListUiState
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
+import me.kafuuneko.rpclient.ui.widgets.HimitsuPictograms
 import me.kafuuneko.rpclient.ui.widgets.RpIconBubble
 import me.kafuuneko.rpclient.ui.widgets.RpPageTitle
 import me.kafuuneko.rpclient.ui.widgets.RpSectionHeader
@@ -178,16 +178,16 @@ private fun EmptyPanel() {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RpIconBubble(Icons.AutoMirrored.Rounded.MenuBook)
+            RpIconBubble(HimitsuPictograms.LampBook)
             Spacer(modifier = Modifier.width(12.dp))
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = stringResource(R.string.no_world_books),
+                    text = stringResource(R.string.himitsu_empty_world_books_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = stringResource(R.string.no_world_books_desc),
+                    text = stringResource(R.string.himitsu_empty_world_books_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
                 )

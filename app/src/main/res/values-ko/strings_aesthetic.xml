@@ -4,4 +4,15 @@
 <resources>
     <string name="appearance_dynamic_color">동적 색상</string>
     <string name="appearance_dynamic_color_desc">Himitsu 팔레트 대신 배경화면 색상을 사용합니다</string>
+    <string name="himitsu_empty_characters_title">선반이 비어 있어요</string>
+    <string name="himitsu_empty_characters_desc">캐릭터 카드를 가져오거나 대화할 상대를 만들어 보세요.</string>
+    <string name="himitsu_empty_recent_title">커서가 깜빡이고 있어요</string>
+    <string name="himitsu_empty_recent_desc">대화, 그룹 대화 또는 이야기를 시작해 보세요. 여기선 아무도 보지 않아요.</string>
+    <string name="himitsu_empty_chats_title">화면이 기다리고 있어요</string>
+    <string name="himitsu_empty_chats_desc">세션을 만들고 첫마디를 건네 보세요.</string>
+    <string name="himitsu_empty_provider_title">연결된 모델이 없어요</string>
+    <string name="himitsu_empty_provider_desc">라우터조차 당신이 있는 줄 몰라요. 모델 관리자에서 모델을 설정하세요.</string>
+    <string name="himitsu_empty_world_books_title">아직 월드북이 없어요</string>
+    <string name="himitsu_empty_world_books_desc">좋은 이야기는 항목 하나에서 시작돼요. 설정을 담을 월드북을 만들어 보세요.</string>
+    <string name="himitsu_empty_regex_scripts">이 범위에는 스크립트가 없어요. 텍스트는 모델이 쓴 그대로 표시돼요.</string>
 </resources>

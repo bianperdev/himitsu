@@ -4,4 +4,15 @@
 <resources>
     <string name="appearance_dynamic_color">Colori dinamici</string>
     <string name="appearance_dynamic_color_desc">Usa i colori dello sfondo invece della tavolozza di Himitsu</string>
+    <string name="himitsu_empty_characters_title">Lo scaffale è vuoto</string>
+    <string name="himitsu_empty_characters_desc">Importa una scheda personaggio o crea qualcuno con cui parlare.</string>
+    <string name="himitsu_empty_recent_title">Il cursore lampeggia</string>
+    <string name="himitsu_empty_recent_desc">Inizia una chat, una chat di gruppo o una storia. Non guarda nessun altro.</string>
+    <string name="himitsu_empty_chats_title">Lo schermo ti aspetta</string>
+    <string name="himitsu_empty_chats_desc">Crea una sessione e di\' la prima parola.</string>
+    <string name="himitsu_empty_provider_title">Nessun modello collegato</string>
+    <string name="himitsu_empty_provider_desc">Nemmeno il router sa che esisti. Apri la gestione modelli per configurarne uno.</string>
+    <string name="himitsu_empty_world_books_title">Ancora nessun grimorio</string>
+    <string name="himitsu_empty_world_books_desc">Ogni bella storia inizia da una voce. Crea un grimorio per la tua lore.</string>
+    <string name="himitsu_empty_regex_scripts">Nessuno script in questo ambito. Il testo arriva esattamente come lo scrive il modello.</string>
 </resources>

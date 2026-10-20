@@ -4,4 +4,15 @@
 <resources>
     <string name="appearance_dynamic_color">Warna dinamis</string>
     <string name="appearance_dynamic_color_desc">Gunakan warna wallpaper, bukan palet Himitsu</string>
+    <string name="himitsu_empty_characters_title">Raknya masih kosong</string>
+    <string name="himitsu_empty_characters_desc">Impor kartu karakter atau buat seseorang untuk diajak bicara.</string>
+    <string name="himitsu_empty_recent_title">Kursornya berkedip</string>
+    <string name="himitsu_empty_recent_desc">Mulai obrolan, obrolan grup, atau cerita. Tidak ada orang lain yang melihat.</string>
+    <string name="himitsu_empty_chats_title">Layar sedang menunggu</string>
+    <string name="himitsu_empty_chats_desc">Buat sesi dan ucapkan kata pertama.</string>
+    <string name="himitsu_empty_provider_title">Belum ada model yang terhubung</string>
+    <string name="himitsu_empty_provider_desc">Bahkan router pun tidak tahu kamu ada. Buka pengelola model untuk menyiapkannya.</string>
+    <string name="himitsu_empty_world_books_title">Belum ada buku dunia</string>
+    <string name="himitsu_empty_world_books_desc">Setiap cerita bagus dimulai dari satu entri. Buat buku dunia untuk lore-mu.</string>
+    <string name="himitsu_empty_regex_scripts">Tidak ada skrip dalam cakupan ini. Teks tampil persis seperti yang ditulis model.</string>
 </resources>

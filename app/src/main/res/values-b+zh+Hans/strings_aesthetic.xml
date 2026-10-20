@@ -4,4 +4,15 @@
 <resources>
     <string name="appearance_dynamic_color">动态配色</string>
     <string name="appearance_dynamic_color_desc">使用壁纸颜色代替 Himitsu 配色</string>
+    <string name="himitsu_empty_characters_title">书架还空着</string>
+    <string name="himitsu_empty_characters_desc">导入角色卡，或创建一个可以聊天的人。</string>
+    <string name="himitsu_empty_recent_title">光标在闪烁</string>
+    <string name="himitsu_empty_recent_desc">创建单聊、群聊或故事吧。这里没有别人在看。</string>
+    <string name="himitsu_empty_chats_title">屏幕在等你</string>
+    <string name="himitsu_empty_chats_desc">创建会话，说出第一句话。</string>
+    <string name="himitsu_empty_provider_title">还没有连接模型</string>
+    <string name="himitsu_empty_provider_desc">连路由器都不知道你的存在。前往模型管理器配置一个模型。</string>
+    <string name="himitsu_empty_world_books_title">还没有世界书</string>
+    <string name="himitsu_empty_world_books_desc">好故事都从一个条目开始。创建世界书来存放你的设定。</string>
+    <string name="himitsu_empty_regex_scripts">当前作用域没有脚本。文本会按模型输出原样显示。</string>
 </resources>
