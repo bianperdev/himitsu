@@ -40,7 +40,7 @@ Approved by the maintainer on 2026-10-20. This document records the decisions of
 
 - `androidx.biometric:biometric` 1.1.0 (stable). Authenticators: strong biometrics or the device credential on API 30+, weak biometrics or the device credential on API 26-29 (the platform does not support the strong combination there).
 - The app always starts locked when the lock is enabled. After going to the background it re-locks after the configured delay (immediately, 1 minute, 5 minutes), measured with `elapsedRealtime`.
-- `CoreActivity` checks the gate in `onStart` and hides its content while locked, so nothing flashes on screen.
+- `CoreActivity` covers its page with a curtain while the gate is not open: it raises it in `onStop` when the lock is on and lowers it in `onResume` only after a synchronous gate check, so nothing flashes on screen. Dialogs that can show private content read `LocalAppGateOpen` and skip their window while locked.
 - Only `libs/security` can mark the app as unlocked, and only after a successful authentication. Decoys from `feat/disguise` can *start* authentication through `UnlockEntry`, never skip it.
 
 ### Hardening

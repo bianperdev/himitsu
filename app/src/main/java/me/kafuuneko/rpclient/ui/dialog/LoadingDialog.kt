@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 
 import androidx.compose.material3.FilledTonalButton
@@ -41,6 +42,8 @@ fun LoadingDialog(
     description: String,
     onCancel: (() -> Unit)? = null
 ) {
+    // Himitsu: no dialog window above the gate curtain while the app is locked
+    if (!LocalAppGateOpen.current) return
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(

@@ -201,9 +201,9 @@ class SecureStorageManager(
      *
      * - Only encrypted files are moved; a database still in plain form stays and is encrypted
      *   with the new key, so no plain copy is parked out of sight.
-     * - Leftovers of an interrupted migration are settled first: a verified `.plaintext` copy
-     *   next to an encrypted database and an incomplete `.encrypting` copy are deleted, as the
-     *   migration itself would have done.
+     * - Leftovers of an interrupted migration are settled: an incomplete `.encrypting` copy is
+     *   deleted, and a verified `.plaintext` copy is put back when the live file is missing, so
+     *   it is encrypted with the new key.
      */
     private fun setAside(file: File, suffix: String) {
         DatabaseFiles.delete(File(file.path + ".encrypting"))
