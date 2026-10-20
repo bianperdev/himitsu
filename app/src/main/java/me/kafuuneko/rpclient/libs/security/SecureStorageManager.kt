@@ -246,12 +246,17 @@ class SecureStorageManager(
                 val primary = mContext.getDatabasePath(EncryptedDatabase.Primary.fileName)
                 val primaryStaysPlain = DatabaseFiles.kindOf(primary) == DatabaseFileKind.Plaintext ||
                     (DatabaseFiles.kindOf(primary) == DatabaseFileKind.Missing && File(primary.path + ".plaintext").exists())
+                // The model files go only with an encrypted registry; a plain one from an earlier
+                // build stays, is encrypted with the new key and still lists them
+                val registry = mContext.getDatabasePath(EncryptedDatabase.LocalModels.fileName)
+                val modelsGoAside = DatabaseFiles.kindOf(registry) == DatabaseFileKind.Encrypted
                 try {
                     mVault.moveKeyFileAside(suffix)
+                    // Before the databases: if it fails, the retry still finds data without a key
+                    if (modelsGoAside) setAsideLocalModels(suffix)
                     setAsideStoredFiles(suffix, keepPlainFiles = primaryStaysPlain)
                     EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     SealedPreferencesProvider.setAside(mContext, suffix)
-                    setAsideLocalModels(suffix)
                     synchronized(mKeyLock) {
                         mLoadedKey?.destroy()
                         mLoadedKey = null
@@ -526,7 +531,8 @@ class SecureStorageManager(
     /** Moves a database that earlier builds kept in `noBackupFilesDir` next to the others, once. */
     private fun moveFromNoBackup(database: EncryptedDatabase, file: File) {
         val legacy = File(mContext.noBackupFilesDir, database.fileName)
-        if (!DatabaseFiles.anyExists(legacy) || DatabaseFiles.anyExists(file)) return
+        // The main file moves last, so while it is still at its source the move is unfinished
+        if (!legacy.exists() || file.exists()) return
         file.parentFile?.mkdirs()
         DatabaseFiles.move(legacy, file)
     }

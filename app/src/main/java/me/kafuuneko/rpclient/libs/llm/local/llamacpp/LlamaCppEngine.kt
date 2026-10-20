@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.libs.llm.local.llamacpp
 
+import android.os.Build
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -56,10 +57,11 @@ import java.util.concurrent.atomic.AtomicLong
  * - The KV cache keeps the previous prompt, so a follow-up message only evaluates the new tokens.
  * - A GGUF's chat template is untrusted code: it renders on its own thread, with a size limit and a
  *   time limit.
- * - The GPU driver loads only after the user turned the GPU on. Until a reply was generated on
- *   the GPU, [mGpuMarker] exists during every native call that uses the driver (backend load,
- *   model load, generation), so a driver that kills the process is found at the next start and
- *   the GPU turned off. Between calls the marker is gone, so a normal process kill is not blamed.
+ * - The GPU driver loads only after the user turned the GPU on. Until a token was decoded on the
+ *   GPU on this system build, [mGpuMarker] exists during every native call that uses the driver
+ *   (backend load, model load, prompt evaluation up to the first token), so a driver that kills
+ *   the process is found at the next start and the GPU turned off. Between calls the marker is
+ *   gone, so a normal process kill is not blamed.
  */
 class LlamaCppEngine(
     private val mNativeLibDir: String,
@@ -185,12 +187,17 @@ class LlamaCppEngine(
                 val filter = StopSequenceFilter(sampling.stop)
                 // The sink runs on the engine thread inside the native decode loop. Checking isActive
                 // also stops a generation whose abort arrived before the native call reset the flag.
+                val onGpu = mModelOnGpu
                 val sink = LlamaTokenSink { bytes ->
+                    // The first token decoded on the GPU proves its driver: stop watching it
+                    if (onGpu && !isGpuVerified()) {
+                        LocalInferencePrefs.gpuVerifiedFingerprint = Build.FINGERPRINT
+                        mGpuMarker.delete()
+                    }
                     val text = filter.accept(String(bytes))
                     if (text.isNotEmpty()) trySendBlocking(LocalGenerationEvent.Token(text))
                     !filter.stopped && isActive
                 }
-                val onGpu = mModelOnGpu
                 val result = watchGpu(onGpu) { LlamaCppNative.nativeGenerate(
                     handle = handle,
                     parts = prompt.segments.map { it.text.toByteArray() }.toTypedArray(),
@@ -205,8 +212,6 @@ class LlamaCppEngine(
                     sink = sink
                 ) }
                 val (code, promptTokens, completionTokens) = result.toList()
-                // A reply decoded on the GPU proves the driver: stop watching it
-                if (onGpu && code != LlamaCppNative.FINISH_DECODE_ERROR) LocalInferencePrefs.gpuVerified = true
                 // Map native finish codes; an abort means the collector is already gone
                 val reason = when (code) {
                     LlamaCppNative.FINISH_ABORTED -> return@launch
@@ -324,7 +329,7 @@ class LlamaCppEngine(
      * process killed inside [block] leaves the file behind; an exception removes it.
      */
     private inline fun <T> watchGpu(active: Boolean, block: () -> T): T {
-        if (!active || LocalInferencePrefs.gpuVerified) return block()
+        if (!active || isGpuVerified()) return block()
         runCatching { mGpuMarker.createNewFile() }
         try {
             return block()
@@ -340,6 +345,8 @@ class LlamaCppEngine(
         LocalInferencePrefs.useGpu = false
         LocalInferencePrefs.gpuDriverFailed = true
     }
+
+    private fun isGpuVerified(): Boolean = LocalInferencePrefs.gpuVerifiedFingerprint == Build.FINGERPRINT
 
     /** Whether the vendor OpenCL driver exists, checked without loading it. */
     private fun hasOpenClDriver(): Boolean = OPENCL_DRIVER_PATHS.any { File(it).exists() }
