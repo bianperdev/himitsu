@@ -54,6 +54,9 @@ jmethodID g_sink_on_piece = nullptr;
 
 void silent_log(ggml_log_level, const char *, void *) {}
 
+// ggml's fatal errors would print their message and a backtrace; the process still aborts afterwards
+void silent_abort(const char *) {}
+
 bool abort_requested(void * data) {
     return static_cast<Session *>(data)->abort.load();
 }
@@ -233,6 +236,9 @@ bool deliver(JNIEnv * env, jobject sink, std::string & pending, bool flush) {
 void native_init(JNIEnv * env, jclass, jstring native_lib_dir, jstring kernel_cache_dir) {
     llama_log_set(silent_log, nullptr);
     ggml_log_set(silent_log, nullptr);
+    // The default backtrace forks a debugger (gdb/lldb) against this process; never do that
+    setenv("GGML_NO_BACKTRACE", "1", 1);
+    ggml_set_abort_callback(silent_abort);
     // OpenCL compiles its kernels once and caches them; the default temp path does not exist on Android
     const char * cache = env->GetStringUTFChars(kernel_cache_dir, nullptr);
     setenv("GGML_OPENCL_KERNEL_CACHE_DIR", cache, 1);
