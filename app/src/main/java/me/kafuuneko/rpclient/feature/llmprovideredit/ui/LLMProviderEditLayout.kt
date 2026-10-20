@@ -213,7 +213,7 @@ private fun LLMProviderEditNormal(
                     )
                 }
             }
-            item { BasicPanel(state.form, state.modelCatalogState, state.localModelImportState, emit) }
+            item { BasicPanel(state.form, state.modelCatalogState, state.localModelImportState, state.localModelName, emit) }
             item { ParameterPanel(state.form, emit) }
             item {
                 CollapsibleAdvancedPanel(
@@ -295,6 +295,7 @@ private fun BasicPanel(
     form: LLMProviderEditForm,
     modelCatalogState: LLMProviderEditModelCatalogState,
     localModelImportState: LocalModelImportState,
+    localModelName: String?,
     emit: LLMProviderEditUiIntent.() -> Unit
 ) {
     Panel {
@@ -332,6 +333,14 @@ private fun BasicPanel(
             emit = emit
         )
         if (!usesNetwork) {
+            localModelName?.let { name ->
+                Text(
+                    text = stringResource(R.string.local_inference_selected_model, name),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
             LocalModelImportRow(localModelImportState, emit)
         }
         if (usesNetwork) {

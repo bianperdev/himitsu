@@ -31,7 +31,9 @@ sealed class LLMProviderEditUiState {
         /** 当前页面互斥展示的对话框状态。 */
         val dialogState: LLMProviderEditDialogState = LLMProviderEditDialogState.None,
         /** Himitsu: progress of a GGUF import for a local provider. */
-        val localModelImportState: LocalModelImportState = LocalModelImportState.Idle
+        val localModelImportState: LocalModelImportState = LocalModelImportState.Idle,
+        /** Himitsu: display name of the selected on-device model, or null when unknown. */
+        val localModelName: String? = null
     ) : LLMProviderEditUiState()
 
     data class Finished(val previous: LLMProviderEditUiState) : LLMProviderEditUiState()

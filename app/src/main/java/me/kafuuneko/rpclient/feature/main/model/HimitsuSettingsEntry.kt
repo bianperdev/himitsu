@@ -3,7 +3,11 @@ package me.kafuuneko.rpclient.feature.main.model
 
 import android.app.Activity
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.ui.graphics.vector.ImageVector
+import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.localmodels.LocalModelsActivity
 
 /**
  * A settings entry contributed by a Himitsu work track.
@@ -20,4 +24,10 @@ data class HimitsuSettingsEntry(
 
 /** Settings entries contributed by Himitsu tracks, in display order. Each track appends one entry. */
 internal val himitsuSettingsEntries: List<HimitsuSettingsEntry> = listOf(
+    HimitsuSettingsEntry(
+        titleRes = R.string.local_models_title,
+        subtitleRes = R.string.local_models_settings_desc,
+        icon = Icons.Rounded.Memory,
+        activity = LocalModelsActivity::class.java
+    ), // feat/local-inference
 )

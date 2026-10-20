@@ -6,6 +6,7 @@ import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_CLAUDE_REQUEST_BODY_PATCH_JS
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_DEEPSEEK_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_GEMINI_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_GROK_REQUEST_BODY_PATCH_JSON
+import me.kafuuneko.rpclient.libs.llm.local.DEFAULT_LOCAL_SAMPLER_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_OPENROUTER_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderType
@@ -89,7 +90,7 @@ enum class ProviderPreset(
         protocol = LLMProviderProtocol.Local,
         baseUrl = "",
         defaultModel = "",
-        defaultRequestBodyPatchJson = "{}",
+        defaultRequestBodyPatchJson = DEFAULT_LOCAL_SAMPLER_PATCH_JSON,
         defaultUseServerReportedUsage = true,
         displayNameRes = R.string.local_inference_preset_name
     ),

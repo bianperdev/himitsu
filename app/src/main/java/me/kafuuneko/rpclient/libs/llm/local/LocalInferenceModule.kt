@@ -7,8 +7,11 @@ import android.os.Build
 import androidx.room.Room
 import me.kafuuneko.rpclient.libs.llm.local.llamacpp.LlamaCppEngine
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDatabase
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloadTracker
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloader
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImporter
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelLibrary
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -30,6 +33,9 @@ val localInferenceModule = module {
     // Partial copies left by a killed process are useless; nothing can be importing yet
     single { LocalModelFiles(androidContext()).also { it.deletePartialFiles() } }
     singleOf(::LocalModelImporter)
+    singleOf(::LocalModelDownloader)
+    singleOf(::LocalModelDownloadTracker)
+    singleOf(::LocalModelLibrary)
     singleOf(::LocalModelRepository)
     singleOf(::LocalModelRuntime)
     singleOf(::LocalLLMClientFactory)

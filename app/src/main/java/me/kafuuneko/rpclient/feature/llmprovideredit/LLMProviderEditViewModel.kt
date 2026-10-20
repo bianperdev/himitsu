@@ -44,6 +44,7 @@ import me.kafuuneko.rpclient.libs.llm.catalog.model.LLMAvailableModel
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImportException
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImportFailure
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImporter
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelLibrary
 import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.libs.llm.model.ImageInputSetting
 import me.kafuuneko.rpclient.libs.llm.model.ImageTokenEstimatorType
@@ -79,6 +80,7 @@ class LLMProviderEditViewModel :
     private val mModelCatalogRepository by inject<LLMModelCatalogRepository>()
     private val mContext by inject<Context>()
     private val mLocalModelImporter by inject<LocalModelImporter>()
+    private val mLocalModelLibrary by inject<LocalModelLibrary>()
 
     /** Himitsu: running GGUF import; cancelling it deletes the partial copy. */
     private var mLocalModelImportJob: Job? = null
@@ -107,6 +109,7 @@ class LLMProviderEditViewModel :
             showImageTokenEstimator = form.canEstimateImages(),
             requestExtensionsState = form.toRequestExtensionsState()
         ).setup()
+        refreshLocalModelName()
     }
 
     /** 处理返回操作，检查未保存修改并弹出二次确认弹窗。 */
@@ -704,6 +707,22 @@ class LLMProviderEditViewModel :
                 uiState.modelCatalogState
             }
         ).setup()
+        if (updatedForm.model != uiState.form.model || updatedForm.protocol != uiState.form.protocol) {
+            refreshLocalModelName()
+        }
+    }
+
+    /** Himitsu: shows the name of the selected on-device model, since the field holds its id. */
+    private fun refreshLocalModelName() {
+        val form = getOrNull<LLMProviderEditUiState.Normal>()?.form ?: return
+        val modelId = form.model.trim()
+        viewModelScope.launch {
+            val name = modelId.takeIf { !form.protocol.usesNetworkEndpoint && it.isNotBlank() }
+                ?.let { mLocalModelLibrary.displayName(it) }
+            val latest = getOrNull<LLMProviderEditUiState.Normal>() ?: return@launch
+            // Ignore a lookup that finished after the user picked another model
+            if (latest.form.model.trim() == modelId) latest.copy(localModelName = name).setup()
+        }
     }
 
     /** 使用与模型目录查询相同的连接身份，不让无关数字表单错误影响能力显示。 */

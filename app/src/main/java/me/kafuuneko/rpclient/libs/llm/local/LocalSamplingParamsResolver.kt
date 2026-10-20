@@ -9,6 +9,12 @@ import me.kafuuneko.rpclient.libs.llm.model.LLMProviderConfig
 import me.kafuuneko.rpclient.libs.llm.model.resolveFor
 
 /**
+ * Sampler defaults of the local preset, shown in the provider's request body patch so users can
+ * change them. Small models fall into repetition loops without a repeat penalty.
+ */
+const val DEFAULT_LOCAL_SAMPLER_PATCH_JSON = "{\"min_p\":0.05,\"repeat_penalty\":1.1}"
+
+/**
  * Builds [LocalSamplingParams] for a local provider.
  *
  * - Temperature, top-p, max tokens and stop sequences come from the provider and the request,

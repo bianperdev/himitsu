@@ -24,6 +24,9 @@ class LocalModelFiles(context: Context) {
     /** Temporary file used while model [id] is being copied. */
     fun partialFileFor(id: String): File = File(directory, "$id$EXTENSION$PARTIAL_SUFFIX")
 
+    /** Partial download of a catalog entry; kept across restarts so it can resume. */
+    fun downloadFileFor(catalogKey: String): File = File(directory, "$catalogKey$DOWNLOAD_SUFFIX")
+
     /** Deletes copies interrupted by a crash or a killed process. Call only when no import runs. */
     fun deletePartialFiles() {
         directory.listFiles { file -> file.name.endsWith(PARTIAL_SUFFIX) }?.forEach { it.delete() }
@@ -33,6 +36,7 @@ class LocalModelFiles(context: Context) {
         const val DIRECTORY_NAME = "models"
         const val EXTENSION = ".gguf"
         const val PARTIAL_SUFFIX = ".part"
+        const val DOWNLOAD_SUFFIX = ".download"
     }
 }
 
