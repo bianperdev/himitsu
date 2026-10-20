@@ -16,9 +16,9 @@
     <string name="github_repo_label">Repository GitHub</string>
     <string name="visit_repo">Visita</string>
     <string name="rate_app">Valuta l\'app</string>
-    <string name="rate_app_desc">Valuta RPClient sull\'app store</string>
+    <string name="rate_app_desc">Valuta Himitsu sull\'app store</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Ti piace RPClient?</string>
+    <string name="rate_card_title">Ti piace Himitsu?</string>
     <string name="rate_card_desc">Lascia una recensione a 5 stelle su Google Play per supportare i nostri continui aggiornamenti e lo sviluppo.</string>
     <string name="rate_card_action">Valuta su Google Play</string>
     <string name="feedback_label">Feedback</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Gratuito e open source · Con licenza MIT</string>
     <string name="about_app_summary">Client immersivo per giochi di ruolo e narrazione con IA</string>
     <string name="about_crafted_with_love">Creato con passione per appassionati di giochi di ruolo e narratori</string>
-    <string name="about_copyright">RPClient · Software open source</string>
+    <string name="about_copyright">Himitsu · Software open source</string>
     <string name="home">Home</string>
     <string name="settings">Impostazioni</string>
     <string name="character">Personaggio</string>
@@ -600,7 +600,7 @@ Non riusciti: %2$d</string>
     <string name="request_body_patch_status_default">Struttura di richiesta predefinita ({})</string>
     <string name="reset">Reimposta</string>
     <string name="reset_to_default">Ripristina</string>
-    <string name="request_body_patch_description">Unisci campi aggiuntivi, incluse le impostazioni di ragionamento native del provider, nel corpo della richiesta generata. RPClient protegge i campi strutturali e di generazione che gestisce.</string>
+    <string name="request_body_patch_description">Unisci campi aggiuntivi, incluse le impostazioni di ragionamento native del provider, nel corpo della richiesta generata. Himitsu protegge i campi strutturali e di generazione che gestisce.</string>
     <string name="request_body_patch_json">JSON patch del corpo della richiesta</string>
     <string name="edit_request_body_patch">Modifica</string>
     <string name="request_body_patch_editor_title">Modifica patch del corpo della richiesta</string>
@@ -609,7 +609,7 @@ Non riusciti: %2$d</string>
     <string name="openrouter_preferred_provider">Preferisci un provider upstream OpenRouter specifico</string>
     <string name="openrouter_provider_slug">Slug del provider upstream (ad esempio, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Consenti fallback del provider upstream</string>
-    <string name="openrouter_session_affinity_note">In modalità Auto, RPClient invia un ID sessione anonimo e stabile per conversazione per il routing permanente (sticky routing). Un ordine preferito di provider upstream ha la priorità quando abilitato.</string>
+    <string name="openrouter_session_affinity_note">In modalità Auto, Himitsu invia un ID sessione anonimo e stabile per conversazione per il routing permanente (sticky routing). Un ordine preferito di provider upstream ha la priorità quando abilitato.</string>
     <string name="save">Salva</string>
     <string name="model_test">Test modello</string>
     <string name="send_short_message">Invia un breve messaggio per verificare la connessione</string>
@@ -952,7 +952,7 @@ Apri le impostazioni del modello per verificare la chiave API, l\'URL di base, i
     <string name="no_matching_characters">Nessun personaggio corrispondente</string>
     <string name="importing_chat">Importazione in corso…</string>
     <string name="export_chat">Esporta chat corrente</string>
-    <string name="export_chat_desc">Esporta JSONL; RPClient può ripristinare le immagini incorporate</string>
+    <string name="export_chat_desc">Esporta JSONL; Himitsu può ripristinare le immagini incorporate</string>
     <string name="exporting_chat">Esportazione chat in corso…</string>
     <string name="export_chat_success">Chat esportata</string>
     <string name="export_chat_failed">Impossibile esportare la chat</string>
@@ -1132,7 +1132,7 @@ Apri le impostazioni del modello per verificare la chiave API, l\'URL di base, i
     <string name="model_config_delete_failed">Impossibile eliminare la configurazione del modello</string>
     <string name="no_model_configured">Nessun modello configurato</string>
     <string name="no_model_provider_title">Configurazione modello richiesta</string>
-    <string name="no_model_provider_desc">RPClient è un client locale e non include modelli IA integrati. Configura e abilita una chiave API (es. OpenAI, Gemini, Claude, DeepSeek) nelle impostazioni del modello per iniziare a chattare.</string>
+    <string name="no_model_provider_desc">Himitsu è un client locale e non include modelli IA integrati. Configura e abilita una chiave API (es. OpenAI, Gemini, Claude, DeepSeek) nelle impostazioni del modello per iniziare a chattare.</string>
     <string name="no_model_provider_banner">Nessun modello configurato. Tocca qui per configurare una chiave API.</string>
     <string name="go_to_model_settings">Configura</string>
     <string name="prompt_max_history_messages">Numero massimo di messaggi storici nel prompt</string>

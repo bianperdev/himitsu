@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">RPClient</string>
+    <string name="app_name" translatable="false">Himitsu</string>
     <string name="back">Back</string>
     <string name="image_crop_title">Crop Avatar</string>
     <string name="image_crop_helper">Pinch to zoom and drag to adjust avatar area</string>
@@ -17,9 +17,9 @@
     <string name="github_repo_label">GitHub Repository</string>
     <string name="visit_repo">Visit</string>
     <string name="rate_app">Rate App</string>
-    <string name="rate_app_desc">Rate RPClient on the app store</string>
+    <string name="rate_app_desc">Rate Himitsu on the app store</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Enjoying RPClient?</string>
+    <string name="rate_card_title">Enjoying Himitsu?</string>
     <string name="rate_card_desc">Leave a 5-star review on Google Play to support our continuous updates and development.</string>
     <string name="rate_card_action">Rate on Google Play</string>
     <string name="feedback_label">Feedback</string>
@@ -32,7 +32,7 @@
     <string name="open_source_license_desc">Free &amp; Open Source · Under MIT License</string>
     <string name="about_app_summary">Immersive AI roleplay &amp; storytelling client</string>
     <string name="about_crafted_with_love">Crafted with passion for roleplayers &amp; storytellers</string>
-    <string name="about_copyright">RPClient · Open source software</string>
+    <string name="about_copyright">Himitsu · Open source software</string>
 
     <!-- Main Layout -->
     <string name="home">Home</string>
@@ -616,7 +616,7 @@
     <string name="request_body_patch_status_default">Default request structure ({})</string>
     <string name="reset">Reset</string>
     <string name="reset_to_default">Reset</string>
-    <string name="request_body_patch_description">Merge extra fields, including provider-native reasoning settings, into the generated request body. RPClient protects structural and generation fields it manages.</string>
+    <string name="request_body_patch_description">Merge extra fields, including provider-native reasoning settings, into the generated request body. Himitsu protects structural and generation fields it manages.</string>
     <string name="request_body_patch_json">Request body patch JSON</string>
     <string name="edit_request_body_patch">Edit</string>
     <string name="request_body_patch_editor_title">Edit request body patch</string>
@@ -625,7 +625,7 @@
     <string name="openrouter_preferred_provider">Prefer a specific OpenRouter upstream provider</string>
     <string name="openrouter_provider_slug">Upstream provider slug (for example, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Allow upstream provider fallback</string>
-    <string name="openrouter_session_affinity_note">In Auto mode, RPClient sends a stable anonymous session ID per conversation for sticky routing. A preferred upstream provider order takes priority when enabled.</string>
+    <string name="openrouter_session_affinity_note">In Auto mode, Himitsu sends a stable anonymous session ID per conversation for sticky routing. A preferred upstream provider order takes priority when enabled.</string>
     <string name="save">Save</string>
     <string name="model_test">Model Test</string>
     <string name="send_short_message">Send a short message to verify connection</string>
@@ -976,7 +976,7 @@
     <string name="no_matching_characters">No matching characters</string>
     <string name="importing_chat">Importing…</string>
     <string name="export_chat">Export current chat</string>
-    <string name="export_chat_desc">Export JSONL; embedded images can be restored by RPClient</string>
+    <string name="export_chat_desc">Export JSONL; embedded images can be restored by Himitsu</string>
     <string name="exporting_chat">Exporting chat…</string>
     <string name="export_chat_success">Chat exported</string>
     <string name="export_chat_failed">Failed to export chat</string>
@@ -1157,7 +1157,7 @@
     <string name="model_config_delete_failed">Could not delete the model configuration</string>
     <string name="no_model_configured">No model configured</string>
     <string name="no_model_provider_title">Model Provider Required</string>
-    <string name="no_model_provider_desc">RPClient is a local-first client and does not provide built-in AI models. Please configure and enable an API Key (e.g. OpenAI, Gemini, Claude, DeepSeek) in Model Settings to start chatting.</string>
+    <string name="no_model_provider_desc">Himitsu is a local-first client and does not provide built-in AI models. Please configure and enable an API Key (e.g. OpenAI, Gemini, Claude, DeepSeek) in Model Settings to start chatting.</string>
     <string name="no_model_provider_banner">No model configured. Tap here to set up an API key.</string>
     <string name="go_to_model_settings">Configure</string>
     <string name="image_input_capability">Image input</string>
@@ -1202,7 +1202,7 @@
     <string name="about_build_number">Build number</string>
     <string name="about_brand_keywords">Characters · Stories · Creation · Possibilities</string>
     <string name="about_rate_action">Rate app</string>
-    <string name="about_brand_name" translatable="false">RPClient</string>
+    <string name="about_brand_name" translatable="false">Himitsu</string>
     <string name="about_dev_badge" translatable="false">DEV</string>
     <string name="about_github" translatable="false">GitHub</string>
     <string name="image_send_title">Image sending (advanced)</string>

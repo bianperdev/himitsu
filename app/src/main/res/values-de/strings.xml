@@ -17,9 +17,9 @@
     <string name="github_repo_label">GitHub-Repository</string>
     <string name="visit_repo">Besuchen</string>
     <string name="rate_app">App bewerten</string>
-    <string name="rate_app_desc">Bewerte RPClient im App Store</string>
+    <string name="rate_app_desc">Bewerte Himitsu im App Store</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Gefällt dir RPClient?</string>
+    <string name="rate_card_title">Gefällt dir Himitsu?</string>
     <string name="rate_card_desc">Hinterlasse eine 5-Sterne-Bewertung auf Google Play, um die Weiterentwicklung zu unterstützen.</string>
     <string name="rate_card_action">Jetzt bewerten</string>
     <string name="feedback_label">Feedback</string>
@@ -32,7 +32,7 @@
     <string name="open_source_license_desc">Frei &amp; Open-Source · Unter MIT-Lizenz</string>
     <string name="about_app_summary">Immersiver KI-Rollenspiel- und Storytelling-Client</string>
     <string name="about_crafted_with_love">Mit Leidenschaft für Rollenspieler und Geschichtenerzähler entwickelt</string>
-    <string name="about_copyright">RPClient · Open-Source-Software</string>
+    <string name="about_copyright">Himitsu · Open-Source-Software</string>
 
     <!-- Main Layout -->
     <string name="home">Startseite</string>
@@ -883,7 +883,7 @@
     <string name="no_matching_characters">Keine passenden Charaktere</string>
     <string name="importing_chat">Wird importiert…</string>
     <string name="export_chat">Aktuellen Chat exportieren</string>
-    <string name="export_chat_desc">JSONL exportieren; eingebettete Bilder lassen sich mit RPClient wiederherstellen</string>
+    <string name="export_chat_desc">JSONL exportieren; eingebettete Bilder lassen sich mit Himitsu wiederherstellen</string>
     <string name="exporting_chat">Chat wird exportiert…</string>
     <string name="export_chat_success">Chat exportiert</string>
     <string name="export_chat_failed">Chat konnte nicht exportiert werden</string>
@@ -1020,7 +1020,7 @@
     <string name="prompt_story_summarize_desc">Steuert, wie die Handlungszusammenfassung aktualisiert wird</string>
     <string name="prompt_source_story_summary">Handlungszusammenfassung</string>
     <string name="request_extensions">Anfrageerweiterungen</string>
-    <string name="request_body_patch_description">Fügt dem erzeugten Anfragekörper zusätzliche Felder einschließlich anbieterspezifischer Denkeinstellungen hinzu. RPClient schützt die von der App verwalteten Struktur- und Generierungsfelder.</string>
+    <string name="request_body_patch_description">Fügt dem erzeugten Anfragekörper zusätzliche Felder einschließlich anbieterspezifischer Denkeinstellungen hinzu. Himitsu schützt die von der App verwalteten Struktur- und Generierungsfelder.</string>
     <string name="request_body_patch_json">JSON-Patch für den Anfragekörper</string>
     <string name="edit_request_body_patch">Erweitertes JSON bearbeiten</string>
     <string name="request_body_patch_editor_title">Anfragekörper-Patch bearbeiten</string>
@@ -1029,7 +1029,7 @@
     <string name="openrouter_preferred_provider">Bestimmten OpenRouter-Upstream-Anbieter bevorzugen</string>
     <string name="openrouter_provider_slug">Upstream-Anbieter-Slug (zum Beispiel deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Upstream-Anbieter-Fallback erlauben</string>
-    <string name="openrouter_session_affinity_note">Im Auto-Modus sendet RPClient pro Unterhaltung eine stabile anonyme Sitzungs-ID für Sticky Routing. Eine aktivierte Reihenfolge der bevorzugten Upstream-Anbieter hat Vorrang.</string>
+    <string name="openrouter_session_affinity_note">Im Auto-Modus sendet Himitsu pro Unterhaltung eine stabile anonyme Sitzungs-ID für Sticky Routing. Eine aktivierte Reihenfolge der bevorzugten Upstream-Anbieter hat Vorrang.</string>
     <string name="add_tag">Tag hinzufügen</string>
     <string name="add_keyword">Schlüsselwort hinzufügen</string>
     <string name="add_category">Kategorie hinzufügen</string>
@@ -1153,7 +1153,7 @@
     <string name="story_structure_update_failed">Die Story-Struktur konnte nicht aktualisiert werden</string>
     <string name="no_model_configured">Kein Modell konfiguriert</string>
     <string name="no_model_provider_title">Modellkonfiguration erforderlich</string>
-    <string name="no_model_provider_desc">RPClient ist ein lokaler Client und enthält keine integrierten KI-Modelle. Bitte konfiguriere und aktiviere einen API-Schlüssel (z. B. OpenAI, Gemini, Claude, DeepSeek) in den Modelleinstellungen, um zu chatten.</string>
+    <string name="no_model_provider_desc">Himitsu ist ein lokaler Client und enthält keine integrierten KI-Modelle. Bitte konfiguriere und aktiviere einen API-Schlüssel (z. B. OpenAI, Gemini, Claude, DeepSeek) in den Modelleinstellungen, um zu chatten.</string>
     <string name="no_model_provider_banner">Kein Modell konfiguriert. Tippe hier, um einen API-Schlüssel einzurichten.</string>
     <string name="go_to_model_settings">Konfigurieren</string>
     <string name="prompt_max_history_messages">Maximale Prompt-Verlaufsnachrichten</string>

@@ -16,9 +16,9 @@
     <string name="github_repo_label">Repositori GitHub</string>
     <string name="visit_repo">Kunjungi</string>
     <string name="rate_app">Beri Nilai Aplikasi</string>
-    <string name="rate_app_desc">Beri nilai RPClient di toko aplikasi</string>
+    <string name="rate_app_desc">Beri nilai Himitsu di toko aplikasi</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Menikmati RPClient?</string>
+    <string name="rate_card_title">Menikmati Himitsu?</string>
     <string name="rate_card_desc">Berikan ulasan bintang 5 di Google Play untuk mendukung pembaruan dan pengembangan berkelanjutan kami.</string>
     <string name="rate_card_action">Beri Nilai di Google Play</string>
     <string name="feedback_label">Umpan Balik</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Gratis &amp; Sumber Terbuka · Di bawah Lisensi MIT</string>
     <string name="about_app_summary">Klien bermain peran &amp; penulisan cerita AI yang imersif</string>
     <string name="about_crafted_with_love">Dibuat dengan penuh semangat untuk para pemain peran &amp; pendongeng</string>
-    <string name="about_copyright">RPClient · Perangkat lunak sumber terbuka</string>
+    <string name="about_copyright">Himitsu · Perangkat lunak sumber terbuka</string>
 
     <!-- Main Layout -->
     <string name="home">Beranda</string>
@@ -616,7 +616,7 @@ Gagal: %2$d</string>
     <string name="request_body_patch_status_default">Struktur permintaan default ({})</string>
     <string name="reset">Atur Ulang</string>
     <string name="reset_to_default">Atur Ulang</string>
-    <string name="request_body_patch_description">Gabungkan bidang tambahan, termasuk pengaturan penalaran bawaan penyedia, ke dalam badan permintaan yang dibuat. RPClient melindungi bidang struktural dan pembuatan yang dikelolanya.</string>
+    <string name="request_body_patch_description">Gabungkan bidang tambahan, termasuk pengaturan penalaran bawaan penyedia, ke dalam badan permintaan yang dibuat. Himitsu melindungi bidang struktural dan pembuatan yang dikelolanya.</string>
     <string name="request_body_patch_json">JSON patch badan permintaan</string>
     <string name="edit_request_body_patch">Edit</string>
     <string name="request_body_patch_editor_title">Edit patch badan permintaan</string>
@@ -625,7 +625,7 @@ Gagal: %2$d</string>
     <string name="openrouter_preferred_provider">Pilih penyedia hulu OpenRouter tertentu</string>
     <string name="openrouter_provider_slug">Slug penyedia hulu (misalnya, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Izinkan pengalihan cadangan penyedia hulu</string>
-    <string name="openrouter_session_affinity_note">Dalam mode Otomatis, RPClient mengirim ID sesi anonim yang stabil per percakapan untuk perutean lengket. Urutan penyedia hulu pilihan diprioritaskan saat diaktifkan.</string>
+    <string name="openrouter_session_affinity_note">Dalam mode Otomatis, Himitsu mengirim ID sesi anonim yang stabil per percakapan untuk perutean lengket. Urutan penyedia hulu pilihan diprioritaskan saat diaktifkan.</string>
     <string name="save">Simpan</string>
     <string name="model_test">Uji Model</string>
     <string name="send_short_message">Kirim pesan singkat untuk memverifikasi koneksi</string>
@@ -974,7 +974,7 @@ Buka Pengaturan Model untuk memeriksa kunci API, URL dasar, nama model, dan izin
     <string name="no_matching_characters">Tidak ada karakter yang cocok</string>
     <string name="importing_chat">Mengimpor…</string>
     <string name="export_chat">Ekspor obrolan saat ini</string>
-    <string name="export_chat_desc">Ekspor JSONL; gambar tertanam dapat dipulihkan oleh RPClient</string>
+    <string name="export_chat_desc">Ekspor JSONL; gambar tertanam dapat dipulihkan oleh Himitsu</string>
     <string name="exporting_chat">Mengekspor obrolan…</string>
     <string name="export_chat_success">Obrolan berhasil diekspor</string>
     <string name="export_chat_failed">Gagal mengekspor obrolan</string>
@@ -1154,7 +1154,7 @@ Buka Pengaturan Model untuk memeriksa kunci API, URL dasar, nama model, dan izin
     <string name="model_config_delete_failed">Tidak dapat menghapus konfigurasi model</string>
     <string name="no_model_configured">Tidak ada model yang dikonfigurasi</string>
     <string name="no_model_provider_title">Penyedia Model Diperlukan</string>
-    <string name="no_model_provider_desc">RPClient adalah klien yang mengutamakan lokal dan tidak menyediakan model AI bawaan. Silakan konfigurasikan dan aktifkan Kunci API (misalnya OpenAI, Gemini, Claude, DeepSeek) di Pengaturan Model untuk mulai mengobrol.</string>
+    <string name="no_model_provider_desc">Himitsu adalah klien yang mengutamakan lokal dan tidak menyediakan model AI bawaan. Silakan konfigurasikan dan aktifkan Kunci API (misalnya OpenAI, Gemini, Claude, DeepSeek) di Pengaturan Model untuk mulai mengobrol.</string>
     <string name="no_model_provider_banner">Tidak ada model yang dikonfigurasi. Ketuk di sini untuk mengatur kunci API.</string>
     <string name="go_to_model_settings">Konfigurasikan</string>
     <string name="prompt_max_history_messages">Maksimum pesan riwayat prompt</string>

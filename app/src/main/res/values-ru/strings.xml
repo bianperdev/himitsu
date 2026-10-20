@@ -16,13 +16,13 @@
     <string name="github_repo_label">Репозиторий GitHub</string>
     <string name="visit_repo">Перейти</string>
     <string name="rate_app">Оценить приложение</string>
-    <string name="rate_app_desc">Оценить RPClient в магазине приложений</string>
+    <string name="rate_app_desc">Оценить Himitsu в магазине приложений</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Нравится RPClient?</string>
+    <string name="rate_card_title">Нравится Himitsu?</string>
     <string name="rate_card_desc">Оставьте отзыв с 5 звездами в Google Play, чтобы поддержать дальнейшие обновления и разработку.</string>
     <string name="rate_card_action">Оценить</string>
     <string name="feedback_label">Отзывы и предложения</string>
-    <string name="feedback_desc">Сообщайте об ошибках или предлагайте идеи для улучшения RPClient</string>
+    <string name="feedback_desc">Сообщайте об ошибках или предлагайте идеи для улучшения Himitsu</string>
     <string name="feedback_github_issues">GitHub Issues</string>
     <string name="section_community">Сообщество и отзывы</string>
     <string name="section_about">О приложении и поддержка</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Свободно и открыто · Лицензия MIT</string>
     <string name="about_app_summary">Иммерсивный клиент для ролевых игр и создания историй с ИИ</string>
     <string name="about_crafted_with_love">Создано с заботой для ролевиков и рассказчиков</string>
-    <string name="about_copyright">RPClient · Открытое программное обеспечение</string>
+    <string name="about_copyright">Himitsu · Открытое программное обеспечение</string>
 
     <!-- Main Layout -->
     <string name="home">Главная</string>
@@ -886,7 +886,7 @@
     <string name="no_matching_characters">Подходящие персонажи не найдены</string>
     <string name="importing_chat">Импорт…</string>
     <string name="export_chat">Экспортировать текущий чат</string>
-    <string name="export_chat_desc">Экспорт JSONL; встроенные изображения можно восстановить в RPClient</string>
+    <string name="export_chat_desc">Экспорт JSONL; встроенные изображения можно восстановить в Himitsu</string>
     <string name="exporting_chat">Экспорт чата…</string>
     <string name="export_chat_success">Чат экспортирован</string>
     <string name="export_chat_failed">Не удалось экспортировать чат</string>
@@ -1023,7 +1023,7 @@
     <string name="prompt_story_summarize_desc">Управляет обновлением сводки сюжета</string>
     <string name="prompt_source_story_summary">Сводка сюжета</string>
     <string name="request_extensions">Расширения запроса</string>
-    <string name="request_body_patch_description">Добавляет в сформированное тело запроса дополнительные поля, включая нативные настройки рассуждений поставщика. RPClient защищает поля структуры и генерации, которыми управляет приложение.</string>
+    <string name="request_body_patch_description">Добавляет в сформированное тело запроса дополнительные поля, включая нативные настройки рассуждений поставщика. Himitsu защищает поля структуры и генерации, которыми управляет приложение.</string>
     <string name="request_body_patch_json">JSON-патч тела запроса</string>
     <string name="edit_request_body_patch">Изменить расширенный JSON</string>
     <string name="request_body_patch_editor_title">Изменить патч тела запроса</string>
@@ -1032,7 +1032,7 @@
     <string name="openrouter_preferred_provider">Предпочитать указанного вышестоящего поставщика OpenRouter</string>
     <string name="openrouter_provider_slug">Идентификатор вышестоящего поставщика (например, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Разрешить резервного вышестоящего поставщика</string>
-    <string name="openrouter_session_affinity_note">В режиме Auto RPClient отправляет стабильный анонимный ID сессии для каждого диалога, чтобы включить закреплённую маршрутизацию. Включённый порядок предпочитаемых вышестоящих поставщиков имеет приоритет.</string>
+    <string name="openrouter_session_affinity_note">В режиме Auto Himitsu отправляет стабильный анонимный ID сессии для каждого диалога, чтобы включить закреплённую маршрутизацию. Включённый порядок предпочитаемых вышестоящих поставщиков имеет приоритет.</string>
     <string name="add_tag">Добавить тег</string>
     <string name="add_keyword">Добавить ключевое слово</string>
     <string name="add_category">Добавить категорию</string>
@@ -1158,7 +1158,7 @@
     <string name="story_structure_update_failed">Не удалось обновить структуру истории</string>
     <string name="no_model_configured">Модель не настроена</string>
     <string name="no_model_provider_title">Требуется настройка модели</string>
-    <string name="no_model_provider_desc">RPClient — это локальный клиент без встроенных моделей ИИ. Пожалуйста, настройте и включите ключ API (например, OpenAI, Gemini, Claude, DeepSeek) в настройках моделей, чтобы начать общение.</string>
+    <string name="no_model_provider_desc">Himitsu — это локальный клиент без встроенных моделей ИИ. Пожалуйста, настройте и включите ключ API (например, OpenAI, Gemini, Claude, DeepSeek) в настройках моделей, чтобы начать общение.</string>
     <string name="no_model_provider_banner">Модель не настроена. Нажмите здесь, чтобы настроить ключ API.</string>
     <string name="go_to_model_settings">Настроить</string>
     <string name="prompt_max_history_messages">Максимум сообщений истории в промпте</string>

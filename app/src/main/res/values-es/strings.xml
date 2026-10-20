@@ -16,9 +16,9 @@
     <string name="github_repo_label">Repositorio de GitHub</string>
     <string name="visit_repo">Visitar</string>
     <string name="rate_app">Calificar aplicación</string>
-    <string name="rate_app_desc">Calificar RPClient en la tienda de aplicaciones</string>
+    <string name="rate_app_desc">Calificar Himitsu en la tienda de aplicaciones</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">¿Te gusta RPClient?</string>
+    <string name="rate_card_title">¿Te gusta Himitsu?</string>
     <string name="rate_card_desc">Deja una reseña de 5 estrellas en Google Play para apoyar nuestras actualizaciones y desarrollo continuos.</string>
     <string name="rate_card_action">Calificar ahora</string>
     <string name="feedback_label">Comentarios</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Libre y abierto · Bajo licencia MIT</string>
     <string name="about_app_summary">Cliente inmersivo de rol e historias con IA</string>
     <string name="about_crafted_with_love">Creado con pasión para jugadores de rol y narradores</string>
-    <string name="about_copyright">RPClient · Software de código abierto</string>
+    <string name="about_copyright">Himitsu · Software de código abierto</string>
 
     <!-- Main Layout -->
     <string name="home">Inicio</string>
@@ -615,7 +615,7 @@
     <string name="request_body_patch_status_default">Estructura de solicitud predeterminada ({})</string>
     <string name="reset">Restablecer</string>
     <string name="reset_to_default">Restablecer</string>
-    <string name="request_body_patch_description">Combina campos adicionales en el cuerpo de solicitud generado. RPClient protege los campos gestionados por la aplicación.</string>
+    <string name="request_body_patch_description">Combina campos adicionales en el cuerpo de solicitud generado. Himitsu protege los campos gestionados por la aplicación.</string>
     <string name="request_body_patch_json">JSON de patch del cuerpo de solicitud</string>
     <string name="edit_request_body_patch">Editar</string>
     <string name="request_body_patch_editor_title">Editar patch del cuerpo de solicitud</string>
@@ -624,7 +624,7 @@
     <string name="openrouter_preferred_provider">Preferir un proveedor específico en OpenRouter</string>
     <string name="openrouter_provider_slug">Identificador del proveedor (por ejemplo, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Permitir fallback de proveedor</string>
-    <string name="openrouter_session_affinity_note">En modo Auto, RPClient envía un ID de sesión anónimo estable por conversación para enrutamiento adhesivo.</string>
+    <string name="openrouter_session_affinity_note">En modo Auto, Himitsu envía un ID de sesión anónimo estable por conversación para enrutamiento adhesivo.</string>
     <string name="save">Guardar</string>
     <string name="model_test">Prueba de modelo</string>
     <string name="send_short_message">Enviar un mensaje corto para verificar la conexión</string>
@@ -973,7 +973,7 @@
     <string name="no_matching_characters">No hay personajes coincidentes</string>
     <string name="importing_chat">Importando…</string>
     <string name="export_chat">Exportar chat actual</string>
-    <string name="export_chat_desc">Exportar JSONL; RPClient puede restaurar las imágenes incrustadas</string>
+    <string name="export_chat_desc">Exportar JSONL; Himitsu puede restaurar las imágenes incrustadas</string>
     <string name="exporting_chat">Exportando chat…</string>
     <string name="export_chat_success">Chat exportado</string>
     <string name="export_chat_failed">Error al exportar chat</string>
@@ -1155,7 +1155,7 @@
     <string name="model_config_delete_failed">No se pudo eliminar la configuración de modelo</string>
     <string name="no_model_configured">Sin modelo configurado</string>
     <string name="no_model_provider_title">Configuración de modelo requerida</string>
-    <string name="no_model_provider_desc">RPClient es un cliente local y no incluye modelos de IA integrados. Configure y habilite una clave de API (por ejemplo, OpenAI, Gemini, Claude, DeepSeek) en la configuración de modelos para comenzar a chatear.</string>
+    <string name="no_model_provider_desc">Himitsu es un cliente local y no incluye modelos de IA integrados. Configure y habilite una clave de API (por ejemplo, OpenAI, Gemini, Claude, DeepSeek) en la configuración de modelos para comenzar a chatear.</string>
     <string name="no_model_provider_banner">Sin modelo configurado. Toque aquí para configurar una clave de API.</string>
     <string name="go_to_model_settings">Configurar</string>
     <string name="prompt_max_history_messages">Máximo de mensajes históricos en el prompt</string>

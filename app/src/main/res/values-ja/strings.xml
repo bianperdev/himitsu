@@ -17,9 +17,9 @@
     <string name="github_repo_label">GitHub リポジトリ</string>
     <string name="visit_repo">表示</string>
     <string name="rate_app">アプリを評価</string>
-    <string name="rate_app_desc">アプリストアで RPClient を評価</string>
+    <string name="rate_app_desc">アプリストアで Himitsu を評価</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">RPClient を気に入っていただけましたか？</string>
+    <string name="rate_card_title">Himitsu を気に入っていただけましたか？</string>
     <string name="rate_card_desc">Google Play で星5つの評価をいただき、今後の継続的なアップデートを応援してください。</string>
     <string name="rate_card_action">評価する</string>
     <string name="feedback_label">フィードバックと提案</string>
@@ -32,7 +32,7 @@
     <string name="open_source_license_desc">自由とオープン · MIT License</string>
     <string name="about_app_summary">没入型 AI ロールプレイ＆ストーリー執筆クライアント</string>
     <string name="about_crafted_with_love">ロールプレイヤーとストーリーテラーのために情熱を込めて制作</string>
-    <string name="about_copyright">RPClient · オープンソースソフトウェア</string>
+    <string name="about_copyright">Himitsu · オープンソースソフトウェア</string>
 
     <!-- Main Layout -->
     <string name="home">ホーム</string>
@@ -881,7 +881,7 @@
     <string name="no_matching_characters">一致するキャラクターがありません</string>
     <string name="importing_chat">インポート中…</string>
     <string name="export_chat">現在のチャットをエクスポート</string>
-    <string name="export_chat_desc">JSONL をエクスポート。埋め込み画像は RPClient で復元できます</string>
+    <string name="export_chat_desc">JSONL をエクスポート。埋め込み画像は Himitsu で復元できます</string>
     <string name="exporting_chat">チャットをエクスポート中…</string>
     <string name="export_chat_success">チャットをエクスポートしました</string>
     <string name="export_chat_failed">チャットのエクスポートに失敗しました</string>
@@ -1017,7 +1017,7 @@
     <string name="prompt_story_summarize_desc">ストーリー要約の更新方法を制御します</string>
     <string name="prompt_source_story_summary">ストーリー要約</string>
     <string name="request_extensions">リクエスト拡張</string>
-    <string name="request_body_patch_description">プロバイダー固有の推論設定を含む追加フィールドを、生成されたリクエスト本文にマージします。RPClient が管理する構造および生成フィールドは保護されます。</string>
+    <string name="request_body_patch_description">プロバイダー固有の推論設定を含む追加フィールドを、生成されたリクエスト本文にマージします。Himitsu が管理する構造および生成フィールドは保護されます。</string>
     <string name="request_body_patch_json">リクエスト本文 Patch JSON</string>
     <string name="edit_request_body_patch">高度な JSON を編集</string>
     <string name="request_body_patch_editor_title">リクエスト本文 Patch を編集</string>
@@ -1026,7 +1026,7 @@
     <string name="openrouter_preferred_provider">特定の OpenRouter アップストリームプロバイダーを優先</string>
     <string name="openrouter_provider_slug">アップストリームプロバイダー識別子（例：deepinfra）</string>
     <string name="openrouter_allow_fallbacks">アップストリームプロバイダーのフォールバックを許可</string>
-    <string name="openrouter_session_affinity_note">自動モードでは、RPClient は会話ごとに安定した匿名セッション ID を送信してスティッキールーティングを有効にします。優先アップストリームプロバイダーの順序を有効にすると、その設定が優先されます。</string>
+    <string name="openrouter_session_affinity_note">自動モードでは、Himitsu は会話ごとに安定した匿名セッション ID を送信してスティッキールーティングを有効にします。優先アップストリームプロバイダーの順序を有効にすると、その設定が優先されます。</string>
     <string name="add_tag">タグを追加</string>
     <string name="add_keyword">キーワードを追加</string>
     <string name="add_category">カテゴリを追加</string>
@@ -1149,7 +1149,7 @@
     <string name="story_structure_update_failed">ストーリー構成を更新できませんでした</string>
     <string name="no_model_configured">モデル未設定</string>
     <string name="no_model_provider_title">モデル設定が必要です</string>
-    <string name="no_model_provider_desc">RPClient はローカルファーストのクライアントであり、組み込みの AI モデルは含まれていません。チャットを開始するには、モデル設定で API キー（OpenAI、Gemini、Claude、DeepSeek など）を設定して有効にしてください。</string>
+    <string name="no_model_provider_desc">Himitsu はローカルファーストのクライアントであり、組み込みの AI モデルは含まれていません。チャットを開始するには、モデル設定で API キー（OpenAI、Gemini、Claude、DeepSeek など）を設定して有効にしてください。</string>
     <string name="no_model_provider_banner">モデルが設定されていません。タップして API キーを設定してください。</string>
     <string name="go_to_model_settings">設定する</string>
     <string name="prompt_max_history_messages">プロンプトの最大履歴メッセージ数</string>

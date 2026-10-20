@@ -16,9 +16,9 @@
     <string name="github_repo_label">Repositório no GitHub</string>
     <string name="visit_repo">Visitar</string>
     <string name="rate_app">Avaliar Aplicativo</string>
-    <string name="rate_app_desc">Avalie o RPClient na loja de aplicativos</string>
+    <string name="rate_app_desc">Avalie o Himitsu na loja de aplicativos</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Gostando do RPClient?</string>
+    <string name="rate_card_title">Gostando do Himitsu?</string>
     <string name="rate_card_desc">Deixe uma avaliação de 5 estrelas no Google Play para apoiar nossas atualizações e desenvolvimento contínuos.</string>
     <string name="rate_card_action">Avaliar no Google Play</string>
     <string name="feedback_label">Feedback</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Gratuito e de Código Aberto · Sob Licença MIT</string>
     <string name="about_app_summary">Cliente imersivo de RPG e contação de histórias com IA</string>
     <string name="about_crafted_with_love">Criado com paixão para jogadores de RPG e narradores de histórias</string>
-    <string name="about_copyright">RPClient · Software de código aberto</string>
+    <string name="about_copyright">Himitsu · Software de código aberto</string>
 
     <!-- Main Layout -->
     <string name="home">Início</string>
@@ -616,7 +616,7 @@ Falhas: %2$d</string>
     <string name="request_body_patch_status_default">Estrutura de requisição padrão ({})</string>
     <string name="reset">Redefinir</string>
     <string name="reset_to_default">Redefinir</string>
-    <string name="request_body_patch_description">Mescla campos adicionais, incluindo configurações de raciocínio nativas do provedor, no corpo da requisição gerada. O RPClient protege campos estruturais e de geração que gerencia.</string>
+    <string name="request_body_patch_description">Mescla campos adicionais, incluindo configurações de raciocínio nativas do provedor, no corpo da requisição gerada. O Himitsu protege campos estruturais e de geração que gerencia.</string>
     <string name="request_body_patch_json">JSON do patch do corpo da requisição</string>
     <string name="edit_request_body_patch">Editar</string>
     <string name="request_body_patch_editor_title">Editar patch do corpo da requisição</string>
@@ -625,7 +625,7 @@ Falhas: %2$d</string>
     <string name="openrouter_preferred_provider">Preferir um provedor upstream específico no OpenRouter</string>
     <string name="openrouter_provider_slug">Slug do provedor upstream (por exemplo, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Permitir fallback de provedor upstream</string>
-    <string name="openrouter_session_affinity_note">No modo Automático, o RPClient envia um ID de sessão anônimo estável por conversa para roteamento fixo (sticky routing). A ordem preferencial de provedores upstream tem prioridade quando ativada.</string>
+    <string name="openrouter_session_affinity_note">No modo Automático, o Himitsu envia um ID de sessão anônimo estável por conversa para roteamento fixo (sticky routing). A ordem preferencial de provedores upstream tem prioridade quando ativada.</string>
     <string name="save">Salvar</string>
     <string name="model_test">Teste do Modelo</string>
     <string name="send_short_message">Enviar uma mensagem curta para verificar a conexão</string>
@@ -976,7 +976,7 @@ Abra as Configurações de Modelo para verificar a chave de API, a URL base, o n
     <string name="no_matching_characters">Nenhum personagem correspondente</string>
     <string name="importing_chat">Importando…</string>
     <string name="export_chat">Exportar chat atual</string>
-    <string name="export_chat_desc">Exportar JSONL; imagens incorporadas podem ser restauradas pelo RPClient</string>
+    <string name="export_chat_desc">Exportar JSONL; imagens incorporadas podem ser restauradas pelo Himitsu</string>
     <string name="exporting_chat">Exportando chat…</string>
     <string name="export_chat_success">Chat exportado</string>
     <string name="export_chat_failed">Falha ao exportar chat</string>
@@ -1157,7 +1157,7 @@ Abra as Configurações de Modelo para verificar a chave de API, a URL base, o n
     <string name="model_config_delete_failed">Não foi possível excluir a configuração de modelo</string>
     <string name="no_model_configured">Nenhum modelo configurado</string>
     <string name="no_model_provider_title">Provedor de Modelo Obrigatório</string>
-    <string name="no_model_provider_desc">O RPClient é um cliente local e não inclui modelos de IA integrados. Configure e ative uma chave de API (por exemplo, OpenAI, Gemini, Claude, DeepSeek) nas Configurações de Modelo para começar a conversar.</string>
+    <string name="no_model_provider_desc">O Himitsu é um cliente local e não inclui modelos de IA integrados. Configure e ative uma chave de API (por exemplo, OpenAI, Gemini, Claude, DeepSeek) nas Configurações de Modelo para começar a conversar.</string>
     <string name="no_model_provider_banner">Nenhum modelo configurado. Toque aqui para configurar uma chave de API.</string>
     <string name="go_to_model_settings">Configurar</string>
     <string name="prompt_max_history_messages">Máximo de mensagens do histórico no prompt</string>

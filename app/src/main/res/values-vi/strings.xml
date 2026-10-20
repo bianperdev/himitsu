@@ -16,9 +16,9 @@
     <string name="github_repo_label">Kho lưu trữ GitHub</string>
     <string name="visit_repo">Truy cập</string>
     <string name="rate_app">Đánh giá ứng dụng</string>
-    <string name="rate_app_desc">Đánh giá RPClient trên cửa hàng ứng dụng</string>
+    <string name="rate_app_desc">Đánh giá Himitsu trên cửa hàng ứng dụng</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Bạn thích RPClient chứ?</string>
+    <string name="rate_card_title">Bạn thích Himitsu chứ?</string>
     <string name="rate_card_desc">Hãy để lại đánh giá 5 sao trên Google Play để ủng hộ chúng tôi liên tục cập nhật và phát triển.</string>
     <string name="rate_card_action">Đánh giá trên Google Play</string>
     <string name="feedback_label">Phản hồi</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Tự do &amp; Mã nguồn mở · Theo giấy phép MIT</string>
     <string name="about_app_summary">Ứng dụng nhập vai AI &amp; sáng tác câu chuyện sống động</string>
     <string name="about_crafted_with_love">Được tạo ra với niềm đam mê dành cho người nhập vai &amp; người kể chuyện</string>
-    <string name="about_copyright">RPClient · Phần mềm mã nguồn mở</string>
+    <string name="about_copyright">Himitsu · Phần mềm mã nguồn mở</string>
 
     <!-- Main Layout -->
     <string name="home">Trang chủ</string>
@@ -616,7 +616,7 @@ Thất bại: %2$d</string>
     <string name="request_body_patch_status_default">Cấu trúc yêu cầu mặc định ({})</string>
     <string name="reset">Đặt lại</string>
     <string name="reset_to_default">Đặt lại</string>
-    <string name="request_body_patch_description">Hợp nhất các trường bổ sung, bao gồm cài đặt suy luận gốc của nhà cung cấp, vào thân yêu cầu được tạo. RPClient bảo vệ các trường cấu trúc và tạo nội dung do ứng dụng quản lý.</string>
+    <string name="request_body_patch_description">Hợp nhất các trường bổ sung, bao gồm cài đặt suy luận gốc của nhà cung cấp, vào thân yêu cầu được tạo. Himitsu bảo vệ các trường cấu trúc và tạo nội dung do ứng dụng quản lý.</string>
     <string name="request_body_patch_json">JSON Patch thân yêu cầu</string>
     <string name="edit_request_body_patch">Chỉnh sửa</string>
     <string name="request_body_patch_editor_title">Chỉnh sửa JSON Patch thân yêu cầu</string>
@@ -625,7 +625,7 @@ Thất bại: %2$d</string>
     <string name="openrouter_preferred_provider">Ưu tiên nhà cung cấp thượng nguồn OpenRouter cụ thể</string>
     <string name="openrouter_provider_slug">Định danh nhà cung cấp thượng nguồn (ví dụ: deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Cho phép nhà cung cấp thượng nguồn dự phòng</string>
-    <string name="openrouter_session_affinity_note">Ở chế độ Tự động, RPClient sẽ gửi một ID phiên ẩn danh và ổn định cho mỗi cuộc trò chuyện để định tuyến cố định. Thứ tự nhà cung cấp thượng nguồn ưu tiên sẽ được áp dụng trước khi được bật.</string>
+    <string name="openrouter_session_affinity_note">Ở chế độ Tự động, Himitsu sẽ gửi một ID phiên ẩn danh và ổn định cho mỗi cuộc trò chuyện để định tuyến cố định. Thứ tự nhà cung cấp thượng nguồn ưu tiên sẽ được áp dụng trước khi được bật.</string>
     <string name="save">Lưu</string>
     <string name="model_test">Kiểm tra mô hình</string>
     <string name="send_short_message">Gửi một tin nhắn ngắn để xác minh kết nối</string>
@@ -974,7 +974,7 @@ Mở Cài đặt mô hình để kiểm tra khóa API, URL cơ sở, tên mô h�
     <string name="no_matching_characters">Không có nhân vật phù hợp</string>
     <string name="importing_chat">Đang nhập…</string>
     <string name="export_chat">Xuất cuộc trò chuyện hiện tại</string>
-    <string name="export_chat_desc">Xuất JSONL; RPClient có thể khôi phục ảnh được nhúng</string>
+    <string name="export_chat_desc">Xuất JSONL; Himitsu có thể khôi phục ảnh được nhúng</string>
     <string name="exporting_chat">Đang xuất cuộc trò chuyện…</string>
     <string name="export_chat_success">Đã xuất cuộc trò chuyện</string>
     <string name="export_chat_failed">Xuất cuộc trò chuyện thất bại</string>
@@ -1154,7 +1154,7 @@ Mở Cài đặt mô hình để kiểm tra khóa API, URL cơ sở, tên mô h�
     <string name="model_config_delete_failed">Không thể xóa cấu hình mô hình</string>
     <string name="no_model_configured">Chưa cấu hình mô hình</string>
     <string name="no_model_provider_title">Cần có nhà cung cấp mô hình</string>
-    <string name="no_model_provider_desc">RPClient là ứng dụng chạy cục bộ và không cung cấp sẵn mô hình AI. Vui lòng cấu hình và bật một Khóa API (ví dụ: OpenAI, Gemini, Claude, DeepSeek) trong Cài đặt mô hình để bắt đầu trò chuyện.</string>
+    <string name="no_model_provider_desc">Himitsu là ứng dụng chạy cục bộ và không cung cấp sẵn mô hình AI. Vui lòng cấu hình và bật một Khóa API (ví dụ: OpenAI, Gemini, Claude, DeepSeek) trong Cài đặt mô hình để bắt đầu trò chuyện.</string>
     <string name="no_model_provider_banner">Chưa cấu hình mô hình nào. Chạm vào đây để thiết lập khóa API.</string>
     <string name="go_to_model_settings">Cấu hình</string>
     <string name="prompt_max_history_messages">Số tin nhắn lịch sử tối đa trong prompt</string>

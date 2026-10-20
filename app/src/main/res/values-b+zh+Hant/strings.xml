@@ -16,9 +16,9 @@
     <string name="github_repo_label">開源倉庫</string>
     <string name="visit_repo">前往查看</string>
     <string name="rate_app">應用評分</string>
-    <string name="rate_app_desc">在應用商店為 RPClient 評分</string>
+    <string name="rate_app_desc">在應用商店為 Himitsu 評分</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">喜歡 RPClient 嗎？</string>
+    <string name="rate_card_title">喜歡 Himitsu 嗎？</string>
     <string name="rate_card_desc">歡迎前往 Google Play 為我們留下五星好評，支持我們的持續更新與維護。</string>
     <string name="rate_card_action">前往評分</string>
     <string name="feedback_label">問題反饋</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">自由與開放 · 基於 MIT License</string>
     <string name="about_app_summary">沉浸式 AI 角色扮演與故事創作用戶端</string>
     <string name="about_crafted_with_love">為角色扮演與故事創作者精心打造</string>
-    <string name="about_copyright">RPClient · 基於開源協議發布</string>
+    <string name="about_copyright">Himitsu · 基於開源協議發布</string>
 
     <!-- Main Layout -->
     <string name="home">首頁</string>
@@ -882,7 +882,7 @@
     <string name="no_matching_characters">沒有符合的角色</string>
     <string name="importing_chat">正在匯入…</string>
     <string name="export_chat">匯出目前對話</string>
-    <string name="export_chat_desc">匯出 JSONL，內嵌圖片可由 RPClient 還原</string>
+    <string name="export_chat_desc">匯出 JSONL，內嵌圖片可由 Himitsu 還原</string>
     <string name="exporting_chat">正在匯出對話…</string>
     <string name="export_chat_success">對話已匯出</string>
     <string name="export_chat_failed">匯出對話失敗</string>
@@ -1042,7 +1042,7 @@
     <string name="prompt_story_summarize_desc">控制劇情摘要的更新方式</string>
     <string name="prompt_source_story_summary">劇情摘要</string>
     <string name="request_extensions">請求擴充</string>
-    <string name="request_body_patch_description">將額外欄位（包括供應商原生思考設定）合併至產生的請求主體。RPClient 會保護由應用程式管理的結構與產生參數。</string>
+    <string name="request_body_patch_description">將額外欄位（包括供應商原生思考設定）合併至產生的請求主體。Himitsu 會保護由應用程式管理的結構與產生參數。</string>
     <string name="request_body_patch_json">請求主體 Patch JSON</string>
     <string name="edit_request_body_patch">編輯進階 JSON</string>
     <string name="request_body_patch_editor_title">編輯請求主體 Patch</string>
@@ -1051,7 +1051,7 @@
     <string name="openrouter_preferred_provider">優先使用指定的 OpenRouter 上游供應商</string>
     <string name="openrouter_provider_slug">上游供應商識別碼（例如 deepinfra）</string>
     <string name="openrouter_allow_fallbacks">允許上游供應商備援</string>
-    <string name="openrouter_session_affinity_note">自動模式下，RPClient 會為每個對話傳送穩定的匿名工作階段 ID，以啟用黏性路由；啟用首選上游供應商後，其順序設定優先。</string>
+    <string name="openrouter_session_affinity_note">自動模式下，Himitsu 會為每個對話傳送穩定的匿名工作階段 ID，以啟用黏性路由；啟用首選上游供應商後，其順序設定優先。</string>
     <string name="add_tag">新增標籤</string>
     <string name="add_keyword">新增關鍵字</string>
     <string name="add_category">新增分類</string>
@@ -1150,7 +1150,7 @@
     <string name="model_config_delete_failed">無法刪除模型設定</string>
     <string name="no_model_configured">未設定模型</string>
     <string name="no_model_provider_title">需要設定模型服務</string>
-    <string name="no_model_provider_desc">RPClient 是本機端工具，不包含內建模型服務。請先在「模型設定」中新增並啟用您的 API Key（如 OpenAI、Gemini、Claude、DeepSeek 等）即可開始對話。</string>
+    <string name="no_model_provider_desc">Himitsu 是本機端工具，不包含內建模型服務。請先在「模型設定」中新增並啟用您的 API Key（如 OpenAI、Gemini、Claude、DeepSeek 等）即可開始對話。</string>
     <string name="no_model_provider_banner">尚未設定模型服務，點擊前往設定 API Key</string>
     <string name="go_to_model_settings">前往設定</string>
     <string name="image_input_capability">圖片輸入</string>

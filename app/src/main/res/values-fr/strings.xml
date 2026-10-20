@@ -16,13 +16,13 @@
     <string name="github_repo_label">Dépôt GitHub</string>
     <string name="visit_repo">Visiter</string>
     <string name="rate_app">Évaluer l\'application</string>
-    <string name="rate_app_desc">Évaluez RPClient sur le store d\'applications</string>
+    <string name="rate_app_desc">Évaluez Himitsu sur le store d\'applications</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">Vous appréciez RPClient ?</string>
+    <string name="rate_card_title">Vous appréciez Himitsu ?</string>
     <string name="rate_card_desc">Laissez un avis 5 étoiles sur Google Play pour soutenir notre développement continu.</string>
     <string name="rate_card_action">Laisser un avis</string>
     <string name="feedback_label">Retours et suggestions</string>
-    <string name="feedback_desc">Signalez des bugs ou proposez des améliorations pour faire grandir RPClient</string>
+    <string name="feedback_desc">Signalez des bugs ou proposez des améliorations pour faire grandir Himitsu</string>
     <string name="feedback_github_issues">GitHub Issues</string>
     <string name="section_community">Communauté et retours</string>
     <string name="section_about">À propos et support</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">Libre et ouvert · Sous licence MIT</string>
     <string name="about_app_summary">Client immersif pour le jeu de rôle et la création d\'histoires avec l\'IA</string>
     <string name="about_crafted_with_love">Conçu avec passion pour les rôlistes et les conteurs</string>
-    <string name="about_copyright">RPClient · Logiciel open source</string>
+    <string name="about_copyright">Himitsu · Logiciel open source</string>
 
     <!-- Main Layout -->
     <string name="home">Accueil</string>
@@ -884,7 +884,7 @@
     <string name="no_matching_characters">Aucun personnage correspondant</string>
     <string name="importing_chat">Importation…</string>
     <string name="export_chat">Exporter la discussion actuelle</string>
-    <string name="export_chat_desc">Exporter en JSONL ; RPClient peut restaurer les images intégrées</string>
+    <string name="export_chat_desc">Exporter en JSONL ; Himitsu peut restaurer les images intégrées</string>
     <string name="exporting_chat">Exportation de la discussion…</string>
     <string name="export_chat_success">Discussion exportée</string>
     <string name="export_chat_failed">Échec de l\'exportation de la discussion</string>
@@ -1020,7 +1020,7 @@
     <string name="prompt_story_summarize_desc">Contrôle la mise à jour du résumé de l’histoire</string>
     <string name="prompt_source_story_summary">Résumé de l’histoire</string>
     <string name="request_extensions">Extensions de requête</string>
-    <string name="request_body_patch_description">Fusionne des champs supplémentaires, y compris les réglages de raisonnement propres au fournisseur, dans le corps de requête généré. RPClient protège les champs de structure et de génération gérés par l’application.</string>
+    <string name="request_body_patch_description">Fusionne des champs supplémentaires, y compris les réglages de raisonnement propres au fournisseur, dans le corps de requête généré. Himitsu protège les champs de structure et de génération gérés par l’application.</string>
     <string name="request_body_patch_json">Patch JSON du corps de requête</string>
     <string name="edit_request_body_patch">Modifier le JSON avancé</string>
     <string name="request_body_patch_editor_title">Modifier le patch du corps de requête</string>
@@ -1029,7 +1029,7 @@
     <string name="openrouter_preferred_provider">Préférer un fournisseur en amont OpenRouter précis</string>
     <string name="openrouter_provider_slug">Identifiant du fournisseur en amont (par exemple deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Autoriser un fournisseur en amont de secours</string>
-    <string name="openrouter_session_affinity_note">En mode Auto, RPClient envoie un ID de session anonyme stable par conversation pour le routage persistant. L’ordre préféré des fournisseurs en amont est prioritaire lorsqu’il est activé.</string>
+    <string name="openrouter_session_affinity_note">En mode Auto, Himitsu envoie un ID de session anonyme stable par conversation pour le routage persistant. L’ordre préféré des fournisseurs en amont est prioritaire lorsqu’il est activé.</string>
     <string name="add_tag">Ajouter une étiquette</string>
     <string name="add_keyword">Ajouter un mot-clé</string>
     <string name="add_category">Ajouter une catégorie</string>
@@ -1154,7 +1154,7 @@
     <string name="story_structure_update_failed">Impossible de modifier la structure de l’histoire</string>
     <string name="no_model_configured">Aucun modèle configuré</string>
     <string name="no_model_provider_title">Configuration de modèle requise</string>
-    <string name="no_model_provider_desc">RPClient est un client local et n’intègre pas de modèle IA. Veuillez configurer et activer une clé API (ex. OpenAI, Gemini, Claude, DeepSeek) dans les paramètres de modèle pour commencer à discuter.</string>
+    <string name="no_model_provider_desc">Himitsu est un client local et n’intègre pas de modèle IA. Veuillez configurer et activer une clé API (ex. OpenAI, Gemini, Claude, DeepSeek) dans les paramètres de modèle pour commencer à discuter.</string>
     <string name="no_model_provider_banner">Aucun modèle configuré. Appuyez ici pour configurer une clé API.</string>
     <string name="go_to_model_settings">Configurer</string>
     <string name="prompt_max_history_messages">Maximum de messages d’historique du prompt</string>

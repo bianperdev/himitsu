@@ -16,9 +16,9 @@
     <string name="github_repo_label">GitHub 저장소</string>
     <string name="visit_repo">방문</string>
     <string name="rate_app">앱 평가하기</string>
-    <string name="rate_app_desc">앱 스토어에서 RPClient 평가하기</string>
+    <string name="rate_app_desc">앱 스토어에서 Himitsu 평가하기</string>
     <string name="rate_on_google_play">Google Play</string>
-    <string name="rate_card_title">RPClient가 마음에 드시나요?</string>
+    <string name="rate_card_title">Himitsu가 마음에 드시나요?</string>
     <string name="rate_card_desc">지속적인 업데이트와 개발을 위해 Google Play에 별 5개 리뷰를 남겨주세요.</string>
     <string name="rate_card_action">평가하기</string>
     <string name="feedback_label">문제 신고 및 피드백</string>
@@ -31,7 +31,7 @@
     <string name="open_source_license_desc">자유와 개방 · MIT License</string>
     <string name="about_app_summary">몰입형 AI 롤플레잉 및 스토리 창작 클라이언트</string>
     <string name="about_crafted_with_love">롤플레이어와 스토리 작가를 위해 정성껏 제작되었습니다</string>
-    <string name="about_copyright">RPClient · 오픈 소스 소프트웨어</string>
+    <string name="about_copyright">Himitsu · 오픈 소스 소프트웨어</string>
 
     <!-- Main Layout -->
     <string name="home">홈</string>
@@ -880,7 +880,7 @@
     <string name="no_matching_characters">일치하는 캐릭터가 없습니다</string>
     <string name="importing_chat">가져오는 중…</string>
     <string name="export_chat">현재 채팅 내보내기</string>
-    <string name="export_chat_desc">JSONL 내보내기. 포함된 이미지는 RPClient에서 복원할 수 있습니다</string>
+    <string name="export_chat_desc">JSONL 내보내기. 포함된 이미지는 Himitsu에서 복원할 수 있습니다</string>
     <string name="exporting_chat">채팅을 내보내는 중…</string>
     <string name="export_chat_success">채팅을 내보냈습니다</string>
     <string name="export_chat_failed">채팅을 내보내지 못했습니다</string>
@@ -1016,7 +1016,7 @@
     <string name="prompt_story_summarize_desc">스토리 요약 업데이트 방식을 제어합니다</string>
     <string name="prompt_source_story_summary">스토리 요약</string>
     <string name="request_extensions">요청 확장</string>
-    <string name="request_body_patch_description">공급자 고유 추론 설정을 포함한 추가 필드를 생성된 요청 본문에 병합합니다. RPClient가 관리하는 구조 및 생성 필드는 보호됩니다.</string>
+    <string name="request_body_patch_description">공급자 고유 추론 설정을 포함한 추가 필드를 생성된 요청 본문에 병합합니다. Himitsu가 관리하는 구조 및 생성 필드는 보호됩니다.</string>
     <string name="request_body_patch_json">요청 본문 Patch JSON</string>
     <string name="edit_request_body_patch">고급 JSON 편집</string>
     <string name="request_body_patch_editor_title">요청 본문 Patch 편집</string>
@@ -1025,7 +1025,7 @@
     <string name="openrouter_preferred_provider">특정 OpenRouter 업스트림 공급자 우선 사용</string>
     <string name="openrouter_provider_slug">업스트림 공급자 식별자(예: deepinfra)</string>
     <string name="openrouter_allow_fallbacks">업스트림 공급자 폴백 허용</string>
-    <string name="openrouter_session_affinity_note">자동 모드에서는 RPClient가 대화별로 안정적인 익명 세션 ID를 보내 고정 라우팅을 사용합니다. 우선 업스트림 공급자 순서를 활성화하면 해당 설정이 우선합니다.</string>
+    <string name="openrouter_session_affinity_note">자동 모드에서는 Himitsu가 대화별로 안정적인 익명 세션 ID를 보내 고정 라우팅을 사용합니다. 우선 업스트림 공급자 순서를 활성화하면 해당 설정이 우선합니다.</string>
     <string name="add_tag">태그 추가</string>
     <string name="add_keyword">키워드 추가</string>
     <string name="add_category">카테고리 추가</string>
@@ -1148,7 +1148,7 @@
     <string name="story_structure_update_failed">스토리 구조를 업데이트할 수 없습니다</string>
     <string name="no_model_configured">모델 미구성</string>
     <string name="no_model_provider_title">모델 구성이 필요합니다</string>
-    <string name="no_model_provider_desc">RPClient는 로컬 우선 클라이언트이며 기본 제공 AI 모델이 포함되어 있지 않습니다. 대화를 시작하려면 모델 설정에서 API 키(예: OpenAI, Gemini, Claude, DeepSeek)를 구성하고 활성화하세요.</string>
+    <string name="no_model_provider_desc">Himitsu는 로컬 우선 클라이언트이며 기본 제공 AI 모델이 포함되어 있지 않습니다. 대화를 시작하려면 모델 설정에서 API 키(예: OpenAI, Gemini, Claude, DeepSeek)를 구성하고 활성화하세요.</string>
     <string name="no_model_provider_banner">구성된 모델이 없습니다. 탭하여 API 키를 설정하세요.</string>
     <string name="go_to_model_settings">설정하기</string>
     <string name="prompt_max_history_messages">프롬프트 최대 기록 메시지 수</string>
