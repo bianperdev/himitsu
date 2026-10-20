@@ -627,12 +627,13 @@ class MultimodalImageIntegrationTest {
         }
         // 三协议无论在编码前还是编码后拒绝非法地址，都不能遗留请求文件。
         val request = LLMGenerationRequest(listOf(messageWithBlocks(LLMMessageRole.User, listOf(LLMContentBlock.Image(reference)))))
-        for (protocol in LLMProviderProtocol.entries) {
+        for (protocol in httpProtocols) {
             val invalidProvider = provider.copy(protocol = protocol, baseUrl = "invalid-address")
             val invalidClient: LLMClient = when (protocol) {
                 LLMProviderProtocol.OpenAICompatible -> OpenAICompatibleLLMClient(OkHttpClient(), logs, invalidProvider, media)
                 LLMProviderProtocol.Gemini -> GeminiLLMClient(OkHttpClient(), logs, invalidProvider, media)
                 LLMProviderProtocol.AnthropicMessages -> AnthropicMessagesLLMClient(OkHttpClient(), logs, invalidProvider, media)
+                LLMProviderProtocol.Local -> error("Local is not an HTTP protocol")
             }
             assertTrue(runCatching { invalidClient.generate(request) }.exceptionOrNull() is IllegalArgumentException)
             assertTrue(File(context.cacheDir, "image-requests").listFiles().orEmpty().isEmpty())
@@ -657,7 +658,7 @@ class MultimodalImageIntegrationTest {
         val saved = chat.createUserMessageWithImages(sessionId, "", listOf(MessageImageInput.Prepared(prepared)))
         val reference = media.references(listOf(saved)).getValue(saved.key.messageId).single()
         // 穷举用户与角色、三协议、两种传输和三类内容，检查实际请求字节及角色。
-        for (protocol in LLMProviderProtocol.entries) for (stream in listOf(false, true))
+        for (protocol in httpProtocols) for (stream in listOf(false, true))
         for (role in listOf(LLMMessageRole.User, LLMMessageRole.Assistant)) for (count in 0..2) {
             var payload = ""
             val http = OkHttpClient.Builder().addInterceptor { chain ->
@@ -670,6 +671,7 @@ class MultimodalImageIntegrationTest {
                 LLMProviderProtocol.OpenAICompatible -> OpenAICompatibleLLMClient(http, logs, provider, media)
                 LLMProviderProtocol.Gemini -> GeminiLLMClient(http, logs, provider, media)
                 LLMProviderProtocol.AnthropicMessages -> AnthropicMessagesLLMClient(http, logs, provider, media)
+                LLMProviderProtocol.Local -> error("Local is not an HTTP protocol")
             }
             val blocks = (0 until count).flatMap { index ->
                 listOf(LLMContentBlock.Image(reference)) + if (count == 2) listOf(LLMContentBlock.Text("after-$index")) else emptyList()
@@ -691,6 +693,7 @@ class MultimodalImageIntegrationTest {
                     LLMProviderProtocol.OpenAICompatible -> first.getJSONObject("image_url").getString("url").substringAfter("base64,")
                     LLMProviderProtocol.Gemini -> first.getJSONObject("inlineData").getString("data")
                     LLMProviderProtocol.AnthropicMessages -> first.getJSONObject("source").getString("data")
+                    LLMProviderProtocol.Local -> error("Local is not an HTTP protocol")
                 }
                 assertEquals(reference.byteCount, Base64.getDecoder().decode(encoded).size.toLong())
                 val logId = logs.getLogOverviews(10, 1, 0).single().id
@@ -741,5 +744,9 @@ class MultimodalImageIntegrationTest {
             else """{"candidates":[{"content":{"parts":[{"text":"ok"}]},"finishReason":"STOP"}]}"""
         LLMProviderProtocol.AnthropicMessages -> if (stream) "data: {\"type\":\"content_block_delta\",\"delta\":{\"type\":\"text_delta\",\"text\":\"ok\"}}\n\ndata: {\"type\":\"message_stop\"}\n\n"
             else """{"content":[{"type":"text","text":"ok"}],"stop_reason":"end_turn"}"""
+        LLMProviderProtocol.Local -> error("Local is not an HTTP protocol")
     }
+
+    // These tests check HTTP wire formats; the on-device protocol has no request body to inspect.
+    private val httpProtocols = LLMProviderProtocol.entries - LLMProviderProtocol.Local
 }
