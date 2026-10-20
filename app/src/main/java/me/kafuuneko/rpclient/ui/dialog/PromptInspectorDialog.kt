@@ -2,6 +2,7 @@ package me.kafuuneko.rpclient.ui.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.DataObject
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,6 +39,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +60,7 @@ import me.kafuuneko.rpclient.libs.prompt.model.PromptOmittedItem
 import me.kafuuneko.rpclient.libs.prompt.model.PromptSource
 import me.kafuuneko.rpclient.libs.prompt.model.PromptSourceKind
 import me.kafuuneko.rpclient.libs.prompt.model.PromptTokenizerStrategy
+import me.kafuuneko.rpclient.libs.prompt.model.RenderedPromptInspection
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
 
 /** 展示最终 Prompt、来源、预算裁剪和 Regex 执行记录的现代化调试对话框。 */
@@ -90,6 +98,11 @@ fun PromptInspectorDialog(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     item { InspectionSummary(inspection) }
+
+                    // Himitsu: the exact text an on-device model reads
+                    inspection.renderedPrompt?.let { rendered ->
+                        item { RenderedPromptCard(rendered, onCopyRequest) }
+                    }
 
                     if (inspection.omittedItems.isNotEmpty()) {
                         item {
@@ -370,6 +383,89 @@ private fun OmittedItemCard(item: PromptOmittedItem) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onErrorContainer
             )
+        }
+    }
+}
+
+/** Himitsu: collapsible card with the prompt after the local model's chat template. */
+@Composable
+private fun RenderedPromptCard(
+    rendered: RenderedPromptInspection,
+    onCopyRequest: (String) -> Unit
+) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { isExpanded = !isExpanded },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.local_inference_inspector_rendered_title),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                ) {
+                    Text(
+                        text = stringResource(R.string.prompt_inspector_item_tokens, rendered.tokenCount),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+                IconButton(onClick = { onCopyRequest(rendered.text) }, modifier = Modifier.size(32.dp)) {
+                    Icon(
+                        imageVector = Icons.Rounded.ContentCopy,
+                        contentDescription = stringResource(R.string.copy),
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Icon(
+                    imageVector = if (isExpanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Text(
+                text = stringResource(
+                    if (rendered.usesFallbackTemplate) {
+                        R.string.local_inference_inspector_fallback_template
+                    } else {
+                        R.string.local_inference_inspector_rendered_desc
+                    }
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (isExpanded) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                SelectionContainer {
+                    Text(
+                        text = rendered.text,
+                        style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
         }
     }
 }

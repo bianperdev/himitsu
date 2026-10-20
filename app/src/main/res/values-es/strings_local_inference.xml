@@ -12,4 +12,7 @@
     <string name="local_inference_import_not_gguf">Este archivo no es un modelo GGUF</string>
     <string name="local_inference_import_unreadable">No se pudo leer el archivo</string>
     <string name="local_inference_import_no_space">No hay espacio libre suficiente para este modelo</string>
+    <string name="local_inference_inspector_rendered_title">Prompt final (plantilla de chat)</string>
+    <string name="local_inference_inspector_rendered_desc">Exactamente lo que lee el modelo del dispositivo, con los tokens especiales.</string>
+    <string name="local_inference_inspector_fallback_template">Este modelo no trae plantilla de chat, así que se usó ChatML.</string>
 </resources>

@@ -34,6 +34,7 @@ val localInferenceModule = module {
     singleOf(::LocalModelRuntime)
     singleOf(::LocalLLMClientFactory)
     singleOf(::LocalModelCatalogClient)
+    singleOf(::LocalPromptPreviewer)
 }
 
 private fun availableEngines(context: Context): List<LocalInferenceEngine> {

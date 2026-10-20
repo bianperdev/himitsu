@@ -133,11 +133,23 @@ data class PromptInspection(
     /** 本次 Prompt 构建实际执行的正则脚本记录。 */
     val regexExecutions: List<RegexExecutionHit> = emptyList(),
     /** 本次 Prompt 构建收集的正则脚本错误。 */
-    val regexErrors: List<RegexExecutionError> = emptyList()
+    val regexErrors: List<RegexExecutionError> = emptyList(),
+    /** Himitsu: for on-device models, the prompt text after the model's chat template. */
+    val renderedPrompt: RenderedPromptInspection? = null
 ) {
     val hasOmissions: Boolean
         get() = omittedItems.isNotEmpty()
 }
+
+/** Himitsu: what an on-device model reads after its chat template is applied. */
+data class RenderedPromptInspection(
+    /** The full prompt text, special tokens included. */
+    val text: String,
+    /** True when the model had no usable template and ChatML was used instead. */
+    val usesFallbackTemplate: Boolean,
+    /** Exact token count from the model's tokenizer. */
+    val tokenCount: Int
+)
 
 /**
  * 尚未执行后处理与预算裁剪的消息草稿。

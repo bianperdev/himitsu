@@ -12,4 +12,7 @@
     <string name="local_inference_import_not_gguf">File ini bukan model GGUF</string>
     <string name="local_inference_import_unreadable">File tidak dapat dibaca</string>
     <string name="local_inference_import_no_space">Ruang kosong tidak cukup untuk model ini</string>
+    <string name="local_inference_inspector_rendered_title">Prompt akhir (templat chat)</string>
+    <string name="local_inference_inspector_rendered_desc">Persis yang dibaca model di perangkat, termasuk token khusus.</string>
+    <string name="local_inference_inspector_fallback_template">Model ini tidak memiliki templat chat, jadi ChatML digunakan.</string>
 </resources>

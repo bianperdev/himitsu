@@ -12,4 +12,7 @@
     <string name="local_inference_import_not_gguf">Ce fichier n\'est pas un modèle GGUF</string>
     <string name="local_inference_import_unreadable">Impossible de lire le fichier</string>
     <string name="local_inference_import_no_space">Espace libre insuffisant pour ce modèle</string>
+    <string name="local_inference_inspector_rendered_title">Prompt final (modèle de chat)</string>
+    <string name="local_inference_inspector_rendered_desc">Exactement ce que lit le modèle de l\'appareil, jetons spéciaux compris.</string>
+    <string name="local_inference_inspector_fallback_template">Ce modèle n\'a pas de modèle de chat, ChatML a donc été utilisé.</string>
 </resources>

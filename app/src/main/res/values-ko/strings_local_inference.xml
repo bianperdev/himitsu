@@ -12,4 +12,7 @@
     <string name="local_inference_import_not_gguf">이 파일은 GGUF 모델이 아닙니다</string>
     <string name="local_inference_import_unreadable">파일을 읽을 수 없습니다</string>
     <string name="local_inference_import_no_space">이 모델을 저장할 여유 공간이 부족합니다</string>
+    <string name="local_inference_inspector_rendered_title">최종 프롬프트(채팅 템플릿)</string>
+    <string name="local_inference_inspector_rendered_desc">기기 내 모델이 실제로 읽는 내용으로, 특수 토큰도 포함됩니다.</string>
+    <string name="local_inference_inspector_fallback_template">이 모델에는 채팅 템플릿이 없어 ChatML을 사용했습니다.</string>
 </resources>

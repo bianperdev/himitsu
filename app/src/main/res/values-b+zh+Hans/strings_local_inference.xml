@@ -12,4 +12,7 @@
     <string name="local_inference_import_not_gguf">此文件不是 GGUF 模型</string>
     <string name="local_inference_import_unreadable">无法读取该文件</string>
     <string name="local_inference_import_no_space">可用空间不足，无法存放此模型</string>
+    <string name="local_inference_inspector_rendered_title">最终提示词（聊天模板）</string>
+    <string name="local_inference_inspector_rendered_desc">本机模型实际读取的完整内容，包含特殊标记。</string>
+    <string name="local_inference_inspector_fallback_template">此模型没有聊天模板，因此使用了 ChatML。</string>
 </resources>

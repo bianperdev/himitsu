@@ -12,4 +12,7 @@
     <string name="local_inference_import_not_gguf">Tệp này không phải mô hình GGUF</string>
     <string name="local_inference_import_unreadable">Không thể đọc tệp</string>
     <string name="local_inference_import_no_space">Không đủ dung lượng trống cho mô hình này</string>
+    <string name="local_inference_inspector_rendered_title">Prompt cuối cùng (mẫu trò chuyện)</string>
+    <string name="local_inference_inspector_rendered_desc">Chính xác những gì mô hình trên thiết bị đọc, bao gồm cả token đặc biệt.</string>
+    <string name="local_inference_inspector_fallback_template">Mô hình này không có mẫu trò chuyện nên đã dùng ChatML.</string>
 </resources>
