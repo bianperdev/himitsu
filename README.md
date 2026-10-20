@@ -11,7 +11,7 @@ It is a fork of [RPClient](https://github.com/KafuuNeko/RPClient) by Kafuu Neko.
 
 ### Privacy
 
-- **Encrypted storage.** Chats, characters, lorebooks, settings, API keys and custom headers live in [SQLCipher](https://www.zetetic.net/sqlcipher/) databases. Their keys are derived from a random master key that is wrapped by the Android Keystore and never leaves the device. You can also write down a recovery code that unlocks your data if the Keystore key is ever lost.
+- **Encrypted storage.** Chats, characters, lorebooks, provider settings, API keys and custom headers live in [SQLCipher](https://www.zetetic.net/sqlcipher/) databases; personal text settings such as your persona are sealed with AES-GCM. Their keys are derived from a random master key that is wrapped by the Android Keystore and never leaves the device. You can also write down a recovery code that unlocks your data if the Keystore key is ever lost.
 - **Sealed files and preferences.** Avatars, chat images and drafts are sealed with AES-256-GCM, and text preferences (persona, prompts and similar) are sealed too.
 - **App lock.** Biometrics or your device PIN, pattern or password, with a configurable re-lock delay. Recents previews are hidden while the lock is on, and you can block screenshots.
 - **No telemetry.** No analytics, no crash reporting, no ads, no Firebase, no Google Play Services. Himitsu talks only to the AI endpoint you configure and, if you ask for it, to Hugging Face to download a model.
@@ -113,7 +113,7 @@ Himitsu also relies on:
 
 ### Third-party licenses
 
-The complete list of bundled libraries, fonts and native components, with their licenses and copyright notices, is in [NOTICE](NOTICE). The font license texts are in [LICENSES/](LICENSES).
+The complete list of bundled libraries, fonts and native components, with their licenses and copyright notices, is in [NOTICE](NOTICE). The full license texts are in [LICENSES/](LICENSES), and the app shows them under About › Open source licenses.
 
 ## License
 

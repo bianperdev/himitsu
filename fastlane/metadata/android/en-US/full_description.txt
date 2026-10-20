@@ -1,7 +1,7 @@
 Himitsu (秘密, "secret") is a free and open source AI role-play client built for privacy, with on-device models as a first-class option. It is a fork of RPClient by Kafuu Neko.
 
 PRIVACY FIRST
-- Chats, characters, lorebooks, settings and API keys are stored in encrypted SQLCipher databases, with keys protected by the Android Keystore. An optional recovery code lets you get your data back if that key is ever lost.
+- Chats, characters, lorebooks, provider settings and API keys are stored in encrypted SQLCipher databases, with keys protected by the Android Keystore. An optional recovery code lets you get your data back if that key is ever lost.
 - Avatars, chat images and drafts are encrypted with AES-256-GCM.
 - App lock with biometrics or your device PIN, pattern or password. Recents previews are hidden while the lock is on, and screenshots can be blocked.
 - No analytics, no telemetry, no crash reporting, no ads, no Google services. Himitsu only connects to the AI service you configure and, when you ask for it, to Hugging Face to download a model.

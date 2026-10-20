@@ -8,7 +8,7 @@ This policy describes the code in this repository. If you build Himitsu yourself
 
 ## Summary
 
-- Your chats, characters, lorebooks, settings and API keys stay on your device, encrypted.
+- Your chats, characters, lorebooks, provider settings and API keys stay on your device, encrypted, as do personal text settings such as your persona; other settings, such as the theme, are stored as plain values.
 - Himitsu connects only to the AI endpoint you configure, and to Hugging Face when you start a model download. Nothing else.
 - No analytics, no telemetry, no crash reporting, no ads, no Google Play Services, no third-party SDK that makes network calls.
 - Android backups and device-to-device transfers export nothing from Himitsu.
@@ -28,7 +28,7 @@ Himitsu uses three [SQLCipher](https://www.zetetic.net/sqlcipher/) databases (AE
 | `request_logs.sqlite` | The debug request log, only if you turn debug mode on (see below). |
 | `local_models.sqlite` | The list of on-device models: names, file names and model metadata. |
 
-**Keys.** On first start, Himitsu generates a random 256-bit master key. It is stored only in wrapped (encrypted) form in `himitsu_master.key`, inside the app's no-backup directory. It is wrapped by an AES-256-GCM key held in the Android Keystore (in StrongBox when the device has it), which never leaves the device's secure hardware or trusted environment. A separate key is derived from the master key for each database and for files and preferences, so one key never serves two purposes.
+**Keys.** On first start, Himitsu generates a random 256-bit master key. It is stored only in wrapped (encrypted) form in `himitsu_master.key`, inside the app's no-backup directory. It is wrapped by an AES-256-GCM key held in the Android Keystore (in StrongBox when the device has it). On devices with hardware-backed Keystore, which is most of them, that key never leaves the secure hardware or trusted environment. A separate key is derived from the master key for each database and for files and preferences, so one key never serves two purposes.
 
 **Recovery code (optional).** You can create a recovery code in the security settings. It adds a second wrapped copy of the master key that only the code can open, so you can recover your data if the Keystore key is ever lost. Himitsu cannot show the code again; keep it somewhere safe.
 
@@ -53,7 +53,7 @@ Model files you import or download are stored in the app's no-backup directory (
 
 ### Disguise secret code
 
-If you enable the optional disguise, the secret code (or compass tap sequence) is never stored. Himitsu keeps only a salted hash, computed with PBKDF2-HMAC-SHA256 (310,000 iterations, 16-byte random salt), plus a count of failed attempts, in a preferences file of its own. It is kept outside the encrypted storage on purpose, so the decoy keeps working and leads to the recovery screen even if the Keystore fails. The code is never written to logs. Turning disguise off deletes the hash.
+If you enable the optional disguise, the secret code (or compass tap sequence) is never stored. Himitsu keeps only a salted hash, computed with PBKDF2-HMAC-SHA256 (310,000 iterations, 16-byte random salt), plus a count of failed attempts and the time the next attempt is allowed, in a preferences file of its own. It is kept outside the encrypted storage on purpose, so the decoy keeps working and leads to the recovery screen even if the Keystore fails. The code is never written to logs. Turning disguise off deletes the hash.
 
 ### Logs
 
@@ -103,7 +103,7 @@ When you copy text from a chat, Himitsu marks the clipboard entry as sensitive, 
 | `USE_BIOMETRIC`, `USE_FINGERPRINT` | Added by the AndroidX Biometric library for the app lock (`USE_FINGERPRINT` is for Android 8.0 to 8.1). Himitsu never sees your fingerprint or face data; Android only reports success or failure. |
 | `dev.bianperdev.himitsu.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | Added by AndroidX Core. A signature permission that only Himitsu itself holds, used to keep internal broadcasts private on older Android versions. |
 
-Components added by libraries: AndroidX ProfileInstaller declares a receiver protected by the `DUMP` permission, which only the system and adb can use; it installs ahead-of-time compilation profiles for faster startup and handles no user data. Room declares a non-exported service for its own use. This list was checked against the merged manifest of the release builds.
+Components added by libraries: AndroidX ProfileInstaller declares a receiver protected by the `DUMP` permission, which only the system and adb can use; it installs ahead-of-time compilation profiles for faster startup and handles no user data. Room declares a non-exported service for its own use, and AndroidX Startup a non-exported provider that runs library initializers (lifecycle, ProfileInstaller) at startup. This list was checked against the merged manifest of the release builds.
 
 The disguise needs no permission. The compass uses the device's sensors, which need none.
 

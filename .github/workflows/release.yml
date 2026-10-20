@@ -30,8 +30,9 @@ on:
   #   tags:
   #     - "v*"
 
+# Read-only by default; only the release job below may write (it publishes the release)
 permissions:
-  contents: write
+  contents: read
 
 env:
   NDK_VERSION: "30.0.16248370"
@@ -39,6 +40,8 @@ env:
 
 jobs:
   build-release:
+    permissions:
+      contents: write
     name: Build signed release (github flavor)
     runs-on: ubuntu-latest
 
