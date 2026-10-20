@@ -664,6 +664,12 @@ class MultimodalImageIntegrationTest {
         for (role in listOf(LLMMessageRole.User, LLMMessageRole.Assistant)) for (count in 0..2) {
             var payload = ""
             val http = OkHttpClient.Builder().addInterceptor { chain ->
+                // Himitsu (P-10): while the request runs, its file on disk is sealed, never plain JSON
+                if (count > 0) {
+                    val inFlight = File(context.cacheDir, "image-requests").listFiles().orEmpty()
+                    assertTrue(inFlight.isNotEmpty())
+                    assertTrue(inFlight.all { it.readBytes().copyOf(4).contentEquals("HMF1".toByteArray()) })
+                }
                 payload = Buffer().also { chain.request().body!!.writeTo(it) }.readUtf8()
                 Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200).message("OK")
                     .body(response(protocol, stream).toResponseBody("application/json".toMediaType())).build()
