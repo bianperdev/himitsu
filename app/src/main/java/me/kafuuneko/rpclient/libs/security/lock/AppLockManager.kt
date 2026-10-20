@@ -109,6 +109,28 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
             }
         )
 
+    /**
+     * Creates a prompt that only confirms the user before a sensitive settings change. Unlike
+     * [createPrompt] it never changes the lock state. Must be called from `onCreate`, and
+     * [onOutcome] runs on the main thread.
+     */
+    fun createConfirmPrompt(activity: FragmentActivity, onOutcome: (AuthOutcome) -> Unit): BiometricPrompt =
+        BiometricPrompt(
+            activity,
+            ContextCompat.getMainExecutor(activity),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    mAuthenticating = false
+                    onOutcome(AuthOutcome.Succeeded)
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    mAuthenticating = false
+                    onOutcome(AuthOutcome.Canceled)
+                }
+            }
+        )
+
     /** Shows [prompt] with the strongest authenticators the platform allows together with the device credential. */
     fun authenticate(prompt: BiometricPrompt, title: String, subtitle: String) {
         mAuthenticating = true

@@ -17,4 +17,7 @@ sealed class SecuritySettingsUiIntent {
     data object ShowRemoveRecoveryCodeDialog : SecuritySettingsUiIntent()
     data object ConfirmRemoveRecoveryCode : SecuritySettingsUiIntent()
     data object DismissDialog : SecuritySettingsUiIntent()
+
+    /** Result of the confirmation asked before a sensitive change; [confirmed] only after success. */
+    data class ConfirmationFinished(val confirmed: Boolean) : SecuritySettingsUiIntent()
 }

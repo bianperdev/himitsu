@@ -7,4 +7,7 @@ import me.kafuuneko.rpclient.libs.core.IViewEvent
 sealed class SecuritySettingsViewEvent : IViewEvent {
     /** Apply changed screen privacy settings to the current window at once. */
     data object ApplyWindowProtection : SecuritySettingsViewEvent()
+
+    /** Ask the user to confirm with biometrics or the device credential. */
+    data object RequestConfirmation : SecuritySettingsViewEvent()
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import me.kafuuneko.rpclient.feature.lock.ConfirmCredentialContract
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiIntent
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiState
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsViewEvent
@@ -18,6 +19,9 @@ import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
 /** Host of the security settings screen, opened from the main settings page. */
 class SecuritySettingsActivity : CoreActivityWithEvent() {
     private val mViewModel by viewModels<SecuritySettingsViewModel>()
+    private val mConfirmLauncher = registerForActivityResult(ConfirmCredentialContract()) { confirmed ->
+        mViewModel.emit(SecuritySettingsUiIntent.ConfirmationFinished(confirmed))
+    }
 
     override fun getViewEventFlow() = mViewModel.viewEventFlow
 
@@ -48,6 +52,7 @@ class SecuritySettingsActivity : CoreActivityWithEvent() {
     override suspend fun onReceivedViewEvent(viewEvent: IViewEvent) {
         when (viewEvent) {
             SecuritySettingsViewEvent.ApplyWindowProtection -> WindowProtection.apply(this)
+            SecuritySettingsViewEvent.RequestConfirmation -> mConfirmLauncher.launch(Unit)
             else -> super.onReceivedViewEvent(viewEvent)
         }
     }

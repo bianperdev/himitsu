@@ -64,4 +64,7 @@
     <string name="security_settings_secure_screen">スクリーンショットと履歴で内容を隠す</string>
     <string name="security_settings_secure_screen_desc">スクリーンショットと画面録画をブロックし、最近使ったアプリには空白のプレビューを表示します。アプリのロックがオンの場合、Android 13 以降ではプレビューがすでに非表示になります。</string>
     <string name="security_cleartext_saved_warning">保存しました。このプロバイダーは暗号化されていない HTTP を使用しています。同じネットワーク上の誰でもチャットと API キーを読み取れます。</string>
+    <string name="security_confirm_prompt_title">本人確認</string>
+    <string name="security_confirm_prompt_subtitle">セキュリティ設定を変更するために必要です</string>
+    <string name="security_confirm_canceled">確認されなかったため、何も変更されていません。</string>
 </resources>

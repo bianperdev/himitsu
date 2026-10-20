@@ -22,12 +22,17 @@ import org.koin.core.component.inject
  * - turn the app lock on or off and choose how long the app may stay in the background
  * - create, replace and remove the recovery code; a new code is shown once and then dropped
  *   from state
+ * - ask the user to confirm with biometrics or the device credential before turning the lock
+ *   off or changing the recovery code, so an unlocked phone left on the table is not enough
  */
 class SecuritySettingsViewModel :
     CoreViewModelWithEvent<SecuritySettingsUiIntent, SecuritySettingsUiState>(SecuritySettingsUiState.None),
     KoinComponent {
     private val mLockManager by inject<AppLockManager>()
     private val mStorage by inject<SecureStorageManager>()
+
+    /** Change waiting for the confirmation; lost with the process, which then changes nothing. */
+    private var mPendingAction: ProtectedAction? = null
 
     @UiIntentObserver(SecuritySettingsUiIntent.Init::class)
     private suspend fun onInit() {
@@ -63,8 +68,17 @@ class SecuritySettingsViewModel :
             uiState.copy(deviceSecure = false).setup()
             return
         }
-        mLockManager.setEnabled(intent.enabled)
-        uiState.copy(appLockEnabled = intent.enabled).setup()
+        if (!intent.enabled && uiState.appLockEnabled) {
+            requestConfirmation(ProtectedAction.DisableLock)
+            return
+        }
+        setAppLockEnabled(intent.enabled)
+    }
+
+    private fun setAppLockEnabled(enabled: Boolean) {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        mLockManager.setEnabled(enabled)
+        uiState.copy(appLockEnabled = enabled).setup()
         // The recents preview depends on the lock too
         SecuritySettingsViewEvent.ApplyWindowProtection.tryEmit()
     }
@@ -99,14 +113,15 @@ class SecuritySettingsViewModel :
             uiState.copy(dialogState = SecuritySettingsDialogState.ConfirmReplaceRecoveryCode).setup()
             return
         }
-        generateRecoveryCode()
+        requestConfirmation(ProtectedAction.CreateRecoveryCode)
     }
 
     @UiIntentObserver(SecuritySettingsUiIntent.ConfirmReplaceRecoveryCode::class)
-    private suspend fun onConfirmReplaceRecoveryCode() {
+    private fun onConfirmReplaceRecoveryCode() {
         val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
         if (uiState.dialogState != SecuritySettingsDialogState.ConfirmReplaceRecoveryCode) return
-        generateRecoveryCode()
+        uiState.copy(dialogState = SecuritySettingsDialogState.None).setup()
+        requestConfirmation(ProtectedAction.CreateRecoveryCode)
     }
 
     @UiIntentObserver(SecuritySettingsUiIntent.ShowRemoveRecoveryCodeDialog::class)
@@ -115,12 +130,41 @@ class SecuritySettingsViewModel :
         uiState.copy(dialogState = SecuritySettingsDialogState.ConfirmRemoveRecoveryCode).setup()
     }
 
-    /** Removes the recovery slot from the key file. */
     @UiIntentObserver(SecuritySettingsUiIntent.ConfirmRemoveRecoveryCode::class)
-    private suspend fun onConfirmRemoveRecoveryCode() {
+    private fun onConfirmRemoveRecoveryCode() {
         val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
         if (uiState.dialogState != SecuritySettingsDialogState.ConfirmRemoveRecoveryCode || uiState.isWorking) return
-        uiState.copy(isWorking = true, dialogState = SecuritySettingsDialogState.None).setup()
+        uiState.copy(dialogState = SecuritySettingsDialogState.None).setup()
+        requestConfirmation(ProtectedAction.RemoveRecoveryCode)
+    }
+
+    /** Runs the pending change only when the user confirmed it. */
+    @UiIntentObserver(SecuritySettingsUiIntent.ConfirmationFinished::class)
+    private suspend fun onConfirmationFinished(intent: SecuritySettingsUiIntent.ConfirmationFinished) {
+        val action = mPendingAction ?: return
+        mPendingAction = null
+        if (!intent.confirmed) {
+            AppViewEvent.PopupToastMessageByResId(R.string.security_confirm_canceled).tryEmit()
+            return
+        }
+        when (action) {
+            ProtectedAction.DisableLock -> setAppLockEnabled(false)
+            ProtectedAction.CreateRecoveryCode -> generateRecoveryCode()
+            ProtectedAction.RemoveRecoveryCode -> removeRecoveryCode()
+        }
+    }
+
+    private fun requestConfirmation(action: ProtectedAction) {
+        if (mPendingAction != null) return
+        mPendingAction = action
+        SecuritySettingsViewEvent.RequestConfirmation.tryEmit()
+    }
+
+    /** Removes the recovery slot from the key file. */
+    private suspend fun removeRecoveryCode() {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        if (uiState.isWorking) return
+        uiState.copy(isWorking = true).setup()
         val removed = mStorage.removeRecoveryCode()
         if (!removed) AppViewEvent.PopupToastMessageByResId(R.string.security_recovery_update_failed).tryEmit()
         val current = getOrNull<SecuritySettingsUiState.Normal>() ?: return
@@ -158,4 +202,7 @@ class SecuritySettingsViewModel :
             dialogState = SecuritySettingsDialogState.ShowRecoveryCode(display)
         ).setup()
     }
+
+    /** Changes that need the user's confirmation first. */
+    private enum class ProtectedAction { DisableLock, CreateRecoveryCode, RemoveRecoveryCode }
 }
