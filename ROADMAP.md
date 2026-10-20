@@ -577,6 +577,8 @@ Done (2026-10-20):
 - [x] `fastlane/metadata/android/` rewritten (en-US, es-ES, ja-JP, zh-CN, zh-HK, zh-TW) with the disguise and its limits (D7); `fdroid/dev.bianperdev.himitsu.yml` and `fdroid/README.md`; `.github/workflows/release.yml` adapted, still manual only.
 - [x] O-03 (per-device `.idea` files untracked and ignored), `.gitignore` (`/HANDOFF/`, `.kotlin/`, signing material), EmojiCompat initializer removed.
 
+- [x] Himitsu 0.1.0 published on 2026-10-21 as a GitHub pre-release (tag `v0.1.0` on `378d0a7`, `github` flavor, signed, SHA-256 published): https://github.com/bianperdev/himitsu/releases/tag/v0.1.0
+
 Still open:
 - [ ] Donations: no platform chosen yet (maintainer, 2026-10-20). Then `.github/FUNDING.yml`, the "Support Himitsu" screen in `app/src/donations/` and the F-Droid `Donate`/`Liberapay` fields. The `play` build must stay without any link to the repository.
 - [ ] Screenshots of a release build for the README and every store listing (none are published yet), and a 512 px Play icon made from the launcher artwork.
