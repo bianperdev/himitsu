@@ -140,6 +140,7 @@ import me.kafuuneko.rpclient.ui.message.MessageImageGallery
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.theme.DefaultCharacterAccentColor
 import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.NarratorAvatarColor
 import me.kafuuneko.rpclient.ui.theme.himitsuColors
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
@@ -1858,7 +1859,7 @@ private fun chatStatusText(
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun ChatLayoutPreview() {
     AppTheme(dynamicColor = false) {

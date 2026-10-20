@@ -101,7 +101,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.main.model.MainChatSessionGroup
@@ -158,6 +157,7 @@ import me.kafuuneko.rpclient.ui.theme.AccentRedColor
 import me.kafuuneko.rpclient.ui.theme.AccentSkyColor
 import me.kafuuneko.rpclient.ui.theme.AccentVioletColor
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.ProviderAvailableColor
 import me.kafuuneko.rpclient.ui.theme.ProviderDisabledColor
 import me.kafuuneko.rpclient.ui.theme.ProviderPendingColor
@@ -2624,7 +2624,7 @@ private object MaterialThemeLike {
     fun background() = MaterialTheme.colorScheme.background
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun MainLayoutPreview() {
     AppTheme(dynamicColor = false) {
@@ -2750,7 +2750,7 @@ private fun MainLayoutPreview() {
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun MainSettingsLayoutPreview() {
     AppTheme(dynamicColor = false) {

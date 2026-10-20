@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import me.kafuuneko.rpclient.R
@@ -64,6 +63,7 @@ import me.kafuuneko.rpclient.ui.dialog.AppDialogScaffold
 import me.kafuuneko.rpclient.ui.dialog.AppWarningDialog
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.theme.CharacterAccentColors
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.HimitsuPictograms
 import me.kafuuneko.rpclient.ui.widgets.RpAvatar
@@ -435,7 +435,7 @@ private fun AvatarPreview(
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun CharacterListLayoutPreview() {
     AppTheme(dynamicColor = false) {

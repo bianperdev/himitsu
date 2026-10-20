@@ -49,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.chatcreate.model.ChatCreateForm
@@ -59,6 +58,7 @@ import me.kafuuneko.rpclient.feature.chatcreate.model.ChatCreateCharacterItem
 import me.kafuuneko.rpclient.feature.chatcreate.presentation.ChatCreateLoadState
 import me.kafuuneko.rpclient.feature.chatcreate.presentation.ChatCreateUiIntent
 import me.kafuuneko.rpclient.feature.chatcreate.presentation.ChatCreateUiState
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.utils.toggle
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
@@ -552,7 +552,7 @@ private fun EmptyCard(
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun ChatCreateLayoutPreview() {
     AppTheme(dynamicColor = false) {

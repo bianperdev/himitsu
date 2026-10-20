@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -138,6 +139,7 @@ import me.kafuuneko.rpclient.ui.message.MessageImageEditButton
 import me.kafuuneko.rpclient.ui.message.MessageImageGallery
 import me.kafuuneko.rpclient.ui.dialog.MessageImageViewerDialog
 import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.getMacaronColor
 import me.kafuuneko.rpclient.ui.theme.himitsuColors
 import me.kafuuneko.rpclient.ui.theme.readableAccent
@@ -2133,10 +2135,10 @@ private fun GroupChatActivationStrategy.titleRes(): Int {
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun GroupChatPreview() {
-    ActivityPreview(darkTheme = false) {
+    ActivityPreview(darkTheme = isSystemInDarkTheme()) {
         GroupChatLayout(
             uiState = GroupChatUiState.Normal(
                 sessionId = 1,

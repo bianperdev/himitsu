@@ -64,7 +64,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.kafuuneko.rpclient.R
@@ -81,6 +80,7 @@ import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.room.entity.LLMTokenUsageSource
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.RankBronzeBadgeColor
 import me.kafuuneko.rpclient.ui.theme.RankBronzeTextColor
 import me.kafuuneko.rpclient.ui.theme.RankGoldBadgeColor
@@ -980,7 +980,7 @@ private fun TokenUsageTrendPoint.toChartDataPoint(inputColor: Color, outputColor
     )
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun TokenUsageLayoutPreview() {
     // 固定主题与多种用量来源，便于检查总览、趋势和明细的组合布局。

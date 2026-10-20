@@ -170,6 +170,7 @@ import me.kafuuneko.rpclient.ui.dialog.PromptInspectorDialog
 import me.kafuuneko.rpclient.ui.dialog.StoryChapterDestinationOption
 import me.kafuuneko.rpclient.ui.dialog.StoryMoveChapterDialog
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.NoProviderBanner
 import me.kafuuneko.rpclient.ui.widgets.DraggableItem
@@ -3959,7 +3960,7 @@ private fun EditorLoading() {
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun StoryEditorLayoutPreview() {
     AppTheme(dynamicColor = false) {
