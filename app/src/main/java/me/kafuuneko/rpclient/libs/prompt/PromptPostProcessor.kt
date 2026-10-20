@@ -222,9 +222,8 @@ internal fun normalizeProtocolMessages(
     require(messages.none { it.role == LLMMessageRole.System && it.blocks.any { block -> block is LLMContentBlock.Image } }) {
         "System instructions cannot contain user images"
     }
-    // Himitsu: local chat templates accept arbitrary turns, like OpenAI-compatible servers
-    if (protocol == null || protocol == LLMProviderProtocol.OpenAICompatible || protocol == LLMProviderProtocol.Local) {
-        return messages
-    }
+    // Himitsu: Local is normalized like Gemini, because GGUF chat templates (Qwen, Gemma, Mistral)
+    // reject a second system message and require alternating turns
+    if (protocol == null || protocol == LLMProviderProtocol.OpenAICompatible) return messages
     return messages.toStrictMessages(DEFAULT_STRICT_PROMPT_PLACEHOLDER)
 }
