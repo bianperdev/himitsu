@@ -185,6 +185,8 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - Launcher icons: `app/src/main/res/mipmap-*/**`, `app/src/main/res/drawable/ic_launcher_*`, `app/src/main/res/drawable/app_logo.png`, splash screen resources
 - `…/ui/widgets/**`, `…/ui/message/**` (appearance only)
 - Feature `ui/*Layout.kt` files: replacing hard-coded colors and text styles with theme tokens only, never structure or behavior. **Exception:** do not touch `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` or `…/feature/lock/**` until their owning tracks are merged; do those in a follow-up commit afterwards.
+- Approved by the maintainer: the other UI files of features (`…/feature/*/ui/*.kt`, for example `AboutBranding.kt`, `MainChatImportViews.kt`, `ImageSendPanel.kt`) and `…/ui/dialog/**`, under the same rule (theme tokens only), with the same exceptions.
+- Narrow edits: the `ToggleDynamicColor` entry in `…/feature/main/presentation/MainUiIntent.kt`, and one line in `initView` of `…/libs/core/CoreActivity.kt` (owned by security) that passes the dynamic color preference to `AppTheme`. Keep both when merging.
 
 **Tasks, in order:**
 1. Proposal, approved by the maintainer: complete dark Material 3 `ColorScheme` with a contrast table (WCAG AA), secondary light theme, OFL fonts bundled in the APK with a fallback for CJK and the other app languages, identity details, the icon system and two or three icon concepts.

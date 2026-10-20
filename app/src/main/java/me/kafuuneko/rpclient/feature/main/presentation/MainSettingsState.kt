@@ -36,7 +36,11 @@ data class MainSettingsState(
 /** 应用外观设置面板状态。 */
 data class MainAppearanceSettingsState(
     /** 用户当前选择的配色主题模式。 */
-    val themeMode: AppThemeMode
+    val themeMode: AppThemeMode,
+    /** Whether Material You dynamic color replaces the Himitsu palette. */
+    val dynamicColor: Boolean = false,
+    /** Dynamic color needs Android 12 or later; the switch is hidden otherwise. */
+    val dynamicColorSupported: Boolean = false
 )
 
 /** 用户名称、描述和头像面板状态。 */

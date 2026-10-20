@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/aesthetic track. Keep every locale in sync when adding a string. -->
+<resources>
+    <string name="appearance_dynamic_color">동적 색상</string>
+    <string name="appearance_dynamic_color_desc">Himitsu 팔레트 대신 배경화면 색상을 사용합니다</string>
+</resources>

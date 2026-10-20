@@ -64,6 +64,7 @@ import androidx.compose.material.icons.rounded.Storage
 import androidx.compose.material.icons.rounded.Stream
 import androidx.compose.material.icons.rounded.Thermostat
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -1527,6 +1528,16 @@ private fun AppearancePanel(
                     shape = RoundedCornerShape(10.dp)
                 )
             }
+        }
+        if (state.dynamicColorSupported) {
+            RpSettingsDivider(startIndent = false)
+            RpSettingsSwitchTile(
+                icon = Icons.Rounded.Wallpaper,
+                title = stringResource(R.string.appearance_dynamic_color),
+                subtitle = stringResource(R.string.appearance_dynamic_color_desc),
+                checked = state.dynamicColor,
+                onCheckedChange = { MainUiIntent.ToggleDynamicColor(it).emit() }
+            )
         }
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/aesthetic track. Keep every locale in sync when adding a string. -->
+<resources>
+    <string name="appearance_dynamic_color">ダイナミックカラー</string>
+    <string name="appearance_dynamic_color_desc">Himitsu の配色の代わりに壁紙の色を使います</string>
+</resources>

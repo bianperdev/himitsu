@@ -32,6 +32,8 @@ sealed class MainUiIntent {
 
     data class SelectThemeMode(val themeMode: AppThemeMode) : MainUiIntent()
 
+    data class ToggleDynamicColor(val enabled: Boolean) : MainUiIntent()
+
     data class SelectHomeContentTab(val tab: MainHomeContentTab) : MainUiIntent()
 
     data class OpenChat(val sessionId: String) : MainUiIntent()
