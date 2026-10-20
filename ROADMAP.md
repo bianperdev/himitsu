@@ -217,7 +217,9 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 
 **Design decisions (approved by the maintainer on 2026-10-20):**
 - Local engines plug in as `LLMProviderProtocol.Local` and a `LocalLLMClient` on top of a `LocalInferenceEngine` interface, so the prompt pipeline runs unchanged.
-- llama.cpp is a git submodule pinned to a release tag, built with the NDK and CMake behind a thin JNI layer of our own. No binding library. ggml and llama are linked statically into libraries with Himitsu-specific names and hidden symbols, and `llama-common` (which links an HTTP client) is not built.
+- llama.cpp is a git submodule pinned to a release tag, built with the NDK and CMake behind a thin JNI layer of our own. No binding library. `llama-common` (which links an HTTP client) is not built; only its Jinja engine is compiled.
+- Changed during implementation, pending the maintainer's confirmation: ggml uses its upstream runtime CPU dispatch (`GGML_BACKEND_DL` + `GGML_CPU_ALL_VARIANTS`), which loads `libggml-cpu-*.so` by their fixed upstream names. The static, renamed build in the design only served to coexist with GenieX, which is paused. If GenieX returns, its libraries must be isolated (separate process or renamed build) before both ship together.
+- The model registry is a separate Room database (`local_models.sqlite`) in `noBackupFilesDir`, so this track never bumps the main schema. It must be opened with the encrypted helper from feat/security once that track is merged.
 - Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
 - GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
 - Models are copied to `noBackupFilesDir` and are not encrypted; their names and metadata live in a `local_models` table in the encrypted database.
@@ -226,8 +228,8 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 
 **Tasks, in order:**
 1. [x] Design document, approved by the maintainer: engine interface, chat templates and how the Prompt Inspector shows them, llama.cpp from source (NDK, CMake, pinned commit) versus existing bindings, GenieX runtime detection, native library conflicts between llama.cpp and GenieX, licensing options for GenieX, model import and download, memory and thermal management, and a short list of recommended models.
-2. `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
-3. llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
+2. [x] `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
+3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
 5. GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices.
 6. Performance settings (threads, context size, GPU or NPU) with sensible defaults.
@@ -310,6 +312,9 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | OkHttp (with Okio) | 4.12.0 | Apache-2.0 | Only the requests the app makes |
 | Gson | 2.11.0 | Apache-2.0 | No |
 | JTokkit | 1.1.0 | MIT | No |
+| llama.cpp and ggml (git submodule `third_party/llama.cpp`, built from source; local-inference) | b11748 (`3bb63cb`) | MIT | No (built without `llama-common`, OpenSSL or any downloader) |
+| JSON for Modern C++, vendored in llama.cpp (local-inference) | 3.12.0 | MIT | No |
+| LLVM libc++ (`libc++_shared.so` from NDK 30.0.16248370; local-inference) | NDK r30 | Apache-2.0 WITH LLVM-exception | No |
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 

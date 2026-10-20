@@ -92,6 +92,32 @@ android {
         sourceSets[flavor].java.directories.add("src/donations/java")
         sourceSets[flavor].res.directories.add("src/donations/res")
     }
+
+    // feat/local-inference: llama.cpp built from the pinned submodule in third_party/llama.cpp.
+    ndkVersion = "30.0.16248370"
+    defaultConfig {
+        ndk {
+            // x86_64 lets the engine run on the Android Studio emulator and Chromebooks
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
+        externalNativeBuild {
+            cmake {
+                // Release flags even in debug builds: unoptimized ggml is unusably slow
+                arguments += listOf("-DCMAKE_BUILD_TYPE=Release", "-DANDROID_STL=c++_shared")
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.31.6"
+        }
+    }
+    packaging {
+        // ggml scans nativeLibraryDir for the best CPU backend variant, so the libraries must be
+        // extracted on install
+        jniLibs.useLegacyPackaging = true
+    }
 }
 
 ksp {
