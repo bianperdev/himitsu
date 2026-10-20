@@ -101,4 +101,7 @@
     <string name="security_restore_failed">无法恢复此副本。未作任何更改。</string>
     <string name="security_restore_not_configured">此副本没有恢复码，此设备也已无法打开它，因此无法恢复。</string>
     <string name="security_storage_error_restore_incomplete">移到一旁的数据的恢复未完成。请重试以重新启动应用并完成恢复。</string>
+    <string name="security_storage_error_database_damaged">你的加密数据已损坏，无法打开。你可以保存一份文件副本，或将损坏的数据移到一旁并以空数据继续。</string>
+    <string name="security_set_aside_message_damaged">损坏的数据及其图片将被移到一旁，应用将以空数据继续。不会删除任何内容：移到一旁的副本会以加密形式保留在应用的私有存储中，直到你在“隐私与安全”中删除它。</string>
+    <string name="security_set_aside_kind_damaged">损坏的数据（已加密）</string>
 </resources>

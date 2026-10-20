@@ -101,4 +101,7 @@
     <string name="security_restore_failed">No se ha podido restaurar esta copia. No se ha cambiado nada.</string>
     <string name="security_restore_not_configured">Esta copia no tiene código de recuperación y este dispositivo ya no puede abrirla, así que no se puede restaurar.</string>
     <string name="security_storage_error_restore_incomplete">No ha terminado una restauración de datos apartados. Vuelve a intentarlo para reiniciar la app y terminarla.</string>
+    <string name="security_storage_error_database_damaged">Tus datos cifrados están dañados y no se pueden abrir. Puedes guardar una copia de los archivos, o apartar los datos dañados y continuar con los datos vacíos.</string>
+    <string name="security_set_aside_message_damaged">Los datos dañados y sus imágenes se apartarán, y la app continuará con los datos vacíos. No se borra nada: la copia apartada sigue cifrada en el almacenamiento privado de la app hasta que la borres en Privacidad y seguridad.</string>
+    <string name="security_set_aside_kind_damaged">Datos dañados (cifrados)</string>
 </resources>

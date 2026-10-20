@@ -101,4 +101,7 @@
     <string name="security_restore_failed">無法還原此副本。未進行任何變更。</string>
     <string name="security_restore_not_configured">此副本沒有復原碼，此裝置也已無法開啟它，因此無法還原。</string>
     <string name="security_storage_error_restore_incomplete">移到一旁的資料的還原尚未完成。請再試一次以重新啟動應用程式並完成還原。</string>
+    <string name="security_storage_error_database_damaged">你的加密資料已損毀，無法開啟。你可以儲存一份檔案副本，或將損毀的資料移到一旁並以空白資料繼續。</string>
+    <string name="security_set_aside_message_damaged">損毀的資料及其圖片將被移到一旁，應用程式將以空白資料繼續。不會刪除任何內容：移到一旁的副本會以加密形式保留在應用程式的私人儲存空間中，直到你在「隱私權與安全性」中刪除它。</string>
+    <string name="security_set_aside_kind_damaged">損毀的資料（已加密）</string>
 </resources>

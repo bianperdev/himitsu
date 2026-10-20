@@ -232,6 +232,7 @@ private fun SetAsideItem.details(): String {
 private fun SetAsideKind.labelRes(): Int = when (this) {
     SetAsideKind.Unrecoverable -> R.string.security_set_aside_kind_unrecoverable
     SetAsideKind.Unusable -> R.string.security_set_aside_kind_unusable
+    SetAsideKind.Damaged -> R.string.security_set_aside_kind_damaged
     SetAsideKind.Replaced -> R.string.security_set_aside_kind_replaced
 }
 

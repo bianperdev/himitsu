@@ -25,6 +25,12 @@ enum class SetAsideKind(val marker: String) {
     /** A plain database from an earlier build that could not be encrypted. Not encrypted. */
     Unusable("unusable"),
 
+    /**
+     * An encrypted database that did not open with its key. Still encrypted; it has no key file
+     * of its own, so it can be exported or deleted but not restored.
+     */
+    Damaged("damaged"),
+
     /** The data that was in use before a set-aside copy was restored over it. */
     Replaced("replaced");
 
@@ -131,7 +137,7 @@ class ProtectedFiles(private val mContext: Context) {
 
     companion object {
         /** Suffix that "start over", "set aside" and "restore" append, with its time. */
-        private val MARKER = Regex("""\.(unrecoverable|unusable|replaced)-(\d{8}-\d{6})""")
+        private val MARKER = Regex("""\.(unrecoverable|unusable|damaged|replaced)-(\d{8}-\d{6})""")
         private val TIME_FORMAT = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US)
 
         /** A new suffix for files moved aside now. */

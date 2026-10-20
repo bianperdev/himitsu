@@ -201,7 +201,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         mStorage.startOver()
     }
 
-    /** Asks for confirmation before setting a damaged plain database aside. */
+    /** Asks for confirmation before setting a damaged database aside. */
     @UiIntentObserver(LockUiIntent.ShowSetAsideDialog::class)
     private fun onShowSetAsideDialog() {
         val uiState = getOrNull<LockUiState.Normal>() ?: return
@@ -209,7 +209,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         uiState.copy(dialogState = LockDialogState.ConfirmSetAside).setup()
     }
 
-    /** Sets the damaged plain database aside, without deleting it, and continues without it. */
+    /** Sets the damaged database aside, without deleting it, and continues without it. */
     @UiIntentObserver(LockUiIntent.ConfirmSetAside::class)
     private fun onConfirmSetAside() {
         val uiState = getOrNull<LockUiState.Normal>() ?: return
@@ -317,7 +317,8 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
                 preferRecoveryCode = storage.failure == StorageFailure.KeystoreKeyLost,
                 canUseRecoveryCode = storage.recoveryAvailable && storage.failure != StorageFailure.RestoreIncomplete,
                 canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED,
-                canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable,
+                canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable ||
+                    storage.failure == StorageFailure.DatabaseDamaged,
                 isExporting = (previous as? LockContentState.StorageError)?.isExporting == true
             )
             SecureStorageState.Ready -> if (locked) {

@@ -33,8 +33,8 @@ sealed class LockContentState {
      * @property canUseRecoveryCode whether a recovery code is configured for this data
      * @property preferRecoveryCode whether the recovery code is the likely way out, so it comes first
      * @property canStartOver whether retrying cannot help, so setting the data aside is offered
-     * @property canSetAside whether a plain database can never be encrypted, so setting it
-     *   aside and continuing is offered
+     * @property canSetAside whether a database can never be used (a plain one that cannot be
+     *   encrypted, or a damaged encrypted one), so setting it aside and continuing is offered
      * @property isExporting whether a copy of the files is being saved
      */
     data class StorageError(
