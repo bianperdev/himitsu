@@ -136,6 +136,11 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.RPClient"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".feature.lock.settings.SecuritySettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient"
+            android:windowSoftInputMode="adjustResize" />
         <!-- END feat/security -->
 
         <!-- BEGIN disguise activity-aliases: reserved for the feat/disguise track (see ROADMAP.md).

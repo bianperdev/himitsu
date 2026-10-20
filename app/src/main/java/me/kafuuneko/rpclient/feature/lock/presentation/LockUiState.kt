@@ -32,6 +32,18 @@ sealed class LockContentState {
         val canRetry: Boolean,
         val canUseRecoveryCode: Boolean
     ) : LockContentState()
+
+    /**
+     * The app lock is on and the user must authenticate.
+     *
+     * @property deviceSecure false when the device has no screen lock, so authentication is
+     *   impossible and the user may only continue after a warning
+     * @property errorMessage system message of the last failed attempt, already localized
+     */
+    data class Locked(
+        val deviceSecure: Boolean,
+        val errorMessage: String? = null
+    ) : LockContentState()
 }
 
 /** Dialogs of the gate screen. The recovery code itself is never kept in state. */

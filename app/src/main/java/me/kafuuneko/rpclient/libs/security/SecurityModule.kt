@@ -8,6 +8,7 @@ import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.key.AndroidKeystoreKeyWrapper
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyFileStore
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
+import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -24,6 +25,7 @@ internal val securityModule = module {
         )
     }
     single { SecureStorageManager(androidContext(), get(), PlaintextDatabaseMigrator()) }
-    single { AppGate(get()) }
+    single { AppLockManager(androidContext()) }
+    single { AppGate(get(), get()) }
     single<UnlockEntry> { LockActivityEntry }
 }

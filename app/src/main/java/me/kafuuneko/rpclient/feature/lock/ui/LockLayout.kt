@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.RestartAlt
@@ -139,6 +140,34 @@ private fun LockContent(state: LockContentState, emit: LockUiIntent.() -> Unit) 
             CircularProgressIndicator()
         }
         is LockContentState.StorageError -> StorageErrorContent(state, emit)
+        is LockContentState.Locked -> LockedContent(state, emit)
+    }
+}
+
+@Composable
+private fun LockedContent(state: LockContentState.Locked, emit: LockUiIntent.() -> Unit) {
+    if (!state.deviceSecure) {
+        // Authentication is impossible without a device credential; say so honestly
+        LockScreenFrame(
+            icon = Icons.Rounded.WarningAmber,
+            title = stringResource(R.string.security_lock_no_device_lock_title),
+            message = stringResource(R.string.security_lock_no_device_lock_message)
+        ) {
+            Button(onClick = { LockUiIntent.ContinueWithoutDeviceLock.emit() }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.security_lock_continue_unprotected))
+            }
+        }
+        return
+    }
+    LockScreenFrame(
+        icon = Icons.Rounded.Lock,
+        title = stringResource(R.string.security_lock_title),
+        message = state.errorMessage
+    ) {
+        Button(onClick = { LockUiIntent.Unlock.emit() }, modifier = Modifier.fillMaxWidth()) {
+            Icon(Icons.Rounded.Fingerprint, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Text(stringResource(R.string.security_lock_unlock))
+        }
     }
 }
 

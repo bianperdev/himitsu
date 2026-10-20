@@ -187,6 +187,10 @@ Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design
 
 **Unlock extension point.** `UnlockEntry` (`…/libs/security/AppGate.kt`), resolved from Koin, opens the gate screen. A decoy calls `get<UnlockEntry>().open(context)` from its secret entry. It only shows the gate screen; authentication happens there, so there is no bypass. `AppGate.state` tells whether content may be shown.
 
+- Unlocking happens only in the `BiometricPrompt` success callback inside `AppLockManager`; there is no public unlock method. The one exception is a device without any screen lock, where the gate screen shows a warning and lets the user continue (removing the system lock already required the credential).
+- The app lock settings (`SecurityPrefs`: on/off, timeout) are not secrets; they live in Kotpref.
+- Note for `feat/disguise`: the system authentication prompt shows the application label (seen as "Himitsu (Dev)" on Android 17). Check what it shows when an activity-alias is the launcher entry, and document it as a known limit if it cannot be hidden.
+
 **Lock screen styling.** `LockScreenFrame(icon, title, message, modifier, actions)` in `…/feature/lock/ui/LockLayout.kt` draws every gate state and reads only `MaterialTheme` tokens, so `feat/aesthetic` can restyle it through the theme.
 
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
@@ -317,6 +321,7 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | OkHttp (with Okio) | 4.12.0 | Apache-2.0 | Only the requests the app makes |
 | Gson | 2.11.0 | Apache-2.0 | No |
 | JTokkit | 1.1.0 | MIT | No |
+| AndroidX biometric, lifecycle-process (feat/security; lifecycle-process was already a transitive dependency) | 1.1.0, 2.10.0 | Apache-2.0 | No |
 | SQLCipher for Android (`net.zetetic:sqlcipher-android`, bundles LibTomCrypt, public domain), pulls in AndroidX sqlite 2.7.0 (feat/security) | 4.19.1 | BSD-3-Clause (notice reproduced in `NOTICE`) | No |
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.

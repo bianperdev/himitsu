@@ -7,8 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 
 /** Whether app content may be shown. */
 enum class GateState {
@@ -37,20 +38,19 @@ fun interface UnlockEntry {
  * Single source of truth for whether app content may be shown.
  *
  * `CoreActivity` hides its content and opens [UnlockEntry] whenever the state is not
- * [GateState.Open]. The state combines the encrypted storage state and, once the app lock
- * exists, the lock state.
+ * [GateState.Open]. The state combines the encrypted storage state and the app lock: storage
+ * problems come first, then the lock.
  */
-class AppGate(storage: SecureStorageManager) {
+class AppGate(storage: SecureStorageManager, lock: AppLockManager) {
     private val mScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /** Current gate state. */
-    val state: StateFlow<GateState> = storage.state
-        .map(::toGateState)
-        .stateIn(mScope, SharingStarted.Eagerly, toGateState(storage.state.value))
+    val state: StateFlow<GateState> = combine(storage.state, lock.isLocked) { storageState, locked -> toGateState(storageState, locked) }
+        .stateIn(mScope, SharingStarted.Eagerly, toGateState(storage.state.value, lock.isLocked.value))
 
-    private fun toGateState(storage: SecureStorageState): GateState = when (storage) {
+    private fun toGateState(storage: SecureStorageState, locked: Boolean): GateState = when (storage) {
         SecureStorageState.Starting -> GateState.Starting
-        SecureStorageState.Ready -> GateState.Open
         is SecureStorageState.Failed -> GateState.Blocked
+        SecureStorageState.Ready -> if (locked) GateState.Blocked else GateState.Open
     }
 }

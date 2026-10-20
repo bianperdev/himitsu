@@ -2,14 +2,16 @@
 package me.kafuuneko.rpclient.feature.lock
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.feature.lock.presentation.LockContentState
 import me.kafuuneko.rpclient.feature.lock.presentation.LockDialogState
 import me.kafuuneko.rpclient.feature.lock.presentation.LockUiIntent
 import me.kafuuneko.rpclient.feature.lock.presentation.LockUiState
+import me.kafuuneko.rpclient.feature.lock.presentation.LockViewEvent
 import me.kafuuneko.rpclient.feature.lock.presentation.RecoveryCodeError
-import me.kafuuneko.rpclient.libs.core.CoreViewModel
+import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
@@ -18,6 +20,8 @@ import me.kafuuneko.rpclient.libs.security.SecureStorageState
 import me.kafuuneko.rpclient.libs.security.StorageFailure
 import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.RecoveryResult
+import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
+import me.kafuuneko.rpclient.libs.security.lock.AuthOutcome
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -27,20 +31,79 @@ import org.koin.core.component.inject
  * Responsibilities:
  * - mirror the encrypted storage state, and offer retry, recovery code and start over when it
  *   cannot be opened; none of these deletes data
+ * - when the app is locked, ask the host to show the system prompt, automatically on arrival
+ *   and on return to the screen; unlocking itself happens inside [AppLockManager]
  * - finish as soon as the gate opens
  */
-class LockViewModel : CoreViewModel<LockUiIntent, LockUiState>(LockUiState.None), KoinComponent {
+class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiState.None), KoinComponent {
     private val mStorage by inject<SecureStorageManager>()
+    private val mLockManager by inject<AppLockManager>()
     private val mAppGate by inject<AppGate>()
+
+    /**
+     * [AppLockManager.backgroundCount] when the user dismissed the prompt, or null. While it
+     * matches, returning to this screen does not reopen the prompt; only the button does.
+     */
+    private var mDeclinedAtBackgroundCount: Int? = null
 
     @UiIntentObserver(LockUiIntent.Init::class)
     private fun onInit() {
         if (!isStateOf<LockUiState.None>()) return
         LockUiState.Normal(LockContentState.Loading).setup()
-        viewModelScope.launch { mStorage.state.collect(::onStorageState) }
+        viewModelScope.launch {
+            combine(mStorage.state, mLockManager.isLocked) { storage, locked -> storage to locked }
+                .collect { (storage, locked) -> onGateInputs(storage, locked) }
+        }
         viewModelScope.launch {
             mAppGate.state.first { it == GateState.Open }
-            if (nowState !is LockUiState.Finished) LockUiState.Finished(nowState).setup()
+            val current = uiStateFlow.value
+            if (current !is LockUiState.Finished) LockUiState.Finished(current).setup()
+        }
+    }
+
+    /** Shows the prompt again when the user comes back to a locked screen. */
+    @UiIntentObserver(LockUiIntent.Resume::class)
+    private fun onResume() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        val content = uiState.contentState as? LockContentState.Locked ?: return
+        // Closing the prompt also resumes this screen; reopening it then would trap the user
+        if (mDeclinedAtBackgroundCount == mLockManager.backgroundCount) return
+        mDeclinedAtBackgroundCount = null
+        if (content.deviceSecure) requestPrompt()
+    }
+
+    /** Shows the prompt after the user tapped the unlock button. */
+    @UiIntentObserver(LockUiIntent.Unlock::class)
+    private fun onUnlock() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        val content = uiState.contentState as? LockContentState.Locked ?: return
+        mDeclinedAtBackgroundCount = null
+        if (content.deviceSecure) requestPrompt()
+    }
+
+    /**
+     * Handles the prompt result. Success needs nothing here: the lock manager already unlocked
+     * and the gate closes this screen. Other outcomes keep the screen with an unlock button.
+     */
+    @UiIntentObserver(LockUiIntent.AuthenticationFinished::class)
+    private fun onAuthenticationFinished(intent: LockUiIntent.AuthenticationFinished) {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        val content = uiState.contentState as? LockContentState.Locked ?: return
+        if (intent.outcome != AuthOutcome.Succeeded) mDeclinedAtBackgroundCount = mLockManager.backgroundCount
+        val message = (intent.outcome as? AuthOutcome.Error)?.message
+        uiState.copy(contentState = content.copy(errorMessage = message)).setup()
+    }
+
+    /** Lets the user in when the device has no screen lock, after the warning on screen. */
+    @UiIntentObserver(LockUiIntent.ContinueWithoutDeviceLock::class)
+    private fun onContinueWithoutDeviceLock() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        val content = uiState.contentState as? LockContentState.Locked ?: return
+        if (content.deviceSecure) return
+        if (!mLockManager.continueWithoutDeviceLock()) {
+            // The user set a screen lock meanwhile: authenticate normally
+            uiState.copy(contentState = content.copy(deviceSecure = true)).setup()
+            requestPrompt()
         }
     }
 
@@ -117,15 +180,27 @@ class LockViewModel : CoreViewModel<LockUiIntent, LockUiState>(LockUiState.None)
         uiState.copy(dialogState = LockDialogState.None).setup()
     }
 
-    private fun onStorageState(state: SecureStorageState) {
+    /**
+     * Maps storage and lock state to the screen content.
+     *
+     * - Storage problems come first: there is nothing to unlock until the data can be opened.
+     * - Entering the locked state shows the prompt at once when the device can authenticate.
+     */
+    private fun onGateInputs(storage: SecureStorageState, locked: Boolean) {
         val uiState = getOrNull<LockUiState.Normal>() ?: return
-        val content = when (state) {
-            SecureStorageState.Starting, SecureStorageState.Ready -> LockContentState.Loading
+        val previous = uiState.contentState
+        val content = when (storage) {
+            SecureStorageState.Starting -> LockContentState.Loading
             is SecureStorageState.Failed -> LockContentState.StorageError(
-                failure = state.failure,
-                canRetry = state.failure != StorageFailure.KeystoreKeyLost,
-                canUseRecoveryCode = state.recoveryAvailable
+                failure = storage.failure,
+                canRetry = storage.failure != StorageFailure.KeystoreKeyLost,
+                canUseRecoveryCode = storage.recoveryAvailable
             )
+            SecureStorageState.Ready -> if (locked) {
+                previous as? LockContentState.Locked ?: LockContentState.Locked(mLockManager.isDeviceSecure())
+            } else {
+                LockContentState.Loading
+            }
         }
         // A recovery attempt in progress keeps its dialog; other dialogs close on state changes
         val dialog = uiState.dialogState
@@ -134,8 +209,16 @@ class LockViewModel : CoreViewModel<LockUiIntent, LockUiState>(LockUiState.None)
             contentState = content,
             dialogState = if (keepDialog) dialog else LockDialogState.None
         ).setup()
+        if (content is LockContentState.Locked && previous !is LockContentState.Locked && content.deviceSecure) {
+            requestPrompt()
+        }
     }
 
-    private val nowState: LockUiState
-        get() = uiStateFlow.value
+    /**
+     * Asks the host for the prompt. The host ignores the request while a prompt is already on
+     * screen, and an event dropped before the host listens is repeated by [onResume].
+     */
+    private fun requestPrompt() {
+        LockViewEvent.ShowAuthenticationPrompt.tryEmit()
+    }
 }

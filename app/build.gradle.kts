@@ -144,5 +144,7 @@ dependencies {
 
     // feat/security
     implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.lifecycle.process)
 
 }

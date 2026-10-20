@@ -4,6 +4,7 @@ package me.kafuuneko.rpclient.libs.security
 import android.content.Context
 import java.io.File
 import java.io.IOException
+import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFileKind
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFiles
 import me.kafuuneko.rpclient.libs.security.database.DatabaseKeySource
@@ -158,6 +160,38 @@ class SecureStorageManager(
                 load()
             }
         }
+    }
+
+    /** Whether a recovery code is configured for the current data. */
+    suspend fun hasRecoveryCode(): Boolean = withContext(Dispatchers.IO) { mMutex.withLock { mVault.hasRecoveryCode() } }
+
+    /**
+     * Creates a new recovery code, replacing any previous one. The caller shows it once and
+     * wipes it.
+     *
+     * @return the new code, or null when the storage is not ready or the key file cannot be updated
+     */
+    suspend fun createRecoveryCode(): RecoveryCode? = withContext(Dispatchers.IO) {
+        mMutex.withLock {
+            val masterKey = mReleasedKey.value ?: return@withLock null
+            val code = RecoveryCode.generate(SecureRandom())
+            try {
+                mVault.setRecoveryCode(masterKey, code)
+                code
+            } catch (_: Exception) {
+                code.wipe()
+                null
+            }
+        }
+    }
+
+    /**
+     * Removes the recovery code. Afterwards a lost Keystore key means the data is lost.
+     *
+     * @return whether the key file was updated
+     */
+    suspend fun removeRecoveryCode(): Boolean = withContext(Dispatchers.IO) {
+        mMutex.withLock { runCatching { mVault.removeRecoveryCode() }.isSuccess }
     }
 
     override fun awaitPassphrase(database: EncryptedDatabase): ByteArray {

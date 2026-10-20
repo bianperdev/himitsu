@@ -3,7 +3,11 @@ package me.kafuuneko.rpclient.feature.main.model
 
 import android.app.Activity
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.ui.graphics.vector.ImageVector
+import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.lock.settings.SecuritySettingsActivity
 
 /**
  * A settings entry contributed by a Himitsu work track.
@@ -20,4 +24,10 @@ data class HimitsuSettingsEntry(
 
 /** Settings entries contributed by Himitsu tracks, in display order. Each track appends one entry. */
 internal val himitsuSettingsEntries: List<HimitsuSettingsEntry> = listOf(
+    HimitsuSettingsEntry(
+        titleRes = R.string.security_settings_title,
+        subtitleRes = R.string.security_settings_desc,
+        icon = Icons.Rounded.Lock,
+        activity = SecuritySettingsActivity::class.java
+    ), // feat/security
 )

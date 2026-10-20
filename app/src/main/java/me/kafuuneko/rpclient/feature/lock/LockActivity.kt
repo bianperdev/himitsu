@@ -9,16 +9,24 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.lock.presentation.LockUiIntent
 import me.kafuuneko.rpclient.feature.lock.presentation.LockUiState
+import me.kafuuneko.rpclient.feature.lock.presentation.LockViewEvent
 import me.kafuuneko.rpclient.feature.lock.ui.LockLayout
 import me.kafuuneko.rpclient.feature.main.MainActivity
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
+import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import me.kafuuneko.rpclient.libs.theme.AppThemeManager
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import org.koin.core.component.KoinComponent
@@ -33,6 +41,8 @@ import org.koin.core.component.inject
 class LockActivity : FragmentActivity(), KoinComponent {
     private val mViewModel by viewModels<LockViewModel>()
     private val mAppThemeManager by inject<AppThemeManager>()
+    private val mLockManager by inject<AppLockManager>()
+    private lateinit var mPrompt: BiometricPrompt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +53,10 @@ class LockActivity : FragmentActivity(), KoinComponent {
                 moveTaskToBack(true)
             }
         })
+        // BiometricPrompt must be created in onCreate to survive configuration changes
+        mPrompt = mLockManager.createPrompt(this) { outcome ->
+            mViewModel.emit(LockUiIntent.AuthenticationFinished(outcome))
+        }
         setContent {
             val themeMode by mAppThemeManager.themeModeFlow.collectAsState()
             val uiState by mViewModel.uiStateFlow.collectAsState()
@@ -53,7 +67,31 @@ class LockActivity : FragmentActivity(), KoinComponent {
                 LockLayout(uiState = uiState, emit = { mViewModel.emit(this) })
             }
         }
+        collectViewEvents()
         mViewModel.emit(LockUiIntent.Init)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.emit(LockUiIntent.Resume)
+    }
+
+    private fun collectViewEvents() {
+        lifecycleScope.launch {
+            mViewModel.viewEventFlow
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { wrapper ->
+                    wrapper.consumeIfNotHandled { event ->
+                        if (event is LockViewEvent.ShowAuthenticationPrompt && !mLockManager.isAuthenticating) {
+                            mLockManager.authenticate(
+                                prompt = mPrompt,
+                                title = getString(R.string.security_lock_prompt_title),
+                                subtitle = getString(R.string.security_lock_prompt_subtitle)
+                            )
+                        }
+                    }
+                }
+        }
     }
 
     /** Returns to the page underneath, or to the main page when the gate was opened directly. */
