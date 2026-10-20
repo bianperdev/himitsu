@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+    <!--
+        Clear text stays allowed for self-hosted servers on a local network; the provider editor
+        warns about it (P-09). Only system CAs are trusted: user-installed CAs could let anyone
+        who installs one read the traffic (maintainer decision, 2026-10-20).
+    -->
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="system" />
-            <certificates src="user" />
         </trust-anchors>
     </base-config>
 </network-security-config>
