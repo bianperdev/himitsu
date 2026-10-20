@@ -1131,7 +1131,7 @@
     <string name="openrouter_preferred_provider">首选指定的 OpenRouter 上游供应商</string>
     <string name="openrouter_provider_slug">上游供应商标识（例如 deepinfra）</string>
     <string name="openrouter_allow_fallbacks">允许上游供应商回退</string>
-    <string name="openrouter_session_affinity_note">自动模式下，Himitsu 会为每个对话发送稳定的匿名会话 ID 以启用粘性路由；启用首选上游供应商后，其顺序设置优先。</string>
+    <string name="openrouter_session_affinity_note">Himitsu 默认不发送会话 ID。如需粘性路由，请在请求 JSON 中添加值为 $rpclient.routing_session_id 的 session_id：每个对话一个稳定的匿名 ID。启用首选上游供应商后，其顺序设置优先。</string>
     <string name="generation_error_character_provider_unavailable">绑定到此角色的模型配置已停用或不存在。</string>
     <string name="generation_error_character_provider_unavailable_named">绑定到此角色的“%1$s”模型配置已停用。</string>
     <string name="generation_error_summary_provider_unavailable">所选摘要模型配置已停用或不存在。</string>

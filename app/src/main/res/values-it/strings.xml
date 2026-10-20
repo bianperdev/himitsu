@@ -609,7 +609,7 @@ Non riusciti: %2$d</string>
     <string name="openrouter_preferred_provider">Preferisci un provider upstream OpenRouter specifico</string>
     <string name="openrouter_provider_slug">Slug del provider upstream (ad esempio, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Consenti fallback del provider upstream</string>
-    <string name="openrouter_session_affinity_note">In modalità Auto, Himitsu invia un ID sessione anonimo e stabile per conversazione per il routing permanente (sticky routing). Un ordine preferito di provider upstream ha la priorità quando abilitato.</string>
+    <string name="openrouter_session_affinity_note">Per impostazione predefinita Himitsu non invia alcun ID sessione. Per il routing permanente (sticky routing), aggiungi session_id con il valore $rpclient.routing_session_id al JSON della richiesta: un ID anonimo e stabile per conversazione. Un ordine preferito di provider upstream ha la priorità quando abilitato.</string>
     <string name="save">Salva</string>
     <string name="model_test">Test modello</string>
     <string name="send_short_message">Invia un breve messaggio per verificare la connessione</string>

@@ -624,7 +624,7 @@
     <string name="openrouter_preferred_provider">Preferir un proveedor específico en OpenRouter</string>
     <string name="openrouter_provider_slug">Identificador del proveedor (por ejemplo, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Permitir fallback de proveedor</string>
-    <string name="openrouter_session_affinity_note">En modo Auto, Himitsu envía un ID de sesión anónimo estable por conversación para enrutamiento adhesivo.</string>
+    <string name="openrouter_session_affinity_note">Himitsu no envía ningún ID de sesión por defecto. Para el enrutamiento adhesivo, añade session_id con el valor $rpclient.routing_session_id al JSON de la petición: un ID anónimo estable por conversación. El orden preferido de proveedores upstream tiene prioridad cuando está activado.</string>
     <string name="save">Guardar</string>
     <string name="model_test">Prueba de modelo</string>
     <string name="send_short_message">Enviar un mensaje corto para verificar la conexión</string>

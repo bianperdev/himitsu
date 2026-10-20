@@ -1026,7 +1026,7 @@
     <string name="openrouter_preferred_provider">特定の OpenRouter アップストリームプロバイダーを優先</string>
     <string name="openrouter_provider_slug">アップストリームプロバイダー識別子（例：deepinfra）</string>
     <string name="openrouter_allow_fallbacks">アップストリームプロバイダーのフォールバックを許可</string>
-    <string name="openrouter_session_affinity_note">自動モードでは、Himitsu は会話ごとに安定した匿名セッション ID を送信してスティッキールーティングを有効にします。優先アップストリームプロバイダーの順序を有効にすると、その設定が優先されます。</string>
+    <string name="openrouter_session_affinity_note">Himitsu は既定ではセッション ID を送信しません。スティッキールーティングを使うには、リクエスト JSON に値が $rpclient.routing_session_id の session_id を追加してください。会話ごとに安定した匿名 ID になります。優先アップストリームプロバイダーの順序を有効にすると、その設定が優先されます。</string>
     <string name="add_tag">タグを追加</string>
     <string name="add_keyword">キーワードを追加</string>
     <string name="add_category">カテゴリを追加</string>

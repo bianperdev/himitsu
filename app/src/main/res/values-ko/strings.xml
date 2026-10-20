@@ -1025,7 +1025,7 @@
     <string name="openrouter_preferred_provider">특정 OpenRouter 업스트림 공급자 우선 사용</string>
     <string name="openrouter_provider_slug">업스트림 공급자 식별자(예: deepinfra)</string>
     <string name="openrouter_allow_fallbacks">업스트림 공급자 폴백 허용</string>
-    <string name="openrouter_session_affinity_note">자동 모드에서는 Himitsu가 대화별로 안정적인 익명 세션 ID를 보내 고정 라우팅을 사용합니다. 우선 업스트림 공급자 순서를 활성화하면 해당 설정이 우선합니다.</string>
+    <string name="openrouter_session_affinity_note">Himitsu는 기본적으로 세션 ID를 보내지 않습니다. 고정 라우팅을 사용하려면 요청 JSON에 값이 $rpclient.routing_session_id인 session_id를 추가하세요. 대화별로 안정적인 익명 ID입니다. 우선 업스트림 공급자 순서를 활성화하면 해당 설정이 우선합니다.</string>
     <string name="add_tag">태그 추가</string>
     <string name="add_keyword">키워드 추가</string>
     <string name="add_category">카테고리 추가</string>

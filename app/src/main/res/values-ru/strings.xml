@@ -1032,7 +1032,7 @@
     <string name="openrouter_preferred_provider">Предпочитать указанного вышестоящего поставщика OpenRouter</string>
     <string name="openrouter_provider_slug">Идентификатор вышестоящего поставщика (например, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Разрешить резервного вышестоящего поставщика</string>
-    <string name="openrouter_session_affinity_note">В режиме Auto Himitsu отправляет стабильный анонимный ID сессии для каждого диалога, чтобы включить закреплённую маршрутизацию. Включённый порядок предпочитаемых вышестоящих поставщиков имеет приоритет.</string>
+    <string name="openrouter_session_affinity_note">По умолчанию Himitsu не отправляет ID сессии. Для закреплённой маршрутизации добавьте в JSON запроса session_id со значением $rpclient.routing_session_id: стабильный анонимный ID для каждого диалога. Включённый порядок предпочитаемых вышестоящих поставщиков имеет приоритет.</string>
     <string name="add_tag">Добавить тег</string>
     <string name="add_keyword">Добавить ключевое слово</string>
     <string name="add_category">Добавить категорию</string>

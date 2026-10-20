@@ -1029,7 +1029,7 @@
     <string name="openrouter_preferred_provider">Préférer un fournisseur en amont OpenRouter précis</string>
     <string name="openrouter_provider_slug">Identifiant du fournisseur en amont (par exemple deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Autoriser un fournisseur en amont de secours</string>
-    <string name="openrouter_session_affinity_note">En mode Auto, Himitsu envoie un ID de session anonyme stable par conversation pour le routage persistant. L’ordre préféré des fournisseurs en amont est prioritaire lorsqu’il est activé.</string>
+    <string name="openrouter_session_affinity_note">Par défaut, Himitsu n’envoie aucun ID de session. Pour le routage persistant, ajoutez session_id avec la valeur $rpclient.routing_session_id au JSON de la requête : un ID anonyme stable par conversation. L’ordre préféré des fournisseurs en amont est prioritaire lorsqu’il est activé.</string>
     <string name="add_tag">Ajouter une étiquette</string>
     <string name="add_keyword">Ajouter un mot-clé</string>
     <string name="add_category">Ajouter une catégorie</string>
