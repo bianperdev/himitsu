@@ -501,7 +501,7 @@ The full design (in Spanish) is a Claude Doc kept by the maintainer. Summary:
 6. [x] Compass and unit converter.
 7. [x] Full disguise settings screen.
 8. [x] Quick exit.
-9. [ ] Tests: calculator logic, code verification, alias switching, and proof that no path skips authentication.
+9. [x] Tests: calculator logic, code verification, alias switching, and proof that no path skips authentication.
 
 **Done when:** disguise is off by default; no entry point skips authentication; the secret code is stored only as a salted KDF hash and never logged; wrong entries behave like normal decoy input; decoys need no new permissions and make no network calls; toggling never loses data or locks the user out; the limits are explained honestly in the UI; the privacy-reviewer agent marks the branch fit to merge.
 
