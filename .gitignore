@@ -17,3 +17,18 @@ gradle/gradle-daemon-jvm.properties
 
 # Personal Claude Code preferences (never commit)
 CLAUDE.local.md
+
+# Local working notes and Kotlin compiler caches
+/HANDOFF/
+.kotlin/
+
+# Per-device IDE state: the last device used, including its serial number
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+
+# Signing material never belongs in the repository
+*.jks
+*.keystore
+*.p12
+*.pem
+keystore.properties

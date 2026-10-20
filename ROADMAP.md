@@ -442,7 +442,7 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 - Changed during implementation and confirmed by the maintainer on 2026-10-20: ggml uses its upstream runtime CPU dispatch (`GGML_BACKEND_DL` + `GGML_CPU_ALL_VARIANTS`), which loads `libggml-cpu-*.so` by their fixed upstream names. The static, renamed build in the design only served to coexist with GenieX, which is paused. If GenieX returns, its libraries must be isolated (separate process or renamed build) before both ship together.
 - The model registry is a separate Room database (`local_models.sqlite`) in `noBackupFilesDir`, so this track never bumps the main schema. It must be opened with the encrypted helper from feat/security, which is merged: this is now a follow-up (see below).
 - Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
-- Changed after testing on the S26 Ultra: Local messages get the same strict normalization as Gemini (one leading system message, mid-chat system messages become user turns, alternating roles), because GGUF templates such as Qwen3.5, Gemma and Mistral raise an error otherwise. The Prompt Inspector shows the normalized messages.
+- Changed after testing on the maintainer's phone: Local messages get the same strict normalization as Gemini (one leading system message, mid-chat system messages become user turns, alternating roles), because GGUF templates such as Qwen3.5, Gemma and Mistral raise an error otherwise. The Prompt Inspector shows the normalized messages.
 - GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
 - Models are copied to `noBackupFilesDir` and are not encrypted. Their names and metadata live in the separate `local_models.sqlite` registry above, which is not encrypted yet (follow-up due before the first public release, see below).
 - The optional download list contains only Apache-2.0 models; any other model is imported by hand.
@@ -453,7 +453,7 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 2. [x] `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
 3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
-5. Moved to `feat/geniex` (maintainer, 2026-10-20), planned for version 0.20: GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
+5. Moved to `feat/geniex` (maintainer, 2026-10-20), planned for version 0.20: GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's phone, a supported Snapdragon 8 Elite Gen 5 device.
 6. [x] Performance settings (threads, context size, GPU or NPU) with sensible defaults.
 
 **Follow-ups from the privacy review (2026-10-20):**
