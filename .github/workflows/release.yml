@@ -12,10 +12,13 @@ on:
         description: "Existing tag to release, for example V2026.1.2. Leave empty to use V + versionName."
         required: false
         type: string
-  push:
-    tags:
-      - "v*"
-      - "V*"
+  # Himitsu: tag-triggered releases are disabled until this workflow is
+  # adapted (signing secrets, artifact names, branch checks). Restore during
+  # the release-readiness phase; see ROADMAP.md.
+  # push:
+  #   tags:
+  #     - "v*"
+  #     - "V*"
 
 permissions:
   contents: write
