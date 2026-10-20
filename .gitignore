@@ -14,3 +14,6 @@
 .cxx
 local.properties
 gradle/gradle-daemon-jvm.properties
+
+# Personal Claude Code preferences (never commit)
+CLAUDE.local.md
