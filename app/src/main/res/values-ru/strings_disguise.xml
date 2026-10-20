@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Калькулятор</string>
+    <string name="disguise_compass_name">Компас</string>
+    <string name="disguise_converter_name">Конвертер величин</string>
+    <string name="disguise_change_title">Сменить значок на «%1$s»?</string>
+    <string name="disguise_change_home_icon">Значок на главном экране исчезнет. Найдите «%1$s» в списке приложений; он может появиться через несколько секунд.</string>
+    <string name="disguise_change_app_closes">Himitsu может закрыться при применении изменения. Ваши данные не затрагиваются.</string>
+    <string name="disguise_change_entry_calculator">Чтобы войти, введите код и нажмите «=».</string>
+    <string name="disguise_change_entry_compass">Чтобы войти, нажмите свою последовательность на сторонах света.</string>
+    <string name="disguise_change_entry_converter">Чтобы войти, введите код как значение, выберите две свои единицы и нажмите ⇅.</string>
+    <string name="disguise_change_recovery">Забыли, как войти? Откройте меню ⋮, нажмите «О приложении» и удерживайте номер версии 5 секунд.</string>
+    <string name="disguise_change_two_icons">Некоторые лаунчеры какое-то время показывают оба значка.</string>
+    <string name="disguise_change_confirm">Применить</string>
+    <string name="disguise_restore_title">Вернуть значок Himitsu?</string>
+    <string name="disguise_restore_home_icon">Значок «%1$s» исчезнет. Найдите Himitsu в списке приложений; он может появиться через несколько секунд.</string>
+    <string name="disguise_icon_preview">Предпросмотр значка</string>
+</resources>

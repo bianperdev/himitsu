@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Kalkulator</string>
+    <string name="disguise_compass_name">Kompas</string>
+    <string name="disguise_converter_name">Konverter Satuan</string>
+    <string name="disguise_change_title">Ganti ikon menjadi “%1$s”?</string>
+    <string name="disguise_change_home_icon">Ikon di layar utama akan hilang. Cari “%1$s” di laci aplikasi; mungkin perlu beberapa detik untuk muncul.</string>
+    <string name="disguise_change_app_closes">Himitsu mungkin tertutup saat perubahan diterapkan. Data Anda tidak disentuh.</string>
+    <string name="disguise_change_entry_calculator">Untuk masuk, ketik kode Anda lalu ketuk “=”.</string>
+    <string name="disguise_change_entry_compass">Untuk masuk, ketuk urutan Anda pada arah mata angin.</string>
+    <string name="disguise_change_entry_converter">Untuk masuk, masukkan kode Anda sebagai nilai, pilih dua satuan Anda, lalu ketuk ⇅.</string>
+    <string name="disguise_change_recovery">Lupa cara masuk? Buka menu ⋮, ketuk Tentang, lalu tahan nomor versi selama 5 detik.</string>
+    <string name="disguise_change_two_icons">Beberapa peluncur menampilkan kedua ikon untuk sementara.</string>
+    <string name="disguise_change_confirm">Terapkan</string>
+    <string name="disguise_restore_title">Kembalikan ikon Himitsu?</string>
+    <string name="disguise_restore_home_icon">Ikon “%1$s” akan hilang. Cari Himitsu di laci aplikasi; mungkin perlu beberapa detik untuk muncul.</string>
+    <string name="disguise_icon_preview">Pratinjau ikon</string>
+</resources>

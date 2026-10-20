@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Calculator</string>
+    <string name="disguise_compass_name">Compass</string>
+    <string name="disguise_converter_name">Unit converter</string>
+    <string name="disguise_change_title">Change the icon to “%1$s”?</string>
+    <string name="disguise_change_home_icon">The icon on your home screen will disappear. Look for “%1$s” in your app drawer; it can take a few seconds to appear.</string>
+    <string name="disguise_change_app_closes">Himitsu may close when the change is applied. Your data is not touched.</string>
+    <string name="disguise_change_entry_calculator">To get in, type your code and tap “=”.</string>
+    <string name="disguise_change_entry_compass">To get in, tap your sequence on the cardinal points.</string>
+    <string name="disguise_change_entry_converter">To get in, enter your code as the value, pick your two units and tap ⇅.</string>
+    <string name="disguise_change_recovery">Forgot how to get in? Open the menu ⋮, tap About and hold the version number for 5 seconds.</string>
+    <string name="disguise_change_two_icons">Some launchers show both icons for a while.</string>
+    <string name="disguise_change_confirm">Apply</string>
+    <string name="disguise_restore_title">Bring back the Himitsu icon?</string>
+    <string name="disguise_restore_home_icon">The “%1$s” icon will disappear. Look for Himitsu in your app drawer; it can take a few seconds to appear.</string>
+    <string name="disguise_icon_preview">Icon preview</string>
+</resources>

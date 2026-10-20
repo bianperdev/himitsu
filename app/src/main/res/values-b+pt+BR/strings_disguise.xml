@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Calculadora</string>
+    <string name="disguise_compass_name">Bússola</string>
+    <string name="disguise_converter_name">Conversor de unidades</string>
+    <string name="disguise_change_title">Mudar o ícone para “%1$s”?</string>
+    <string name="disguise_change_home_icon">O ícone da tela inicial vai desaparecer. Procure “%1$s” na gaveta de apps; pode levar alguns segundos para aparecer.</string>
+    <string name="disguise_change_app_closes">O Himitsu pode fechar quando a mudança for aplicada. Seus dados não são alterados.</string>
+    <string name="disguise_change_entry_calculator">Para entrar, digite seu código e toque em “=”.</string>
+    <string name="disguise_change_entry_compass">Para entrar, toque sua sequência nos pontos cardeais.</string>
+    <string name="disguise_change_entry_converter">Para entrar, digite seu código como valor, escolha suas duas unidades e toque em ⇅.</string>
+    <string name="disguise_change_recovery">Esqueceu como entrar? Abra o menu ⋮, toque em Sobre e mantenha pressionado o número da versão por 5 segundos.</string>
+    <string name="disguise_change_two_icons">Alguns launchers mostram os dois ícones por um tempo.</string>
+    <string name="disguise_change_confirm">Aplicar</string>
+    <string name="disguise_restore_title">Trazer de volta o ícone do Himitsu?</string>
+    <string name="disguise_restore_home_icon">O ícone “%1$s” vai desaparecer. Procure o Himitsu na gaveta de apps; pode levar alguns segundos para aparecer.</string>
+    <string name="disguise_icon_preview">Prévia do ícone</string>
+</resources>

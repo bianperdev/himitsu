@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Máy tính</string>
+    <string name="disguise_compass_name">La bàn</string>
+    <string name="disguise_converter_name">Chuyển đổi đơn vị</string>
+    <string name="disguise_change_title">Đổi biểu tượng thành “%1$s”?</string>
+    <string name="disguise_change_home_icon">Biểu tượng trên màn hình chính sẽ biến mất. Hãy tìm “%1$s” trong ngăn ứng dụng; có thể mất vài giây để xuất hiện.</string>
+    <string name="disguise_change_app_closes">Himitsu có thể đóng khi áp dụng thay đổi. Dữ liệu của bạn không bị ảnh hưởng.</string>
+    <string name="disguise_change_entry_calculator">Để vào, nhập mã của bạn rồi chạm “=”.</string>
+    <string name="disguise_change_entry_compass">Để vào, chạm theo chuỗi của bạn trên các hướng la bàn.</string>
+    <string name="disguise_change_entry_converter">Để vào, nhập mã của bạn làm giá trị, chọn hai đơn vị của bạn rồi chạm ⇅.</string>
+    <string name="disguise_change_recovery">Quên cách vào? Mở menu ⋮, chạm Giới thiệu rồi giữ số phiên bản trong 5 giây.</string>
+    <string name="disguise_change_two_icons">Một số trình chạy hiển thị cả hai biểu tượng trong một lúc.</string>
+    <string name="disguise_change_confirm">Áp dụng</string>
+    <string name="disguise_restore_title">Khôi phục biểu tượng Himitsu?</string>
+    <string name="disguise_restore_home_icon">Biểu tượng “%1$s” sẽ biến mất. Hãy tìm Himitsu trong ngăn ứng dụng; có thể mất vài giây để xuất hiện.</string>
+    <string name="disguise_icon_preview">Xem trước biểu tượng</string>
+</resources>

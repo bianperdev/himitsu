@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Calculator decoy icon foreground: a generic pocket calculator. Original artwork for Himitsu. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M42,28 h24 a6,6 0 0 1 6,6 v40 a6,6 0 0 1 -6,6 h-24 a6,6 0 0 1 -6,-6 v-40 a6,6 0 0 1 6,-6 z"
+        android:fillColor="#FFF5F7F8" />
+    <path
+        android:pathData="M42,32 h24 a2,2 0 0 1 2,2 v8 a2,2 0 0 1 -2,2 h-24 a2,2 0 0 1 -2,-2 v-8 a2,2 0 0 1 2,-2 z"
+        android:fillColor="#FFB0BEC5" />
+    <path
+        android:pathData="M42.5,49 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M52.5,49 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M62.5,49 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M42.5,59 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M52.5,59 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M62.5,59 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M42.5,69 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z M52.5,69 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z"
+        android:fillColor="#FF607D8B" />
+    <path
+        android:pathData="M62.5,69 h3.0 a1.5,1.5 0 0 1 1.5,1.5 v3.0 a1.5,1.5 0 0 1 -1.5,1.5 h-3.0 a1.5,1.5 0 0 1 -1.5,-1.5 v-3.0 a1.5,1.5 0 0 1 1.5,-1.5 z"
+        android:fillColor="#FFFFA726" />
+</vector>

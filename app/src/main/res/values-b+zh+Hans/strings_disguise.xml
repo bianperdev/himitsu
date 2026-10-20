@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">计算器</string>
+    <string name="disguise_compass_name">指南针</string>
+    <string name="disguise_converter_name">单位换算</string>
+    <string name="disguise_change_title">将图标更改为“%1$s”？</string>
+    <string name="disguise_change_home_icon">主屏幕上的图标将消失。请在应用列表中查找“%1$s”，可能需要几秒钟才会出现。</string>
+    <string name="disguise_change_app_closes">应用更改时 Himitsu 可能会关闭。你的数据不会受到影响。</string>
+    <string name="disguise_change_entry_calculator">要进入，请输入你的代码并点按“=”。</string>
+    <string name="disguise_change_entry_compass">要进入，请按你设定的顺序点按方位字母。</string>
+    <string name="disguise_change_entry_converter">要进入，请将代码作为数值输入，选择你的两个单位，然后点按 ⇅。</string>
+    <string name="disguise_change_recovery">忘记了进入方法？打开菜单 ⋮，点按“关于”，然后按住版本号 5 秒。</string>
+    <string name="disguise_change_two_icons">部分启动器会在一段时间内同时显示两个图标。</string>
+    <string name="disguise_change_confirm">应用</string>
+    <string name="disguise_restore_title">恢复 Himitsu 图标？</string>
+    <string name="disguise_restore_home_icon">“%1$s”图标将消失。请在应用列表中查找 Himitsu，可能需要几秒钟才会出现。</string>
+    <string name="disguise_icon_preview">图标预览</string>
+</resources>

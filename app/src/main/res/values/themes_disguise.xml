@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <!-- feat/disguise: decoy screens. Neutral on purpose: nothing of the Himitsu look may show while starting. -->
+    <style name="Theme.Disguise" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/disguise_window_light</item>
+    </style>
+</resources>

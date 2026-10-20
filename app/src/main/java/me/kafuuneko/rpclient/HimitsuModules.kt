@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient
 
+import me.kafuuneko.rpclient.libs.disguise.disguiseModule
 import me.kafuuneko.rpclient.libs.llm.local.localInferenceModule
 import me.kafuuneko.rpclient.libs.security.securityModule
 import org.koin.core.module.Module
@@ -14,4 +15,5 @@ import org.koin.core.module.Module
 internal val himitsuModules: List<Module> = listOf(
     securityModule, // feat/security
     localInferenceModule, // feat/local-inference
+    disguiseModule, // feat/disguise
 )

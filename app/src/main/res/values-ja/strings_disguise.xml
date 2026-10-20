@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">電卓</string>
+    <string name="disguise_compass_name">コンパス</string>
+    <string name="disguise_converter_name">単位換算</string>
+    <string name="disguise_change_title">アイコンを「%1$s」に変更しますか？</string>
+    <string name="disguise_change_home_icon">ホーム画面のアイコンは消えます。アプリ一覧で「%1$s」を探してください。表示まで数秒かかることがあります。</string>
+    <string name="disguise_change_app_closes">変更の適用時に Himitsu が閉じることがあります。データには影響しません。</string>
+    <string name="disguise_change_entry_calculator">入るには、コードを入力して「=」をタップします。</string>
+    <string name="disguise_change_entry_compass">入るには、方位の文字を決めた順にタップします。</string>
+    <string name="disguise_change_entry_converter">入るには、コードを値として入力し、2 つの単位を選んで ⇅ をタップします。</string>
+    <string name="disguise_change_recovery">入り方を忘れたら、メニュー ⋮ から「情報」を開き、バージョン番号を 5 秒間長押しします。</string>
+    <string name="disguise_change_two_icons">ランチャーによっては、しばらく両方のアイコンが表示されます。</string>
+    <string name="disguise_change_confirm">適用</string>
+    <string name="disguise_restore_title">Himitsu のアイコンに戻しますか？</string>
+    <string name="disguise_restore_home_icon">「%1$s」のアイコンは消えます。アプリ一覧で Himitsu を探してください。表示まで数秒かかることがあります。</string>
+    <string name="disguise_icon_preview">アイコンのプレビュー</string>
+</resources>

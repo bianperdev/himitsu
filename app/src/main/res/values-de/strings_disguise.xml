@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Rechner</string>
+    <string name="disguise_compass_name">Kompass</string>
+    <string name="disguise_converter_name">Einheitenrechner</string>
+    <string name="disguise_change_title">Symbol zu „%1$s“ ändern?</string>
+    <string name="disguise_change_home_icon">Das Symbol auf deinem Startbildschirm verschwindet. Suche „%1$s“ in der App-Übersicht; es kann ein paar Sekunden dauern.</string>
+    <string name="disguise_change_app_closes">Himitsu wird beim Ändern eventuell geschlossen. Deine Daten bleiben unberührt.</string>
+    <string name="disguise_change_entry_calculator">Zum Öffnen gib deinen Code ein und tippe auf „=“.</string>
+    <string name="disguise_change_entry_compass">Zum Öffnen tippe deine Folge auf die Himmelsrichtungen.</string>
+    <string name="disguise_change_entry_converter">Zum Öffnen gib deinen Code als Wert ein, wähle deine zwei Einheiten und tippe auf ⇅.</string>
+    <string name="disguise_change_recovery">Vergessen, wie es geht? Öffne das Menü ⋮, tippe auf Info und halte die Versionsnummer 5 Sekunden lang gedrückt.</string>
+    <string name="disguise_change_two_icons">Manche Launcher zeigen eine Weile beide Symbole.</string>
+    <string name="disguise_change_confirm">Anwenden</string>
+    <string name="disguise_restore_title">Das Himitsu-Symbol zurückholen?</string>
+    <string name="disguise_restore_home_icon">Das Symbol „%1$s“ verschwindet. Suche Himitsu in der App-Übersicht; es kann ein paar Sekunden dauern.</string>
+    <string name="disguise_icon_preview">Symbolvorschau</string>
+</resources>

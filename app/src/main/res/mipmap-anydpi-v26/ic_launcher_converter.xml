@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Unit converter decoy launcher icon (feat/disguise). Generic and original: it must not resemble any real app or brand. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_converter_background" />
+    <foreground android:drawable="@drawable/ic_launcher_converter_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_converter_monochrome" />
+</adaptive-icon>

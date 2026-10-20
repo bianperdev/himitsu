@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/disguise: decoy names and disguise settings. -->
+<resources>
+    <string name="disguise_calculator_name">Calcolatrice</string>
+    <string name="disguise_compass_name">Bussola</string>
+    <string name="disguise_converter_name">Convertitore di unità</string>
+    <string name="disguise_change_title">Cambiare l\'icona in “%1$s”?</string>
+    <string name="disguise_change_home_icon">L\'icona nella schermata Home scomparirà. Cerca “%1$s” nel drawer delle app; potrebbe impiegare qualche secondo ad apparire.</string>
+    <string name="disguise_change_app_closes">Himitsu potrebbe chiudersi quando la modifica viene applicata. I tuoi dati non vengono toccati.</string>
+    <string name="disguise_change_entry_calculator">Per entrare, digita il tuo codice e tocca “=”.</string>
+    <string name="disguise_change_entry_compass">Per entrare, tocca la tua sequenza sui punti cardinali.</string>
+    <string name="disguise_change_entry_converter">Per entrare, inserisci il tuo codice come valore, scegli le tue due unità e tocca ⇅.</string>
+    <string name="disguise_change_recovery">Hai dimenticato come entrare? Apri il menu ⋮, tocca Informazioni e tieni premuto il numero di versione per 5 secondi.</string>
+    <string name="disguise_change_two_icons">Alcuni launcher mostrano entrambe le icone per un po\'.</string>
+    <string name="disguise_change_confirm">Applica</string>
+    <string name="disguise_restore_title">Ripristinare l\'icona di Himitsu?</string>
+    <string name="disguise_restore_home_icon">L\'icona “%1$s” scomparirà. Cerca Himitsu nel drawer delle app; potrebbe impiegare qualche secondo ad apparire.</string>
+    <string name="disguise_icon_preview">Anteprima dell\'icona</string>
+</resources>
