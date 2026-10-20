@@ -32,6 +32,7 @@ import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabaseCheck
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.database.SqlCipherKey
+import me.kafuuneko.rpclient.libs.security.database.SqlCipherLog
 import me.kafuuneko.rpclient.libs.security.files.FileCipher
 import me.kafuuneko.rpclient.libs.security.files.FileCipherSource
 import me.kafuuneko.rpclient.libs.security.files.StoredFileLayout
@@ -187,9 +188,10 @@ class SecureStorageManager(
      * and before the state becomes [SecureStorageState.Ready].
      */
     fun start(beforeKey: () -> Unit = {}, startupTasks: suspend () -> Unit) {
-        // SQLCipher must be loaded explicitly, and its Java logging silenced before any use
+        // SQLCipher must be loaded explicitly, and its Java and native logging silenced before any use
         System.loadLibrary("sqlcipher")
         Logger.setTarget(NoopTarget())
+        SqlCipherLog.silence()
         mStartupTasks = startupTasks
         // Cleanup that needs no key runs first, and even when the key turns out to be unavailable
         mScope.launch {

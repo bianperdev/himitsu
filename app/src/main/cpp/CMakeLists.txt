@@ -79,3 +79,9 @@ target_link_libraries(himitsu_llama PRIVATE llama ggml himitsu_jinja)
 # Only JNI_OnLoad is exported; the native methods are registered there.
 target_compile_options(himitsu_llama PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
 target_link_options(himitsu_llama PRIVATE -Wl,--exclude-libs,ALL -Wl,--build-id=none)
+
+# Himitsu: turns off SQLCipher's native logs (see the source). Plain C, no dependency besides libdl.
+add_library(himitsu_sqlite_log SHARED himitsu_sqlite_log.c)
+target_link_libraries(himitsu_sqlite_log PRIVATE dl)
+target_compile_options(himitsu_sqlite_log PRIVATE -fvisibility=hidden)
+target_link_options(himitsu_sqlite_log PRIVATE -Wl,--build-id=none)
