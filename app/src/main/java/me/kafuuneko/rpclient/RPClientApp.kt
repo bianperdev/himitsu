@@ -5,6 +5,10 @@ import androidx.room.Room
 import com.chibatching.kotpref.Kotpref
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.character.CharacterCardRepository
 import me.kafuuneko.rpclient.libs.chat.ChatArchiveCodec
@@ -74,6 +78,9 @@ import org.koin.dsl.module
 
 /** 应用进程入口，初始化偏好存储与全局 Koin 依赖图。 */
 class RPClientApp : Application() {
+    /** Himitsu: work that must not delay opening the app. */
+    private val mBackgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     override fun onCreate() {
         super.onCreate()
         Kotpref.init(this)
@@ -94,6 +101,9 @@ class RPClientApp : Application() {
             koinApplication.koin.get<AppUpgradeManager>().upgrade()
             koinApplication.koin.get<FileRepository>().cleanupAbandonedFiles()
             koinApplication.koin.get<RequestLogGuard>().start()
+            // Himitsu (P-06): images of earlier builds are sealed in the background, one at a
+            // time; what is left (a file being read, a storage error) waits for the next start
+            mBackgroundScope.launch { runCatching { koinApplication.koin.get<FileRepository>().sealPlainFiles() } }
         }
     }
 }

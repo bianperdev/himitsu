@@ -52,7 +52,7 @@ internal const val FILE_REPOSITORY_STAGING_DIR_NAME = "staging"
  *
  * Himitsu (P-06): files are sealed with [FileCipher] in `repository/sealed/`, under a keyed
  * name derived from the hash, and read as streams through [StoredFile]. Files left in plain
- * form by earlier builds stay readable.
+ * form by earlier builds stay readable until [sealPlainFiles] has moved them.
  */
 class FileRepository(
     private val mContext: Context,
@@ -131,7 +131,7 @@ class FileRepository(
 
     private val mStagingDir: File get() = File(mSealedDir, FILE_REPOSITORY_STAGING_DIR_NAME).apply { mkdirs() }
 
-    /** Himitsu (P-06): plain drafts of earlier builds. */
+    /** Himitsu (P-06): plain drafts of earlier builds, sealed by [sealPlainFiles]. */
     private val mLegacyStagingDir: File get() = File(mRepositoryDir, FILE_REPOSITORY_STAGING_DIR_NAME)
     private val mState by lazy { mStorageStates.getOrPut(mRepositoryDir.absolutePath) { StorageState() } }
     private val mActiveDrafts get() = mState.activeDrafts
@@ -474,6 +474,121 @@ class FileRepository(
                 }
             }
         }
+
+    /**
+     * Himitsu (P-06): seals the files that builds before P-06 left in plain form, one at a time
+     * so readers wait at most for one file.
+     *
+     * - Each file is sealed into a synced `.sealing` copy, which is read back in full and
+     *   checked against the hash and size of the plain file before it takes the final name.
+     *   The plain file is deleted only after that, so a crash at any point leaves a readable copy.
+     * - Files being read are skipped and sealed on a later start, as is a file whose content
+     *   does not match its name: it is kept as it is, never deleted.
+     * - Drafts are sealed under the same handle, so a draft restored after an upgrade still works.
+     *
+     * Deleting a file on flash storage does not guarantee that its blocks are erased; the same
+     * limit applies to the plain databases of earlier builds.
+     *
+     * @return how many plain files are left for a later start
+     */
+    suspend fun sealPlainFiles(): Int = withContext(Dispatchers.IO) {
+        var remaining = 0
+        val hashes = mRepositoryDir.listFiles().orEmpty().filter { it.isFile && it.name.matches(HASH_NAME) }
+        for (plain in hashes) {
+            currentCoroutineContext().ensureActive()
+            if (!sealingStep { sealPlainFile(plain.name) }) remaining++
+        }
+        val drafts = mLegacyStagingDir.listFiles().orEmpty().filter { it.isFile && !it.name.endsWith(".meta") }
+        for (draft in drafts) {
+            currentCoroutineContext().ensureActive()
+            if (!sealingStep { sealPlainDraft(draft.name) }) remaining++
+        }
+        remaining
+    }
+
+    /** Runs one sealing step under the file lock; a storage error leaves the plain file for a later start. */
+    private suspend fun sealingStep(step: suspend () -> Boolean): Boolean = try {
+        mStorageMutex.withLock { step() }
+    } catch (_: IOException) {
+        false
+    }
+
+    /** Seals one plain file under the file lock. @return whether no plain copy is left */
+    private suspend fun sealPlainFile(hash: String): Boolean {
+        val plain = File(mRepositoryDir, hash)
+        if (!plain.isFile) return true
+        if (mLeases.getOrDefault(hash, 0) > 0) return false
+        val cipher = mCipher
+        val target = File(mSealedDir, cipher.sealedName(hash))
+        // A sealed copy that does not verify is replaced from the plain file, never trusted
+        if (!verifies(target, hash, plain.length()) && !sealVerified(plain, target, hash)) return false
+        plain.delete()
+        return true
+    }
+
+    /** Seals one plain draft and its metadata under the file lock. @return whether no plain copy is left */
+    private suspend fun sealPlainDraft(handle: String): Boolean {
+        val plain = File(mLegacyStagingDir, handle)
+        val metadata = File(mLegacyStagingDir, "$handle.meta")
+        if (!plain.isFile) return true
+        // Without valid metadata the draft can never be restored; the retention cleanup removes it
+        if (!handle.matches(Regex("[0-9a-f-]{36}")) || handle in mActiveDrafts) return false
+        val values = runCatching { Properties().apply { metadata.inputStream().use { load(it) } } }.getOrNull() ?: return false
+        val hash = values.getProperty("hash")?.takeIf { it.matches(HASH_NAME) } ?: return false
+        val owner = values.getProperty("owner")?.takeIf { it.isNotBlank() } ?: return false
+        if (values.getProperty("size")?.toLongOrNull() != plain.length()) return false
+        val prepared = PreparedFile(owner, handle, FileEntity(handle, hash, values.getProperty("mime")), plain.length())
+        if (!sealVerified(plain, File(mStagingDir, handle), hash)) return false
+        // The metadata comes last: a draft without it is not restorable, as for new drafts
+        writePreparedMetadata(prepared)
+        if (readPrepared(handle) != prepared) return false
+        plain.delete()
+        metadata.delete()
+        return true
+    }
+
+    /** Seals [plain] into [target] through a synced copy that must verify before it is renamed. */
+    private suspend fun sealVerified(plain: File, target: File, hash: String): Boolean {
+        val temporary = File(target.parentFile, target.name + SEALING_SUFFIX)
+        try {
+            val length = plain.length()
+            plain.inputStream().use { input ->
+                mCipher.sealFile(temporary) { output ->
+                    val buffer = ByteArray(8192)
+                    while (true) {
+                        currentCoroutineContext().ensureActive()
+                        val count = input.read(buffer)
+                        if (count < 0) break
+                        output.write(buffer, 0, count)
+                    }
+                }
+            }
+            return verifies(temporary, hash, length) && temporary.renameTo(target)
+        } catch (_: IOException) {
+            return false
+        } finally {
+            temporary.delete()
+        }
+    }
+
+    /** Whether [sealed] opens and holds exactly [length] bytes whose SHA-256 is [hash]. */
+    private fun verifies(sealed: File, hash: String, length: Long): Boolean {
+        if (!sealed.isFile || sealedLength(sealed) != length) return false
+        return try {
+            val digest = MessageDigest.getInstance("SHA-256")
+            mCipher.open(sealed).use { input ->
+                val buffer = ByteArray(8192)
+                while (true) {
+                    val count = input.read(buffer)
+                    if (count < 0) break
+                    digest.update(buffer, 0, count)
+                }
+            }
+            digest.digest().joinToString("") { "%02x".format(it) } == hash
+        } catch (_: IOException) {
+            false
+        }
+    }
 
     /** 校验句柄格式，防止恢复状态将任意路径作为私有草稿读取。 */
     private fun readPrepared(handle: String): PreparedFile? {
