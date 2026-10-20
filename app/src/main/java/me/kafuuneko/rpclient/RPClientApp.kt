@@ -94,7 +94,11 @@ class RPClientApp : Application() {
         // Himitsu: startup work needs the encrypted databases, so it runs off the main thread
         // once the master key is loaded; screens wait behind the app gate until it finishes.
         secureStorage.start(
-            beforeKey = { koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles() }
+            beforeKey = {
+                koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles()
+                // Himitsu (P-06): sealed with a key of the process that wrote them, so unreadable now
+                koinApplication.koin.get<ChatArchiveImageStore>().discardStale()
+            }
         ) {
             SealedPreferencesProvider.sealPlainValues(AppModel)
             contentResolver.releaseObsoletePersistedUriPermissions()
