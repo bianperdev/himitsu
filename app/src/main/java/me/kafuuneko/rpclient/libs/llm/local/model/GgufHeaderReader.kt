@@ -3,6 +3,7 @@ package me.kafuuneko.rpclient.libs.llm.local.model
 
 import java.io.DataInputStream
 import java.io.EOFException
+import java.io.FilterInputStream
 import java.io.InputStream
 
 /** Metadata read from a GGUF header, used to describe and validate an imported model. */
@@ -36,11 +37,13 @@ data class GgufAttentionShape(
 class InvalidGgufException(message: String) : IllegalArgumentException(message)
 
 /**
- * Reads the key-value header of a GGUF file without loading tensors.
+ * Reads and validates the header of a GGUF file without loading tensor data.
  *
- * GGUF files come from the user's storage and are untrusted, so every length and count is
- * checked against a limit before anything is allocated, and the header is fully validated in
- * Kotlin before the native parser ever sees the file.
+ * GGUF files come from the user's storage and are untrusted. Every length and count is checked
+ * against a limit before anything is allocated, and both the key-value section and the tensor
+ * table (dimensions, types, offsets, alignment) are validated before the native parser sees the
+ * file. The native parser stays the last line of defense: this catches malformed files early,
+ * it is not a full proof that a file is safe.
  */
 object GgufHeaderReader {
     private const val MAGIC = 0x46554747 // "GGUF" read as a little-endian int
@@ -49,6 +52,12 @@ object GgufHeaderReader {
     private const val MAX_STRING_BYTES = 4L * 1024 * 1024
     private const val MAX_ARRAY_ITEMS = 10_000_000L
     private const val MAX_KEPT_STRING_BYTES = 256
+
+    // Limits mirrored from ggml: GGML_MAX_NAME (64, null included), GGML_MAX_DIMS, GGML_TYPE_COUNT
+    private const val MAX_TENSOR_NAME_BYTES = 63L
+    private const val MAX_TENSOR_DIMS = 4
+    private const val GGML_TYPE_COUNT = 43
+    private const val DEFAULT_ALIGNMENT = 32L
 
     private const val TYPE_UINT8 = 0
     private const val TYPE_INT8 = 1
@@ -67,16 +76,19 @@ object GgufHeaderReader {
     /**
      * Reads the header from [input], which must be at the start of the file.
      *
-     * @throws InvalidGgufException when the data is not a supported GGUF header.
+     * @param fileSize size of the whole file when known; tensor offsets are then checked against it.
+     * @throws InvalidGgufException when the data is not a supported, well-formed GGUF header.
      */
-    fun read(input: InputStream): GgufMetadata {
-        val data = LittleEndianReader(DataInputStream(input.buffered()))
+    fun read(input: InputStream, fileSize: Long = UNKNOWN_SIZE): GgufMetadata {
+        val counter = CountingInputStream(input.buffered())
+        val data = LittleEndianReader(DataInputStream(counter))
         try {
             // Fixed header: magic, version, tensor and key-value counts
             if (data.int() != MAGIC) throw InvalidGgufException("Not a GGUF file")
             val version = data.int()
             if (version !in 2..3) throw InvalidGgufException("Unsupported GGUF version")
-            if (data.long() !in 0..MAX_TENSORS) throw InvalidGgufException("Invalid tensor count")
+            val tensorCount = data.long()
+            if (tensorCount !in 0..MAX_TENSORS) throw InvalidGgufException("Invalid tensor count")
             val keyValues = data.long()
             if (keyValues !in 0..MAX_KEY_VALUES) throw InvalidGgufException("Invalid metadata count")
 
@@ -98,6 +110,17 @@ object GgufHeaderReader {
                     else -> data.skipValue(type)
                 }
             }
+            // Tensor table: what the native parser turns into allocations and file offsets
+            val alignment = numbers["general.alignment"] ?: DEFAULT_ALIGNMENT
+            if (alignment <= 0 || alignment and (alignment - 1) != 0L) throw InvalidGgufException("Invalid alignment")
+            val dataOffsets = (0 until tensorCount).map { readTensorInfo(data, alignment) }
+            if (fileSize != UNKNOWN_SIZE) {
+                val dataStart = (counter.position + alignment - 1) / alignment * alignment
+                if (dataStart > fileSize || dataOffsets.any { it >= fileSize - dataStart }) {
+                    throw InvalidGgufException("Tensor data outside the file")
+                }
+            }
+
             val architecture = strings["general.architecture"]
             val number = { suffix: String ->
                 architecture?.let { numbers["$it.$suffix"] }?.coerceIn(0, Int.MAX_VALUE.toLong())?.toInt() ?: 0
@@ -125,9 +148,48 @@ object GgufHeaderReader {
         }
     }
 
+    /** Size of a file that is not known, for example while reading from a content URI. */
+    const val UNKNOWN_SIZE = -1L
+
+    /** Validates one tensor description and returns its offset in the data section. */
+    private fun readTensorInfo(data: LittleEndianReader, alignment: Long): Long {
+        data.string(MAX_TENSOR_NAME_BYTES)
+        val dims = data.int()
+        if (dims !in 1..MAX_TENSOR_DIMS) throw InvalidGgufException("Invalid tensor dimensions")
+        var elements = 1L
+        repeat(dims) {
+            val size = data.long()
+            if (size < 0) throw InvalidGgufException("Invalid tensor dimensions")
+            // Overflowing element counts are what turns a malformed file into a bad allocation
+            elements = try {
+                Math.multiplyExact(elements, size)
+            } catch (_: ArithmeticException) {
+                throw InvalidGgufException("Tensor too large")
+            }
+        }
+        val type = data.int()
+        if (type !in 0 until GGML_TYPE_COUNT) throw InvalidGgufException("Unknown tensor type")
+        val offset = data.long()
+        if (offset < 0 || offset % alignment != 0L) throw InvalidGgufException("Invalid tensor offset")
+        return offset
+    }
+
     private val INTEGER_TYPES = setOf(
         TYPE_UINT8, TYPE_INT8, TYPE_UINT16, TYPE_INT16, TYPE_UINT32, TYPE_INT32, TYPE_UINT64, TYPE_INT64
     )
+
+    /** Counts the bytes read, to find where the data section starts. */
+    private class CountingInputStream(input: InputStream) : FilterInputStream(input) {
+        var position = 0L
+            private set
+
+        override fun read(): Int = super.read().also { if (it >= 0) position++ }
+
+        override fun read(buffer: ByteArray, offset: Int, length: Int): Int =
+            super.read(buffer, offset, length).also { if (it > 0) position += it }
+
+        override fun skip(count: Long): Long = super.skip(count).also { if (it > 0) position += it }
+    }
 
     /** Little-endian primitive reads with bounds checks on every variable-length field. */
     private class LittleEndianReader(private val mInput: DataInputStream) {

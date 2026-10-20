@@ -118,7 +118,7 @@ class LocalModelDownloader(
             throw LocalModelDownloadException(LocalModelDownloadFailure.Integrity)
         }
         val metadata = try {
-            partial.inputStream().use { GgufHeaderReader.read(it) }
+            partial.inputStream().use { GgufHeaderReader.read(it, partial.length()) }
         } catch (_: InvalidGgufException) {
             partial.delete()
             throw LocalModelDownloadException(LocalModelDownloadFailure.Integrity)

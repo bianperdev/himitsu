@@ -80,17 +80,91 @@ class GgufHeaderReaderTest {
         }
     }
 
-    /** Builds a minimal GGUF v3 header with the given key-value pairs and no tensors. */
+    @Test
+    fun acceptsAWellFormedTensorTable() {
+        val bytes = gguf {
+            tensor("token_embd.weight", listOf(4096L, 32000L), type = 12, offset = 0)
+            tensor("output_norm.weight", listOf(4096L), type = 0, offset = 64)
+        }
+
+        GgufHeaderReader.read(bytes.inputStream(), fileSize = bytes.size + 1024L)
+    }
+
+    @Test
+    fun rejectsTensorsWithoutDimensionsOrWithTooMany() {
+        listOf(emptyList(), listOf(1L, 1L, 1L, 1L, 1L)).forEach { dims ->
+            assertInvalid(gguf { tensor("blk.0.attn_q.weight", dims) })
+        }
+    }
+
+    @Test
+    fun rejectsAnUnknownTensorType() {
+        assertInvalid(gguf { tensor("blk.0.attn_q.weight", listOf(16L), type = 43) })
+    }
+
+    @Test
+    fun rejectsAnElementCountThatOverflows() {
+        assertInvalid(gguf { tensor("blk.0.attn_q.weight", listOf(Long.MAX_VALUE, 2L)) })
+    }
+
+    @Test
+    fun rejectsATensorNameLongerThanGgmlAllows() {
+        assertInvalid(gguf { tensor("x".repeat(64), listOf(16L)) })
+    }
+
+    @Test
+    fun rejectsOffsetsThatBreakTheAlignment() {
+        assertInvalid(gguf { tensor("blk.0.attn_q.weight", listOf(16L), offset = 7) })
+        // 32 is aligned by default, but not to a declared 64-byte alignment
+        assertInvalid(gguf {
+            uint32("general.alignment", 64)
+            tensor("blk.0.attn_q.weight", listOf(16L), offset = 32)
+        })
+        assertInvalid(gguf { uint32("general.alignment", 48) })
+    }
+
+    @Test
+    fun rejectsTensorDataOutsideTheFile() {
+        val bytes = gguf { tensor("blk.0.attn_q.weight", listOf(16L), offset = 4096) }
+
+        // Without a known size only the header is checked
+        GgufHeaderReader.read(bytes.inputStream())
+        assertThrows(InvalidGgufException::class.java) {
+            GgufHeaderReader.read(bytes.inputStream(), fileSize = bytes.size + 1024L)
+        }
+    }
+
+    private fun assertInvalid(bytes: ByteArray) {
+        assertThrows(InvalidGgufException::class.java) {
+            GgufHeaderReader.read(bytes.inputStream())
+        }
+    }
+
+    /** Builds a minimal GGUF v3 header with the given key-value pairs and tensor descriptions. */
     private fun gguf(block: GgufBuilder.() -> Unit): ByteArray {
         val builder = GgufBuilder().apply(block)
         val head = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-            .putInt(0x46554747).putInt(3).putLong(0).putLong(builder.count.toLong())
-        return head.array() + builder.body.toByteArray()
+            .putInt(0x46554747).putInt(3).putLong(builder.tensorCount.toLong()).putLong(builder.count.toLong())
+        return head.array() + builder.body.toByteArray() + builder.tensors.toByteArray()
     }
 
     private class GgufBuilder {
         val body = ByteArrayOutputStream()
         var count = 0
+        val tensors = ByteArrayOutputStream()
+        var tensorCount = 0
+
+        /** A tensor description; GGUF writes them all after the key-value pairs. */
+        fun tensor(name: String, dims: List<Long>, type: Int = 0, offset: Long = 0) {
+            tensorCount++
+            Writer(tensors).apply {
+                putString(name)
+                putInt(dims.size)
+                dims.forEach { putLong(it) }
+                putInt(type)
+                putLong(offset)
+            }
+        }
 
         fun string(key: String, value: String) = entry(key, 8) { putString(value) }
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.storage.StorageManager
 import android.provider.OpenableColumns
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -24,8 +25,15 @@ class LocalModelFiles(context: Context) {
     /** Temporary file used while model [id] is being copied. */
     fun partialFileFor(id: String): File = File(directory, "$id$EXTENSION$PARTIAL_SUFFIX")
 
-    /** Partial download of a catalog entry; kept across restarts so it can resume. */
-    fun downloadFileFor(catalogKey: String): File = File(directory, "$catalogKey$DOWNLOAD_SUFFIX")
+    /**
+     * Partial download of a catalog entry; kept across restarts so it can resume. Named by a hash of
+     * the catalog key, so the file name does not say which model it is.
+     */
+    fun downloadFileFor(catalogKey: String): File {
+        val hash = MessageDigest.getInstance("SHA-256").digest(catalogKey.toByteArray())
+            .take(DOWNLOAD_NAME_BYTES).joinToString("") { "%02x".format(it) }
+        return File(directory, "$hash$DOWNLOAD_SUFFIX")
+    }
 
     /** Deletes copies interrupted by a crash or a killed process. Call only when no import runs. */
     fun deletePartialFiles() {
@@ -37,6 +45,7 @@ class LocalModelFiles(context: Context) {
         const val EXTENSION = ".gguf"
         const val PARTIAL_SUFFIX = ".part"
         const val DOWNLOAD_SUFFIX = ".download"
+        const val DOWNLOAD_NAME_BYTES = 16
     }
 }
 
@@ -58,10 +67,13 @@ class LocalModelImportException(val failure: LocalModelImportFailure) :
 /**
  * Copies a GGUF file chosen with the Storage Access Framework into app storage.
  *
- * - The header is validated before copying, so a wrong file fails fast and costs no space.
+ * - The header is validated before copying, so a wrong file fails fast and costs no space, and
+ *   validated again on the copy, because a document provider may serve different bytes each time.
  * - The copy goes to a partial file and is renamed only when complete; its SHA-256 is computed
  *   on the fly and stored, so later downloads and imports can be verified against it.
  * - The URI is used once and no persistent permission is requested.
+ * - Any error from the document provider becomes [LocalModelImportFailure.Unreadable]: an uncaught
+ *   one would crash the app and print the URI, which can contain the file name, to Logcat.
  */
 class LocalModelImporter(
     private val mContext: Context,
@@ -80,16 +92,12 @@ class LocalModelImporter(
         onProgress: (copiedBytes: Long, totalBytes: Long) -> Unit
     ): LocalModelEntity = withContext(Dispatchers.IO) {
         val resolver = mContext.contentResolver
-        val (fileName, totalBytes) = queryNameAndSize(uri)
+        val (fileName, totalBytes) = readFromProvider { queryNameAndSize(uri) }
 
         // Validate the header before using any space
-        val metadata = try {
+        val firstLook = readFromProvider {
             resolver.openInputStream(uri)?.use { GgufHeaderReader.read(it) }
                 ?: throw LocalModelImportException(LocalModelImportFailure.Unreadable)
-        } catch (_: InvalidGgufException) {
-            throw LocalModelImportException(LocalModelImportFailure.NotGguf)
-        } catch (_: IOException) {
-            throw LocalModelImportException(LocalModelImportFailure.Unreadable)
         }
         mFiles.directory.mkdirs()
         if (totalBytes > 0 && totalBytes + FREE_SPACE_MARGIN_BYTES > allocatableBytes()) {
@@ -101,8 +109,8 @@ class LocalModelImporter(
         val partial = mFiles.partialFileFor(id)
         val digest = MessageDigest.getInstance("SHA-256")
         var copied = 0L
-        try {
-            val input = resolver.openInputStream(uri)
+        val metadata = try {
+            val input = readFromProvider { resolver.openInputStream(uri) }
                 ?: throw LocalModelImportException(LocalModelImportFailure.Unreadable)
             input.use { source ->
                 partial.outputStream().use { target ->
@@ -118,17 +126,25 @@ class LocalModelImporter(
                     }
                 }
             }
+            // Validate what was actually stored, with its real size, before accepting it
+            val stored = try {
+                partial.inputStream().use { GgufHeaderReader.read(it, partial.length()) }
+            } catch (_: InvalidGgufException) {
+                throw LocalModelImportException(LocalModelImportFailure.NotGguf)
+            }
+            if (stored != firstLook) throw LocalModelImportException(LocalModelImportFailure.NotGguf)
             if (!partial.renameTo(mFiles.fileFor(id))) throw IOException("Rename failed")
+            stored
         } catch (error: Throwable) {
             partial.delete()
             throw when (error) {
-                is LocalModelImportException -> error
+                is LocalModelImportException, is CancellationException -> error
                 is IOException -> if (allocatableBytes() < COPY_BUFFER_BYTES) {
                     LocalModelImportException(LocalModelImportFailure.NoSpace)
                 } else {
                     LocalModelImportException(LocalModelImportFailure.Unreadable)
                 }
-                else -> error
+                else -> LocalModelImportException(LocalModelImportFailure.Unreadable)
             }
         }
 
@@ -152,6 +168,19 @@ class LocalModelImporter(
             throw error
         }
         entity
+    }
+
+    /** Runs a document provider call, turning anything it throws into a fixed, path-free failure. */
+    private inline fun <T> readFromProvider(block: () -> T): T = try {
+        block()
+    } catch (error: LocalModelImportException) {
+        throw error
+    } catch (_: InvalidGgufException) {
+        throw LocalModelImportException(LocalModelImportFailure.NotGguf)
+    } catch (error: CancellationException) {
+        throw error
+    } catch (_: Exception) {
+        throw LocalModelImportException(LocalModelImportFailure.Unreadable)
     }
 
     private fun queryNameAndSize(uri: Uri): Pair<String, Long> {
