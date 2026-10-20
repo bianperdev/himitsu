@@ -48,7 +48,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -67,7 +66,13 @@ import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderType
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
+import me.kafuuneko.rpclient.ui.theme.AccentAmberColor
+import me.kafuuneko.rpclient.ui.theme.AccentBlueColor
+import me.kafuuneko.rpclient.ui.theme.AccentEmeraldColor
+import me.kafuuneko.rpclient.ui.theme.AccentIndigoColor
+import me.kafuuneko.rpclient.ui.theme.AccentVioletColor
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.himitsuColors
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.RpMetaPill
 import me.kafuuneko.rpclient.ui.widgets.RpPageTitle
@@ -405,7 +410,7 @@ private fun ProviderStatusDot(isEnabled: Boolean, isConfigured: Boolean) {
     val dotColor = when {
         !isEnabled -> MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
         !isConfigured -> MaterialTheme.colorScheme.error
-        else -> Color(0xFF10B981) // Emerald green
+        else -> MaterialTheme.himitsuColors.success
     }
     Surface(
         shape = CircleShape,
@@ -428,12 +433,13 @@ private fun ProviderBrandBadge(
     isEnabled: Boolean
 ) {
     val (brandColor, brandIcon) = when (providerType) {
-        LLMProviderType.ChatGPT -> Color(0xFF10A37F) to Icons.Rounded.SmartToy
-        LLMProviderType.Gemini -> Color(0xFF4E82EE) to Icons.Rounded.AutoAwesome
-        LLMProviderType.Claude -> Color(0xFFD97706) to Icons.Rounded.Psychology
-        LLMProviderType.DeepSeek -> Color(0xFF0066FF) to Icons.Rounded.Memory
-        LLMProviderType.Grok -> Color(0xFF475569) to Icons.Rounded.Bolt
-        LLMProviderType.OpenRouter -> Color(0xFF7C3AED) to Icons.Rounded.Hub
+        // Himitsu accents rather than brand colors: they keep their contrast in both themes.
+        LLMProviderType.ChatGPT -> AccentEmeraldColor to Icons.Rounded.SmartToy
+        LLMProviderType.Gemini -> AccentBlueColor to Icons.Rounded.AutoAwesome
+        LLMProviderType.Claude -> AccentAmberColor to Icons.Rounded.Psychology
+        LLMProviderType.DeepSeek -> AccentIndigoColor to Icons.Rounded.Memory
+        LLMProviderType.Grok -> MaterialTheme.himitsuColors.accents.silver to Icons.Rounded.Bolt
+        LLMProviderType.OpenRouter -> AccentVioletColor to Icons.Rounded.Hub
         LLMProviderType.Custom -> MaterialTheme.colorScheme.primary to Icons.Rounded.Dns
         LLMProviderType.Local -> MaterialTheme.colorScheme.tertiary to Icons.Rounded.PhoneAndroid
     }

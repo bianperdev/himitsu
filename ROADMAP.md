@@ -285,7 +285,7 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 6. Icon (adaptive, with a monochrome version for Android 13+) and splash screen.
 7. Compose previews of the main screens in both themes.
 
-**Follow-ups after the owning tracks merge:** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (10 color literals, monospace fields) and `…/feature/requestlog/**` (monospace), and `…/utils/PromptMacroHighlighting.kt` (monospace).
+**Follow-ups after the owning tracks merge (done after merging into `main`):** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (success green and provider colors now use Himitsu accents), `…/feature/requestlog/**`, `…/feature/localmodels/**`, `…/feature/lock/**` (lock screen and security settings) and `…/utils/PromptMacroHighlighting.kt`.
 
 **Spanish register (decided by the maintainer):** Himitsu addresses the user with informal "tú" in Spanish. `strings_aesthetic.xml` already does; the inherited `values-es/strings.xml` still uses formal "usted" ("Cree", "Elija"). Converting it touches a file no track owns, so do it in one dedicated commit after every track is merged.
 
@@ -302,8 +302,7 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
   - `feat/disguise` adds `calculator`, `compass` and `converter` the same way and references `@mipmap/ic_launcher_<id>` from each `activity-alias` (`android:icon` and `android:roundIcon`). Decoy icons must be original and generic, never copies of real apps.
   - The splash screen (Android 12+) does not set an icon, so it shows the icon of the entry that was tapped; a disguise alias never shows the Himitsu logo while starting. Its background is the neutral night or morning color.
 
-**Offered to `feat/security` (the maintainer chose this before the security contract existed):**
-- **Lock screen frame:** `RpLockScreenFrame(title, modifier, subtitle, mark, actions)` in `…/ui/widgets/RpLockScreenFrame.kt`. It only draws: the night background with the monitor glow, a mark (a glowing lock by default, `RpLockMark`), the title and subtitle, and an `actions` slot for the unlock controls. It holds no strings and no branding, so callers pass localized text and `feat/disguise` can pass a neutral `mark`. It has no animation. Security keeps all lock logic in `…/feature/lock/**` and can ignore or wrap the frame; if its own contract needs another shape, the aesthetic track adapts the frame.
+**Lock screen styling:** `feat/security` defined the frame, `LockScreenFrame` in `…/feature/lock/ui/LockLayout.kt`, so the aesthetic track's own `RpLockScreenFrame` was dropped. The security frame draws the Himitsu look with two pieces from `…/ui/widgets/RpLockVisuals.kt`: `Modifier.lockRoomLight()` (monitor glow and desk lamp) and `RpLockMark(icon)` (the icon on a glowing tile). Both hold no text or branding and have no animation, so `feat/disguise` can reuse them with a neutral icon.
 
 **Done when:** text contrast meets WCAG AA in both themes; no fonts or images are downloaded at runtime; every font and asset is original or has a verified free license recorded in `NOTICE`; animations respect the system "remove animations" setting; screen structure and behavior are unchanged; every flavor builds.
 

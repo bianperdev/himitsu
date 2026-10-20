@@ -85,12 +85,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -130,6 +128,8 @@ import me.kafuuneko.rpclient.ui.dialog.AppDialogScaffold
 import me.kafuuneko.rpclient.ui.dialog.AppInputDialog
 import me.kafuuneko.rpclient.ui.dialog.DialogBadgeTone
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
+import me.kafuuneko.rpclient.ui.theme.himitsuColors
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.RpIconBubble
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
@@ -1177,7 +1177,7 @@ private fun TestPanel(
                 },
                 contentColor = when (testState) {
                     is LLMProviderEditTestState.Failed -> MaterialTheme.colorScheme.error
-                    is LLMProviderEditTestState.Success -> Color(0xFF10B981)
+                    is LLMProviderEditTestState.Success -> MaterialTheme.himitsuColors.success
                     else -> MaterialTheme.colorScheme.primary
                 },
                 containerColor = when (testState) {
@@ -1185,7 +1185,7 @@ private fun TestPanel(
                         alpha = 0.45f
                     )
 
-                    is LLMProviderEditTestState.Success -> Color(0xFF10B981).copy(alpha = 0.15f)
+                    is LLMProviderEditTestState.Success -> MaterialTheme.himitsuColors.success.copy(alpha = 0.15f)
                     else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
                 }
             )
@@ -1211,7 +1211,7 @@ private fun TestPanel(
                     style = MaterialTheme.typography.bodySmall,
                     color = when (testState) {
                         is LLMProviderEditTestState.Failed -> MaterialTheme.colorScheme.error
-                        is LLMProviderEditTestState.Success -> Color(0xFF059669)
+                        is LLMProviderEditTestState.Success -> MaterialTheme.himitsuColors.success
                         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
                     }
                 )
@@ -1589,7 +1589,7 @@ private fun JsonSyntaxHighlightPreview(
                 Text(
                     text = annotatedText,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        fontFamily = FontFamily.Monospace,
+                        fontFamily = HimitsuMonoFamily,
                         lineHeight = 18.sp
                     )
                 )

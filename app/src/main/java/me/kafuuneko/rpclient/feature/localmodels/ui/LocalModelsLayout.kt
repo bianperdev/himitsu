@@ -44,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
@@ -61,6 +60,7 @@ import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelMemoryFit
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelSource
 import me.kafuuneko.rpclient.ui.dialog.AppConfirmDialog
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
 import me.kafuuneko.rpclient.ui.widgets.RpPageTitle
@@ -191,7 +191,7 @@ private fun StoredModelCard(model: LocalModelItem, emit: LocalModelsUiIntent.() 
         MemoryLine(model.estimatedRamBytes, model.memoryFit)
         Text(
             text = stringResource(R.string.local_models_sha, model.sha256Prefix),
-            style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
+            style = MaterialTheme.typography.labelSmall.copy(fontFamily = HimitsuMonoFamily),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }

@@ -28,10 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -46,6 +44,8 @@ import me.kafuuneko.rpclient.ui.dialog.AppConfirmDialog
 import me.kafuuneko.rpclient.ui.dialog.AppDialogScaffold
 import me.kafuuneko.rpclient.ui.dialog.DialogBadgeTone
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.RpSectionHeader
 import me.kafuuneko.rpclient.ui.widgets.RpSettingsDivider
@@ -265,7 +265,7 @@ private fun RecoveryCodeDialog(code: String, onDone: () -> Unit) {
                 Text(
                     text = code.replace("-", " - "),
                     style = MaterialTheme.typography.titleMedium,
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = HimitsuMonoFamily,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -282,10 +282,10 @@ private fun LockTimeout.labelRes(): Int = when (this) {
     LockTimeout.FiveMinutes -> R.string.security_timeout_five_minutes
 }
 
-@Preview
+@HimitsuPhonePreviews
 @Composable
 private fun SecuritySettingsLayoutPreview() {
-    AppTheme(darkTheme = true, dynamicColor = false) {
+    AppTheme(dynamicColor = false) {
         SecuritySettingsLayout(
             uiState = SecuritySettingsUiState.Normal(
                 appLockEnabled = true,

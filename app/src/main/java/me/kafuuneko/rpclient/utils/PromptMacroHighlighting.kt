@@ -8,11 +8,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 
 /** 提示词高亮颜色配置。 */
 data class PromptHighlightColors(
@@ -75,7 +75,7 @@ fun rememberPromptMacroOutputTransformation(
                     color = colors.macroForeground,
                     background = colors.macroBackground,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = HimitsuMonoFamily
                 ),
                 start = match.range.first,
                 end = match.range.last + 1
@@ -146,7 +146,7 @@ class PromptMacroVisualTransformation(
                         color = mColors.macroForeground,
                         background = mColors.macroBackground,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = HimitsuMonoFamily
                     ),
                     start = match.range.first,
                     end = match.range.last + 1
