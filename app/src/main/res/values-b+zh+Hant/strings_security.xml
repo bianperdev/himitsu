@@ -62,7 +62,7 @@
     <string name="security_recovery_update_failed">無法更新復原碼。請再試一次。</string>
     <string name="security_settings_section_screen">螢幕</string>
     <string name="security_settings_secure_screen">在螢幕截圖和最近使用中隱藏內容</string>
-    <string name="security_settings_secure_screen_desc">封鎖螢幕截圖和螢幕錄影，並在最近使用的應用程式中顯示空白預覽。開啟應用程式鎖後，Android 13 以上版本已會隱藏預覽。</string>
+    <string name="security_settings_secure_screen_desc">封鎖螢幕截圖和螢幕錄影，並在最近使用的應用程式中顯示空白預覽。開啟應用程式鎖後，預覽一律會隱藏；在 Android 12 以下版本，這也會封鎖螢幕截圖。</string>
     <string name="security_cleartext_saved_warning">已儲存。此服務供應商使用未加密的 HTTP：同一網路中的任何人都能讀取你的聊天和 API 金鑰。</string>
     <string name="security_confirm_prompt_title">確認是你本人</string>
     <string name="security_confirm_prompt_subtitle">變更安全設定時需要驗證</string>

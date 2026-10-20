@@ -62,7 +62,7 @@
     <string name="security_recovery_update_failed">No se pudo actualizar el código de recuperación. Inténtalo de nuevo.</string>
     <string name="security_settings_section_screen">Pantalla</string>
     <string name="security_settings_secure_screen">Ocultar el contenido en capturas y recientes</string>
-    <string name="security_settings_secure_screen_desc">Bloquea las capturas y la grabación de pantalla, y muestra una vista previa en blanco en recientes. Con el bloqueo de la app activo, Android 13 o superior ya oculta la vista previa.</string>
+    <string name="security_settings_secure_screen_desc">Bloquea las capturas y la grabación de pantalla, y muestra una vista previa en blanco en recientes. Con el bloqueo de la app activo, la vista previa siempre se oculta; en Android 12 o anterior, eso también bloquea las capturas.</string>
     <string name="security_cleartext_saved_warning">Guardado. Este proveedor usa HTTP sin cifrar: cualquiera en la misma red puede leer tus chats y tu API key.</string>
     <string name="security_confirm_prompt_title">Confirma que eres tú</string>
     <string name="security_confirm_prompt_subtitle">Hace falta para cambiar los ajustes de seguridad</string>

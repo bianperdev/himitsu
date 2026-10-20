@@ -62,7 +62,7 @@
     <string name="security_recovery_update_failed">Không thể cập nhật mã khôi phục. Hãy thử lại.</string>
     <string name="security_settings_section_screen">Màn hình</string>
     <string name="security_settings_secure_screen">Ẩn nội dung khỏi ảnh chụp màn hình và mục gần đây</string>
-    <string name="security_settings_secure_screen_desc">Chặn chụp và quay màn hình, đồng thời hiển thị bản xem trước trống trong mục ứng dụng gần đây. Khi bật khóa ứng dụng, Android 13 trở lên đã ẩn bản xem trước.</string>
+    <string name="security_settings_secure_screen_desc">Chặn chụp và quay màn hình, đồng thời hiển thị bản xem trước trống trong mục ứng dụng gần đây. Khi bật khóa ứng dụng, bản xem trước luôn bị ẩn; trên Android 12 trở xuống, việc này cũng chặn chụp màn hình.</string>
     <string name="security_cleartext_saved_warning">Đã lưu. Nhà cung cấp này dùng HTTP không mã hóa: bất kỳ ai trên cùng mạng đều có thể đọc cuộc trò chuyện và khóa API của bạn.</string>
     <string name="security_confirm_prompt_title">Xác nhận đó là bạn</string>
     <string name="security_confirm_prompt_subtitle">Cần thiết để thay đổi cài đặt bảo mật</string>

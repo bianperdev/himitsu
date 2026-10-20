@@ -62,7 +62,7 @@
     <string name="security_recovery_update_failed">Impossibile aggiornare il codice di recupero. Riprova.</string>
     <string name="security_settings_section_screen">Schermo</string>
     <string name="security_settings_secure_screen">Nascondi i contenuti da screenshot e app recenti</string>
-    <string name="security_settings_secure_screen_desc">Blocca screenshot e registrazione dello schermo e mostra un\'anteprima vuota nelle app recenti. Con il blocco dell\'app attivo, Android 13 e versioni successive nascondono già l\'anteprima.</string>
+    <string name="security_settings_secure_screen_desc">Blocca screenshot e registrazione dello schermo e mostra un\'anteprima vuota nelle app recenti. Con il blocco dell\'app attivo, l\'anteprima è sempre nascosta; su Android 12 e versioni precedenti questo blocca anche gli screenshot.</string>
     <string name="security_cleartext_saved_warning">Salvato. Questo provider usa HTTP non cifrato: chiunque sulla stessa rete può leggere le tue chat e la tua chiave API.</string>
     <string name="security_confirm_prompt_title">Conferma la tua identità</string>
     <string name="security_confirm_prompt_subtitle">Necessario per modificare le impostazioni di sicurezza</string>

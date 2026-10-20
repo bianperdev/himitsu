@@ -11,12 +11,15 @@ import android.view.WindowManager
  * - With "hide content" on, `FLAG_SECURE` blocks screenshots and screen recording, and the
  *   recent apps view shows a blank preview on every Android version.
  * - With only the app lock on, Android 13 and later hide the recents preview without blocking
- *   screenshots, so the lock is not defeated by a thumbnail.
+ *   screenshots, so the lock is not defeated by a thumbnail. Earlier versions can only hide it
+ *   with `FLAG_SECURE`, so there the lock also turns it on and screenshots are blocked
+ *   (maintainer decision, 2026-10-20).
  */
 object WindowProtection {
     /** Applies the current settings to [activity]. Safe to call on every resume. */
     fun apply(activity: Activity) {
-        if (SecurityPrefs.secureScreenEnabled) {
+        val lockNeedsSecureFlag = SecurityPrefs.appLockEnabled && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+        if (SecurityPrefs.secureScreenEnabled || lockNeedsSecureFlag) {
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)

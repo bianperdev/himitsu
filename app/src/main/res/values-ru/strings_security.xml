@@ -62,7 +62,7 @@
     <string name="security_recovery_update_failed">Не удалось обновить код восстановления. Повторите попытку.</string>
     <string name="security_settings_section_screen">Экран</string>
     <string name="security_settings_secure_screen">Скрывать содержимое на скриншотах и в недавних</string>
-    <string name="security_settings_secure_screen_desc">Блокирует скриншоты и запись экрана и показывает пустой эскиз в недавних приложениях. При включённой блокировке Android 13 и новее уже скрывает эскиз.</string>
+    <string name="security_settings_secure_screen_desc">Блокирует скриншоты и запись экрана и показывает пустой эскиз в недавних приложениях. При включённой блокировке эскиз всегда скрыт; на Android 12 и старше это также блокирует скриншоты.</string>
     <string name="security_cleartext_saved_warning">Сохранено. Этот провайдер использует незашифрованный HTTP: любой в той же сети может прочитать ваши чаты и API-ключ.</string>
     <string name="security_confirm_prompt_title">Подтвердите, что это вы</string>
     <string name="security_confirm_prompt_subtitle">Требуется для изменения настроек безопасности</string>

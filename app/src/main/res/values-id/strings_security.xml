@@ -62,7 +62,7 @@
     <string name="security_recovery_update_failed">Kode pemulihan tidak dapat diperbarui. Coba lagi.</string>
     <string name="security_settings_section_screen">Layar</string>
     <string name="security_settings_secure_screen">Sembunyikan konten dari tangkapan layar dan aplikasi terbaru</string>
-    <string name="security_settings_secure_screen_desc">Memblokir tangkapan layar dan perekaman layar, serta menampilkan pratinjau kosong di aplikasi terbaru. Dengan kunci aplikasi aktif, Android 13 dan yang lebih baru sudah menyembunyikan pratinjau.</string>
+    <string name="security_settings_secure_screen_desc">Memblokir tangkapan layar dan perekaman layar, serta menampilkan pratinjau kosong di aplikasi terbaru. Dengan kunci aplikasi aktif, pratinjau selalu disembunyikan; di Android 12 dan versi sebelumnya, ini juga memblokir tangkapan layar.</string>
     <string name="security_cleartext_saved_warning">Tersimpan. Penyedia ini menggunakan HTTP tanpa enkripsi: siapa pun di jaringan yang sama dapat membaca obrolan dan kunci API Anda.</string>
     <string name="security_confirm_prompt_title">Konfirmasi bahwa ini Anda</string>
     <string name="security_confirm_prompt_subtitle">Diperlukan untuk mengubah setelan keamanan</string>
