@@ -80,8 +80,9 @@ class LocalModelDownloader(
     private val mFiles: LocalModelFiles,
     private val mDao: LocalModelDao
 ) {
-    // No redirects to plain HTTP and no cookies; the shared client already has no cookie jar
-    private val mClient = okHttpClient.newBuilder().followSslRedirects(false).build()
+    // Hugging Face redirects to its CDN, and these requests carry no key or token, so redirects
+    // are allowed here, never to plain HTTP. No cookies: the shared client has no cookie jar.
+    private val mClient = okHttpClient.newBuilder().followRedirects(true).followSslRedirects(false).build()
 
     /** Bytes of a previous attempt that a new download would resume from. */
     fun partialBytes(entry: LocalModelCatalogEntry): Long = mFiles.downloadFileFor(entry.key).length()
