@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
+import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
 import me.kafuuneko.rpclient.libs.security.lock.SecurityPrefs
 import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
@@ -67,7 +69,8 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
         WindowProtection.apply(this)
-        mForcedCurtain.value = mAppGate.evaluateNow() != GateState.Open
+        // Only a blocked gate keeps the curtain; Starting is covered by the gate state itself
+        mForcedCurtain.value = mAppGate.evaluateNow() == GateState.Blocked
     }
 
     /** Covers the page before it can be seen again if the app may lock meanwhile (Himitsu). */
@@ -81,6 +84,7 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mAppGate.state.collect { state ->
+                    if (state == GateState.Open && mAppGate.evaluateNow() == GateState.Open) mForcedCurtain.value = false
                     if (state == GateState.Blocked) mUnlockEntry.open(this@CoreActivity)
                 }
             }
@@ -114,7 +118,9 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
         val open = gateState == GateState.Open && !mForcedCurtain.value
         Box(Modifier.fillMaxSize()) {
             Box(if (open) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics { }) {
-                ViewContent()
+                CompositionLocalProvider(LocalAppGateOpen provides open) {
+                    ViewContent()
+                }
             }
             if (!open) {
                 Box(

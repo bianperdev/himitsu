@@ -62,6 +62,7 @@ import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.libs.media.ImagePreviewState
 import me.kafuuneko.rpclient.libs.media.MessageImageAction
 import me.kafuuneko.rpclient.libs.media.MessageImageState
+import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
 
 /**
  * 图片查看器对话框，展示当前图片并发出切换、关闭和保存行为。
@@ -85,6 +86,8 @@ fun MessageImageViewerDialog(
     // 维护控件浮层显隐状态，默认展示
     var controlsVisible by remember { mutableStateOf(true) }
 
+    // Himitsu: no dialog window above the gate curtain while the app is locked
+    if (!LocalAppGateOpen.current) return
     // 创建全屏沉浸式对话框容器
     Dialog(
         onDismissRequest = { emit(MessageImageAction.ClosePreview) },
