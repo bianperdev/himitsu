@@ -565,28 +565,28 @@ Before every merge: rebase onto `main`, build every flavor, run the unit tests, 
 
 ## Phase: Release (`chore/release-readiness`)
 
-Starts when every track, including disguise, is merged (true since 2026-10-20, `3e337b1`). The maintainer decides which follow-ups in [Pending after stage 1](#pending-after-stage-1) must land first.
+Starts when every track, including disguise, is merged (true since 2026-10-20, `3e337b1`). Version 0.1.0 (versionCode 30000100; scheme `30000000 + major * 10000 + minor * 100 + patch`, maintainer decision 2026-10-20), tags `v<version>`.
 
-- [ ] Store listings in every channel explain the disguise and its limits (decision D7), and the Google Play deceptive behavior and impersonation policies are checked before submitting.
+Done (2026-10-20):
+- [x] Git history audit for secrets and personal data: nothing blocks making the repository public. Inherited history keeps a third-party character card (`doc/main_fuka-shikuzaki-*.png`, added and removed by upstream, public there); left as is (maintainer, 2026-10-20). Test device mentions replaced by a generic description in new commits; older commits keep them.
+- [x] Name check: other projects named Himitsu exist (a Google Play photo vault, a Unix secret manager, several GitHub projects, two pending US trademark applications for restaurants); reported to the maintainer, no conclusion drawn.
+- [x] Licensing: official GPLv3 in `LICENSE`, RPClient notice intact, full third-party texts in `LICENSES/`, NOTICE completed with the transitive dependencies; SPDX headers on new files. No GenieX exception needed before 0.20.
+- [x] README, `PRIVACY.md` (checked against the code and the merged release manifests), `SECURITY.md`, `CONTRIBUTING.md`, issue forms and pull request template. `README_ZH.md` and the RPClient images, privacy policy and store icon removed.
+- [x] Open source licenses screen with NOTICE, the GPL and every third-party text, bundled from the repository by `bundleLicenses`.
+- [x] About: links to Himitsu, credit to RPClient, licenses screen; the "rate the app" card and Google Play link live only in `app/src/play` (`AboutChannel`); the `play` APK contains no repository URL; RPClient's e-mail removed.
+- [x] `fastlane/metadata/android/` rewritten (en-US, es-ES, ja-JP, zh-CN, zh-HK, zh-TW) with the disguise and its limits (D7); `fdroid/dev.bianperdev.himitsu.yml` and `fdroid/README.md`; `.github/workflows/release.yml` adapted, still manual only.
+- [x] O-03 (per-device `.idea` files untracked and ignored), `.gitignore` (`/HANDOFF/`, `.kotlin/`, signing material), EmojiCompat initializer removed.
 
-- [ ] Audit the full git history for secrets and personal data. This is the requirement for making the repository public.
-- [ ] Check the "Himitsu" name for conflicts with other apps, projects or trademarks.
-- [ ] Verify licensing: official GPLv3 text in `LICENSE`, intact RPClient notice in `LICENSES/MIT-RPClient.txt`, SPDX headers on new files, and a GenieX exception text if one was approved (not needed before version 0.20, when GenieX is planned).
-- [ ] Full README, `PRIVACY.md` (must match what the code does), `SECURITY.md`, `CONTRIBUTING.md`, issue and pull request templates, `.github/FUNDING.yml`.
-- [ ] Donation screen in `fdroid` and `github` only; open source licenses screen with every dependency, including native ones.
-- [ ] `fastlane/metadata/android/`: store descriptions, changelogs and screenshots still describe RPClient. Rewrite them for Himitsu in every locale.
-- [ ] `fdroid/me.kafuuneko.rpclient.yml` and `fdroid/README.md`: still declare `License: MIT`, the RPClient author and the upstream repository. Replace them with Himitsu metadata and list the expected anti-features.
-- [ ] `metadata/images/`: RPClient screenshots used by the old README.
-- [ ] `README_ZH.md`: Chinese README of RPClient. Translate the Himitsu README or remove it.
-- [ ] `.github/workflows/release.yml`: tag trigger disabled. Adapt the signing secrets, the artifact names (`RPClient-*.apk`), the `origin/master` branch check and the release title, build the `github` flavor with SHA-256 checksums, then re-enable it.
-- [ ] About screen: the repository and feedback links (`AppModel.GITHUB_REPO`, `…/feature/about/`) still point to RPClient. Point them to Himitsu, keep an explicit credit to RPClient, and link the licenses screen.
-- [ ] About screen: move the Google Play link and the "rate the app" card into the `play` flavor.
-- [ ] Reproducible builds: evaluate what is needed.
-- [ ] Adult content: report what Google Play and F-Droid require (content rating, warnings) so the maintainer can decide.
-- [ ] O-02, O-03, O-05. For O-03, untrack the per-device `.idea` files first (`deploymentTargetSelector.xml` records a device serial).
-- [ ] The `play` build must not link the GitHub repository once it shows a funding button or donation text (indirect donation link).
-- [ ] Licenses screen and packaged notices: SQLCipher (BSD-3), llama.cpp, JSON for Modern C++, libc++, OpenCL-Headers.
-- [ ] Play Console: declare the `dataSync` foreground service type, or move model downloads to a user-initiated data transfer job.
+Still open:
+- [ ] Donations: no platform chosen yet (maintainer, 2026-10-20). Then `.github/FUNDING.yml`, the "Support Himitsu" screen in `app/src/donations/` and the F-Droid `Donate`/`Liberapay` fields. The `play` build must stay without any link to the repository.
+- [ ] Screenshots of a release build for the README and every store listing (none are published yet), and a 512 px Play icon made from the launcher artwork.
+- [ ] The maintainer: enable "Private vulnerability reporting" in the repository settings (SECURITY.md relies on it), then make the repository public.
+- [ ] Release workflow before enabling it: move the publish step to its own job (only it needs `contents: write`), pin the actions by commit SHA, add the signing secrets, and test it with `workflow_dispatch`.
+- [ ] F-Droid: run `fdroid scanner` locally on the recipe and add `scandelete` entries for what it flags in the llama.cpp submodule; confirm CMake 3.31.6 and NDK r30 on the build server; maintainers may ask to build SQLCipher from source. Possible anti-features: NSFW (role-play with user-chosen models) and NonFreeNet (presets for proprietary AI services); see the release documentation report.
+- [ ] Google Play, before submitting: the `play` build has no source code link, so the listing (or a page without donation links) must say where the source of each release is (GPL section 6), and Play needs a privacy policy URL that does not lead to donation links. Declare the `dataSync` foreground service type (with a video) or move downloads to a user-initiated data transfer job. The AI-generated content policy expects an in-app way to report offensive content, which Himitsu does not have; answer the content rating questionnaire truthfully.
+- [ ] Reproducible builds: `Binaries:` and `AllowedAPKSigningKeys` in the F-Droid recipe, pinned NDK and JDK, no timestamps, deterministic baseline profile and native build IDs (https://f-droid.org/docs/Reproducible_Builds/).
+- [ ] O-02 (Koin `4.0.0-RC1` to a stable release) and O-05 (`.claude/agents/privacy-reviewer.md`), each proposed to the maintainer first.
+- [ ] Decisions for the maintainer: `LockActivity` with dynamic color; `values-es/strings.xml` from "usted" to "tú" (own commit); font subsetting.
 
 ---
 

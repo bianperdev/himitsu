@@ -12,8 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.Code
-import androidx.compose.material.icons.rounded.ContentCopy
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Numbers
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
@@ -42,10 +40,11 @@ import me.kafuuneko.rpclient.ui.widgets.draggableScrollIndicator
 fun AboutLayout(
     uiState: AboutUiState,
     onBack: () -> Unit,
-    onCopyDeveloperEmail: () -> Unit,
     onOpenRepository: () -> Unit,
     onRateApp: () -> Unit,
-    onOpenFeedback: () -> Unit
+    onOpenFeedback: () -> Unit,
+    onOpenLicenses: () -> Unit,
+    onOpenUpstream: () -> Unit
 ) {
     // 装饰与正文共享背景，系统栏和内容避让仍由 Scaffold 处理。
     Box(modifier = Modifier.fillMaxSize()) {
@@ -56,10 +55,11 @@ fun AboutLayout(
         ) { paddingValues ->
             AboutViewContent(
                 uiState = uiState,
-                onCopyDeveloperEmail = onCopyDeveloperEmail,
                 onOpenRepository = onOpenRepository,
                 onRateApp = onRateApp,
                 onOpenFeedback = onOpenFeedback,
+                onOpenLicenses = onOpenLicenses,
+                onOpenUpstream = onOpenUpstream,
                 modifier = Modifier.padding(paddingValues)
             )
         }
@@ -69,10 +69,11 @@ fun AboutLayout(
 @Composable
 private fun AboutViewContent(
     uiState: AboutUiState,
-    onCopyDeveloperEmail: () -> Unit,
     onOpenRepository: () -> Unit,
     onRateApp: () -> Unit,
     onOpenFeedback: () -> Unit,
+    onOpenLicenses: () -> Unit,
+    onOpenUpstream: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -89,9 +90,10 @@ private fun AboutViewContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AboutHeroHeader(uiState.appInfo.isDevelopmentBuild)
-            AboutRatingCard(onRateApp)
-            AboutCommunitySection(uiState.githubRepoName, onOpenFeedback, onOpenRepository)
-            AboutSupportSection(uiState.developerEmail, onCopyDeveloperEmail, onOpenRepository)
+            // Himitsu: the store card and the repository links depend on the distribution channel
+            if (uiState.ratesInStore) AboutRatingCard(onRateApp)
+            if (uiState.linksRepository) AboutCommunitySection(uiState.githubRepoName, onOpenFeedback, onOpenRepository)
+            AboutSupportSection(uiState.linksRepository, onOpenLicenses, onOpenUpstream)
             AboutAppInfoSection(uiState.appInfo)
             AboutFooter()
         }
@@ -128,33 +130,36 @@ private fun AboutCommunitySection(
     }
 }
 
+/** Himitsu: the in-app licenses and the credit to RPClient, linked only where the channel allows. */
 @Composable
 private fun AboutSupportSection(
-    developerEmail: String,
-    onCopyDeveloperEmail: () -> Unit,
-    onOpenRepository: () -> Unit
+    linksUpstream: Boolean,
+    onOpenLicenses: () -> Unit,
+    onOpenUpstream: () -> Unit
 ) {
-    // 邮箱置于副标题，尾部仅保留短操作标签，避免小屏被长地址挤压。
     AboutSection(stringResource(R.string.section_about)) {
-        AboutActionRow(
-            icon = Icons.Rounded.Email,
-            accent = AccentSkyColor,
-            title = stringResource(R.string.developer_contact),
-            subtitle = developerEmail,
-            action = stringResource(R.string.copy),
-            actionIcon = Icons.Rounded.ContentCopy,
-            pillAction = true,
-            onClick = onCopyDeveloperEmail
-        )
-        AboutDivider()
         AboutActionRow(
             icon = Icons.Rounded.Info,
             accent = MaterialTheme.colorScheme.secondary,
             title = stringResource(R.string.open_source_license),
             subtitle = stringResource(R.string.open_source_license_desc),
-            action = stringResource(R.string.visit_repo),
-            onClick = onOpenRepository
+            action = stringResource(R.string.about_licenses_action),
+            onClick = onOpenLicenses
         )
+        AboutDivider()
+        if (linksUpstream) {
+            AboutActionRow(
+                icon = Icons.Rounded.Code,
+                accent = AccentSkyColor,
+                title = stringResource(R.string.about_credit_rpclient),
+                subtitle = stringResource(R.string.about_credit_rpclient_desc),
+                action = stringResource(R.string.about_github),
+                actionIcon = Icons.AutoMirrored.Rounded.OpenInNew,
+                onClick = onOpenUpstream
+            )
+        } else {
+            AboutInfoRow(Icons.Rounded.Code, stringResource(R.string.about_credit_rpclient), stringResource(R.string.about_credit_rpclient_desc))
+        }
     }
 }
 
@@ -206,14 +211,14 @@ private fun AboutPreviewContent() {
     AboutLayout(
         uiState = AboutUiState(
             appInfo = AboutAppInfoState("2026.2.3-dev", "20260203", true),
-            githubRepoUrl = "https://github.com/KafuuNeko/RPClient",
-            githubRepoName = "KafuuNeko/RPClient",
-            developerEmail = "developer@example.com"
+            githubRepoUrl = "https://github.com/bianperdev/himitsu",
+            githubRepoName = "bianperdev/himitsu"
         ),
         onBack = {},
-        onCopyDeveloperEmail = {},
         onOpenRepository = {},
         onRateApp = {},
-        onOpenFeedback = {}
+        onOpenFeedback = {},
+        onOpenLicenses = {},
+        onOpenUpstream = {}
     )
 }

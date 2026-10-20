@@ -1,0 +1,8 @@
+First release of Himitsu, a privacy-first fork of RPClient.
+
+- Encrypted databases, files and preferences; keys protected by the Android Keystore, optional recovery code.
+- App lock with biometrics or the device credential.
+- On-device models with llama.cpp, optional OpenCL GPU, verified downloads.
+- Optional disguise as a calculator, compass or unit converter (discretion, not security; limits shown in the app).
+- New night theme.
+- No telemetry, no ads, no Google services.

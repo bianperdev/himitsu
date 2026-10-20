@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="about_licenses_action">Lihat</string>
+    <string name="about_credit_rpclient">Berdasarkan RPClient</string>
+    <string name="about_credit_rpclient_desc">Oleh Kafuu Neko, dengan Lisensi MIT yang disertakan dalam pemberitahuan Himitsu</string>
+    <string name="licenses_title">Lisensi sumber terbuka</string>
+    <string name="licenses_desc">Himitsu adalah perangkat lunak bebas di bawah GNU GPL versi 3 atau yang lebih baru. Aplikasi ini mencakup komponen dalam pemberitahuan, masing-masing dengan lisensinya sendiri.</string>
+    <string name="licenses_notice">Pemberitahuan Himitsu dan komponennya</string>
+    <string name="licenses_gpl">GNU General Public License v3</string>
+</resources>

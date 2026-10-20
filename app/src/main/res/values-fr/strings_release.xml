@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="about_licenses_action">Voir</string>
+    <string name="about_credit_rpclient">Basé sur RPClient</string>
+    <string name="about_credit_rpclient_desc">De Kafuu Neko, sous licence MIT, conservée dans les avis de Himitsu</string>
+    <string name="licenses_title">Licences open source</string>
+    <string name="licenses_desc">Himitsu est un logiciel libre sous GNU GPL, version 3 ou ultérieure. Il inclut les composants listés dans les avis, chacun sous sa propre licence.</string>
+    <string name="licenses_notice">Avis de Himitsu et de ses composants</string>
+    <string name="licenses_gpl">Licence publique générale GNU v3</string>
+</resources>

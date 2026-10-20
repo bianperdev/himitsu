@@ -18,12 +18,6 @@ import me.kafuuneko.rpclient.libs.theme.AppThemeMode
  * [SealedPreferencesProvider].
  */
 object AppModel : KotprefModel(preferencesProvider = SealedPreferencesProvider), PromptPreferences {
-    // 应用联系邮箱。
-    const val EMAIL = "kafuuneko@gmail.com"
-
-    // 仓库地址。
-    const val GITHUB_REPO = "https://github.com/KafuuNeko/RPClient"
-
     /** 普通生成默认最多读取的最近历史消息数。 */
     const val DEFAULT_MAX_PROMPT_HISTORY_MESSAGES = 500
 

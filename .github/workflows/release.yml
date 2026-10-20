@@ -1,5 +1,18 @@
 name: Release
 
+# Builds the signed `github` flavor of Himitsu, with SHA-256 checksums, and optionally publishes
+# it as a GitHub Release whose notes link the exact source of the tag (GPL-3.0-or-later).
+#
+# It only runs by hand (Actions > Release > Run workflow). Tag-triggered releases stay disabled
+# until the maintainer has configured the signing secrets and decided to turn them on; see the
+# "Phase: Release" section of ROADMAP.md.
+#
+# Secrets read by app/build.gradle.kts (through the environment):
+#   RELEASE_KEYSTORE_BASE64  the release keystore, base64-encoded (decoded to a temporary file)
+#   RELEASE_STORE_PASSWORD   keystore password
+#   RELEASE_KEY_ALIAS        key alias
+#   RELEASE_KEY_PASSWORD     key password
+
 on:
   workflow_dispatch:
     inputs:
@@ -9,30 +22,37 @@ on:
         default: false
         type: boolean
       release_tag:
-        description: "Existing tag to release, for example V2026.1.2. Leave empty to use V + versionName."
+        description: "Existing tag to release, for example v0.1.0. Leave empty to use v + versionName."
         required: false
         type: string
-  # Himitsu: tag-triggered releases are disabled until this workflow is
-  # adapted (signing secrets, artifact names, branch checks). Restore during
-  # the release-readiness phase; see ROADMAP.md.
+  # Disabled on purpose: tag pushes must not start a release yet.
   # push:
   #   tags:
   #     - "v*"
-  #     - "V*"
 
+# Read-only by default; only the release job below may write (it publishes the release)
 permissions:
-  contents: write
+  contents: read
+
+env:
+  NDK_VERSION: "30.0.16248370"
+  CMAKE_VERSION: "3.31.6"
 
 jobs:
   build-release:
-    name: Build signed release
+    permissions:
+      contents: write
+    name: Build signed release (github flavor)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Full history and tags, to check that the release commit is on main
           fetch-depth: 0
+          # Submodules are fetched below, shallow, after the release tag is checked out
+          submodules: false
 
       - name: Select existing tag for manual publish
         if: github.event_name == 'workflow_dispatch' && inputs.publish_release
@@ -45,12 +65,16 @@ jobs:
 
           release_tag="$INPUT_RELEASE_TAG"
           if [ -z "$release_tag" ]; then
-            release_tag="V$app_version"
+            release_tag="v$app_version"
           fi
 
           echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
           git rev-parse --verify --quiet "refs/tags/$release_tag^{commit}" >/dev/null
           git checkout --detach "refs/tags/$release_tag"
+
+      - name: Fetch submodules
+        shell: bash
+        run: git submodule update --init --recursive --depth 1
 
       - name: Resolve release metadata
         shell: bash
@@ -64,39 +88,47 @@ jobs:
             if [ "$GITHUB_EVENT_NAME" = "push" ]; then
               release_tag="$GITHUB_REF_NAME"
             else
-              release_tag="V$app_version"
+              release_tag="v$app_version"
             fi
             echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
           else
             release_tag="$RELEASE_TAG"
           fi
 
+          # A published release must come from the tag that matches versionName
           if [ "$GITHUB_EVENT_NAME" = "push" ] || [ "$PUBLISH_RELEASE" = "true" ]; then
-            tag_version="${release_tag#[vV]}"
-            test "$tag_version" = "$app_version"
+            test "$release_tag" = "v$app_version"
           fi
 
           echo "APP_VERSION=$app_version" >> "$GITHUB_ENV"
+          echo "SOURCE_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
-      - name: Ensure tag commit is on master
+      - name: Ensure tag commit is on main
         if: github.event_name == 'push'
         shell: bash
         run: |
           tag_commit="$(git rev-list -n 1 "$GITHUB_REF_NAME")"
-          git branch --remotes --contains "$tag_commit" | grep -q "origin/master"
+          git branch --remotes --contains "$tag_commit" | grep -qE "^[[:space:]]*origin/main$"
 
-      - name: Ensure manual publish runs from master
+      - name: Ensure manual publish runs from main
         if: github.event_name == 'workflow_dispatch' && inputs.publish_release
         shell: bash
         run: |
           tag_commit="$(git rev-parse HEAD)"
-          git branch --remotes --contains "$tag_commit" | grep -q "origin/master"
+          git branch --remotes --contains "$tag_commit" | grep -qE "^[[:space:]]*origin/main$"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
+
+      - name: Install NDK and CMake
+        shell: bash
+        run: |
+          sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$sdkmanager" --licenses >/dev/null
+          "$sdkmanager" --install "ndk;$NDK_VERSION" "cmake;$CMAKE_VERSION"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -109,7 +141,7 @@ jobs:
           test -n "$RELEASE_KEYSTORE_BASE64"
           echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
 
-      - name: Build signed APK
+      - name: Test and build signed APK
         shell: bash
         env:
           RELEASE_STORE_FILE: ${{ runner.temp }}/release.keystore
@@ -120,38 +152,22 @@ jobs:
           test -n "$RELEASE_STORE_PASSWORD"
           test -n "$RELEASE_KEY_ALIAS"
           test -n "$RELEASE_KEY_PASSWORD"
-          ./gradlew --no-daemon clean test assembleRelease
+          ./gradlew --no-daemon clean testGithubDebugUnitTest assembleGithubRelease
 
-      - name: Prepare signed APK
+      - name: Remove signing key
+        if: always()
         shell: bash
-        env:
-          RELEASE_STORE_FILE: ${{ runner.temp }}/release.keystore
-          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
-          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
-          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: Verify signed APK
+        shell: bash
         run: |
           build_tools="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
-          apk="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name "*.apk" ! -name "*unsigned*" | head -n 1)"
+          apk="$(find app/build/outputs/apk/github/release -maxdepth 1 -type f -name "*.apk" ! -name "*unsigned*" | head -n 1)"
+          # The build signs the APK only when every RELEASE_* value is set; never publish an unsigned one
+          test -n "$apk"
 
-          if [ -z "$apk" ]; then
-            unsigned_apk="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name "*unsigned*.apk" | head -n 1)"
-            test -n "$unsigned_apk"
-
-            aligned_apk="$RUNNER_TEMP/RPClient-${APP_VERSION}-aligned.apk"
-            signed_apk="$RUNNER_TEMP/RPClient-${APP_VERSION}.apk"
-
-            "$build_tools/zipalign" -p -f 4 "$unsigned_apk" "$aligned_apk"
-            "$build_tools/apksigner" sign \
-              --ks "$RELEASE_STORE_FILE" \
-              --ks-pass "pass:$RELEASE_STORE_PASSWORD" \
-              --ks-key-alias "$RELEASE_KEY_ALIAS" \
-              --key-pass "pass:$RELEASE_KEY_PASSWORD" \
-              --out "$signed_apk" \
-              "$aligned_apk"
-            apk="$signed_apk"
-          fi
-
-          "$build_tools/apksigner" verify --verbose "$apk"
+          "$build_tools/apksigner" verify --verbose --print-certs "$apk"
           echo "SIGNED_APK=$apk" >> "$GITHUB_ENV"
 
       - name: Collect release artifacts
@@ -159,13 +175,35 @@ jobs:
         run: |
           mkdir -p release-artifacts
           test -n "$SIGNED_APK"
-          cp "$SIGNED_APK" "release-artifacts/RPClient-${APP_VERSION}.apk"
+          apk_name="Himitsu-${APP_VERSION}-github.apk"
+          cp "$SIGNED_APK" "release-artifacts/$apk_name"
+          (cd release-artifacts && sha256sum "$apk_name" > SHA256SUMS.txt)
+          cat release-artifacts/SHA256SUMS.txt
+
+      - name: Write release notes
+        shell: bash
+        env:
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          {
+            echo "Himitsu ${APP_VERSION} (\`github\` flavor, signed by the Himitsu maintainer)."
+            echo
+            echo "**Source code:** the complete corresponding source of this build is the tag [\`${RELEASE_TAG}\`](${REPOSITORY_URL}/tree/${RELEASE_TAG}) (commit \`${SOURCE_COMMIT}\`), including the git submodules under \`third_party/\`. Himitsu is licensed under GPL-3.0-or-later; see [LICENSE](${REPOSITORY_URL}/blob/${RELEASE_TAG}/LICENSE) and [NOTICE](${REPOSITORY_URL}/blob/${RELEASE_TAG}/NOTICE)."
+            echo
+            echo "Requires Android 8.0 or later on a 64-bit device. The F-Droid build is signed with a different key: switching between them needs a reinstall, which deletes the app's data."
+            echo
+            echo "**SHA-256:**"
+            echo
+            echo '```'
+            cat release-artifacts/SHA256SUMS.txt
+            echo '```'
+          } > "$RUNNER_TEMP/release-notes.md"
 
       - name: Upload release artifacts
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
-          name: RPClient-${{ env.APP_VERSION }}
+          name: Himitsu-${{ env.APP_VERSION }}-github
           path: release-artifacts/*
 
       - name: Publish GitHub Release
@@ -173,6 +211,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: RPClient ${{ env.APP_VERSION }}
+          name: Himitsu ${{ env.APP_VERSION }}
+          body_path: ${{ runner.temp }}/release-notes.md
           files: release-artifacts/*
           generate_release_notes: true

@@ -30,8 +30,12 @@ android {
         applicationId = "dev.bianperdev.himitsu"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20260301
-        versionName = "2026.3.1"
+        // Himitsu: SemVer 0.x. versionCode = 30000000 + major * 10000 + minor * 100 + patch, so it
+        // stays above every inherited RPClient code (20260301): installed builds update, and the
+        // inherited data upgrade steps keyed by versionCode still run. Literal values on purpose,
+        // so F-Droid's update checker can read them.
+        versionCode = 30000100
+        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -124,6 +128,37 @@ android {
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+/**
+ * Himitsu: copies NOTICE, LICENSE and LICENSES/ into the assets (`licenses/`), so the open source
+ * licenses screen always shows the same files as the repository, which stay the only source.
+ */
+abstract class BundleLicenses : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val licenseFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun bundle() {
+        val target = outputDirectory.get().asFile.resolve("licenses")
+        target.deleteRecursively()
+        target.mkdirs()
+        licenseFiles.files.filter { it.isFile }.forEach { it.copyTo(target.resolve(it.name)) }
+    }
+}
+
+val bundleLicenses = tasks.register<BundleLicenses>("bundleLicenses") {
+    licenseFiles.from(rootProject.file("NOTICE"), rootProject.file("LICENSE"), rootProject.fileTree("LICENSES"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(bundleLicenses, BundleLicenses::outputDirectory)
+    }
 }
 
 dependencies {

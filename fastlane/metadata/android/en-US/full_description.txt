@@ -1,26 +1,31 @@
-RPClient is an AI roleplay and storytelling client with support for common tavern-style character cards and lorebooks. Create your own characters, write multi-chapter stories, start one-on-one chats, or build group chats where multiple characters join the same story.
+Himitsu (秘密, "secret") is a free and open source AI role-play client built for privacy, with on-device models as a first-class option. It is a fork of RPClient by Kafuu Neko.
 
-RPClient is not an Android remake of SillyTavern. It is a mobile-focused roleplay and storytelling app that supports familiar workflows such as character cards, lorebooks, prompts, and long-term story memory, while offering an interface designed for Android.
+PRIVACY FIRST
+- Chats, characters, lorebooks, provider settings and API keys are stored in encrypted SQLCipher databases, with keys protected by the Android Keystore. An optional recovery code lets you get your data back if that key is ever lost.
+- Avatars, chat images and drafts are encrypted with AES-256-GCM.
+- App lock with biometrics or your device PIN, pattern or password. Recents previews are hidden while the lock is on, and screenshots can be blocked.
+- No analytics, no telemetry, no crash reporting, no ads, no Google services. Himitsu only connects to the AI service you configure and, when you ask for it, to Hugging Face to download a model.
+- Android backups and device transfers export nothing.
 
-Key features:
+ON-DEVICE MODELS
+- Run GGUF models offline with llama.cpp, built from source.
+- Optional GPU acceleration through OpenCL on supported phones.
+- Import any GGUF file, or download a suggested model from Hugging Face. Downloads start only when you tap the button and are checked with SHA-256.
 
-- Write and organize multi-chapter stories with Story Studio (volumes, chapters, and continuation prompts)
-- View model reasoning and thought processes in real time during generation
-- Backup and share stories with .rpstory archive export and import
-- Import JSON and PNG character cards (including batch import)
-- Create, edit, and manage your own characters
-- Import and manage tavern-style lorebooks (with mutual exclusion groups)
-- Start one-on-one AI character chats
-- Create group chats with multiple characters
-- Regenerate, continue, or stop replies
-- Generate from the user’s perspective
-- Keep long stories going with summary memory
-- Assign independent models to specific characters and summaries
-- Import and export chat histories compatible with SillyTavern (.jsonl)
-- Manage prompts, character settings, greetings, and story context
-- Connect to OpenAI-compatible APIs, Gemini, Claude, DeepSeek, OpenRouter, and custom providers
-- Chats, stories, characters, and settings are stored on your device by default
+ROLE-PLAY FEATURES (from RPClient)
+- Import character cards (JSON and PNG), lorebooks and Regex scripts compatible with SillyTavern. Embedded Regex scripts run only after you authorize them.
+- One-on-one and group chats, and Story Studio for multi-chapter stories.
+- Summary memory, prompt presets and a Prompt Inspector that shows exactly what is sent.
+- Import and export chats as SillyTavern .jsonl.
+- Connect to OpenAI-compatible APIs, Gemini, Claude, DeepSeek, OpenRouter, xAI or your own server.
 
-RPClient does not include a built-in AI model service. To chat or generate stories, you need to configure your own model provider or API key. Requests are sent to the provider you choose, so please use services you trust.
+OPTIONAL DISGUISE
+Himitsu can change its icon and name to look like a working calculator, compass or unit converter. A secret code or gesture in the decoy opens the system authentication prompt; it never skips the app lock. Disguise is off by default and needs the app lock and a screen lock.
+Disguise is discretion, not security. Android's Settings (Apps, notifications, battery, storage) still show Himitsu, as do the package name, your app store's history, the system fingerprint or PIN prompt, the header of some notifications and tools such as adb. The app explains these limits before you turn it on.
 
-RPClient is not an official SillyTavern Android app and is not affiliated with OpenAI, Google, Anthropic, DeepSeek, or OpenRouter.
+GOOD TO KNOW
+- Himitsu does not include an AI service. Use an on-device model, or configure your own provider and API key; requests then go only to that provider, under its own privacy policy.
+- What a model generates depends on the model and provider you choose.
+- Requires Android 8.0 or later on a 64-bit device.
+
+Himitsu is free software under the GPL-3.0-or-later license. It is not affiliated with SillyTavern, OpenAI, Google, Anthropic, DeepSeek, OpenRouter, xAI or Hugging Face.

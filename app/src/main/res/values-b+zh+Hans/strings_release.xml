@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="about_licenses_action">查看</string>
+    <string name="about_credit_rpclient">基于 RPClient</string>
+    <string name="about_credit_rpclient_desc">作者 Kafuu Neko，采用 MIT 许可证，保留在 Himitsu 的声明中</string>
+    <string name="licenses_title">开源许可证</string>
+    <string name="licenses_desc">Himitsu 是采用 GNU GPL 第 3 版或更高版本的自由软件。它包含声明中列出的组件，各自遵循其许可证。</string>
+    <string name="licenses_notice">Himitsu 及其组件的声明</string>
+    <string name="licenses_gpl">GNU 通用公共许可证 v3</string>
+</resources>

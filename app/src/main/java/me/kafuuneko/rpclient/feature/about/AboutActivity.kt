@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import me.kafuuneko.rpclient.feature.about.presentation.AboutUiState
 import me.kafuuneko.rpclient.feature.about.presentation.AboutAppInfoState
 import me.kafuuneko.rpclient.feature.about.ui.AboutLayout
+import me.kafuuneko.rpclient.feature.licenses.LicensesActivity
 import me.kafuuneko.rpclient.R
-import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.core.CoreActivity
 
 /** 关于页面宿主，负责提供版本、社区反馈和项目联系信息。 */
@@ -28,6 +28,8 @@ class AboutActivity : CoreActivity() {
     override fun ViewContent() {
         // - 读取应用包信息与静态链接，构造页面展示状态
         val uiState = remember {
+            // Himitsu: links come from the flavor; the play build has none (see AboutChannel)
+            val repositoryUrl = FlavorAboutChannel.repositoryUrl
             val packageInfo = packageManager.getPackageInfo(packageName, 0)
             AboutUiState(
                 appInfo = AboutAppInfoState(
@@ -35,10 +37,11 @@ class AboutActivity : CoreActivity() {
                     buildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString(),
                     isDevelopmentBuild = applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
                 ),
-                githubRepoUrl = AppModel.GITHUB_REPO,
-                githubRepoName = "KafuuNeko/RPClient",
-                developerEmail = AppModel.EMAIL,
-                githubIssuesUrl = "${AppModel.GITHUB_REPO}/issues"
+                githubRepoUrl = repositoryUrl.orEmpty(),
+                githubRepoName = repositoryUrl.orEmpty().removePrefix("https://github.com/"),
+                githubIssuesUrl = repositoryUrl?.let { "$it/issues" }.orEmpty(),
+                linksRepository = repositoryUrl != null,
+                ratesInStore = FlavorAboutChannel.ratesInStore
             )
         }
 
@@ -47,47 +50,12 @@ class AboutActivity : CoreActivity() {
             AboutLayout(
                 uiState = uiState,
                 onBack = { finish() },
-                onCopyDeveloperEmail = { copyDeveloperEmail(uiState.developerEmail) },
                 onOpenRepository = { safeOpenUrl(uiState.githubRepoUrl) },
-                onRateApp = { openGooglePlay() },
-                onOpenFeedback = { safeOpenUrl(uiState.githubIssuesUrl) }
+                onRateApp = { FlavorAboutChannel.openStore(this) },
+                onOpenFeedback = { safeOpenUrl(uiState.githubIssuesUrl) },
+                onOpenLicenses = { startActivity(Intent(this, LicensesActivity::class.java)) },
+                onOpenUpstream = { FlavorAboutChannel.upstreamUrl?.let(::safeOpenUrl) }
             )
-        }
-    }
-
-    /** 复制开发者邮箱至剪贴板并提示用户。 */
-    private fun copyDeveloperEmail(email: String) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(
-            ClipData.newPlainText(
-                getString(R.string.developer_contact),
-                email
-            )
-        )
-        Toast.makeText(
-            this,
-            R.string.copied_to_clipboard,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    /** 打开 Google Play 商店评价页面，缺失对应市场应用时平滑降级至网页版。 */
-    private fun openGooglePlay() {
-        val pkg = packageName
-        val playStoreIntent = Intent(
-            Intent.ACTION_VIEW,
-            "market://details?id=$pkg".toUri()
-        ).apply {
-            setPackage("com.android.vending")
-        }
-        try {
-            startActivity(playStoreIntent)
-        } catch (_: ActivityNotFoundException) {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=$pkg".toUri()))
-            } catch (_: ActivityNotFoundException) {
-                safeOpenUrl("https://play.google.com/store/apps/details?id=$pkg")
-            }
         }
     }
 

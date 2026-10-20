@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/bianperdev/himitsu/security/policy
+    about: Do not open a public issue for vulnerabilities. Read the security policy and report privately.
+  - name: Privacy policy
+    url: https://github.com/bianperdev/himitsu/blob/main/PRIVACY.md
+    about: What Himitsu stores, what leaves the device, and what the disguise cannot hide.
