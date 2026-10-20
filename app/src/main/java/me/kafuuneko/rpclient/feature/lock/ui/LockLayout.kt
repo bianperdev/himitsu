@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.lock.presentation.LockContentState
@@ -52,6 +51,9 @@ import me.kafuuneko.rpclient.ui.dialog.AppConfirmDialog
 import me.kafuuneko.rpclient.ui.dialog.AppInputDialog
 import me.kafuuneko.rpclient.ui.dialog.DialogBadgeTone
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
+import me.kafuuneko.rpclient.ui.widgets.RpLockMark
+import me.kafuuneko.rpclient.ui.widgets.lockRoomLight
 
 /** Entry of the gate screen. */
 @Composable
@@ -88,6 +90,7 @@ fun LockScreenFrame(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .lockRoomLight()
                 .safeDrawingPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp, vertical = 32.dp),
@@ -97,12 +100,7 @@ fun LockScreenFrame(
                 modifier = Modifier.widthIn(max = 420.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(48.dp)
-                )
+                RpLockMark(icon = icon)
                 if (title != null) {
                     Spacer(Modifier.height(20.dp))
                     Text(
@@ -269,10 +267,10 @@ private fun RecoveryCodeError.messageRes(): Int = when (this) {
     RecoveryCodeError.Failed -> R.string.security_recovery_error_failed
 }
 
-@Preview
+@HimitsuPhonePreviews
 @Composable
 private fun LockLayoutStorageErrorPreview() {
-    AppTheme(darkTheme = true, dynamicColor = false) {
+    AppTheme(dynamicColor = false) {
         LockLayout(
             uiState = LockUiState.Normal(
                 LockContentState.StorageError(
