@@ -224,7 +224,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
 - Changed after testing on the S26 Ultra: Local messages get the same strict normalization as Gemini (one leading system message, mid-chat system messages become user turns, alternating roles), because GGUF templates such as Qwen3.5, Gemma and Mistral raise an error otherwise. The Prompt Inspector shows the normalized messages.
 - GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
-- Models are copied to `noBackupFilesDir` and are not encrypted; their names and metadata live in a `local_models` table in the encrypted database.
+- Models are copied to `noBackupFilesDir` and are not encrypted. Their names and metadata live in the separate `local_models.sqlite` registry above, which is not encrypted until feat/security is merged.
 - The optional download list contains only Apache-2.0 models; any other model is imported by hand.
 - New permissions accepted for model downloads and background generation: `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_DATA_SYNC`, `POST_NOTIFICATIONS`.
 
@@ -235,6 +235,11 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
 5. Moved to a later branch (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
 6. [x] Performance settings (threads, context size, GPU or NPU) with sensible defaults.
+
+**Follow-ups from the privacy review (2026-10-20):**
+- After feat/security merges: open `local_models.sqlite` with the encrypted helper (file names and model metadata are readable today, chats are not stored there). Local inference preferences are covered by security task P-03 (backups).
+- For feat/disguise: the model download and background-generation notifications show the app's label in their header (their icons and channel names are already neutral); the label must follow the disguise.
+- Chat templates from GGUF files are untrusted code. They render on their own thread with a 128 KB size limit and a 15 s time limit, but llama.cpp's Jinja runtime has no recursion or step limit, so a malicious template can still crash the app (never leak data). A real limit needs an upstream patch.
 
 **Done when:** a downloaded or imported GGUF can be used offline with the same presets, lorebooks, Regex and Prompt Inspector as remote providers; no network call is added except the explicit model download; nothing heavy runs on the main thread; generation can be cancelled and the model is released; the `fdroid` build contains only source-built llama.cpp and no GenieX; unsupported devices never crash; every new license is in `NOTICE` and in the table below; every flavor builds.
 
