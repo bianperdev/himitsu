@@ -31,7 +31,7 @@ Side work that runs in parallel with `feat/disguise`: `feat/geniex` (blocked on 
 
 ### `feat/security-followups` merged (2026-10-20)
 
-Merged into `main` as `85b362c`; local branch and worktree deleted (`origin/feat/security-followups` is kept until the maintainer decides). Checks run on `main` at `85b362c`:
+Merged into `main` as `85b362c`; branch (local and remote) and worktree deleted. Checks run on `main` at `85b362c`:
 
 - `assemble{Fdroid,Github,Play}Debug` and `assemble{Fdroid,Github,Play}Release` (R8, unsigned) build.
 - Unit tests: 356 per flavor, no failures. `connectedFdroidDebugAndroidTest`: 121/121 (`Medium_Phone_API_37.0`, Android 17).
