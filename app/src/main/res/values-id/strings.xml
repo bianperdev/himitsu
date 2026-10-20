@@ -625,7 +625,7 @@ Gagal: %2$d</string>
     <string name="openrouter_preferred_provider">Pilih penyedia hulu OpenRouter tertentu</string>
     <string name="openrouter_provider_slug">Slug penyedia hulu (misalnya, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Izinkan pengalihan cadangan penyedia hulu</string>
-    <string name="openrouter_session_affinity_note">Dalam mode Otomatis, Himitsu mengirim ID sesi anonim yang stabil per percakapan untuk perutean lengket. Urutan penyedia hulu pilihan diprioritaskan saat diaktifkan.</string>
+    <string name="openrouter_session_affinity_note">Secara default, Himitsu tidak mengirim ID sesi. Untuk perutean lengket, tambahkan session_id dengan nilai $rpclient.routing_session_id ke JSON permintaan: ID anonim yang stabil per percakapan. Urutan penyedia hulu pilihan diprioritaskan saat diaktifkan.</string>
     <string name="save">Simpan</string>
     <string name="model_test">Uji Model</string>
     <string name="send_short_message">Kirim pesan singkat untuk memverifikasi koneksi</string>

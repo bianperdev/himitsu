@@ -24,10 +24,13 @@ import me.kafuuneko.rpclient.libs.llm.model.LLMProviderConfig
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.media.MessageImageRuntime
 import me.kafuuneko.rpclient.libs.room.model.MessageImagePolicy
+import me.kafuuneko.rpclient.libs.security.files.FileCipher
+import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okio.BufferedSink
+import okio.source
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -95,11 +98,14 @@ internal class MultimodalWireCodec(private val mProvider: LLMProviderConfig) {
         }
         val media = requireNotNull(runtime) { "The image processing service is unavailable" }
         val file = media.createRequestFile()
+        // Himitsu (P-10): the body holds the whole prompt and the decoded images. It is sealed with
+        // a key that lives only in this request, so a file left by a killed process is unreadable.
+        val cipher = FileCipher.ephemeral()
         try {
             // 有界输出在写入过程中终止，避免超大 Patch 或图片占满磁盘。
             withContext(Dispatchers.IO) {
-                file.outputStream().buffered().use { output ->
-                    val bounded = LimitedOutputStream(output, MessageImagePolicy.MAX_REQUEST_BYTES)
+                cipher.sealFile(file) { sealed ->
+                    val bounded = LimitedOutputStream(sealed, MessageImagePolicy.MAX_REQUEST_BYTES)
                     write(JsonParser.parseString(json), bounded, media)
                 }
             }
@@ -107,7 +113,7 @@ internal class MultimodalWireCodec(private val mProvider: LLMProviderConfig) {
                 value.replace(marker, "[image data omitted, cannot be replayed directly: " +
                     "${ref.mimeType} ${ref.width}x${ref.height} ${ref.byteCount} bytes]")
             }
-            return PreparedWireBody(file.asRequestBody(JsonMediaType), log, file)
+            return PreparedWireBody(SealedFileRequestBody(file, cipher, JsonMediaType), log, file)
         } catch (error: Throwable) {
             file.delete()
             throw error
@@ -189,4 +195,22 @@ private class LimitedOutputStream(output: OutputStream, private val mMaximum: Lo
 private class NonClosingOutputStream(output: OutputStream) : FilterOutputStream(output) {
     override fun close() { flush() }
     override fun write(bytes: ByteArray, offset: Int, length: Int) { out.write(bytes, offset, length) }
+}
+
+/**
+ * Himitsu (P-10): a request body read from a file sealed by [mCipher], opened again for every
+ * write so OkHttp can retry. The plaintext never touches the disk.
+ */
+private class SealedFileRequestBody(
+    private val mFile: File,
+    private val mCipher: FileCipher,
+    private val mContentType: MediaType
+) : RequestBody() {
+    override fun contentType(): MediaType = mContentType
+
+    override fun contentLength(): Long = FileCipher.plainLength(mFile.length())
+
+    override fun writeTo(sink: BufferedSink) {
+        mCipher.open(mFile).source().use { sink.writeAll(it) }
+    }
 }

@@ -1051,7 +1051,7 @@
     <string name="openrouter_preferred_provider">優先使用指定的 OpenRouter 上游供應商</string>
     <string name="openrouter_provider_slug">上游供應商識別碼（例如 deepinfra）</string>
     <string name="openrouter_allow_fallbacks">允許上游供應商備援</string>
-    <string name="openrouter_session_affinity_note">自動模式下，Himitsu 會為每個對話傳送穩定的匿名工作階段 ID，以啟用黏性路由；啟用首選上游供應商後，其順序設定優先。</string>
+    <string name="openrouter_session_affinity_note">Himitsu 預設不傳送工作階段 ID。如需黏性路由，請在請求 JSON 中加入值為 $rpclient.routing_session_id 的 session_id：每個對話一個穩定的匿名 ID。啟用首選上游供應商後，其順序設定優先。</string>
     <string name="add_tag">新增標籤</string>
     <string name="add_keyword">新增關鍵字</string>
     <string name="add_category">新增分類</string>

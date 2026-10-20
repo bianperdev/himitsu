@@ -12,6 +12,8 @@ import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloader
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImporter
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelLibrary
+import me.kafuuneko.rpclient.libs.security.SecureStorageManager
+import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
@@ -26,9 +28,11 @@ import java.io.File
 val localInferenceModule = module {
     single { LocalEngineRegistry(availableEngines(androidContext())) }
     single {
-        // In noBackupFilesDir, so Android backups never export the model list
-        val path = File(androidContext().noBackupFilesDir, LocalModelDatabase.FILE_NAME).path
-        Room.databaseBuilder(androidContext(), LocalModelDatabase::class.java, path).build()
+        // SQLCipher, keyed like the other databases; the storage moves a plain file from earlier
+        // builds (in noBackupFilesDir) here and encrypts it before Room opens it
+        Room.databaseBuilder(androidContext(), LocalModelDatabase::class.java, LocalModelDatabase.FILE_NAME)
+            .openHelperFactory(get<SecureStorageManager>().openHelperFactory(EncryptedDatabase.LocalModels))
+            .build()
     }
     single { get<LocalModelDatabase>().localModelDao() }
     // Partial copies left by a killed process are useless; nothing can be importing yet
@@ -56,7 +60,11 @@ private fun availableEngines(context: Context): List<LocalInferenceEngine> {
         if (isDebuggable) add(FakeLocalInferenceEngine())
         if (hasLlamaCppAbi) {
             val kernelCache = File(context.cacheDir, "opencl-kernels").apply { mkdirs() }
-            add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir, kernelCache.path))
+            val gpuMarker = File(context.noBackupFilesDir, GPU_LOAD_MARKER_FILE)
+            add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir, kernelCache.path, gpuMarker))
         }
     }
 }
+
+/** Exists only while the GPU driver loads; see [LlamaCppEngine]. Not backed up, like the models. */
+private const val GPU_LOAD_MARKER_FILE = "llama_gpu_loading"

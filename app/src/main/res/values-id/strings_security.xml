@@ -107,4 +107,6 @@
     <string name="security_storage_error_startup_database">Data Anda tidak dapat dibaca saat aplikasi dimulai. Coba lagi, dan jika masih gagal, simpan salinan file.</string>
     <string name="security_storage_error_request_log_unusable">Log Permintaan mode debug rusak dan tidak dapat dibuka. Obrolan Anda tidak terpengaruh. Anda dapat menyimpan salinan file, atau menyisihkan log dan melanjutkan.</string>
     <string name="security_set_aside_message_request_log">Log Permintaan akan disisihkan dan mode debug akan mulai dengan log kosong. Obrolan Anda tidak terpengaruh. Tidak ada yang dihapus: salinan yang disisihkan tetap ada di penyimpanan pribadi aplikasi hingga Anda menghapusnya di Privasi dan keamanan.</string>
+    <string name="security_storage_error_model_registry_unusable">Daftar model di perangkat rusak dan tidak bisa dibuka. Chat Anda tidak terpengaruh. Anda dapat menyimpan salinan file, atau menyisihkan daftar beserta file modelnya lalu melanjutkan.</string>
+    <string name="security_set_aside_message_model_registry">Daftar model di perangkat beserta filenya akan disisihkan, dan Anda dapat mengunduh atau mengimpor model lagi. Chat Anda tidak terpengaruh. Tidak ada yang dihapus: salinan yang disisihkan tetap ada di penyimpanan pribadi aplikasi sampai Anda menghapusnya di Privasi dan keamanan.</string>
 </resources>

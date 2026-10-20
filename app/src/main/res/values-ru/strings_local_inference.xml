@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Недостаточно свободного места для этой модели.</string>
     <string name="local_models_download_failed_integrity">Файл не совпал с опубликованной контрольной суммой и был удалён.</string>
     <string name="local_models_download_failed_storage">Не удалось сохранить файл.</string>
+    <string name="local_models_download_failed_time_limit">Android приостановил загрузку: закончилось дневное время работы в фоне. Её можно возобновить.</string>
     <string name="local_models_download_confirm_title">Скачать %1$s?</string>
     <string name="local_models_download_confirm_message">Будет скачано %1$s с Hugging Face через интернет. Hugging Face увидит ваш IP-адрес и какую модель вы скачиваете. Аккаунт, токены и данные чатов не передаются. Используйте Wi-Fi, если ваш тариф ограничен.</string>
     <string name="local_models_download_busy">Уже идёт другая загрузка</string>
@@ -63,6 +64,8 @@
     <string name="local_models_threads_auto">Авто</string>
     <string name="local_models_gpu">Использовать GPU</string>
     <string name="local_models_gpu_desc">%1$s через OpenCL. Экспериментально: обычно быстрее на новых телефонах со Snapdragon.</string>
+    <string name="local_models_gpu_desc_not_loaded">Через OpenCL, если телефон это поддерживает. Экспериментально: драйвер GPU загружается, только когда вы включаете эту опцию.</string>
+    <string name="local_models_gpu_driver_failed">Выключено, потому что в прошлый раз драйвер GPU закрыл Himitsu. Можно попробовать снова.</string>
     <string name="local_models_kv">Компактная память контекста</string>
     <string name="local_models_kv_desc">Хранит контекст в 8 битах: вдвое меньше памяти при небольшой потере качества.</string>
     <string name="local_models_unload">Выгружать модель в фоне</string>

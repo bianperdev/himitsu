@@ -6,6 +6,7 @@ import me.kafuuneko.rpclient.feature.lock.LockActivityEntry
 import me.kafuuneko.rpclient.libs.disguise.compass.CompassSensor
 import me.kafuuneko.rpclient.libs.disguise.secret.DisguiseSecretStore
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
+import me.kafuuneko.rpclient.libs.security.lock.LockPolicy
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -27,4 +28,7 @@ internal val disguiseModule = module {
     // Replaces the securityModule binding (Koin keeps the last definition), so a page hidden by
     // the lock shows the decoy while disguise is on. It delegates to the gate screen otherwise.
     single<UnlockEntry> { DisguiseUnlockEntry(get(), LockActivityEntry) }
+    // Also replaces a securityModule binding: while disguise is on, leaving the app locks it at
+    // once, so the decoy's icon or recents card never reopens a page within the lock timeout
+    single { LockPolicy { isDisguiseActive() } }
 }

@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">Disguise</string>
     <string name="disguise_settings_desc">Make Himitsu look like an everyday app</string>
     <string name="disguise_settings_about_title">Discretion, not security</string>
-    <string name="disguise_settings_about_text">Disguise changes the icon and name so Himitsu goes unnoticed at a glance. It is not a security feature: your chats are protected by encryption and the app lock. Himitsu still shows its name in Settings › Apps, battery and storage usage, your store history and some notifications. Anyone with technical access to the phone can see it is installed.</string>
+    <string name="disguise_settings_about_text">Disguise changes the icon and name so Himitsu goes unnoticed at a glance. It is not a security feature: your chats are protected by encryption and the app lock. Himitsu still shows its name in Settings › Apps, battery and storage usage, your store history and some notifications. Anyone with technical access to the phone can see it is installed. While disguise is on, Himitsu locks as soon as you leave it, whatever lock timeout you chose.</string>
     <string name="disguise_settings_needs_lock_title">Turn on the app lock first</string>
     <string name="disguise_settings_needs_lock_text">Disguise needs the app lock and a screen lock on this device, so the disguise always asks for authentication. Tap to open Security.</string>
     <string name="disguise_settings_switch">Disguise</string>

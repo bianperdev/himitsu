@@ -12,6 +12,7 @@ import java.security.SecureRandom
 enum class KeyPurpose(val info: String) {
     PrimaryDatabase("himitsu/v1/database/primary"),
     RequestLogDatabase("himitsu/v1/database/request-log"),
+    LocalModelDatabase("himitsu/v1/database/local-models"),
     Preferences("himitsu/v1/preferences"),
     Files("himitsu/v1/files")
 }

@@ -2,6 +2,7 @@
 package me.kafuuneko.rpclient.feature.localmodels.presentation
 
 import androidx.annotation.StringRes
+import me.kafuuneko.rpclient.libs.llm.local.LocalGpuStatus
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloadFailure
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelMemoryFit
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelSource
@@ -36,8 +37,8 @@ sealed class LocalModelsUiState {
 data class LocalPerformanceState(
     /** CPU threads; 0 means automatic. */
     val threads: Int = 0,
-    /** Name of the GPU the engine can use, or null when there is none and the option is hidden. */
-    val gpuName: String? = null,
+    /** What the GPU option can offer; [LocalGpuStatus.None] hides it. */
+    val gpu: LocalGpuStatus = LocalGpuStatus.None,
     val useGpu: Boolean = false,
     val quantizedKvCache: Boolean = false,
     /** Seconds in the background before releasing the model; -1 keeps it loaded. */

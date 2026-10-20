@@ -40,7 +40,10 @@ sealed class AuthOutcome {
  * - When the device has no secure screen lock, authentication is impossible; the user may then
  *   continue after an explicit warning instead of being locked out.
  */
-class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
+class AppLockManager(
+    private val mContext: Context,
+    private val mPolicy: LockPolicy = LockPolicy.Default
+) : DefaultLifecycleObserver {
     private val mLocked = MutableStateFlow(SecurityPrefs.appLockEnabled)
     private var mBackgroundSince: Long? = null
     private var mAuthenticating = false
@@ -184,7 +187,9 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
         val since = mBackgroundSince ?: return
         mBackgroundSince = null
         if (!SecurityPrefs.appLockEnabled) return
-        if (SystemClock.elapsedRealtime() - since >= timeout.millis) mLocked.value = true
+        // A stricter policy (disguise) locks at once; the timeout itself stays as the user set it
+        val limit = if (mPolicy.lockOnLeave()) 0L else timeout.millis
+        if (SystemClock.elapsedRealtime() - since >= limit) mLocked.value = true
     }
 
     /** Strong biometrics with the credential need API 30; earlier versions only allow weak ones. */

@@ -625,7 +625,7 @@ Falhas: %2$d</string>
     <string name="openrouter_preferred_provider">Preferir um provedor upstream específico no OpenRouter</string>
     <string name="openrouter_provider_slug">Slug do provedor upstream (por exemplo, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Permitir fallback de provedor upstream</string>
-    <string name="openrouter_session_affinity_note">No modo Automático, o Himitsu envia um ID de sessão anônimo estável por conversa para roteamento fixo (sticky routing). A ordem preferencial de provedores upstream tem prioridade quando ativada.</string>
+    <string name="openrouter_session_affinity_note">Por padrão, o Himitsu não envia nenhum ID de sessão. Para roteamento fixo (sticky routing), adicione session_id com o valor $rpclient.routing_session_id ao JSON da solicitação: um ID anônimo estável por conversa. A ordem preferencial de provedores upstream tem prioridade quando ativada.</string>
     <string name="save">Salvar</string>
     <string name="model_test">Teste do Modelo</string>
     <string name="send_short_message">Enviar uma mensagem curta para verificar a conexão</string>

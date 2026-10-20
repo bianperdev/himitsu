@@ -323,6 +323,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
                 canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable ||
                     storage.failure == StorageFailure.DatabaseDamaged,
                 isRequestLog = storage.database == EncryptedDatabase.RequestLog,
+                isModelRegistry = storage.database == EncryptedDatabase.LocalModels,
                 isExporting = (previous as? LockContentState.StorageError)?.isExporting == true
             )
             SecureStorageState.Ready -> if (locked) {

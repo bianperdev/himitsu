@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">可用空間不足，無法存放此模型。</string>
     <string name="local_models_download_failed_integrity">檔案與公布的檢查碼不一致，已刪除。</string>
     <string name="local_models_download_failed_storage">無法儲存檔案。</string>
+    <string name="local_models_download_failed_time_limit">Android 已用完每日背景時間，下載已暫停。你可以繼續下載。</string>
     <string name="local_models_download_confirm_title">下載 %1$s？</string>
     <string name="local_models_download_confirm_message">將透過網際網路從 Hugging Face 下載 %1$s。Hugging Face 會看到你的 IP 位址和你下載的模型。不會傳送任何帳號、權杖或聊天資料。如果行動數據有限，請使用 Wi-Fi。</string>
     <string name="local_models_download_busy">已有其他下載正在進行</string>
@@ -63,6 +64,8 @@
     <string name="local_models_threads_auto">自動</string>
     <string name="local_models_gpu">使用 GPU</string>
     <string name="local_models_gpu_desc">%1$s，透過 OpenCL。實驗性功能：在較新的 Snapdragon 手機上通常更快。</string>
+    <string name="local_models_gpu_desc_not_loaded">透過 OpenCL，前提是手機支援。實驗性功能：只有在你開啟後才會載入 GPU 驅動程式。</string>
+    <string name="local_models_gpu_driver_failed">上次 GPU 驅動程式導致 Himitsu 關閉，因此已關閉此選項。你可以再試一次。</string>
     <string name="local_models_kv">精簡上下文記憶體</string>
     <string name="local_models_kv_desc">以 8 位元儲存上下文：記憶體減半，品質略為下降。</string>
     <string name="local_models_unload">在背景釋放模型</string>

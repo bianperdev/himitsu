@@ -126,6 +126,10 @@ internal val appModules = module {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
+            // Himitsu: OkHttp drops only Authorization on a redirect to another host, so API key
+            // headers and the prompt would reach it; a provider's redirect fails as an HTTP error
+            .followRedirects(false)
+            .followSslRedirects(false)
             .build()
     }
 

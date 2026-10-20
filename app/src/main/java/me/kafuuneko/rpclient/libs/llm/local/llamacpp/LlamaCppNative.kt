@@ -36,11 +36,17 @@ internal object LlamaCppNative {
     fun loadLibrary(): Boolean = runCatching { System.loadLibrary("himitsu_llama") }.isSuccess
 
     /**
-     * Silences native logs, loads the backends found in [nativeLibDir] (the best CPU variant, and
-     * OpenCL when the device has a driver) and initializes llama.cpp. [kernelCacheDir] keeps
-     * compiled GPU kernels between runs.
+     * Silences native logs, loads the CPU backend variant from [nativeLibDir] that best matches
+     * this processor and initializes llama.cpp. [kernelCacheDir] keeps compiled GPU kernels
+     * between runs. No GPU driver is loaded here.
      */
     @JvmStatic external fun nativeInit(nativeLibDir: String, kernelCacheDir: String)
+
+    /**
+     * Loads the OpenCL backend from [nativeLibDir], which loads the vendor GPU driver; a broken
+     * driver can crash the process here. Returns whether the backend registered.
+     */
+    @JvmStatic external fun nativeLoadGpu(nativeLibDir: String): Boolean
 
     /**
      * Loads a GGUF model; returns 0 on failure. [threads] decode the reply, [batchThreads] evaluate

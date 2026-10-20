@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">偽裝</string>
     <string name="disguise_settings_desc">讓 Himitsu 看起來像一般應用程式</string>
     <string name="disguise_settings_about_title">用於低調，而非安全</string>
-    <string name="disguise_settings_about_text">偽裝會變更圖示和名稱，讓 Himitsu 不會一眼被認出。這不是安全功能：你的聊天由加密和應用程式鎖保護。在「設定 › 應用程式」、電池和儲存空間用量、商店記錄以及部分通知中，Himitsu 仍會顯示其名稱。能以技術手段存取手機的人可以看到它已安裝。</string>
+    <string name="disguise_settings_about_text">偽裝會變更圖示和名稱，讓 Himitsu 不會一眼被認出。這不是安全功能：你的聊天由加密和應用程式鎖保護。在「設定 › 應用程式」、電池和儲存空間用量、商店記錄以及部分通知中，Himitsu 仍會顯示其名稱。能以技術手段存取手機的人可以看到它已安裝。偽裝開啟時，只要你離開 Himitsu 就會立即鎖定，無論你選擇了哪種鎖定延遲。</string>
     <string name="disguise_settings_needs_lock_title">請先開啟應用程式鎖</string>
     <string name="disguise_settings_needs_lock_text">偽裝需要應用程式鎖和裝置螢幕鎖定，這樣偽裝畫面一律會要求驗證身分。輕觸以開啟「安全性」。</string>
     <string name="disguise_settings_switch">偽裝</string>

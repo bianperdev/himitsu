@@ -37,6 +37,8 @@ sealed class LockContentState {
      *   encrypted, or a damaged encrypted one), so setting it aside and continuing is offered
      * @property isRequestLog whether the database that cannot be used only holds the debug
      *   request log, so chats are not affected
+     * @property isModelRegistry whether the database that cannot be used only lists the on-device
+     *   models, so chats are not affected
      * @property isExporting whether a copy of the files is being saved
      */
     data class StorageError(
@@ -47,6 +49,7 @@ sealed class LockContentState {
         val preferRecoveryCode: Boolean = false,
         val canSetAside: Boolean = false,
         val isRequestLog: Boolean = false,
+        val isModelRegistry: Boolean = false,
         val isExporting: Boolean = false
     ) : LockContentState()
 

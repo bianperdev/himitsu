@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption
 import java.util.Properties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_DIR_NAME
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFiles
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
@@ -197,6 +198,11 @@ object RestoreJournal {
         // A directory without files (left by the app or by "start over") holds nothing to keep
         if (from.exists() && to.exists() && to.walk().none { it.isFile }) to.deleteRecursively()
         move(from, to)
+        // The on-device model files follow their registry, which the databases above moved
+        val models = File(context.noBackupFilesDir, LocalModelFiles.DIRECTORY_NAME)
+        val (modelsFrom, modelsTo) = pair(models)
+        if (modelsFrom.exists() && modelsTo.exists() && modelsTo.walk().none { it.isFile }) modelsTo.deleteRecursively()
+        move(modelsFrom, modelsTo)
         // Every live file with sealed values goes aside, since the copy's key cannot read them,
         // as do the files the copy replaces; plain ones such as the lock switches stay. Android's
         // `.bak` backup of a preference file always moves with it, or it would be restored over

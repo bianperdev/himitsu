@@ -18,6 +18,15 @@ object LocalInferencePrefs : KotprefModel() {
     /** Offload layers to the GPU when the device offers a supported one. */
     var useGpu by booleanPref(default = false)
 
+    /** Loading the GPU driver closed the app; set until the user turns the GPU on again. */
+    var gpuDriverFailed by booleanPref(default = false)
+
+    /**
+     * `Build.FINGERPRINT` of the system on which a token was decoded on the GPU, so its driver is
+     * no longer watched; a system or driver update watches it again.
+     */
+    var gpuVerifiedFingerprint by stringPref(default = "")
+
     /** Store the KV cache in 8-bit instead of 16-bit: half the memory, slightly lower quality. */
     var quantizedKvCache by booleanPref(default = false)
 

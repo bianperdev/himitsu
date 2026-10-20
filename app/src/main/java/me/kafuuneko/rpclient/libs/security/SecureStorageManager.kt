@@ -32,6 +32,7 @@ import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabaseCheck
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.database.SqlCipherKey
+import me.kafuuneko.rpclient.libs.security.database.SqlCipherLog
 import me.kafuuneko.rpclient.libs.security.files.FileCipher
 import me.kafuuneko.rpclient.libs.security.files.FileCipherSource
 import me.kafuuneko.rpclient.libs.security.files.StoredFileLayout
@@ -42,6 +43,7 @@ import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.RecoveryResult
 import me.kafuuneko.rpclient.libs.security.key.VaultFailure
 import me.kafuuneko.rpclient.libs.security.key.VaultLoadResult
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_DIR_NAME
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_STAGING_DIR_NAME
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
@@ -187,9 +189,10 @@ class SecureStorageManager(
      * and before the state becomes [SecureStorageState.Ready].
      */
     fun start(beforeKey: () -> Unit = {}, startupTasks: suspend () -> Unit) {
-        // SQLCipher must be loaded explicitly, and its Java logging silenced before any use
+        // SQLCipher must be loaded explicitly, and its Java and native logging silenced before any use
         System.loadLibrary("sqlcipher")
         Logger.setTarget(NoopTarget())
+        SqlCipherLog.silence()
         mStartupTasks = startupTasks
         // Cleanup that needs no key runs first, and even when the key turns out to be unavailable
         mScope.launch {
@@ -243,8 +246,14 @@ class SecureStorageManager(
                 val primary = mContext.getDatabasePath(EncryptedDatabase.Primary.fileName)
                 val primaryStaysPlain = DatabaseFiles.kindOf(primary) == DatabaseFileKind.Plaintext ||
                     (DatabaseFiles.kindOf(primary) == DatabaseFileKind.Missing && File(primary.path + ".plaintext").exists())
+                // The model files go only with an encrypted registry; a plain one from an earlier
+                // build stays, is encrypted with the new key and still lists them
+                val registry = mContext.getDatabasePath(EncryptedDatabase.LocalModels.fileName)
+                val modelsGoAside = DatabaseFiles.kindOf(registry) == DatabaseFileKind.Encrypted
                 try {
                     mVault.moveKeyFileAside(suffix)
+                    // Before the databases: if it fails, the retry still finds data without a key
+                    if (modelsGoAside) setAsideLocalModels(suffix)
                     setAsideStoredFiles(suffix, keepPlainFiles = primaryStaysPlain)
                     EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     SealedPreferencesProvider.setAside(mContext, suffix)
@@ -315,6 +324,8 @@ class SecureStorageManager(
                 val file = mContext.getDatabasePath(database.fileName)
                 try {
                     if (database == EncryptedDatabase.Primary) setAsideStoredFiles(suffix)
+                    // The new, empty registry would not list the model files: they go with it
+                    if (database == EncryptedDatabase.LocalModels) setAsideLocalModels(suffix)
                     DatabaseFiles.delete(File(file.path + ".encrypting"))
                     // A plain copy left by an interrupted migration is listed as plain, never
                     // under the damaged encrypted file's marker
@@ -330,6 +341,17 @@ class SecureStorageManager(
                 load()
             }
         }
+    }
+
+    /**
+     * Sets the on-device model files aside with their registry ("start over", or a registry that
+     * cannot be used): a new, empty registry would not list them. They are plain GGUF files, kept
+     * until the user deletes the set-aside copy.
+     */
+    private fun setAsideLocalModels(suffix: String) {
+        val models = File(mContext.noBackupFilesDir, LocalModelFiles.DIRECTORY_NAME)
+        if (!models.exists()) return
+        Files.move(models.toPath(), File(models.path + suffix).toPath())
     }
 
     /**
@@ -467,6 +489,12 @@ class SecureStorageManager(
         // before Room can open them
         for (database in EncryptedDatabase.entries) {
             val file = mContext.getDatabasePath(database.fileName)
+            try {
+                if (database.movedFromNoBackup) moveFromNoBackup(database, file)
+            } catch (_: IOException) {
+                fail(StorageFailure.StorageError)
+                return
+            }
             val key = masterKey.derive(database.purpose)
             val passphrase = SqlCipherKey.rawKeyPassphrase(key)
             key.fill(0)
@@ -498,6 +526,15 @@ class SecureStorageManager(
             return
         }
         mState.value = SecureStorageState.Ready
+    }
+
+    /** Moves a database that earlier builds kept in `noBackupFilesDir` next to the others, once. */
+    private fun moveFromNoBackup(database: EncryptedDatabase, file: File) {
+        val legacy = File(mContext.noBackupFilesDir, database.fileName)
+        // The main file moves last, so while it is still at its source the move is unfinished
+        if (!legacy.exists() || file.exists()) return
+        file.parentFile?.mkdirs()
+        DatabaseFiles.move(legacy, file)
     }
 
     private fun fail(failure: StorageFailure, database: EncryptedDatabase? = null) {

@@ -1029,7 +1029,7 @@
     <string name="openrouter_preferred_provider">Bestimmten OpenRouter-Upstream-Anbieter bevorzugen</string>
     <string name="openrouter_provider_slug">Upstream-Anbieter-Slug (zum Beispiel deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Upstream-Anbieter-Fallback erlauben</string>
-    <string name="openrouter_session_affinity_note">Im Auto-Modus sendet Himitsu pro Unterhaltung eine stabile anonyme Sitzungs-ID für Sticky Routing. Eine aktivierte Reihenfolge der bevorzugten Upstream-Anbieter hat Vorrang.</string>
+    <string name="openrouter_session_affinity_note">Himitsu sendet standardmäßig keine Sitzungs-ID. Für Sticky Routing füge session_id mit dem Wert $rpclient.routing_session_id zum Anfrage-JSON hinzu: eine stabile anonyme ID pro Unterhaltung. Eine aktivierte Reihenfolge der bevorzugten Upstream-Anbieter hat Vorrang.</string>
     <string name="add_tag">Tag hinzufügen</string>
     <string name="add_keyword">Schlüsselwort hinzufügen</string>
     <string name="add_category">Kategorie hinzufügen</string>

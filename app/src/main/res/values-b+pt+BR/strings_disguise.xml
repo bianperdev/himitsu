@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">Disfarce</string>
     <string name="disguise_settings_desc">Faça o Himitsu parecer um app comum</string>
     <string name="disguise_settings_about_title">Discrição, não segurança</string>
-    <string name="disguise_settings_about_text">O disfarce muda o ícone e o nome para que o Himitsu passe despercebido numa olhada. Não é um recurso de segurança: suas conversas são protegidas pela criptografia e pelo bloqueio do app. O Himitsu continua aparecendo com o nome dele em Configurações › Apps, no uso de bateria e armazenamento, no histórico da loja e em algumas notificações. Quem tiver acesso técnico ao celular pode ver que ele está instalado.</string>
+    <string name="disguise_settings_about_text">O disfarce muda o ícone e o nome para que o Himitsu passe despercebido numa olhada. Não é um recurso de segurança: suas conversas são protegidas pela criptografia e pelo bloqueio do app. O Himitsu continua aparecendo com o nome dele em Configurações › Apps, no uso de bateria e armazenamento, no histórico da loja e em algumas notificações. Quem tiver acesso técnico ao celular pode ver que ele está instalado. Com o disfarce ativo, o Himitsu é bloqueado assim que você sai dele, seja qual for o tempo de bloqueio escolhido.</string>
     <string name="disguise_settings_needs_lock_title">Ative primeiro o bloqueio do app</string>
     <string name="disguise_settings_needs_lock_text">O disfarce precisa do bloqueio do app e de um bloqueio de tela no aparelho, para que o disfarce sempre peça autenticação. Toque para abrir Segurança.</string>
     <string name="disguise_settings_switch">Disfarce</string>

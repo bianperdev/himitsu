@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">このモデルを保存する空き容量が足りません。</string>
     <string name="local_models_download_failed_integrity">ファイルが公開されているチェックサムと一致しなかったため削除しました。</string>
     <string name="local_models_download_failed_storage">ファイルを保存できませんでした。</string>
+    <string name="local_models_download_failed_time_limit">バックグラウンドで使える1日の時間を超えたため、Android がダウンロードを一時停止しました。再開できます。</string>
     <string name="local_models_download_confirm_title">%1$s をダウンロードしますか？</string>
     <string name="local_models_download_confirm_message">インターネット経由で Hugging Face から %1$s をダウンロードします。Hugging Face にはあなたの IP アドレスとダウンロードするモデルがわかります。アカウント、トークン、チャットのデータは送信されません。データ通信量に制限がある場合は Wi-Fi を使用してください。</string>
     <string name="local_models_download_busy">別のダウンロードが進行中です</string>
@@ -63,6 +64,8 @@
     <string name="local_models_threads_auto">自動</string>
     <string name="local_models_gpu">GPU を使用</string>
     <string name="local_models_gpu_desc">%1$s（OpenCL 経由）。試験的機能：最近の Snapdragon 端末では通常より高速です。</string>
+    <string name="local_models_gpu_desc_not_loaded">対応している端末では OpenCL を使います。試験的な機能です。GPU ドライバーはオンにしたときだけ読み込まれます。</string>
+    <string name="local_models_gpu_driver_failed">前回 GPU ドライバーが Himitsu を終了させたため、オフにしました。もう一度試すことができます。</string>
     <string name="local_models_kv">コンパクトなコンテキストメモリ</string>
     <string name="local_models_kv_desc">コンテキストを 8 ビットで保存します。メモリは半分になり、品質はわずかに下がります。</string>
     <string name="local_models_unload">バックグラウンドでモデルを解放</string>

@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">이 모델을 저장할 여유 공간이 부족합니다.</string>
     <string name="local_models_download_failed_integrity">파일이 공개된 체크섬과 일치하지 않아 삭제했습니다.</string>
     <string name="local_models_download_failed_storage">파일을 저장할 수 없습니다.</string>
+    <string name="local_models_download_failed_time_limit">하루 백그라운드 시간이 끝나 Android가 다운로드를 일시중지했습니다. 다시 이어서 받을 수 있습니다.</string>
     <string name="local_models_download_confirm_title">%1$s을(를) 다운로드할까요?</string>
     <string name="local_models_download_confirm_message">인터넷을 통해 Hugging Face에서 %1$s을(를) 다운로드합니다. Hugging Face는 IP 주소와 다운로드하는 모델을 알 수 있습니다. 계정, 토큰, 채팅 데이터는 전송되지 않습니다. 데이터 요금제가 제한적이면 Wi-Fi를 사용하세요.</string>
     <string name="local_models_download_busy">다른 다운로드가 이미 진행 중입니다</string>
@@ -63,6 +64,8 @@
     <string name="local_models_threads_auto">자동</string>
     <string name="local_models_gpu">GPU 사용</string>
     <string name="local_models_gpu_desc">%1$s, OpenCL 사용. 실험적 기능: 최신 Snapdragon 휴대폰에서 대체로 더 빠릅니다.</string>
+    <string name="local_models_gpu_desc_not_loaded">이 휴대전화가 지원하면 OpenCL을 사용합니다. 실험적 기능: GPU 드라이버는 이 옵션을 켤 때만 불러옵니다.</string>
+    <string name="local_models_gpu_driver_failed">지난번에 GPU 드라이버 때문에 Himitsu가 종료되어 꺼졌습니다. 다시 시도할 수 있습니다.</string>
     <string name="local_models_kv">압축 컨텍스트 메모리</string>
     <string name="local_models_kv_desc">컨텍스트를 8비트로 저장합니다. 메모리는 절반, 품질은 약간 떨어집니다.</string>
     <string name="local_models_unload">백그라운드에서 모델 해제</string>

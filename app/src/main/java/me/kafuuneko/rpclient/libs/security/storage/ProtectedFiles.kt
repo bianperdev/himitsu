@@ -112,7 +112,9 @@ class ProtectedFiles(private val mContext: Context) {
         set.entries.forEach { entry ->
             when (entry.parentFile) {
                 mDatabaseDir -> add(ExportEntry("databases/${entry.name}", entry))
-                mKeyDir -> add(ExportEntry("no_backup/${entry.name}", entry))
+                // The on-device model files set aside with their registry are left out: they are
+                // plain, can weigh gigabytes and can be downloaded or imported again
+                mKeyDir -> if (entry.isFile) add(ExportEntry("no_backup/${entry.name}", entry))
                 mPreferencesDir -> add(ExportEntry("shared_prefs/${entry.name}", entry))
                 else -> addTree(entry, entry.name)
             }

@@ -625,7 +625,7 @@
     <string name="openrouter_preferred_provider">Prefer a specific OpenRouter upstream provider</string>
     <string name="openrouter_provider_slug">Upstream provider slug (for example, deepinfra)</string>
     <string name="openrouter_allow_fallbacks">Allow upstream provider fallback</string>
-    <string name="openrouter_session_affinity_note">In Auto mode, Himitsu sends a stable anonymous session ID per conversation for sticky routing. A preferred upstream provider order takes priority when enabled.</string>
+    <string name="openrouter_session_affinity_note">Himitsu sends no session ID by default. For sticky routing, add session_id with the value $rpclient.routing_session_id to the request JSON: a stable anonymous ID per conversation. A preferred upstream provider order takes priority when enabled.</string>
     <string name="save">Save</string>
     <string name="model_test">Model Test</string>
     <string name="send_short_message">Send a short message to verify connection</string>

@@ -1,5 +1,6 @@
 package me.kafuuneko.rpclient.libs.core
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
@@ -80,6 +81,9 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     }
 
     /** feat/disguise: a double press of volume down shows the decoy, when the user turned it on. */
+    // androidx.core marks its ComponentActivity.dispatchKeyEvent override as restricted, but
+    // overriding the public Activity method and calling super is the documented use
+    @SuppressLint("RestrictedApi")
     override fun dispatchKeyEvent(event: KeyEvent): Boolean =
         QuickExit.onKeyEvent(this, event) || super.dispatchKeyEvent(event)
 

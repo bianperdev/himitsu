@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Espace libre insuffisant pour ce modèle.</string>
     <string name="local_models_download_failed_integrity">Le fichier ne correspondait pas à sa somme de contrôle publiée et a été supprimé.</string>
     <string name="local_models_download_failed_storage">Impossible d\'enregistrer le fichier.</string>
+    <string name="local_models_download_failed_time_limit">Android a mis le téléchargement en pause après son temps quotidien en arrière-plan. Vous pouvez le reprendre.</string>
     <string name="local_models_download_confirm_title">Télécharger %1$s ?</string>
     <string name="local_models_download_confirm_message">Cela télécharge %1$s depuis Hugging Face via Internet. Hugging Face verra votre adresse IP et le modèle téléchargé. Aucun compte, jeton ni donnée de discussion n\'est envoyé. Utilisez le Wi-Fi si votre forfait de données est limité.</string>
     <string name="local_models_download_busy">Un autre téléchargement est déjà en cours</string>
@@ -63,6 +64,8 @@
     <string name="local_models_threads_auto">Automatique</string>
     <string name="local_models_gpu">Utiliser le GPU</string>
     <string name="local_models_gpu_desc">%1$s, via OpenCL. Expérimental : généralement plus rapide sur les téléphones Snapdragon récents.</string>
+    <string name="local_models_gpu_desc_not_loaded">Via OpenCL, si votre téléphone le prend en charge. Expérimental : le pilote GPU n\'est chargé que lorsque vous activez cette option.</string>
+    <string name="local_models_gpu_driver_failed">Désactivé, car le pilote GPU a fermé Himitsu la dernière fois. Vous pouvez réessayer.</string>
     <string name="local_models_kv">Mémoire de contexte compacte</string>
     <string name="local_models_kv_desc">Stocke le contexte sur 8 bits : moitié moins de mémoire, avec une légère perte de qualité.</string>
     <string name="local_models_unload">Libérer le modèle en arrière-plan</string>

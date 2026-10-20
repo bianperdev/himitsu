@@ -8,6 +8,7 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 
 /**
  * A model file stored on this device.
@@ -67,9 +68,9 @@ interface LocalModelDao {
 /**
  * Registry of local models, kept apart from the main database.
  *
- * - The file lives in `noBackupFilesDir`, so Android backups never export it.
+ * - Encrypted with SQLCipher like the other databases ([EncryptedDatabase.LocalModels]); Android
+ *   backups exclude it like every other file.
  * - Keeping it separate means this track never bumps the main schema version.
- * TODO: open it with the encrypted helper that feat/security provides once that track is merged.
  */
 @Database(entities = [LocalModelEntity::class], version = 1, exportSchema = true)
 abstract class LocalModelDatabase : RoomDatabase() {

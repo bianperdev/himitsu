@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">Ngụy trang</string>
     <string name="disguise_settings_desc">Làm Himitsu trông như một ứng dụng thường ngày</string>
     <string name="disguise_settings_about_title">Kín đáo, không phải bảo mật</string>
-    <string name="disguise_settings_about_text">Ngụy trang đổi biểu tượng và tên để Himitsu không gây chú ý khi nhìn qua. Đây không phải tính năng bảo mật: cuộc trò chuyện của bạn được bảo vệ bằng mã hóa và khóa ứng dụng. Himitsu vẫn hiện tên trong Cài đặt › Ứng dụng, mức dùng pin và bộ nhớ, lịch sử cửa hàng và một số thông báo. Người có quyền truy cập kỹ thuật vào điện thoại có thể thấy ứng dụng đã được cài.</string>
+    <string name="disguise_settings_about_text">Ngụy trang đổi biểu tượng và tên để Himitsu không gây chú ý khi nhìn qua. Đây không phải tính năng bảo mật: cuộc trò chuyện của bạn được bảo vệ bằng mã hóa và khóa ứng dụng. Himitsu vẫn hiện tên trong Cài đặt › Ứng dụng, mức dùng pin và bộ nhớ, lịch sử cửa hàng và một số thông báo. Người có quyền truy cập kỹ thuật vào điện thoại có thể thấy ứng dụng đã được cài. Khi ngụy trang đang bật, Himitsu sẽ khóa ngay khi bạn rời khỏi ứng dụng, bất kể thời gian khóa bạn đã chọn.</string>
     <string name="disguise_settings_needs_lock_title">Hãy bật khóa ứng dụng trước</string>
     <string name="disguise_settings_needs_lock_text">Ngụy trang cần khóa ứng dụng và khóa màn hình trên thiết bị, để màn hình ngụy trang luôn yêu cầu xác thực. Chạm để mở Bảo mật.</string>
     <string name="disguise_settings_switch">Ngụy trang</string>

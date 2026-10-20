@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Không đủ dung lượng trống cho mô hình này.</string>
     <string name="local_models_download_failed_integrity">Tệp không khớp với tổng kiểm tra đã công bố và đã bị xóa.</string>
     <string name="local_models_download_failed_storage">Không thể lưu tệp.</string>
+    <string name="local_models_download_failed_time_limit">Android đã tạm dừng tải xuống vì hết thời gian chạy nền trong ngày. Bạn có thể tiếp tục tải.</string>
     <string name="local_models_download_confirm_title">Tải xuống %1$s?</string>
     <string name="local_models_download_confirm_message">Thao tác này tải %1$s từ Hugging Face qua internet. Hugging Face sẽ thấy địa chỉ IP của bạn và mô hình bạn tải. Không có tài khoản, token hay dữ liệu trò chuyện nào được gửi. Hãy dùng Wi-Fi nếu gói dữ liệu của bạn bị giới hạn.</string>
     <string name="local_models_download_busy">Đang có một lượt tải xuống khác</string>
@@ -63,6 +64,8 @@
     <string name="local_models_threads_auto">Tự động</string>
     <string name="local_models_gpu">Dùng GPU</string>
     <string name="local_models_gpu_desc">%1$s, qua OpenCL. Thử nghiệm: thường nhanh hơn trên điện thoại Snapdragon mới.</string>
+    <string name="local_models_gpu_desc_not_loaded">Qua OpenCL, nếu điện thoại hỗ trợ. Thử nghiệm: trình điều khiển GPU chỉ được tải khi bạn bật tùy chọn này.</string>
+    <string name="local_models_gpu_driver_failed">Đã tắt vì lần trước trình điều khiển GPU làm Himitsu bị đóng. Bạn có thể thử lại.</string>
     <string name="local_models_kv">Bộ nhớ ngữ cảnh gọn</string>
     <string name="local_models_kv_desc">Lưu ngữ cảnh ở 8 bit: tốn một nửa bộ nhớ, chất lượng giảm nhẹ.</string>
     <string name="local_models_unload">Giải phóng mô hình khi chạy nền</string>
