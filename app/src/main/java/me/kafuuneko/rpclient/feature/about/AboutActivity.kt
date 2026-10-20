@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import me.kafuuneko.rpclient.feature.about.presentation.AboutUiState
 import me.kafuuneko.rpclient.feature.about.presentation.AboutAppInfoState
 import me.kafuuneko.rpclient.feature.about.ui.AboutLayout
+import me.kafuuneko.rpclient.feature.licenses.LicensesActivity
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.core.CoreActivity
@@ -36,9 +37,10 @@ class AboutActivity : CoreActivity() {
                     isDevelopmentBuild = applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
                 ),
                 githubRepoUrl = AppModel.GITHUB_REPO,
-                githubRepoName = "KafuuNeko/RPClient",
-                developerEmail = AppModel.EMAIL,
-                githubIssuesUrl = "${AppModel.GITHUB_REPO}/issues"
+                githubRepoName = AppModel.GITHUB_REPO.removePrefix("https://github.com/"),
+                githubIssuesUrl = "${AppModel.GITHUB_REPO}/issues",
+                linksRepository = FlavorAboutChannel.linksRepository,
+                ratesInStore = FlavorAboutChannel.ratesInStore
             )
         }
 
@@ -47,47 +49,12 @@ class AboutActivity : CoreActivity() {
             AboutLayout(
                 uiState = uiState,
                 onBack = { finish() },
-                onCopyDeveloperEmail = { copyDeveloperEmail(uiState.developerEmail) },
                 onOpenRepository = { safeOpenUrl(uiState.githubRepoUrl) },
-                onRateApp = { openGooglePlay() },
-                onOpenFeedback = { safeOpenUrl(uiState.githubIssuesUrl) }
+                onRateApp = { FlavorAboutChannel.openStore(this) },
+                onOpenFeedback = { safeOpenUrl(uiState.githubIssuesUrl) },
+                onOpenLicenses = { startActivity(Intent(this, LicensesActivity::class.java)) },
+                onOpenUpstream = { safeOpenUrl(RPCLIENT_REPO) }
             )
-        }
-    }
-
-    /** 复制开发者邮箱至剪贴板并提示用户。 */
-    private fun copyDeveloperEmail(email: String) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(
-            ClipData.newPlainText(
-                getString(R.string.developer_contact),
-                email
-            )
-        )
-        Toast.makeText(
-            this,
-            R.string.copied_to_clipboard,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    /** 打开 Google Play 商店评价页面，缺失对应市场应用时平滑降级至网页版。 */
-    private fun openGooglePlay() {
-        val pkg = packageName
-        val playStoreIntent = Intent(
-            Intent.ACTION_VIEW,
-            "market://details?id=$pkg".toUri()
-        ).apply {
-            setPackage("com.android.vending")
-        }
-        try {
-            startActivity(playStoreIntent)
-        } catch (_: ActivityNotFoundException) {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=$pkg".toUri()))
-            } catch (_: ActivityNotFoundException) {
-                safeOpenUrl("https://play.google.com/store/apps/details?id=$pkg")
-            }
         }
     }
 
@@ -102,5 +69,10 @@ class AboutActivity : CoreActivity() {
             )
             Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private companion object {
+        /** Himitsu is a fork of RPClient; credited in About (MIT notice in LICENSES/). */
+        const val RPCLIENT_REPO = "https://github.com/KafuuNeko/RPClient"
     }
 }
