@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">Himitsu のアイコンに戻しますか？</string>
     <string name="disguise_restore_home_icon">「%1$s」のアイコンは消えます。アプリ一覧で Himitsu を探してください。表示まで数秒かかることがあります。</string>
     <string name="disguise_icon_preview">アイコンのプレビュー</string>
+    <string name="disguise_menu_more">その他のオプション</string>
+    <string name="disguise_menu_about">情報</string>
+    <string name="disguise_about_version">バージョン %1$s</string>
+    <string name="disguise_about_close">閉じる</string>
+    <string name="disguise_calc_clear">クリア</string>
+    <string name="disguise_calc_delete">削除</string>
+    <string name="disguise_calc_percent">パーセント</string>
+    <string name="disguise_calc_divide">割る</string>
+    <string name="disguise_calc_multiply">掛ける</string>
+    <string name="disguise_calc_minus">引く</string>
+    <string name="disguise_calc_plus">足す</string>
+    <string name="disguise_calc_toggle_sign">符号を切り替え</string>
+    <string name="disguise_calc_equals">イコール</string>
+    <string name="disguise_calc_decimal">小数点</string>
+    <string name="disguise_calc_error_divide_by_zero">0 で割ることはできません</string>
+    <string name="disguise_calc_error_too_large">数値が大きすぎます</string>
 </resources>

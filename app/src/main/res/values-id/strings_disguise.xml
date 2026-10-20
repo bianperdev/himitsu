@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">Kembalikan ikon Himitsu?</string>
     <string name="disguise_restore_home_icon">Ikon “%1$s” akan hilang. Cari Himitsu di laci aplikasi; mungkin perlu beberapa detik untuk muncul.</string>
     <string name="disguise_icon_preview">Pratinjau ikon</string>
+    <string name="disguise_menu_more">Opsi lainnya</string>
+    <string name="disguise_menu_about">Tentang</string>
+    <string name="disguise_about_version">Versi %1$s</string>
+    <string name="disguise_about_close">Tutup</string>
+    <string name="disguise_calc_clear">Hapus semua</string>
+    <string name="disguise_calc_delete">Hapus</string>
+    <string name="disguise_calc_percent">Persen</string>
+    <string name="disguise_calc_divide">Bagi</string>
+    <string name="disguise_calc_multiply">Kali</string>
+    <string name="disguise_calc_minus">Kurang</string>
+    <string name="disguise_calc_plus">Tambah</string>
+    <string name="disguise_calc_toggle_sign">Ubah tanda</string>
+    <string name="disguise_calc_equals">Sama dengan</string>
+    <string name="disguise_calc_decimal">Pemisah desimal</string>
+    <string name="disguise_calc_error_divide_by_zero">Tidak bisa dibagi 0</string>
+    <string name="disguise_calc_error_too_large">Angka terlalu besar</string>
 </resources>

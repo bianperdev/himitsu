@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">Вернуть значок Himitsu?</string>
     <string name="disguise_restore_home_icon">Значок «%1$s» исчезнет. Найдите Himitsu в списке приложений; он может появиться через несколько секунд.</string>
     <string name="disguise_icon_preview">Предпросмотр значка</string>
+    <string name="disguise_menu_more">Другие параметры</string>
+    <string name="disguise_menu_about">О приложении</string>
+    <string name="disguise_about_version">Версия %1$s</string>
+    <string name="disguise_about_close">Закрыть</string>
+    <string name="disguise_calc_clear">Сброс</string>
+    <string name="disguise_calc_delete">Удалить</string>
+    <string name="disguise_calc_percent">Процент</string>
+    <string name="disguise_calc_divide">Разделить</string>
+    <string name="disguise_calc_multiply">Умножить</string>
+    <string name="disguise_calc_minus">Минус</string>
+    <string name="disguise_calc_plus">Плюс</string>
+    <string name="disguise_calc_toggle_sign">Сменить знак</string>
+    <string name="disguise_calc_equals">Равно</string>
+    <string name="disguise_calc_decimal">Десятичный разделитель</string>
+    <string name="disguise_calc_error_divide_by_zero">Делить на 0 нельзя</string>
+    <string name="disguise_calc_error_too_large">Слишком большое число</string>
 </resources>

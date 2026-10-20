@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">要恢復 Himitsu 圖示嗎？</string>
     <string name="disguise_restore_home_icon">「%1$s」圖示將會消失。請在應用程式清單中尋找 Himitsu，可能需要幾秒鐘才會出現。</string>
     <string name="disguise_icon_preview">圖示預覽</string>
+    <string name="disguise_menu_more">更多選項</string>
+    <string name="disguise_menu_about">關於</string>
+    <string name="disguise_about_version">版本 %1$s</string>
+    <string name="disguise_about_close">關閉</string>
+    <string name="disguise_calc_clear">清除</string>
+    <string name="disguise_calc_delete">刪除</string>
+    <string name="disguise_calc_percent">百分比</string>
+    <string name="disguise_calc_divide">除</string>
+    <string name="disguise_calc_multiply">乘</string>
+    <string name="disguise_calc_minus">減</string>
+    <string name="disguise_calc_plus">加</string>
+    <string name="disguise_calc_toggle_sign">切換正負號</string>
+    <string name="disguise_calc_equals">等於</string>
+    <string name="disguise_calc_decimal">小數點</string>
+    <string name="disguise_calc_error_divide_by_zero">無法除以 0</string>
+    <string name="disguise_calc_error_too_large">數字過大</string>
 </resources>

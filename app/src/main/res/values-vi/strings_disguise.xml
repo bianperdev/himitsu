@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">Khôi phục biểu tượng Himitsu?</string>
     <string name="disguise_restore_home_icon">Biểu tượng “%1$s” sẽ biến mất. Hãy tìm Himitsu trong ngăn ứng dụng; có thể mất vài giây để xuất hiện.</string>
     <string name="disguise_icon_preview">Xem trước biểu tượng</string>
+    <string name="disguise_menu_more">Tùy chọn khác</string>
+    <string name="disguise_menu_about">Giới thiệu</string>
+    <string name="disguise_about_version">Phiên bản %1$s</string>
+    <string name="disguise_about_close">Đóng</string>
+    <string name="disguise_calc_clear">Xóa hết</string>
+    <string name="disguise_calc_delete">Xóa</string>
+    <string name="disguise_calc_percent">Phần trăm</string>
+    <string name="disguise_calc_divide">Chia</string>
+    <string name="disguise_calc_multiply">Nhân</string>
+    <string name="disguise_calc_minus">Trừ</string>
+    <string name="disguise_calc_plus">Cộng</string>
+    <string name="disguise_calc_toggle_sign">Đổi dấu</string>
+    <string name="disguise_calc_equals">Bằng</string>
+    <string name="disguise_calc_decimal">Dấu thập phân</string>
+    <string name="disguise_calc_error_divide_by_zero">Không thể chia cho 0</string>
+    <string name="disguise_calc_error_too_large">Số quá lớn</string>
 </resources>

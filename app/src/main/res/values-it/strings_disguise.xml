@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">Ripristinare l\'icona di Himitsu?</string>
     <string name="disguise_restore_home_icon">L\'icona “%1$s” scomparirà. Cerca Himitsu nel drawer delle app; potrebbe impiegare qualche secondo ad apparire.</string>
     <string name="disguise_icon_preview">Anteprima dell\'icona</string>
+    <string name="disguise_menu_more">Altre opzioni</string>
+    <string name="disguise_menu_about">Informazioni</string>
+    <string name="disguise_about_version">Versione %1$s</string>
+    <string name="disguise_about_close">Chiudi</string>
+    <string name="disguise_calc_clear">Cancella tutto</string>
+    <string name="disguise_calc_delete">Cancella</string>
+    <string name="disguise_calc_percent">Percentuale</string>
+    <string name="disguise_calc_divide">Diviso</string>
+    <string name="disguise_calc_multiply">Per</string>
+    <string name="disguise_calc_minus">Meno</string>
+    <string name="disguise_calc_plus">Più</string>
+    <string name="disguise_calc_toggle_sign">Cambia segno</string>
+    <string name="disguise_calc_equals">Uguale</string>
+    <string name="disguise_calc_decimal">Separatore decimale</string>
+    <string name="disguise_calc_error_divide_by_zero">Impossibile dividere per 0</string>
+    <string name="disguise_calc_error_too_large">Numero troppo grande</string>
 </resources>

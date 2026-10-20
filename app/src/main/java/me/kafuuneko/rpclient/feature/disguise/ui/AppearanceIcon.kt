@@ -24,7 +24,12 @@ import me.kafuuneko.rpclient.libs.disguise.Appearance
  * appearance and size.
  */
 @Composable
-fun AppearanceIcon(appearance: Appearance, modifier: Modifier = Modifier, size: Dp = 64.dp) {
+fun AppearanceIcon(
+    appearance: Appearance,
+    modifier: Modifier = Modifier,
+    size: Dp = 64.dp,
+    contentDescription: String? = stringResource(R.string.disguise_icon_preview)
+) {
     val context = LocalContext.current
     val sizePx = with(LocalDensity.current) { size.roundToPx() }
     val bitmap = remember(appearance, sizePx) {
@@ -34,7 +39,7 @@ fun AppearanceIcon(appearance: Appearance, modifier: Modifier = Modifier, size: 
     } ?: return
     Image(
         bitmap = bitmap,
-        contentDescription = stringResource(R.string.disguise_icon_preview),
+        contentDescription = contentDescription,
         modifier = modifier.size(size)
     )
 }

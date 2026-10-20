@@ -17,4 +17,20 @@
     <string name="disguise_restore_title">Das Himitsu-Symbol zurückholen?</string>
     <string name="disguise_restore_home_icon">Das Symbol „%1$s“ verschwindet. Suche Himitsu in der App-Übersicht; es kann ein paar Sekunden dauern.</string>
     <string name="disguise_icon_preview">Symbolvorschau</string>
+    <string name="disguise_menu_more">Weitere Optionen</string>
+    <string name="disguise_menu_about">Info</string>
+    <string name="disguise_about_version">Version %1$s</string>
+    <string name="disguise_about_close">Schließen</string>
+    <string name="disguise_calc_clear">Löschen</string>
+    <string name="disguise_calc_delete">Rücktaste</string>
+    <string name="disguise_calc_percent">Prozent</string>
+    <string name="disguise_calc_divide">Geteilt durch</string>
+    <string name="disguise_calc_multiply">Mal</string>
+    <string name="disguise_calc_minus">Minus</string>
+    <string name="disguise_calc_plus">Plus</string>
+    <string name="disguise_calc_toggle_sign">Vorzeichen wechseln</string>
+    <string name="disguise_calc_equals">Gleich</string>
+    <string name="disguise_calc_decimal">Dezimaltrennzeichen</string>
+    <string name="disguise_calc_error_divide_by_zero">Division durch 0 nicht möglich</string>
+    <string name="disguise_calc_error_too_large">Zahl zu groß</string>
 </resources>
