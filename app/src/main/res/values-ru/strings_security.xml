@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Подтвердите, что это вы</string>
     <string name="security_confirm_prompt_subtitle">Требуется для изменения настроек безопасности</string>
     <string name="security_confirm_canceled">Не подтверждено. Ничего не изменено.</string>
+    <string name="security_storage_error_plain_unusable">Данные из предыдущей версии приложения повреждены, и их нельзя перенести в зашифрованное хранилище. Вы можете сохранить их копию или отложить их и продолжить с пустыми данными.</string>
+    <string name="security_action_set_aside">Отложить и продолжить</string>
+    <string name="security_set_aside_title">Отложить повреждённые данные?</string>
+    <string name="security_set_aside_message">Повреждённые данные и их изображения будут отложены, и приложение продолжит работу с пустыми данными. Ничего не удаляется, но отложенная копия остаётся незашифрованной в личном хранилище приложения, пока вы не удалите её в разделе «Конфиденциальность и безопасность».</string>
+    <string name="security_set_aside_confirm">Отложить</string>
+    <string name="security_action_export">Сохранить копию файлов</string>
+    <string name="security_export_working">Сохранение копии…</string>
+    <string name="security_export_title">Сохранить копию файлов?</string>
+    <string name="security_export_message">В файле .zip будут ваши файлы точно в том виде, в каком они хранятся на устройстве. Зашифрованные файлы можно будет открыть снова только с кодом восстановления этих данных, а импортировать их приложение пока не умеет. Данные из предыдущей версии, которые ещё не были зашифрованы, не зашифрованы и в копии.</string>
+    <string name="security_export_confirm">Выбрать, куда сохранить</string>
+    <string name="security_export_done">Копия сохранена.</string>
+    <string name="security_export_failed">Не удалось сохранить копию. Ваши данные не изменились.</string>
 </resources>

@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">본인 확인</string>
     <string name="security_confirm_prompt_subtitle">보안 설정을 변경하려면 필요합니다</string>
     <string name="security_confirm_canceled">확인되지 않았습니다. 변경된 내용이 없습니다.</string>
+    <string name="security_storage_error_plain_unusable">이전 버전 앱의 데이터가 손상되어 암호화된 저장소로 옮길 수 없습니다. 사본을 저장하거나, 따로 보관하고 빈 데이터로 계속할 수 있습니다.</string>
+    <string name="security_action_set_aside">따로 보관하고 계속</string>
+    <string name="security_set_aside_title">손상된 데이터를 따로 보관할까요?</string>
+    <string name="security_set_aside_message">손상된 데이터와 이미지는 따로 보관되고 앱은 빈 데이터로 계속됩니다. 아무것도 삭제되지 않지만, 따로 보관한 사본은 개인정보 보호 및 보안에서 삭제할 때까지 암호화되지 않은 채 앱의 비공개 저장소에 남습니다.</string>
+    <string name="security_set_aside_confirm">따로 보관</string>
+    <string name="security_action_export">파일 사본 저장</string>
+    <string name="security_export_working">사본을 저장하는 중…</string>
+    <string name="security_export_title">파일 사본을 저장할까요?</string>
+    <string name="security_export_message">.zip 파일에 이 기기에 있는 그대로의 파일이 담깁니다. 암호화된 파일은 이 데이터의 복구 코드로만 다시 열 수 있으며, 앱은 아직 이를 가져올 수 없습니다. 이전 버전에서 아직 암호화되지 않았던 데이터는 사본에서도 암호화되지 않습니다.</string>
+    <string name="security_export_confirm">저장할 위치 선택</string>
+    <string name="security_export_done">사본을 저장했습니다.</string>
+    <string name="security_export_failed">사본을 저장하지 못했습니다. 데이터는 변경되지 않았습니다.</string>
 </resources>

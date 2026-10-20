@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Confirmez votre identité</string>
     <string name="security_confirm_prompt_subtitle">Nécessaire pour modifier les paramètres de sécurité</string>
     <string name="security_confirm_canceled">Non confirmé. Rien n\'a été modifié.</string>
+    <string name="security_storage_error_plain_unusable">Vos données d\'une version précédente de l\'application sont endommagées et ne peuvent pas être transférées vers le stockage chiffré. Vous pouvez en enregistrer une copie, ou les mettre de côté et continuer avec des données vides.</string>
+    <string name="security_action_set_aside">Mettre de côté et continuer</string>
+    <string name="security_set_aside_title">Mettre les données endommagées de côté ?</string>
+    <string name="security_set_aside_message">Les données endommagées et leurs images seront mises de côté, et l\'application continuera avec des données vides. Rien n\'est supprimé, mais la copie mise de côté reste non chiffrée dans le stockage privé de l\'application jusqu\'à ce que vous la supprimiez dans Confidentialité et sécurité.</string>
+    <string name="security_set_aside_confirm">Mettre de côté</string>
+    <string name="security_action_export">Enregistrer une copie des fichiers</string>
+    <string name="security_export_working">Enregistrement de la copie…</string>
+    <string name="security_export_title">Enregistrer une copie des fichiers ?</string>
+    <string name="security_export_message">Un fichier .zip contiendra vos fichiers exactement tels qu\'ils sont sur cet appareil. Les fichiers chiffrés ne pourront être rouverts qu\'avec le code de récupération de ces données, et l\'application ne peut pas encore les importer. Les données d\'une version précédente qui n\'étaient pas encore chiffrées ne le sont pas non plus dans la copie.</string>
+    <string name="security_export_confirm">Choisir l\'emplacement</string>
+    <string name="security_export_done">Copie enregistrée.</string>
+    <string name="security_export_failed">La copie n\'a pas pu être enregistrée. Vos données n\'ont pas été modifiées.</string>
 </resources>

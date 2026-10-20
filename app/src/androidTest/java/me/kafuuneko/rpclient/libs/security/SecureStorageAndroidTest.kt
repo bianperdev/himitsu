@@ -10,6 +10,7 @@ import java.security.SecureRandom
 import me.kafuuneko.rpclient.libs.room.RequestLogDatabase
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFileKind
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFiles
+import me.kafuuneko.rpclient.libs.security.database.DatabaseMigrationException
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
@@ -112,6 +113,38 @@ class SecureStorageAndroidTest {
 
         assertEquals(DatabaseFileKind.Encrypted, DatabaseFiles.kindOf(file))
         assertFalse(File(file.path + ".plaintext").exists())
+    }
+
+    @Test
+    fun aDamagedPlainDatabaseIsReportedAsPermanentAndKept() {
+        val file = File(dir, "damaged.sqlite")
+        val damaged = "SQLite format 3\u0000".toByteArray(Charsets.US_ASCII) + ByteArray(4096) { 0x5a }
+        file.writeBytes(damaged)
+
+        try {
+            PlaintextDatabaseMigrator().migrateIfNeeded(file, newPassphrase())
+            fail("A damaged database must not migrate")
+        } catch (e: DatabaseMigrationException) {
+            assertTrue(e.permanent)
+        }
+        assertTrue(file.readBytes().contentEquals(damaged))
+        assertFalse(File(file.path + ".encrypting").exists())
+    }
+
+    @Test
+    fun twoPlainCopiesAreReportedAsPermanentAndBothKept() {
+        val file = File(dir, "twice.sqlite")
+        createPlainDatabase(file, rows = 2)
+        createPlainDatabase(File(file.path + ".plaintext"), rows = 3)
+
+        try {
+            PlaintextDatabaseMigrator().migrateIfNeeded(file, newPassphrase())
+            fail("Two plain copies must not be merged or dropped")
+        } catch (e: DatabaseMigrationException) {
+            assertTrue(e.permanent)
+        }
+        assertEquals(DatabaseFileKind.Plaintext, DatabaseFiles.kindOf(file))
+        assertEquals(DatabaseFileKind.Plaintext, DatabaseFiles.kindOf(File(file.path + ".plaintext")))
     }
 
     @Test

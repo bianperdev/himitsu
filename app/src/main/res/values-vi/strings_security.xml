@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Xác nhận đó là bạn</string>
     <string name="security_confirm_prompt_subtitle">Cần thiết để thay đổi cài đặt bảo mật</string>
     <string name="security_confirm_canceled">Chưa xác nhận. Không có gì thay đổi.</string>
+    <string name="security_storage_error_plain_unusable">Dữ liệu từ phiên bản ứng dụng trước bị hỏng và không thể chuyển sang bộ nhớ mã hóa. Bạn có thể lưu một bản sao, hoặc để riêng và tiếp tục với dữ liệu trống.</string>
+    <string name="security_action_set_aside">Để riêng và tiếp tục</string>
+    <string name="security_set_aside_title">Để riêng dữ liệu bị hỏng?</string>
+    <string name="security_set_aside_message">Dữ liệu bị hỏng và hình ảnh của nó sẽ được để riêng, và ứng dụng sẽ tiếp tục với dữ liệu trống. Không có gì bị xóa, nhưng bản sao để riêng vẫn không được mã hóa trong bộ nhớ riêng của ứng dụng cho đến khi bạn xóa nó trong Quyền riêng tư và bảo mật.</string>
+    <string name="security_set_aside_confirm">Để riêng</string>
+    <string name="security_action_export">Lưu bản sao các tệp</string>
+    <string name="security_export_working">Đang lưu bản sao…</string>
+    <string name="security_export_title">Lưu bản sao các tệp?</string>
+    <string name="security_export_message">Một tệp .zip sẽ chứa các tệp của bạn đúng như trên thiết bị này. Tệp đã mã hóa chỉ có thể mở lại bằng mã khôi phục của dữ liệu này, và ứng dụng chưa thể nhập chúng. Dữ liệu từ phiên bản trước chưa được mã hóa thì trong bản sao cũng không được mã hóa.</string>
+    <string name="security_export_confirm">Chọn nơi lưu</string>
+    <string name="security_export_done">Đã lưu bản sao.</string>
+    <string name="security_export_failed">Không thể lưu bản sao. Dữ liệu của bạn không thay đổi.</string>
 </resources>

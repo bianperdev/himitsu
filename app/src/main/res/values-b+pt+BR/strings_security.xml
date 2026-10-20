@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Confirme que é você</string>
     <string name="security_confirm_prompt_subtitle">Necessário para alterar as configurações de segurança</string>
     <string name="security_confirm_canceled">Não confirmado. Nada foi alterado.</string>
+    <string name="security_storage_error_plain_unusable">Seus dados de uma versão anterior do app estão danificados e não podem ser movidos para o armazenamento criptografado. Você pode salvar uma cópia ou deixá-los de lado e continuar com os dados vazios.</string>
+    <string name="security_action_set_aside">Deixar de lado e continuar</string>
+    <string name="security_set_aside_title">Deixar os dados danificados de lado?</string>
+    <string name="security_set_aside_message">Os dados danificados e suas imagens serão deixados de lado, e o app continuará com os dados vazios. Nada é excluído, mas a cópia deixada de lado continua sem criptografia no armazenamento privado do app até você excluí-la em Privacidade e segurança.</string>
+    <string name="security_set_aside_confirm">Deixar de lado</string>
+    <string name="security_action_export">Salvar uma cópia dos arquivos</string>
+    <string name="security_export_working">Salvando a cópia…</string>
+    <string name="security_export_title">Salvar uma cópia dos arquivos?</string>
+    <string name="security_export_message">Um arquivo .zip guardará seus arquivos exatamente como estão neste dispositivo. Os arquivos criptografados só podem ser abertos novamente com o código de recuperação destes dados, e o app ainda não consegue importá-los. Os dados de uma versão anterior que ainda não estavam criptografados também não estão criptografados na cópia.</string>
+    <string name="security_export_confirm">Escolher onde salvar</string>
+    <string name="security_export_done">Cópia salva.</string>
+    <string name="security_export_failed">Não foi possível salvar a cópia. Seus dados não foram alterados.</string>
 </resources>

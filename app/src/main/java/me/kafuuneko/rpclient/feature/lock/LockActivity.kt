@@ -5,9 +5,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -44,6 +46,9 @@ class LockActivity : FragmentActivity(), KoinComponent {
     private val mAppThemeManager by inject<AppThemeManager>()
     private val mLockManager by inject<AppLockManager>()
     private lateinit var mPrompt: BiometricPrompt
+    private val mExportLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+        mViewModel.emit(LockUiIntent.ExportTo(uri))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,12 +89,17 @@ class LockActivity : FragmentActivity(), KoinComponent {
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { wrapper ->
                     wrapper.consumeIfNotHandled { event ->
-                        if (event is LockViewEvent.ShowAuthenticationPrompt && !mLockManager.isAuthenticating) {
-                            mLockManager.authenticate(
-                                prompt = mPrompt,
-                                title = getString(R.string.security_lock_prompt_title),
-                                subtitle = getString(R.string.security_lock_prompt_subtitle)
-                            )
+                        when (event) {
+                            LockViewEvent.ShowAuthenticationPrompt -> if (!mLockManager.isAuthenticating) {
+                                mLockManager.authenticate(
+                                    prompt = mPrompt,
+                                    title = getString(R.string.security_lock_prompt_title),
+                                    subtitle = getString(R.string.security_lock_prompt_subtitle)
+                                )
+                            }
+                            is LockViewEvent.PickExportDestination -> mExportLauncher.launch(event.fileName)
+                            is LockViewEvent.ShowMessage ->
+                                Toast.makeText(this@LockActivity, event.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

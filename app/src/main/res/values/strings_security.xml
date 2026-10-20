@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Confirm it\'s you</string>
     <string name="security_confirm_prompt_subtitle">Needed to change your security settings</string>
     <string name="security_confirm_canceled">Not confirmed. Nothing was changed.</string>
+    <string name="security_storage_error_plain_unusable">Your data from an earlier version of the app is damaged and cannot be moved to encrypted storage. You can save a copy of it, or set it aside and continue with empty data.</string>
+    <string name="security_action_set_aside">Set aside and continue</string>
+    <string name="security_set_aside_title">Set the damaged data aside?</string>
+    <string name="security_set_aside_message">The damaged data and its images will be moved aside, and the app will continue with empty data. Nothing is deleted, but the set-aside copy stays unencrypted in the app\'s private storage until you delete it in Privacy and security.</string>
+    <string name="security_set_aside_confirm">Set aside</string>
+    <string name="security_action_export">Save a copy of the files</string>
+    <string name="security_export_working">Saving the copy…</string>
+    <string name="security_export_title">Save a copy of the files?</string>
+    <string name="security_export_message">A .zip file will hold your files exactly as they are on this device. Encrypted files can only be opened again with this data\'s recovery code, and the app cannot import them yet. Data from an earlier version that was not encrypted yet is not encrypted in the copy either.</string>
+    <string name="security_export_confirm">Choose where to save</string>
+    <string name="security_export_done">Copy saved.</string>
+    <string name="security_export_failed">The copy could not be saved. Your data was not changed.</string>
 </resources>

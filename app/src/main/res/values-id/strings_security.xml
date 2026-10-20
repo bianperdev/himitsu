@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Konfirmasi bahwa ini Anda</string>
     <string name="security_confirm_prompt_subtitle">Diperlukan untuk mengubah setelan keamanan</string>
     <string name="security_confirm_canceled">Tidak dikonfirmasi. Tidak ada yang diubah.</string>
+    <string name="security_storage_error_plain_unusable">Data Anda dari versi aplikasi sebelumnya rusak dan tidak dapat dipindahkan ke penyimpanan terenkripsi. Anda dapat menyimpan salinannya, atau menyisihkannya dan melanjutkan dengan data kosong.</string>
+    <string name="security_action_set_aside">Sisihkan dan lanjutkan</string>
+    <string name="security_set_aside_title">Sisihkan data yang rusak?</string>
+    <string name="security_set_aside_message">Data yang rusak beserta gambarnya akan disisihkan, dan aplikasi akan berlanjut dengan data kosong. Tidak ada yang dihapus, tetapi salinan yang disisihkan tetap tidak terenkripsi di penyimpanan pribadi aplikasi hingga Anda menghapusnya di Privasi dan keamanan.</string>
+    <string name="security_set_aside_confirm">Sisihkan</string>
+    <string name="security_action_export">Simpan salinan file</string>
+    <string name="security_export_working">Menyimpan salinan…</string>
+    <string name="security_export_title">Simpan salinan file?</string>
+    <string name="security_export_message">File .zip akan menyimpan file Anda persis seperti yang ada di perangkat ini. File terenkripsi hanya dapat dibuka kembali dengan kode pemulihan data ini, dan aplikasi belum dapat mengimpornya. Data dari versi sebelumnya yang belum terenkripsi juga tidak terenkripsi di salinan.</string>
+    <string name="security_export_confirm">Pilih lokasi penyimpanan</string>
+    <string name="security_export_done">Salinan disimpan.</string>
+    <string name="security_export_failed">Salinan tidak dapat disimpan. Data Anda tidak diubah.</string>
 </resources>

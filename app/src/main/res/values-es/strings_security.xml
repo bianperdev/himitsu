@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Confirma que eres tú</string>
     <string name="security_confirm_prompt_subtitle">Hace falta para cambiar los ajustes de seguridad</string>
     <string name="security_confirm_canceled">No se ha confirmado. No se ha cambiado nada.</string>
+    <string name="security_storage_error_plain_unusable">Tus datos de una versión anterior de la app están dañados y no se pueden pasar al almacenamiento cifrado. Puedes guardar una copia, o apartarlos y continuar con los datos vacíos.</string>
+    <string name="security_action_set_aside">Apartar y continuar</string>
+    <string name="security_set_aside_title">¿Apartar los datos dañados?</string>
+    <string name="security_set_aside_message">Los datos dañados y sus imágenes se apartarán, y la app continuará con los datos vacíos. No se borra nada, pero la copia apartada sigue sin cifrar en el almacenamiento privado de la app hasta que la borres en Privacidad y seguridad.</string>
+    <string name="security_set_aside_confirm">Apartar</string>
+    <string name="security_action_export">Guardar una copia de los archivos</string>
+    <string name="security_export_working">Guardando la copia…</string>
+    <string name="security_export_title">¿Guardar una copia de los archivos?</string>
+    <string name="security_export_message">Un archivo .zip guardará tus archivos tal y como están en este dispositivo. Los archivos cifrados solo se pueden volver a abrir con el código de recuperación de estos datos, y la app aún no puede importarlos. Los datos de una versión anterior que todavía no estaban cifrados tampoco lo están en la copia.</string>
+    <string name="security_export_confirm">Elegir dónde guardar</string>
+    <string name="security_export_done">Copia guardada.</string>
+    <string name="security_export_failed">No se ha podido guardar la copia. Tus datos no han cambiado.</string>
 </resources>

@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">Bestätige, dass du es bist</string>
     <string name="security_confirm_prompt_subtitle">Erforderlich, um die Sicherheitseinstellungen zu ändern</string>
     <string name="security_confirm_canceled">Nicht bestätigt. Es wurde nichts geändert.</string>
+    <string name="security_storage_error_plain_unusable">Deine Daten aus einer früheren Version der App sind beschädigt und können nicht in den verschlüsselten Speicher übertragen werden. Du kannst eine Kopie speichern oder sie beiseitelegen und mit leeren Daten fortfahren.</string>
+    <string name="security_action_set_aside">Beiseitelegen und fortfahren</string>
+    <string name="security_set_aside_title">Beschädigte Daten beiseitelegen?</string>
+    <string name="security_set_aside_message">Die beschädigten Daten und ihre Bilder werden beiseitegelegt, und die App macht mit leeren Daten weiter. Es wird nichts gelöscht, aber die beiseitegelegte Kopie bleibt unverschlüsselt im privaten Speicher der App, bis du sie unter Datenschutz und Sicherheit löschst.</string>
+    <string name="security_set_aside_confirm">Beiseitelegen</string>
+    <string name="security_action_export">Kopie der Dateien speichern</string>
+    <string name="security_export_working">Kopie wird gespeichert …</string>
+    <string name="security_export_title">Kopie der Dateien speichern?</string>
+    <string name="security_export_message">Eine .zip-Datei enthält deine Dateien genau so, wie sie auf diesem Gerät liegen. Verschlüsselte Dateien lassen sich nur mit dem Wiederherstellungscode dieser Daten wieder öffnen, und die App kann sie noch nicht importieren. Daten aus einer früheren Version, die noch nicht verschlüsselt waren, sind auch in der Kopie unverschlüsselt.</string>
+    <string name="security_export_confirm">Speicherort wählen</string>
+    <string name="security_export_done">Kopie gespeichert.</string>
+    <string name="security_export_failed">Die Kopie konnte nicht gespeichert werden. Deine Daten wurden nicht geändert.</string>
 </resources>

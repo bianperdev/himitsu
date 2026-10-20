@@ -54,7 +54,13 @@ enum class StorageFailure {
     StorageError,
 
     /** A plain database from an earlier build could not be encrypted. It is still intact. */
-    MigrationFailed;
+    MigrationFailed,
+
+    /**
+     * A plain database from an earlier build is damaged, or exists twice, so it can never be
+     * encrypted. It can only be exported or set aside, still in plain form.
+     */
+    PlainDatabaseUnusable;
 
     companion object {
         /**
@@ -120,6 +126,9 @@ class SecureStorageManager(
     /** Last load failure; preference reads do not retry the Keystore until the user does. */
     @Volatile
     private var mLastFailure: VaultFailure? = null
+
+    /** Database whose plain file cannot be encrypted, while the state is [StorageFailure.PlainDatabaseUnusable]. */
+    private var mUnusableDatabase: EncryptedDatabase? = null
 
     /** Key released to Room once every database is encrypted. Never reset within a process. */
     private val mReleasedKey = MutableStateFlow<MasterKey?>(null)
@@ -224,6 +233,38 @@ class SecureStorageManager(
         if (entries.isEmpty()) return
         Files.move(directory.toPath(), File(directory.path + suffix).toPath())
         File(mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE), FILE_REPOSITORY_STAGING_DIR_NAME).mkdirs()
+    }
+
+    /**
+     * Sets a plain database that can never be encrypted aside, still in plain form, and opens
+     * the storage without it, after the user chose to.
+     *
+     * Nothing is deleted: the plain files (the database and a copy left by an interrupted
+     * migration) keep their content under an `.unusable-<time>` suffix. Setting the main
+     * database aside also sets the stored files aside, because their index lives in it.
+     */
+    fun setAsideUnusableDatabase() {
+        mScope.launch {
+            mMutex.withLock {
+                val state = mState.value as? SecureStorageState.Failed ?: return@withLock
+                if (state.failure != StorageFailure.PlainDatabaseUnusable) return@withLock
+                val database = mUnusableDatabase ?: return@withLock
+                val suffix = ".unusable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                val file = mContext.getDatabasePath(database.fileName)
+                try {
+                    if (database == EncryptedDatabase.Primary) setAsideStoredFiles(suffix)
+                    DatabaseFiles.delete(File(file.path + ".encrypting"))
+                    val plainCopy = File(file.path + ".plaintext")
+                    if (plainCopy.exists()) DatabaseFiles.move(plainCopy, File(plainCopy.path + suffix))
+                    if (DatabaseFiles.kindOf(file) != DatabaseFileKind.Missing) DatabaseFiles.move(file, File(file.path + suffix))
+                } catch (_: IOException) {
+                    fail(StorageFailure.StorageError)
+                    return@withLock
+                }
+                mUnusableDatabase = null
+                load()
+            }
+        }
     }
 
     /**
@@ -352,20 +393,19 @@ class SecureStorageManager(
         }
         mState.value = SecureStorageState.Starting
         // Encrypt databases left in plain form by earlier builds before Room can open them
-        try {
-            EncryptedDatabase.entries.forEach { database ->
-                val key = masterKey.derive(database.purpose)
-                val passphrase = SqlCipherKey.rawKeyPassphrase(key)
-                key.fill(0)
-                try {
-                    mMigrator.migrateIfNeeded(mContext.getDatabasePath(database.fileName), passphrase)
-                } finally {
-                    passphrase.fill(0)
-                }
+        for (database in EncryptedDatabase.entries) {
+            val key = masterKey.derive(database.purpose)
+            val passphrase = SqlCipherKey.rawKeyPassphrase(key)
+            key.fill(0)
+            try {
+                mMigrator.migrateIfNeeded(mContext.getDatabasePath(database.fileName), passphrase)
+            } catch (e: DatabaseMigrationException) {
+                mUnusableDatabase = database.takeIf { e.permanent }
+                fail(if (e.permanent) StorageFailure.PlainDatabaseUnusable else StorageFailure.MigrationFailed)
+                return
+            } finally {
+                passphrase.fill(0)
             }
-        } catch (_: DatabaseMigrationException) {
-            fail(StorageFailure.MigrationFailed)
-            return
         }
         // Release database keys, then run the inherited startup work that needs them
         mReleasedKey.value = masterKey

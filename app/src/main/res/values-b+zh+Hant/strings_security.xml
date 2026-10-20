@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">確認是你本人</string>
     <string name="security_confirm_prompt_subtitle">變更安全設定時需要驗證</string>
     <string name="security_confirm_canceled">未通過確認，未進行任何變更。</string>
+    <string name="security_storage_error_plain_unusable">來自舊版應用程式的資料已損毀，無法移入加密儲存空間。你可以儲存一份副本，或將其移到一旁並以空白資料繼續。</string>
+    <string name="security_action_set_aside">移到一旁並繼續</string>
+    <string name="security_set_aside_title">將損毀的資料移到一旁？</string>
+    <string name="security_set_aside_message">損毀的資料及其圖片將被移到一旁，應用程式將以空白資料繼續。不會刪除任何內容，但移到一旁的副本會以未加密形式保留在應用程式的私人儲存空間中，直到你在「隱私權與安全性」中刪除它。</string>
+    <string name="security_set_aside_confirm">移到一旁</string>
+    <string name="security_action_export">儲存檔案副本</string>
+    <string name="security_export_working">正在儲存副本…</string>
+    <string name="security_export_title">儲存檔案副本？</string>
+    <string name="security_export_message">一個 .zip 檔案將按此裝置上的原樣保存你的檔案。加密的檔案只能用這些資料的復原碼再次開啟，且應用程式目前還無法匯入它們。舊版中尚未加密的資料在副本中同樣未加密。</string>
+    <string name="security_export_confirm">選擇儲存位置</string>
+    <string name="security_export_done">副本已儲存。</string>
+    <string name="security_export_failed">無法儲存副本。你的資料未被變更。</string>
 </resources>

@@ -198,6 +198,18 @@ private fun StorageErrorContent(state: LockContentState.StorageError, emit: Lock
                 }
             }
         }
+        if (state.canSetAside) {
+            OutlinedButton(onClick = { LockUiIntent.ShowSetAsideDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.security_action_set_aside))
+            }
+        }
+        TextButton(
+            onClick = { LockUiIntent.ShowExportDialog.emit() },
+            enabled = !state.isExporting,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(if (state.isExporting) R.string.security_export_working else R.string.security_action_export))
+        }
         if (state.canStartOver) {
             TextButton(onClick = { LockUiIntent.ShowStartOverDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
                 Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
@@ -221,6 +233,25 @@ private fun LockDialogs(state: LockDialogState, emit: LockUiIntent.() -> Unit) {
             confirmText = stringResource(R.string.security_start_over_confirm),
             confirmIsDestructive = true,
             onConfirm = { LockUiIntent.ConfirmStartOver.emit() }
+        )
+        LockDialogState.ConfirmSetAside -> AppConfirmDialog(
+            onDismissRequest = { LockUiIntent.DismissDialog.emit() },
+            title = stringResource(R.string.security_set_aside_title),
+            message = stringResource(R.string.security_set_aside_message),
+            badgeIcon = Icons.Rounded.WarningAmber,
+            badgeTone = DialogBadgeTone.Danger,
+            confirmText = stringResource(R.string.security_set_aside_confirm),
+            confirmIsDestructive = true,
+            onConfirm = { LockUiIntent.ConfirmSetAside.emit() }
+        )
+        LockDialogState.ConfirmExport -> AppConfirmDialog(
+            onDismissRequest = { LockUiIntent.DismissDialog.emit() },
+            title = stringResource(R.string.security_export_title),
+            message = stringResource(R.string.security_export_message),
+            badgeIcon = Icons.Rounded.Key,
+            badgeTone = DialogBadgeTone.Primary,
+            confirmText = stringResource(R.string.security_export_confirm),
+            onConfirm = { LockUiIntent.ConfirmExport.emit() }
         )
     }
 }
@@ -258,6 +289,7 @@ private fun StorageFailure.messageRes(): Int = when (this) {
     StorageFailure.KeystoreUnavailable -> R.string.security_storage_error_keystore_unavailable
     StorageFailure.StorageError -> R.string.security_storage_error_storage
     StorageFailure.MigrationFailed -> R.string.security_storage_error_migration_failed
+    StorageFailure.PlainDatabaseUnusable -> R.string.security_storage_error_plain_unusable
 }
 
 private fun RecoveryCodeError.messageRes(): Int = when (this) {

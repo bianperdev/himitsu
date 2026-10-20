@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">本人確認</string>
     <string name="security_confirm_prompt_subtitle">セキュリティ設定を変更するために必要です</string>
     <string name="security_confirm_canceled">確認されなかったため、何も変更されていません。</string>
+    <string name="security_storage_error_plain_unusable">以前のバージョンのアプリのデータが破損しているため、暗号化ストレージに移せません。コピーを保存するか、別の場所に移して空のデータで続行できます。</string>
+    <string name="security_action_set_aside">別の場所に移して続行</string>
+    <string name="security_set_aside_title">破損したデータを別の場所に移しますか？</string>
+    <string name="security_set_aside_message">破損したデータとその画像は別の場所に移され、アプリは空のデータで続行します。何も削除されませんが、移したコピーは「プライバシーとセキュリティ」で削除するまで、暗号化されないままアプリの非公開ストレージに残ります。</string>
+    <string name="security_set_aside_confirm">移す</string>
+    <string name="security_action_export">ファイルのコピーを保存</string>
+    <string name="security_export_working">コピーを保存しています…</string>
+    <string name="security_export_title">ファイルのコピーを保存しますか？</string>
+    <string name="security_export_message">.zip ファイルには、この端末にあるとおりのファイルが保存されます。暗号化されたファイルは、このデータの復旧コードがなければ再び開くことはできず、アプリはまだそれらをインポートできません。以前のバージョンでまだ暗号化されていなかったデータは、コピーでも暗号化されていません。</string>
+    <string name="security_export_confirm">保存先を選択</string>
+    <string name="security_export_done">コピーを保存しました。</string>
+    <string name="security_export_failed">コピーを保存できませんでした。データは変更されていません。</string>
 </resources>

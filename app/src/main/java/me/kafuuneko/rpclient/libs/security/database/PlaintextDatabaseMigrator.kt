@@ -2,12 +2,24 @@
 package me.kafuuneko.rpclient.libs.security.database
 
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabaseCorruptException
 import java.io.File
 import java.io.IOException
 import net.zetetic.database.sqlcipher.SQLiteDatabase
+import net.zetetic.database.sqlcipher.SQLiteNotADatabaseException
 
-/** A plain database could not be migrated. The plain original is left untouched. */
-class DatabaseMigrationException(message: String, cause: Throwable? = null) : IOException(message, cause)
+/**
+ * A plain database could not be migrated. The plain original is left untouched.
+ *
+ * @property permanent true when retrying cannot help: the plain file is damaged, its copy does
+ *   not match it, or two plain copies exist and neither can be chosen safely. False for errors
+ *   that may pass, such as a full disk.
+ */
+class DatabaseMigrationException(
+    message: String,
+    cause: Throwable? = null,
+    val permanent: Boolean = false
+) : IOException(message, cause)
 
 /**
  * Moves a plain SQLite database from an earlier Himitsu build into SQLCipher.
@@ -39,7 +51,7 @@ class PlaintextDatabaseMigrator {
             when (DatabaseFiles.kindOf(databaseFile)) {
                 DatabaseFileKind.Encrypted -> DatabaseFiles.delete(backup)
                 DatabaseFileKind.Missing, DatabaseFileKind.Empty -> DatabaseFiles.move(backup, databaseFile)
-                DatabaseFileKind.Plaintext -> throw DatabaseMigrationException("Two plain copies of one database")
+                DatabaseFileKind.Plaintext -> throw DatabaseMigrationException("Two plain copies of one database", permanent = true)
             }
         }
         if (DatabaseFiles.kindOf(databaseFile) != DatabaseFileKind.Plaintext) return false
@@ -50,7 +62,7 @@ class PlaintextDatabaseMigrator {
             verify(databaseFile, temp, passphrase)
         } catch (e: Exception) {
             DatabaseFiles.delete(temp)
-            throw e as? DatabaseMigrationException ?: DatabaseMigrationException("Export failed", e)
+            throw e as? DatabaseMigrationException ?: DatabaseMigrationException("Export failed", e, permanent = isDamaged(e))
         }
         // Swap the files, then remove the plain copy
         try {
@@ -84,12 +96,12 @@ class PlaintextDatabaseMigrator {
         try {
             val copy = SQLiteDatabase.openDatabase(encrypted.path, passphrase, null, SQLiteDatabase.OPEN_READONLY, null, null)
             try {
-                if (source.version != copy.version) throw DatabaseMigrationException("Schema version mismatch")
+                if (source.version != copy.version) throw DatabaseMigrationException("Schema version mismatch", permanent = true)
                 val tables = tableNames(source)
-                if (tables != tableNames(copy)) throw DatabaseMigrationException("Table list mismatch")
+                if (tables != tableNames(copy)) throw DatabaseMigrationException("Table list mismatch", permanent = true)
                 tables.forEach { table ->
                     if (rowCount(source, table) != rowCount(copy, table)) {
-                        throw DatabaseMigrationException("Row count mismatch")
+                        throw DatabaseMigrationException("Row count mismatch", permanent = true)
                     }
                 }
             } finally {
@@ -99,6 +111,10 @@ class PlaintextDatabaseMigrator {
             source.close()
         }
     }
+
+    /** Whether [error] says the plain file itself is damaged, which no retry can fix. */
+    private fun isDamaged(error: Throwable): Boolean =
+        generateSequence(error) { it.cause }.any { it is SQLiteDatabaseCorruptException || it is SQLiteNotADatabaseException }
 
     private fun openPlain(file: File, flags: Int): SQLiteDatabase =
         SQLiteDatabase.openDatabase(file.path, "", null, flags, null)

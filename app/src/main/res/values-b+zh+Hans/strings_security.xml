@@ -67,4 +67,16 @@
     <string name="security_confirm_prompt_title">确认是你本人</string>
     <string name="security_confirm_prompt_subtitle">更改安全设置时需要验证</string>
     <string name="security_confirm_canceled">未通过确认，未作任何更改。</string>
+    <string name="security_storage_error_plain_unusable">来自旧版本应用的数据已损坏，无法移入加密存储。你可以保存一份副本，或将其移到一旁并以空数据继续。</string>
+    <string name="security_action_set_aside">移到一旁并继续</string>
+    <string name="security_set_aside_title">将损坏的数据移到一旁？</string>
+    <string name="security_set_aside_message">损坏的数据及其图片将被移到一旁，应用将以空数据继续。不会删除任何内容，但移到一旁的副本会以未加密形式保留在应用的私有存储中，直到你在“隐私与安全”中删除它。</string>
+    <string name="security_set_aside_confirm">移到一旁</string>
+    <string name="security_action_export">保存文件副本</string>
+    <string name="security_export_working">正在保存副本…</string>
+    <string name="security_export_title">保存文件副本？</string>
+    <string name="security_export_message">一个 .zip 文件将按此设备上的原样保存你的文件。加密的文件只能用这些数据的恢复码再次打开，且应用目前还无法导入它们。旧版本中尚未加密的数据在副本中同样未加密。</string>
+    <string name="security_export_confirm">选择保存位置</string>
+    <string name="security_export_done">副本已保存。</string>
+    <string name="security_export_failed">无法保存副本。你的数据未被更改。</string>
 </resources>
