@@ -34,7 +34,11 @@ import me.kafuuneko.rpclient.libs.llm.local.PromptSegment
 import me.kafuuneko.rpclient.libs.llm.local.RenderedPrompt
 import me.kafuuneko.rpclient.libs.llm.local.StopSequenceFilter
 import java.io.File
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
+import java.util.concurrent.FutureTask
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -46,6 +50,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  * - Cancelling [generate]'s collector sets the native abort flag, which stops decoding at the next
  *   token or prompt batch.
  * - The KV cache keeps the previous prompt, so a follow-up message only evaluates the new tokens.
+ * - A GGUF's chat template is untrusted code: it renders on its own thread, with a size limit and a
+ *   time limit.
  */
 class LlamaCppEngine(
     private val mNativeLibDir: String,
@@ -61,11 +67,16 @@ class LlamaCppEngine(
     @Volatile
     private var mGpuDevices: List<String>? = null
 
-    // Written only on the engine thread; read from other threads to abort
+    // Written only on the engine thread, under mHandleLock; other threads abort through it while
+    // holding the lock, so the session cannot be freed under them
     @Volatile
     private var mHandle = 0L
+    private val mHandleLock = Any()
     private var mModelId: String? = null
     private var mInfo: ModelInfo? = null
+
+    // Templates that ran past the time limit; their thread cannot be stopped, so they are not run again
+    private val mStuckTemplates = mutableSetOf<String>()
 
     override val kind: LocalEngineKind = LocalEngineKind.LlamaCpp
 
@@ -96,7 +107,7 @@ class LlamaCppEngine(
             mState.value = LocalEngineState.Idle
             throw LocalModelLoadException()
         }
-        mHandle = handle
+        synchronized(mHandleLock) { mHandle = handle }
         mModelId = model.id
         mInfo = readInfo(handle)
         mState.value = LocalEngineState.Ready(model.id)
@@ -110,19 +121,7 @@ class LlamaCppEngine(
     override suspend fun renderChat(messages: List<LocalChatMessage>): RenderedPrompt = withContext(mDispatcher) {
         val info = mInfo ?: throw LocalModelLoadException()
         val template = info.chatTemplate?.takeIf { it.isNotBlank() }
-        val result = try {
-            LlamaCppNative.nativeRender(
-                template = (template ?: CHATML_TEMPLATE).toByteArray(),
-                roles = messages.map { it.role.name.lowercase().toByteArray() }.toTypedArray(),
-                contents = messages.map { it.content.toByteArray() }.toTypedArray(),
-                addGenerationPrompt = true,
-                enableThinking = false,
-                bos = info.bos.toByteArray(),
-                eos = info.eos.toByteArray()
-            )
-        } catch (_: IllegalStateException) {
-            throw LocalChatTemplateException()
-        }
+        val result = renderLimited(template ?: CHATML_TEMPLATE, messages, info)
         @Suppress("UNCHECKED_CAST")
         val texts = result[0] as Array<ByteArray>
         val flags = result[1] as BooleanArray
@@ -197,7 +196,7 @@ class LlamaCppEngine(
             }
         }
         // The native call ignores coroutine cancellation, so stop it explicitly
-        awaitClose { if (running.get() && handle != 0L) LlamaCppNative.nativeAbort(handle) }
+        awaitClose { if (running.get()) abortIfCurrent(handle) }
         worker.join()
     }.buffer(Channel.UNLIMITED)
 
@@ -207,8 +206,45 @@ class LlamaCppEngine(
     }
 
     override fun abortGeneration() {
-        val handle = mHandle
-        if (handle != 0L) LlamaCppNative.nativeAbort(handle)
+        synchronized(mHandleLock) {
+            if (mHandle != 0L) LlamaCppNative.nativeAbort(mHandle)
+        }
+    }
+
+    private fun abortIfCurrent(handle: Long) {
+        synchronized(mHandleLock) {
+            if (handle != 0L && handle == mHandle) LlamaCppNative.nativeAbort(handle)
+        }
+    }
+
+    /**
+     * Renders [template] on a fresh thread with a large stack, so deeply nested templates do not
+     * overflow the engine thread. The native renderer cannot be interrupted: past [RENDER_TIMEOUT_SECONDS]
+     * the thread is abandoned and the template is refused from then on.
+     */
+    private fun renderLimited(template: String, messages: List<LocalChatMessage>, info: ModelInfo): Array<Any> {
+        val templateBytes = template.toByteArray()
+        if (templateBytes.size > MAX_TEMPLATE_BYTES || template in mStuckTemplates) throw LocalChatTemplateException()
+        val task = FutureTask {
+            LlamaCppNative.nativeRender(
+                template = templateBytes,
+                roles = messages.map { it.role.name.lowercase().toByteArray() }.toTypedArray(),
+                contents = messages.map { it.content.toByteArray() }.toTypedArray(),
+                addGenerationPrompt = true,
+                enableThinking = false,
+                bos = info.bos.toByteArray(),
+                eos = info.eos.toByteArray()
+            )
+        }
+        Thread(null, task, RENDER_THREAD_NAME, RENDER_STACK_BYTES).apply { isDaemon = true }.start()
+        return try {
+            task.get(RENDER_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        } catch (_: TimeoutException) {
+            mStuckTemplates += template
+            throw LocalChatTemplateException()
+        } catch (_: ExecutionException) {
+            throw LocalChatTemplateException()
+        }
     }
 
     private fun ensureInitialized() {
@@ -220,9 +256,8 @@ class LlamaCppEngine(
     }
 
     private fun releaseCurrent() {
-        val handle = mHandle
+        val handle = synchronized(mHandleLock) { mHandle.also { mHandle = 0L } }
         if (handle != 0L) LlamaCppNative.nativeFree(handle)
-        mHandle = 0L
         mModelId = null
         mInfo = null
     }
@@ -277,6 +312,12 @@ class LlamaCppEngine(
         const val FAST_CORE_DIVISOR = 100
         const val ALL_LAYERS = 999
         const val FALLBACK_TEMPLATE_NAME = "chatml"
+        const val RENDER_THREAD_NAME = "himitsu-template"
+        const val RENDER_STACK_BYTES = 16L * 1024 * 1024
+        const val RENDER_TIMEOUT_SECONDS = 15L
+
+        // Real chat templates are a few KB; the largest known ones stay well under 64 KB
+        const val MAX_TEMPLATE_BYTES = 128 * 1024
 
         // Used when a GGUF has no chat template; ChatML is the most widely trained format
         const val CHATML_TEMPLATE =
