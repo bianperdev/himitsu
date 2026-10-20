@@ -47,8 +47,8 @@ MIT License:
   - JTokkit - Knuddels GmbH
 
 Resources:
-  - Launcher icon background vector, Apache License 2.0,
-    The Android Open Source Project
+  - The launcher icon, in-app logo and empty-state pictograms are
+    original artwork made for Himitsu, under the project license.
 
 Fonts, SIL Open Font License 1.1 (https://openfontlicense.org), bundled
 in app/src/main/res/font/ from google/fonts commit 47d54ca1ebb1. Full

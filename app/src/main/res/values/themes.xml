@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.RPClient" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- The window background avoids a flash of the wrong color before Compose draws the first frame. -->
+    <style name="Theme.RPClient" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/himitsu_morning</item>
+    </style>
 </resources>

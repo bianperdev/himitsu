@@ -206,6 +206,11 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 
 **Contract this track must document here before it is merged:**
 - **Icon system:** where launcher icons live and how alternative icons are added, so `feat/disguise` can add generic calculator, compass and converter icons.
+  - Every launcher icon is an adaptive icon made only of vectors (minSdk 26 supports them everywhere, so there are no raster `mipmap-*dpi` files).
+  - An icon with id `<id>` has three layers in `app/src/main/res/drawable/`: `ic_launcher_<id>_background.xml`, `ic_launcher_<id>_foreground.xml` and `ic_launcher_<id>_monochrome.xml` (108 dp, artwork inside the 66 dp safe zone; the monochrome layer is a single-color silhouette for Android 13+ themed icons). They are combined by `app/src/main/res/mipmap-anydpi-v26/ic_launcher_<id>.xml`.
+  - Himitsu's own icon has id `himitsu`; it is wired as `@mipmap/ic_launcher` and `@mipmap/ic_launcher_round`, which the manifest already uses.
+  - `feat/disguise` adds `calculator`, `compass` and `converter` the same way and references `@mipmap/ic_launcher_<id>` from each `activity-alias` (`android:icon` and `android:roundIcon`). Decoy icons must be original and generic, never copies of real apps.
+  - The splash screen (Android 12+) does not set an icon, so it shows the icon of the entry that was tapped; a disguise alias never shows the Himitsu logo while starting. Its background is the neutral night or morning color.
 
 **Offered to `feat/security` (the maintainer chose this before the security contract existed):**
 - **Lock screen frame:** `RpLockScreenFrame(title, modifier, subtitle, mark, actions)` in `…/ui/widgets/RpLockScreenFrame.kt`. It only draws: the night background with the monitor glow, a mark (a glowing lock by default, `RpLockMark`), the title and subtitle, and an `actions` slot for the unlock controls. It holds no strings and no branding, so callers pass localized text and `feat/disguise` can pass a neutral `mark`. It has no animation. Security keeps all lock logic in `…/feature/lock/**` and can ignore or wrap the frame; if its own contract needs another shape, the aesthetic track adapts the frame.
@@ -315,7 +320,7 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 
-Bundled resources: the launcher icon background vector is from the AOSP template (Apache-2.0). The provenance of `app/src/main/res/drawable/app_logo.png` is unverified; the aesthetic track replaces it.
+Bundled resources: the launcher icon background vector is from the AOSP template (Apache-2.0). The provenance of `app/src/main/res/drawable/app_logo.png` is unverified; the aesthetic track replaces it. **Update (aesthetic track):** both are removed; the launcher icon, the in-app logo (`app_logo.xml`) and the empty-state pictograms are original artwork made for Himitsu, under the project license.
 
 | Bundled font | Version | License | Network calls of its own |
 |---|---|---|---|

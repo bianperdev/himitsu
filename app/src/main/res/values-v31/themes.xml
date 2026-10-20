@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <!--
+      System splash screen (Android 12+). The icon is deliberately not set: the system shows the
+      icon of the launcher entry that was tapped, so a disguise alias never reveals the Himitsu logo.
+    -->
+    <style name="Theme.RPClient" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/himitsu_morning</item>
+        <item name="android:windowSplashScreenBackground">@color/himitsu_morning</item>
+    </style>
+</resources>
