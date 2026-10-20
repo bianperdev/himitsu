@@ -233,12 +233,14 @@ bool deliver(JNIEnv * env, jobject sink, std::string & pending, bool flush) {
 
 // ---- Native methods ------------------------------------------------------------------------
 
-void native_init(JNIEnv * env, jclass, jstring native_lib_dir, jstring kernel_cache_dir) {
+void native_init_impl(JNIEnv * env, jclass, jstring native_lib_dir, jstring kernel_cache_dir) {
     llama_log_set(silent_log, nullptr);
     ggml_log_set(silent_log, nullptr);
     // The default backtrace forks a debugger (gdb/lldb) against this process; never do that
     setenv("GGML_NO_BACKTRACE", "1", 1);
     ggml_set_abort_callback(silent_abort);
+    // Last resort for exceptions on ggml's own threads: the default handler would log their message
+    std::set_terminate([] { abort(); });
     // OpenCL compiles its kernels once and caches them; the default temp path does not exist on Android
     const char * cache = env->GetStringUTFChars(kernel_cache_dir, nullptr);
     setenv("GGML_OPENCL_KERNEL_CACHE_DIR", cache, 1);
@@ -250,7 +252,7 @@ void native_init(JNIEnv * env, jclass, jstring native_lib_dir, jstring kernel_ca
     llama_backend_init();
 }
 
-jlong native_load(JNIEnv * env, jclass, jstring path, jint context_tokens, jint threads, jint batch_threads,
+jlong native_load_impl(JNIEnv * env, jclass, jstring path, jint context_tokens, jint threads, jint batch_threads,
                   jboolean vocab_only, jint gpu_layers, jboolean quantized_kv) {
     // An empty device list keeps everything on the CPU, even when a GPU backend is loaded
     static ggml_backend_dev_t no_offload_devices[] = {nullptr};
@@ -295,7 +297,7 @@ jlong native_load(JNIEnv * env, jclass, jstring path, jint context_tokens, jint 
     return reinterpret_cast<jlong>(session);
 }
 
-void native_free(JNIEnv *, jclass, jlong handle) {
+void native_free_impl(JNIEnv *, jclass, jlong handle) {
     Session * session = as_session(handle);
     if (session == nullptr) return;
     if (session->ctx != nullptr) llama_free(session->ctx);
@@ -304,7 +306,7 @@ void native_free(JNIEnv *, jclass, jlong handle) {
 }
 
 // Returns {chat template or null, BOS text, EOS text, trained context length, model name}.
-jobjectArray native_info(JNIEnv * env, jclass, jlong handle) {
+jobjectArray native_info_impl(JNIEnv * env, jclass, jlong handle) {
     Session * s = as_session(handle);
     jclass bytes_class = env->FindClass("[B");
     jobjectArray out = env->NewObjectArray(5, bytes_class, nullptr);
@@ -356,7 +358,7 @@ jobjectArray native_render(JNIEnv * env, jclass, jbyteArray template_bytes, jobj
         const jinja::value result = runtime.execute(program);
         auto gathered = jinja::runtime::gather_string_parts(result);
         parts = gathered->val_str.parts;
-    } catch (const std::exception &) {
+    } catch (...) {
         // The template's own message may quote chat content, so it is not passed on
         throw_state(env, "Chat template could not be rendered");
         return nullptr;
@@ -380,7 +382,7 @@ jobjectArray native_render(JNIEnv * env, jclass, jbyteArray template_bytes, jobj
     return out;
 }
 
-jint native_count_tokens(JNIEnv * env, jclass, jlong handle, jobjectArray parts, jbooleanArray is_input) {
+jint native_count_tokens_impl(JNIEnv * env, jclass, jlong handle, jobjectArray parts, jbooleanArray is_input) {
     Session * s = as_session(handle);
     std::vector<llama_token> tokens;
     if (!tokenize_parts(s->vocab, to_strings(env, parts), to_bools(env, is_input), tokens)) return -1;
@@ -388,7 +390,7 @@ jint native_count_tokens(JNIEnv * env, jclass, jlong handle, jobjectArray parts,
 }
 
 // Generates a reply and streams it to `sink`. Returns {finish reason, prompt tokens, completion tokens}.
-jintArray native_generate(JNIEnv * env, jclass, jlong handle, jobjectArray parts, jbooleanArray is_input,
+jintArray native_generate_impl(JNIEnv * env, jclass, jlong handle, jobjectArray parts, jbooleanArray is_input,
                           jint max_tokens, jfloat temperature, jfloat top_p, jint top_k, jfloat min_p,
                           jfloat repeat_penalty, jlong seed, jobject sink) {
     Session & s = *as_session(handle);
@@ -440,7 +442,7 @@ jintArray native_generate(JNIEnv * env, jclass, jlong handle, jobjectArray parts
 }
 
 // Descriptions of the GPU devices ggml can offload to, for example "QUALCOMM Adreno(TM) 840".
-jobjectArray native_gpu_devices(JNIEnv * env, jclass) {
+jobjectArray native_gpu_devices_impl(JNIEnv * env, jclass) {
     std::vector<std::string> names;
     for (size_t i = 0; i < ggml_backend_dev_count(); i++) {
         ggml_backend_dev_t device = ggml_backend_dev_get(i);
@@ -457,6 +459,76 @@ jobjectArray native_gpu_devices(JNIEnv * env, jclass) {
         env->DeleteLocalRef(name);
     }
     return out;
+}
+
+// ---- Exception barrier ---------------------------------------------------------------------
+// C++ exceptions must never unwind into the JVM: they would reach std::terminate, whose default
+// handler logs the exception message. Each entry point turns them into its usual failure result.
+
+void native_init(JNIEnv * env, jclass c, jstring native_lib_dir, jstring kernel_cache_dir) {
+    try {
+        native_init_impl(env, c, native_lib_dir, kernel_cache_dir);
+    } catch (...) {
+        throw_state(env, "Local inference engine could not start");
+    }
+}
+
+jlong native_load(JNIEnv * env, jclass c, jstring path, jint context_tokens, jint threads, jint batch_threads,
+                  jboolean vocab_only, jint gpu_layers, jboolean quantized_kv) {
+    try {
+        return native_load_impl(env, c, path, context_tokens, threads, batch_threads, vocab_only, gpu_layers,
+                                quantized_kv);
+    } catch (...) {
+        return 0;
+    }
+}
+
+void native_free(JNIEnv * env, jclass c, jlong handle) {
+    try {
+        native_free_impl(env, c, handle);
+    } catch (...) {
+    }
+}
+
+jobjectArray native_info(JNIEnv * env, jclass c, jlong handle) {
+    try {
+        return native_info_impl(env, c, handle);
+    } catch (...) {
+        throw_state(env, "Model information could not be read");
+        return nullptr;
+    }
+}
+
+jint native_count_tokens(JNIEnv * env, jclass c, jlong handle, jobjectArray parts, jbooleanArray is_input) {
+    try {
+        return native_count_tokens_impl(env, c, handle, parts, is_input);
+    } catch (...) {
+        return -1;
+    }
+}
+
+jintArray native_generate(JNIEnv * env, jclass c, jlong handle, jobjectArray parts, jbooleanArray is_input,
+                          jint max_tokens, jfloat temperature, jfloat top_p, jint top_k, jfloat min_p,
+                          jfloat repeat_penalty, jlong seed, jobject sink) {
+    try {
+        return native_generate_impl(env, c, handle, parts, is_input, max_tokens, temperature, top_p, top_k, min_p,
+                                    repeat_penalty, seed, sink);
+    } catch (...) {
+        // The cache may hold a half-evaluated prompt; start clean next time
+        Session * s = as_session(handle);
+        llama_memory_clear(llama_get_memory(s->ctx), true);
+        s->cached.clear();
+        return finish(env, FINISH_DECODE_ERROR, 0, 0);
+    }
+}
+
+jobjectArray native_gpu_devices(JNIEnv * env, jclass c) {
+    try {
+        return native_gpu_devices_impl(env, c);
+    } catch (...) {
+        // No GPU offload rather than no engine
+        return env->NewObjectArray(0, env->FindClass("[B"), nullptr);
+    }
 }
 
 void native_abort(JNIEnv *, jclass, jlong handle) {
