@@ -212,7 +212,9 @@ class SecureStorageManager(
      */
     private fun setAsideStoredFiles(suffix: String) {
         val directory = mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE)
-        if (directory.list().isNullOrEmpty()) return
+        // An unreadable directory must not pass as empty, or the cleanup would delete its files
+        val entries = directory.list() ?: throw IOException("Stored files directory is unreadable")
+        if (entries.isEmpty()) return
         Files.move(directory.toPath(), File(directory.path + suffix).toPath())
         File(mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE), FILE_REPOSITORY_STAGING_DIR_NAME).mkdirs()
     }
