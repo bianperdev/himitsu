@@ -42,4 +42,15 @@ interface LLMRequestLogDao : MutableDao<LLMRequestLog> {
     /** 清空全部调试日志。 */
     @Query("DELETE FROM llm_request_logs")
     suspend fun deleteAll()
+
+    /** Himitsu (P-07): drops logs created before [before]. */
+    @Query("DELETE FROM llm_request_logs WHERE createTime < :before")
+    suspend fun deleteOlderThan(before: Long)
+
+    /** Himitsu (P-07): keeps only the newest [keep] logs. */
+    @Query(
+        "DELETE FROM llm_request_logs WHERE id NOT IN " +
+            "(SELECT id FROM llm_request_logs ORDER BY createTime DESC, id DESC LIMIT :keep)"
+    )
+    suspend fun keepNewest(keep: Int)
 }

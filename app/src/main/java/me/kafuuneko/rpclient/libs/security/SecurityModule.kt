@@ -28,4 +28,5 @@ internal val securityModule = module {
     single { AppLockManager(androidContext()) }
     single { AppGate(get(), get()) }
     single<UnlockEntry> { LockActivityEntry }
+    single { RequestLogGuard(get()) }
 }

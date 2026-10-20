@@ -50,6 +50,7 @@ import me.kafuuneko.rpclient.libs.room.repository.LLMTokenUsageRepository
 import me.kafuuneko.rpclient.libs.room.repository.LorebookRepository
 import me.kafuuneko.rpclient.libs.room.repository.MessageImageRepository
 import me.kafuuneko.rpclient.libs.room.repository.StoryRepository
+import me.kafuuneko.rpclient.libs.security.RequestLogGuard
 import me.kafuuneko.rpclient.libs.security.SecureStorageManager
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.story.StoryArchiveCodec
@@ -85,6 +86,7 @@ class RPClientApp : Application() {
             contentResolver.releaseObsoletePersistedUriPermissions()
             koinApplication.koin.get<AppUpgradeManager>().upgrade()
             koinApplication.koin.get<FileRepository>().cleanupAbandonedFiles()
+            koinApplication.koin.get<RequestLogGuard>().start()
         }
     }
 }
