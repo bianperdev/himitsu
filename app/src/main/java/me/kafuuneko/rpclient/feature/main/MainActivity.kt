@@ -4,10 +4,18 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import me.kafuuneko.rpclient.feature.disguise.ui.QuickExitButton
 import me.kafuuneko.rpclient.feature.imagecrop.ImageCropActivity
 import me.kafuuneko.rpclient.feature.main.model.Route
 import me.kafuuneko.rpclient.feature.main.presentation.MainUiIntent
@@ -62,10 +70,14 @@ class MainActivity : CoreActivityWithEvent() {
             if (uiState is MainUiState.Finished) finish()
         }
 
-        MainLayout(
-            uiState = uiState,
-            emit = { mViewModel.emit(this) }
-        )
+        Box(Modifier.fillMaxSize()) {
+            MainLayout(
+                uiState = uiState,
+                emit = { mViewModel.emit(this) }
+            )
+            // feat/disguise: quick exit to the decoy, floating above the bottom bar, only while disguise is on
+            QuickExitButton(Modifier.align(Alignment.BottomStart).navigationBarsPadding().padding(start = 24.dp, bottom = 112.dp))
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

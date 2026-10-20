@@ -105,4 +105,7 @@
     <string name="disguise_limits_exports">I file che esporti mantengono nomi che possono rivelarne il contenuto.</string>
     <string name="disguise_busy_title">Attendi un momento</string>
     <string name="disguise_busy_text">È in corso il download di un modello o una risposta. Cambiare l\'icona può chiudere l\'app e interromperla. Riprova quando ha finito.</string>
+    <string name="disguise_quick_exit">Mostra subito il camuffamento</string>
+    <string name="disguise_settings_volume_title">Uscita rapida con volume giù</string>
+    <string name="disguise_settings_volume_text">Premi due volte rapidamente volume giù in Himitsu per mostrare subito il camuffamento.</string>
 </resources>

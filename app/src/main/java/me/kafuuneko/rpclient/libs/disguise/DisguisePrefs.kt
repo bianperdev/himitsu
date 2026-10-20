@@ -17,4 +17,7 @@ object DisguisePrefs : KotprefModel() {
 
     /** [Appearance.id] of the appearance the user chose. Himitsu by default: disguise is off. */
     var appearanceId by stringPref(default = Appearance.Himitsu.id)
+
+    /** Whether a double press of volume down shows the decoy. Off by default. */
+    var quickExitVolumeKey by booleanPref(default = false)
 }

@@ -21,6 +21,7 @@ sealed class DisguiseSettingsUiState {
         val appLockEnabled: Boolean,
         val deviceSecure: Boolean,
         val recentsPreviewVisible: Boolean = false,
+        val quickExitVolumeKey: Boolean = false,
         val step: DisguiseSetupStep = DisguiseSetupStep.None,
         val isWorking: Boolean = false
     ) : DisguiseSettingsUiState() {

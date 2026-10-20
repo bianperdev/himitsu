@@ -2,6 +2,7 @@ package me.kafuuneko.rpclient.libs.core
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -25,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.disguise.DisguiseTaskDescription
+import me.kafuuneko.rpclient.libs.disguise.QuickExit
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
 import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
@@ -76,6 +78,10 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
         // Only a blocked gate keeps the curtain; Starting is covered by the gate state itself
         mForcedCurtain.value = mAppGate.evaluateNow() == GateState.Blocked
     }
+
+    /** feat/disguise: a double press of volume down shows the decoy, when the user turned it on. */
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean =
+        QuickExit.onKeyEvent(this, event) || super.dispatchKeyEvent(event)
 
     /** Covers the page before it can be seen again if the app may lock meanwhile (Himitsu). */
     override fun onStop() {

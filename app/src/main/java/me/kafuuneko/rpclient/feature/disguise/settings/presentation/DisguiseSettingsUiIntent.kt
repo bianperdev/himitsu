@@ -20,6 +20,7 @@ sealed class DisguiseSettingsUiIntent {
     data object StartChange : DisguiseSettingsUiIntent()
 
     data object ShowLimits : DisguiseSettingsUiIntent()
+    data class ToggleQuickExitVolumeKey(val enabled: Boolean) : DisguiseSettingsUiIntent()
 
     /** The disguise switch was turned off. */
     data object StartDisable : DisguiseSettingsUiIntent()

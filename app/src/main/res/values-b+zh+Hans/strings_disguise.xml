@@ -105,4 +105,7 @@
     <string name="disguise_limits_exports">你导出的文件会保留可能暴露其内容的文件名。</string>
     <string name="disguise_busy_title">请稍候</string>
     <string name="disguise_busy_text">正在下载模型或生成回复。更改图标可能会关闭应用并将其中断。请在完成后再试。</string>
+    <string name="disguise_quick_exit">立即显示伪装</string>
+    <string name="disguise_settings_volume_title">用音量减键快速退出</string>
+    <string name="disguise_settings_volume_text">在 Himitsu 中快速按两次音量减键，立即显示伪装。</string>
 </resources>

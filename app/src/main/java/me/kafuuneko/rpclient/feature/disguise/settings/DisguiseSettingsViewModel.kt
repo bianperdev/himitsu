@@ -17,6 +17,7 @@ import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
 import me.kafuuneko.rpclient.libs.disguise.Appearance
 import me.kafuuneko.rpclient.libs.disguise.AppearanceSwitcher
+import me.kafuuneko.rpclient.libs.disguise.DisguisePrefs
 import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorEngine
 import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorFormat
 import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorKey
@@ -73,7 +74,8 @@ class DisguiseSettingsViewModel :
             appearance = mAppearanceSwitcher.current,
             appLockEnabled = SecurityPrefs.appLockEnabled,
             deviceSecure = mLockManager.isDeviceSecure(),
-            recentsPreviewVisible = isRecentsPreviewVisible()
+            recentsPreviewVisible = isRecentsPreviewVisible(),
+            quickExitVolumeKey = DisguisePrefs.quickExitVolumeKey
         ).setup()
     }
 
@@ -125,6 +127,13 @@ class DisguiseSettingsViewModel :
         if (!uiState.appearance.isDecoy || uiState.isWorking) return
         val step = if (isBackgroundWorkRunning()) DisguiseSetupStep.Busy else DisguiseSetupStep.ConfirmChange(Appearance.Himitsu)
         uiState.copy(step = step).setup()
+    }
+
+    @UiIntentObserver(DisguiseSettingsUiIntent.ToggleQuickExitVolumeKey::class)
+    private fun onToggleQuickExitVolumeKey(intent: DisguiseSettingsUiIntent.ToggleQuickExitVolumeKey) {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        DisguisePrefs.quickExitVolumeKey = intent.enabled
+        uiState.copy(quickExitVolumeKey = intent.enabled).setup()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.ShowLimits::class)

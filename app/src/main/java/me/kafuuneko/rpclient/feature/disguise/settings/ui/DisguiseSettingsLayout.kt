@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.TheaterComedy
 import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material.icons.automirrored.rounded.VolumeDown
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -159,6 +160,14 @@ private fun DisguiseGroup(uiState: DisguiseSettingsUiState.Normal, emit: Disguis
                     onClick = { DisguiseSettingsUiIntent.OpenSecuritySettings.emit() }
                 )
             }
+            RpSettingsDivider()
+            RpSettingsSwitchTile(
+                title = stringResource(R.string.disguise_settings_volume_title),
+                subtitle = stringResource(R.string.disguise_settings_volume_text),
+                icon = Icons.AutoMirrored.Rounded.VolumeDown,
+                checked = uiState.quickExitVolumeKey,
+                onCheckedChange = { DisguiseSettingsUiIntent.ToggleQuickExitVolumeKey(it).emit() }
+            )
             RpSettingsDivider()
             RpSettingsTile(
                 title = stringResource(R.string.disguise_settings_recovery_title),

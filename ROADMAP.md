@@ -490,7 +490,7 @@ The full design (in Spanish) is a Claude Doc kept by the maintainer. Summary:
 - Shortcuts, widgets, share targets: none exist. Any future one must hang from the `HimitsuLauncher` alias so it disappears with disguise.
 - Android 17 refuses component state changes from `adb shell pm`; only the app can switch aliases.
 
-**Narrow edits outside the track (for the pull request):** `…/libs/core/CoreActivity.kt` (task description, one line), `…/libs/llm/local/LocalGenerationService.kt` (no foreground service while disguised), `…/feature/localmodels/{LocalModelsViewModel.kt,presentation/LocalModelsUiState.kt,ui/LocalModelsLayout.kt}` (download notice), `…/feature/main/model/HimitsuSettingsEntry.kt` (settings entry), `…/feature/main/MainActivity` manifest entry (launcher filter moved to the alias, `exported="false"`).
+**Narrow edits outside the track (for the pull request):** `…/libs/core/CoreActivity.kt` (task description, one line), `…/libs/llm/local/LocalGenerationService.kt` (no foreground service while disguised), `…/feature/localmodels/{LocalModelsViewModel.kt,presentation/LocalModelsUiState.kt,ui/LocalModelsLayout.kt}` (download notice), `…/feature/main/model/HimitsuSettingsEntry.kt` (settings entry), `…/feature/main/MainActivity` manifest entry (launcher filter moved to the alias, `exported="false"`), `…/feature/main/MainActivity.kt` (quick exit button overlaid on the main screen while disguise is on), `…/libs/core/CoreActivity.kt` (`dispatchKeyEvent` for the optional volume-down quick exit).
 
 **Tasks, in order:**
 1. [x] Design document, approved by the maintainer: activity-alias switching and launcher quirks; functional decoys; secret shortcuts that always lead to authentication; recovery; leaks (recents, notifications, shortcuts, share targets); honest limits; store policies per flavor.
@@ -498,9 +498,9 @@ The full design (in Spanish) is a Claude Doc kept by the maintainer. Summary:
 3. [x] Calculator with secret code and recovery.
 4. [x] Integration with the app lock, plus a minimal settings screen (enable, code, practice).
 5. [x] Leak fixes.
-6. [ ] Compass and unit converter.
-7. [ ] Full disguise settings screen.
-8. [ ] Quick exit.
+6. [x] Compass and unit converter.
+7. [x] Full disguise settings screen.
+8. [x] Quick exit.
 9. [ ] Tests: calculator logic, code verification, alias switching, and proof that no path skips authentication.
 
 **Done when:** disguise is off by default; no entry point skips authentication; the secret code is stored only as a salted KDF hash and never logged; wrong entries behave like normal decoy input; decoys need no new permissions and make no network calls; toggling never loses data or locks the user out; the limits are explained honestly in the UI; the privacy-reviewer agent marks the branch fit to merge.
