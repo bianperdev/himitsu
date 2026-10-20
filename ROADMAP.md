@@ -231,6 +231,11 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
   - `AppDatabaseAutoMigrationSpec` (2 to 3) still injects `session_id` into OpenRouter providers migrated from RPClient databases, and the provider editor's example JSON shows it.
   - Chat, persona and character inputs do not set the IME "no personalized learning" flag.
   - Recents previews: on Android 12 and earlier only `FLAG_SECURE` hides them; the app lock alone does not.
+- **Second privacy review (2026-10-20), documented limits:**
+  - Dropdown menus and small popups are not hidden while locked; only the dialogs that show private content are (`AppDialogScaffold`, `PromptInspectorDialog`, `MessageImageViewerDialog`). The gate screen covers them right after.
+  - Permanent failures that are not about the key (a damaged plain database, "two plain copies") only offer Retry; the way out is clearing the app data in system settings. Only earlier debug builds can reach them.
+  - With only system CAs trusted, self-hosted HTTPS servers with a self-signed certificate no longer work; plain HTTP on the LAN still does, with the warning.
+  - `.unrecoverable-*` copies left by "start over" cannot be restored from the app; restoring them with a recovery code would need a new action.
 - **Build:** a combined `assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest` once failed in KSP with Room errors on `MutableDao<T>`; rerunning passed. Probably KSP incremental state; watch for it.
 
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
