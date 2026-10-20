@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">No recovery code was set up for this data.</string>
     <string name="security_recovery_error_failed">Your data was unlocked but the new key could not be saved. Try again.</string>
     <string name="security_start_over_title">Start over with empty data?</string>
-    <string name="security_start_over_message">Your current data will be set aside and the app will start empty. The old files are kept, not deleted, but they cannot be opened without the original key or a recovery code.</string>
+    <string name="security_start_over_message">Your current encrypted data will be set aside and the app will start empty. The old files are kept, not deleted, but they can only be opened again with a recovery code or if this device\'s original key becomes available again.</string>
     <string name="security_start_over_confirm">Start over</string>
     <string name="security_lock_title">Locked</string>
     <string name="security_lock_unlock">Unlock</string>

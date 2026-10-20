@@ -15,32 +15,26 @@ class KeyWrapperException(val failure: KeyWrapperFailure, cause: Throwable? = nu
     Exception("Key wrapper failure: $failure", cause)
 
 /**
- * Seals small secrets with a key that never leaves secure hardware.
+ * Seals small secrets with keys that never leave secure hardware.
  *
- * The production implementation is [AndroidKeystoreKeyWrapper]; unit tests use an in-memory
- * implementation so the vault logic can be tested without the Keystore.
+ * Each key is named by a key ID stored next to the sealed data. A new master key always gets a
+ * new key ID, and keys are never deleted by the vault, so data set aside by "start over" can
+ * still be opened by its own key. The production implementation is [AndroidKeystoreKeyWrapper];
+ * unit tests use an in-memory implementation.
  */
 interface KeyWrapper {
     /**
-     * Seals [plaintext], creating the wrapping key if it does not exist yet.
+     * Seals [plaintext] with the key [keyId], creating that key if it does not exist yet.
      *
      * @throws KeyWrapperException when the key store cannot be used
      */
-    fun seal(plaintext: ByteArray, aad: ByteArray): ByteArray
+    fun seal(keyId: String, plaintext: ByteArray, aad: ByteArray): ByteArray
 
     /**
-     * Opens a box created by [seal].
+     * Opens a box created by [seal] with the same [keyId].
      *
-     * @throws KeyWrapperException with [KeyWrapperFailure.KeyLost] when the wrapping key is gone
-     *   or does not match, or [KeyWrapperFailure.Unavailable] for other failures
+     * @throws KeyWrapperException with [KeyWrapperFailure.KeyLost] when the key is gone or does
+     *   not match, or [KeyWrapperFailure.Unavailable] for other failures
      */
-    fun open(box: ByteArray, aad: ByteArray): ByteArray
-
-    /**
-     * Deletes the wrapping key and creates a new one on the next [seal].
-     *
-     * Only called when no data depends on the old key: a fresh install, or after the master key
-     * was recovered and is about to be sealed again.
-     */
-    fun resetKey()
+    fun open(keyId: String, box: ByteArray, aad: ByteArray): ByteArray
 }

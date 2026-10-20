@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Für diese Daten wurde kein Wiederherstellungscode eingerichtet.</string>
     <string name="security_recovery_error_failed">Deine Daten wurden entsperrt, aber der neue Schlüssel konnte nicht gespeichert werden. Versuche es erneut.</string>
     <string name="security_start_over_title">Mit leeren Daten neu beginnen?</string>
-    <string name="security_start_over_message">Deine aktuellen Daten werden beiseitegelegt und die App startet leer. Die alten Dateien bleiben erhalten und werden nicht gelöscht, können aber ohne den ursprünglichen Schlüssel oder einen Wiederherstellungscode nicht geöffnet werden.</string>
+    <string name="security_start_over_message">Deine aktuellen verschlüsselten Daten werden beiseitegelegt und die App startet leer. Die alten Dateien bleiben erhalten und werden nicht gelöscht, lassen sich aber nur mit einem Wiederherstellungscode wieder öffnen oder wenn der ursprüngliche Schlüssel dieses Geräts wieder verfügbar ist.</string>
     <string name="security_start_over_confirm">Neu beginnen</string>
     <string name="security_lock_title">Gesperrt</string>
     <string name="security_lock_unlock">Entsperren</string>

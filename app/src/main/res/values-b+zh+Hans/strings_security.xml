@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">这些数据没有设置恢复码。</string>
     <string name="security_recovery_error_failed">数据已解锁，但无法保存新密钥。请重试。</string>
     <string name="security_start_over_title">以空数据重新开始？</string>
-    <string name="security_start_over_message">当前数据将被移到一旁，应用将以空数据启动。旧文件会被保留而不会删除，但没有原始密钥或恢复码就无法打开。</string>
+    <string name="security_start_over_message">当前的加密数据将被移到一旁，应用将以空数据启动。旧文件会被保留而不会删除，但只有使用恢复码，或此设备的原始密钥重新可用时，才能再次打开。</string>
     <string name="security_start_over_confirm">重新开始</string>
     <string name="security_lock_title">已锁定</string>
     <string name="security_lock_unlock">解锁</string>

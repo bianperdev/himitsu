@@ -160,6 +160,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
     @UiIntentObserver(LockUiIntent.ShowStartOverDialog::class)
     private fun onShowStartOverDialog() {
         val uiState = getOrNull<LockUiState.Normal>() ?: return
+        if ((uiState.contentState as? LockContentState.StorageError)?.canStartOver != true) return
         uiState.copy(dialogState = LockDialogState.ConfirmStartOver).setup()
     }
 
@@ -194,7 +195,8 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
             is SecureStorageState.Failed -> LockContentState.StorageError(
                 failure = storage.failure,
                 canRetry = storage.failure != StorageFailure.KeystoreKeyLost,
-                canUseRecoveryCode = storage.recoveryAvailable
+                canUseRecoveryCode = storage.recoveryAvailable,
+                canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED
             )
             SecureStorageState.Ready -> if (locked) {
                 previous as? LockContentState.Locked ?: LockContentState.Locked(mLockManager.isDeviceSecure())

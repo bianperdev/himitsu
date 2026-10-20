@@ -50,8 +50,15 @@ enum class StorageFailure {
     /** A plain database from an earlier build could not be encrypted. It is still intact. */
     MigrationFailed;
 
-    internal companion object {
-        fun from(failure: VaultFailure): StorageFailure = when (failure) {
+    companion object {
+        /**
+         * Failures that retrying cannot fix, the only ones where "start over" is offered. The
+         * others are temporary or leave the data intact, so starting over would lose data for
+         * nothing.
+         */
+        val START_OVER_ALLOWED: Set<StorageFailure> = setOf(KeystoreKeyLost, KeyFileMissing, KeyFileCorrupt)
+
+        internal fun from(failure: VaultFailure): StorageFailure = when (failure) {
             VaultFailure.KeyFileMissing -> KeyFileMissing
             VaultFailure.KeyFileCorrupt -> KeyFileCorrupt
             VaultFailure.KeystoreKeyLost -> KeystoreKeyLost
@@ -159,13 +166,11 @@ class SecureStorageManager(
     fun startOver() {
         mScope.launch {
             mMutex.withLock {
-                if (mState.value !is SecureStorageState.Failed) return@withLock
+                val state = mState.value as? SecureStorageState.Failed ?: return@withLock
+                if (state.failure !in StorageFailure.START_OVER_ALLOWED) return@withLock
                 val suffix = ".unrecoverable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
                 try {
-                    EncryptedDatabase.entries.forEach { database ->
-                        val file = mContext.getDatabasePath(database.fileName)
-                        if (file.exists()) DatabaseFiles.move(file, File(file.path + suffix))
-                    }
+                    EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     mVault.moveKeyFileAside(suffix)
                     SealedPreferencesProvider.setAside(mContext, suffix)
                     synchronized(mKeyLock) {
@@ -180,6 +185,22 @@ class SecureStorageManager(
                 load()
             }
         }
+    }
+
+    /**
+     * Sets one database aside for "start over".
+     *
+     * - Only encrypted files are moved; a database still in plain form stays and is encrypted
+     *   with the new key, so no plain copy is parked out of sight.
+     * - Leftovers of an interrupted migration are settled first: a verified `.plaintext` copy
+     *   next to an encrypted database and an incomplete `.encrypting` copy are deleted, as the
+     *   migration itself would have done.
+     */
+    private fun setAside(file: File, suffix: String) {
+        val plainCopy = File(file.path + ".plaintext")
+        if (plainCopy.exists() && DatabaseFiles.kindOf(file) == DatabaseFileKind.Encrypted) DatabaseFiles.delete(plainCopy)
+        DatabaseFiles.delete(File(file.path + ".encrypting"))
+        if (DatabaseFiles.kindOf(file) == DatabaseFileKind.Encrypted) DatabaseFiles.move(file, File(file.path + suffix))
     }
 
     /** Whether a recovery code is configured for the current data. */

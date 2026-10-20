@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">このデータにはリカバリーコードが設定されていません。</string>
     <string name="security_recovery_error_failed">データのロックは解除されましたが、新しい鍵を保存できませんでした。もう一度お試しください。</string>
     <string name="security_start_over_title">空のデータで最初からやり直しますか？</string>
-    <string name="security_start_over_message">現在のデータは別の場所に移され、アプリは空の状態で起動します。古いファイルは削除されずに残りますが、元の鍵またはリカバリーコードがないと開けません。</string>
+    <string name="security_start_over_message">現在の暗号化データは別の場所に移され、アプリは空の状態で起動します。古いファイルは削除されずに残りますが、再び開けるのはリカバリーコードを使う場合か、この端末の元の鍵が再び利用できるようになった場合だけです。</string>
     <string name="security_start_over_confirm">最初からやり直す</string>
     <string name="security_lock_title">ロック中</string>
     <string name="security_lock_unlock">ロック解除</string>

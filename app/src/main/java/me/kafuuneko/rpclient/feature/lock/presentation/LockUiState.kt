@@ -26,11 +26,13 @@ sealed class LockContentState {
      *
      * @property canRetry whether the failure may be temporary
      * @property canUseRecoveryCode whether a recovery code is configured for this data
+     * @property canStartOver whether retrying cannot help, so setting the data aside is offered
      */
     data class StorageError(
         val failure: StorageFailure,
         val canRetry: Boolean,
-        val canUseRecoveryCode: Boolean
+        val canUseRecoveryCode: Boolean,
+        val canStartOver: Boolean
     ) : LockContentState()
 
     /**

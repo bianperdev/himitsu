@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Tidak ada kode pemulihan yang disiapkan untuk data ini.</string>
     <string name="security_recovery_error_failed">Data Anda berhasil dibuka, tetapi kunci baru tidak dapat disimpan. Coba lagi.</string>
     <string name="security_start_over_title">Mulai dari awal dengan data kosong?</string>
-    <string name="security_start_over_message">Data Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap disimpan, tidak dihapus, tetapi tidak dapat dibuka tanpa kunci asli atau kode pemulihan.</string>
+    <string name="security_start_over_message">Data terenkripsi Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap disimpan, tidak dihapus, tetapi hanya dapat dibuka lagi dengan kode pemulihan atau jika kunci asli perangkat ini tersedia kembali.</string>
     <string name="security_start_over_confirm">Mulai dari awal</string>
     <string name="security_lock_title">Terkunci</string>
     <string name="security_lock_unlock">Buka kunci</string>

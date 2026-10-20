@@ -94,6 +94,19 @@ class MasterKeyVaultTest {
     }
 
     @Test
+    fun startingOverKeepsTheSetAsideKeyFileOpenable() {
+        val original = (vault.loadOrCreate(hasEncryptedData = false) as VaultLoadResult.Loaded).masterKey
+
+        vault.moveKeyFileAside(".aside")
+        val fresh = (vault.loadOrCreate(hasEncryptedData = false) as VaultLoadResult.Loaded).masterKey
+        val asideVault = MasterKeyVault(MasterKeyFileStore(File(folder.root, "master.key.aside")), wrapper, random)
+        val reopened = asideVault.loadOrCreate(hasEncryptedData = true) as VaultLoadResult.Loaded
+
+        assertFalse(sameKey(original, fresh))
+        assertTrue(sameKey(original, reopened.masterKey))
+    }
+
+    @Test
     fun purposesGetIndependentKeys() {
         val key = (vault.loadOrCreate(hasEncryptedData = false) as VaultLoadResult.Loaded).masterKey
 
@@ -106,17 +119,17 @@ class MasterKeyVaultTest {
     private fun sameKey(a: MasterKey, b: MasterKey): Boolean =
         a.derive(KeyPurpose.PrimaryDatabase).contentEquals(b.derive(KeyPurpose.PrimaryDatabase))
 
-    /** Seals with an in-memory AES key; [loseKey] simulates a wiped or replaced Keystore key. */
+    /** Seals with in-memory AES keys per key ID; [loseKey] simulates wiped Keystore keys. */
     private class FakeKeyWrapper(private val random: SecureRandom) : KeyWrapper {
-        private var key: ByteArray? = null
+        private val keys = mutableMapOf<String, ByteArray>()
 
-        override fun seal(plaintext: ByteArray, aad: ByteArray): ByteArray {
-            val current = key ?: ByteArray(AesGcm.KEY_SIZE_BYTES).also(random::nextBytes).also { key = it }
+        override fun seal(keyId: String, plaintext: ByteArray, aad: ByteArray): ByteArray {
+            val current = keys.getOrPut(keyId) { ByteArray(AesGcm.KEY_SIZE_BYTES).also(random::nextBytes) }
             return AesGcm.seal(current, plaintext, aad, random)
         }
 
-        override fun open(box: ByteArray, aad: ByteArray): ByteArray {
-            val current = key ?: throw KeyWrapperException(KeyWrapperFailure.KeyLost)
+        override fun open(keyId: String, box: ByteArray, aad: ByteArray): ByteArray {
+            val current = keys[keyId] ?: throw KeyWrapperException(KeyWrapperFailure.KeyLost)
             return try {
                 AesGcm.open(current, box, aad)
             } catch (e: GeneralSecurityException) {
@@ -124,12 +137,8 @@ class MasterKeyVaultTest {
             }
         }
 
-        override fun resetKey() {
-            key = null
-        }
-
         fun loseKey() {
-            key = ByteArray(AesGcm.KEY_SIZE_BYTES).also(random::nextBytes)
+            keys.clear()
         }
     }
 }

@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Nenhum código de recuperação foi configurado para estes dados.</string>
     <string name="security_recovery_error_failed">Seus dados foram desbloqueados, mas não foi possível salvar a nova chave. Tente novamente.</string>
     <string name="security_start_over_title">Começar do zero sem dados?</string>
-    <string name="security_start_over_message">Seus dados atuais serão deixados de lado e o app começará vazio. Os arquivos antigos são mantidos, não excluídos, mas não podem ser abertos sem a chave original ou um código de recuperação.</string>
+    <string name="security_start_over_message">Seus dados criptografados atuais serão deixados de lado e o app começará vazio. Os arquivos antigos são mantidos, não excluídos, mas só poderão ser abertos novamente com um código de recuperação ou se a chave original deste dispositivo voltar a ficar disponível.</string>
     <string name="security_start_over_confirm">Começar do zero</string>
     <string name="security_lock_title">Bloqueado</string>
     <string name="security_lock_unlock">Desbloquear</string>

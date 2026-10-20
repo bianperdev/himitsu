@@ -51,6 +51,8 @@ sealed class RecoveryResult {
  * Creates, loads and recovers the master key.
  *
  * Core rules:
+ * - Every new Keystore slot uses a new Keystore key ID and no key is ever deleted, so a key
+ *   file set aside by "start over" stays openable by its own Keystore key.
  * - A new key is created only when there is no key file *and* the caller confirms that no
  *   encrypted data exists. Otherwise a missing key file is reported, never papered over with a
  *   new key that would make the existing data unreadable.
@@ -82,7 +84,7 @@ class MasterKeyVault(
         val slot = file.slot(KeySlotType.Keystore)
             ?: return VaultLoadResult.Failed(VaultFailure.KeystoreKeyLost)
         val bytes = try {
-            mKeyWrapper.open(slot.sealedKey, MasterKeyFileCodec.slotAad(KeySlotType.Keystore))
+            mKeyWrapper.open(slot.keystoreKeyId(), slot.sealedKey, MasterKeyFileCodec.slotAad(KeySlotType.Keystore))
         } catch (e: KeyWrapperException) {
             return VaultLoadResult.Failed(e.failure.toVaultFailure())
         }
@@ -110,9 +112,8 @@ class MasterKeyVault(
             kek.fill(0)
         }
         val masterKey = adoptOrCorrupt(bytes) ?: return RecoveryResult.Failed(VaultFailure.KeyFileCorrupt)
-        // Replace the lost Keystore slot, keeping the recovery slot as it is
+        // Replace the lost Keystore slot with one under a new key, keeping the recovery slot
         return try {
-            mKeyWrapper.resetKey()
             mStore.write(file.withSlot(keystoreSlot(masterKey)))
             RecoveryResult.Recovered(masterKey)
         } catch (e: KeyWrapperException) {
@@ -168,8 +169,7 @@ class MasterKeyVault(
     private fun create(): VaultLoadResult {
         val masterKey = MasterKey.generate(mRandom)
         return try {
-            // A leftover Keystore key belongs to no data once the key file is gone
-            mKeyWrapper.resetKey()
+            // A new key ID, so any key file set aside keeps a working Keystore key
             mStore.write(MasterKeyFile(listOf(keystoreSlot(masterKey))))
             VaultLoadResult.Loaded(masterKey, created = true)
         } catch (e: KeyWrapperException) {
@@ -181,15 +181,20 @@ class MasterKeyVault(
         }
     }
 
+    /** Seals [masterKey] under a newly generated Keystore key ID, stored in the slot's salt field. */
     private fun keystoreSlot(masterKey: MasterKey): KeySlot {
+        val keyId = ByteArray(KEY_ID_SIZE).also(mRandom::nextBytes).joinToString("") { "%02x".format(it) }
         val raw = masterKey.copyBytes()
         try {
-            val sealed = mKeyWrapper.seal(raw, MasterKeyFileCodec.slotAad(KeySlotType.Keystore))
-            return KeySlot(KeySlotType.Keystore, ByteArray(0), sealed)
+            val sealed = mKeyWrapper.seal(keyId, raw, MasterKeyFileCodec.slotAad(KeySlotType.Keystore))
+            return KeySlot(KeySlotType.Keystore, keyId.toByteArray(Charsets.US_ASCII), sealed)
         } finally {
             raw.fill(0)
         }
     }
+
+    /** Key ID of a Keystore slot; empty for slots written before key IDs existed. */
+    private fun KeySlot.keystoreKeyId(): String = String(salt, Charsets.US_ASCII)
 
     private fun recoveryKek(code: RecoveryCode, salt: ByteArray): ByteArray {
         val material = code.keyMaterial()
@@ -228,6 +233,7 @@ class MasterKeyVault(
 
     private companion object {
         const val SALT_SIZE = 16
+        const val KEY_ID_SIZE = 8
         val RECOVERY_INFO = "himitsu/v1/recovery-slot".toByteArray(Charsets.UTF_8)
     }
 }

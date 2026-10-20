@@ -48,7 +48,7 @@ class SecureStorageAndroidTest {
     @After
     fun cleanUp() {
         dir.deleteRecursively()
-        AndroidKeystoreKeyWrapper(TEST_ALIAS).resetKey()
+        AndroidKeystoreKeyWrapper(TEST_ALIAS).deleteKey(TEST_KEY_ID)
     }
 
     @Test
@@ -57,13 +57,13 @@ class SecureStorageAndroidTest {
         val secret = ByteArray(32).also(random::nextBytes)
         val aad = byteArrayOf(1, 2, 3)
 
-        val box = wrapper.seal(secret, aad)
-        val opened = wrapper.open(box, aad)
-        wrapper.resetKey()
+        val box = wrapper.seal(TEST_KEY_ID, secret, aad)
+        val opened = wrapper.open(TEST_KEY_ID, box, aad)
+        wrapper.deleteKey(TEST_KEY_ID)
 
         assertTrue(opened.contentEquals(secret))
         try {
-            wrapper.open(box, aad)
+            wrapper.open(TEST_KEY_ID, box, aad)
             fail("A deleted Keystore key must not open the box")
         } catch (e: KeyWrapperException) {
             assertEquals(KeyWrapperFailure.KeyLost, e.failure)
@@ -157,5 +157,6 @@ class SecureStorageAndroidTest {
 
     private companion object {
         const val TEST_ALIAS = "himitsu_test_wrap"
+        const val TEST_KEY_ID = "0011223344556677"
     }
 }

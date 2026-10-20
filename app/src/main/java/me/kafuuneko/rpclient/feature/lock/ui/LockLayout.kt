@@ -200,9 +200,11 @@ private fun StorageErrorContent(state: LockContentState.StorageError, emit: Lock
                 }
             }
         }
-        TextButton(onClick = { LockUiIntent.ShowStartOverDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-            Text(stringResource(R.string.security_action_start_over))
+        if (state.canStartOver) {
+            TextButton(onClick = { LockUiIntent.ShowStartOverDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                Text(stringResource(R.string.security_action_start_over))
+            }
         }
     }
 }
@@ -276,7 +278,8 @@ private fun LockLayoutStorageErrorPreview() {
                 LockContentState.StorageError(
                     failure = StorageFailure.KeystoreKeyLost,
                     canRetry = false,
-                    canUseRecoveryCode = true
+                    canUseRecoveryCode = true,
+                    canStartOver = true
                 )
             ),
             emit = {}

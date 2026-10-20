@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Для этих данных код восстановления не настроен.</string>
     <string name="security_recovery_error_failed">Данные разблокированы, но сохранить новый ключ не удалось. Повторите попытку.</string>
     <string name="security_start_over_title">Начать заново с пустыми данными?</string>
-    <string name="security_start_over_message">Текущие данные будут отложены, и приложение запустится пустым. Старые файлы сохраняются и не удаляются, но открыть их без исходного ключа или кода восстановления нельзя.</string>
+    <string name="security_start_over_message">Текущие зашифрованные данные будут отложены, и приложение запустится пустым. Старые файлы сохраняются и не удаляются, но открыть их снова можно будет только с кодом восстановления или если исходный ключ этого устройства снова станет доступен.</string>
     <string name="security_start_over_confirm">Начать заново</string>
     <string name="security_lock_title">Заблокировано</string>
     <string name="security_lock_unlock">Разблокировать</string>

@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Aucun code de récupération n\'a été configuré pour ces données.</string>
     <string name="security_recovery_error_failed">Vos données ont été déverrouillées, mais la nouvelle clé n\'a pas pu être enregistrée. Réessayez.</string>
     <string name="security_start_over_title">Repartir de zéro avec des données vides ?</string>
-    <string name="security_start_over_message">Vos données actuelles seront mises de côté et l\'application démarrera vide. Les anciens fichiers sont conservés, pas supprimés, mais ils ne peuvent pas être ouverts sans la clé d\'origine ou un code de récupération.</string>
+    <string name="security_start_over_message">Vos données chiffrées actuelles seront mises de côté et l\'application démarrera vide. Les anciens fichiers sont conservés, pas supprimés, mais ils ne pourront être rouverts qu\'avec un code de récupération ou si la clé d\'origine de cet appareil redevient disponible.</string>
     <string name="security_start_over_confirm">Repartir de zéro</string>
     <string name="security_lock_title">Verrouillé</string>
     <string name="security_lock_unlock">Déverrouiller</string>

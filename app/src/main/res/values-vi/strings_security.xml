@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Chưa thiết lập mã khôi phục cho dữ liệu này.</string>
     <string name="security_recovery_error_failed">Dữ liệu của bạn đã được mở khóa nhưng không thể lưu khóa mới. Hãy thử lại.</string>
     <string name="security_start_over_title">Bắt đầu lại với dữ liệu trống?</string>
-    <string name="security_start_over_message">Dữ liệu hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn được giữ lại, không bị xóa, nhưng không thể mở nếu không có khóa gốc hoặc mã khôi phục.</string>
+    <string name="security_start_over_message">Dữ liệu đã mã hóa hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn được giữ lại, không bị xóa, nhưng chỉ có thể mở lại bằng mã khôi phục hoặc khi khóa gốc của thiết bị này khả dụng trở lại.</string>
     <string name="security_start_over_confirm">Bắt đầu lại</string>
     <string name="security_lock_title">Đã khóa</string>
     <string name="security_lock_unlock">Mở khóa</string>

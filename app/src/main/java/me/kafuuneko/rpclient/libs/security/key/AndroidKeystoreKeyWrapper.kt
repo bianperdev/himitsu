@@ -19,40 +19,47 @@ import javax.crypto.SecretKey
  *   screen lock never invalidates it, so the app lock can never cause data loss.
  * - StrongBox is used when the device has it, with a fallback to the TEE.
  * - The key cannot be exported and is deleted by the system when the app is uninstalled.
+ * - Each key ID maps to its own alias; the empty ID is the alias used by the first builds.
+ *
+ * @param mAliasPrefix alias of the empty key ID and prefix of the others; tests use their own
  */
-class AndroidKeystoreKeyWrapper(private val mAlias: String = DEFAULT_ALIAS) : KeyWrapper {
+class AndroidKeystoreKeyWrapper(private val mAliasPrefix: String = DEFAULT_ALIAS) : KeyWrapper {
 
-    override fun seal(plaintext: ByteArray, aad: ByteArray): ByteArray = guard {
-        AesGcm.seal(existingKey() ?: generateKey(), plaintext, aad)
+    override fun seal(keyId: String, plaintext: ByteArray, aad: ByteArray): ByteArray = guard {
+        val alias = alias(keyId)
+        AesGcm.seal(existingKey(alias) ?: generateKey(alias), plaintext, aad)
     }
 
-    override fun open(box: ByteArray, aad: ByteArray): ByteArray = guard {
-        val key = existingKey() ?: throw KeyWrapperException(KeyWrapperFailure.KeyLost)
+    override fun open(keyId: String, box: ByteArray, aad: ByteArray): ByteArray = guard {
+        val key = existingKey(alias(keyId)) ?: throw KeyWrapperException(KeyWrapperFailure.KeyLost)
         AesGcm.open(key, box, aad)
     }
 
-    override fun resetKey() {
-        guard { keyStore().deleteEntry(mAlias) }
+    /** Deletes the key [keyId]. Only for tests that clean up their own keys. */
+    fun deleteKey(keyId: String) {
+        guard { keyStore().deleteEntry(alias(keyId)) }
     }
+
+    private fun alias(keyId: String): String = if (keyId.isEmpty()) mAliasPrefix else "${mAliasPrefix}_$keyId"
 
     private fun keyStore(): KeyStore = KeyStore.getInstance(PROVIDER).apply { load(null) }
 
-    private fun existingKey(): SecretKey? = keyStore().getKey(mAlias, null) as? SecretKey
+    private fun existingKey(alias: String): SecretKey? = keyStore().getKey(alias, null) as? SecretKey
 
-    private fun generateKey(): SecretKey {
+    private fun generateKey(alias: String): SecretKey {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
-                return generateKey(strongBox = true)
+                return generateKey(alias, strongBox = true)
             } catch (_: StrongBoxUnavailableException) {
                 // The device has no StrongBox; the TEE-backed key below is the normal case.
             }
         }
-        return generateKey(strongBox = false)
+        return generateKey(alias, strongBox = false)
     }
 
-    private fun generateKey(strongBox: Boolean): SecretKey {
+    private fun generateKey(alias: String, strongBox: Boolean): SecretKey {
         val spec = KeyGenParameterSpec.Builder(
-            mAlias,
+            alias,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
