@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">Thay đổi áp dụng từ câu trả lời tiếp theo.</string>
     <string name="local_inference_generation_notification">Đang xử lý trong nền</string>
     <string name="local_inference_generation_channel">Tác vụ nền</string>
+    <string name="local_inference_error_model_missing">Mô hình của cấu hình này không còn trên điện thoại. Hãy chọn mô hình khác trong cấu hình mô hình.</string>
+    <string name="local_inference_error_too_large">Mô hình này cần nhiều bộ nhớ hơn điện thoại có. Hãy chọn mô hình nhỏ hơn hoặc ngữ cảnh ngắn hơn.</string>
+    <string name="local_inference_error_load_failed">Không thể tải mô hình. Tệp có thể bị hỏng: hãy xóa rồi nhập hoặc tải lại.</string>
+    <string name="local_inference_error_template">Mẫu trò chuyện của mô hình này không thể định dạng cuộc trò chuyện. Hãy thử mô hình khác.</string>
+    <string name="local_inference_error_engine">Mô hình trên thiết bị không khả dụng trên thiết bị này.</string>
+    <string name="local_inference_error_generation">Mô hình trên thiết bị đã dừng do lỗi. Hãy thử lại.</string>
 </resources>

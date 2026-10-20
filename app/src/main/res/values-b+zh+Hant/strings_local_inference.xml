@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">變更會在下一次回覆時生效。</string>
     <string name="local_inference_generation_notification">正在背景處理</string>
     <string name="local_inference_generation_channel">背景工作</string>
+    <string name="local_inference_error_model_missing">此設定使用的本機模型已不在這支手機上。請在模型設定中選擇其他模型。</string>
+    <string name="local_inference_error_too_large">此模型需要的記憶體超過這支手機的記憶體。請選擇更小的模型或更短的上下文。</string>
+    <string name="local_inference_error_load_failed">無法載入模型。檔案可能已損毀：請刪除後重新匯入或下載。</string>
+    <string name="local_inference_error_template">此模型的聊天範本無法格式化這段對話。請嘗試其他模型。</string>
+    <string name="local_inference_error_engine">此裝置不支援本機模型。</string>
+    <string name="local_inference_error_generation">本機模型發生錯誤而停止。請再試一次。</string>
 </resources>

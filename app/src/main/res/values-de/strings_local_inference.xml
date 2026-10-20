@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">Änderungen gelten ab der nächsten Antwort.</string>
     <string name="local_inference_generation_notification">Arbeitet im Hintergrund</string>
     <string name="local_inference_generation_channel">Hintergrundarbeit</string>
+    <string name="local_inference_error_model_missing">Das Modell dieser Konfiguration ist nicht mehr auf diesem Handy. Wähle in der Modellkonfiguration ein anderes.</string>
+    <string name="local_inference_error_too_large">Dieses Modell braucht mehr Speicher, als dieses Handy hat. Wähle ein kleineres Modell oder einen kürzeren Kontext.</string>
+    <string name="local_inference_error_load_failed">Das Modell konnte nicht geladen werden. Die Datei ist vielleicht beschädigt: Lösche sie und importiere oder lade sie erneut herunter.</string>
+    <string name="local_inference_error_template">Die Chat-Vorlage dieses Modells konnte die Unterhaltung nicht formatieren. Versuche ein anderes Modell.</string>
+    <string name="local_inference_error_engine">Modelle auf dem Gerät sind auf diesem Gerät nicht verfügbar.</string>
+    <string name="local_inference_error_generation">Das Modell auf dem Gerät wurde mit einem Fehler beendet. Versuche es erneut.</string>
 </resources>

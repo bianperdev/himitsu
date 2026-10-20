@@ -214,6 +214,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - Protocol checks in `…/libs/prompt/PromptPostProcessor.kt:225`, `…/libs/prompt/PromptRequestFinalizer.kt:107`, `…/libs/prompt/PromptTokenizer.kt:143-161`
 - `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**`
 - Additive changes only: `…/libs/prompt/model/PromptInspection.kt` (an optional rendered-prompt field) and `…/ui/dialog/PromptInspectorDialog.kt` (a collapsible section that shows it)
+- Additive changes only, approved by the maintainer on 2026-10-20: `…/feature/GenerationFailureMessage.kt` (messages for on-device model failures)
 
 **Design decisions (approved by the maintainer on 2026-10-20):**
 - Local engines plug in as `LLMProviderProtocol.Local` and a `LocalLLMClient` on top of a `LocalInferenceEngine` interface, so the prompt pipeline runs unchanged.

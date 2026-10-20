@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">変更は次の応答から反映されます。</string>
     <string name="local_inference_generation_notification">バックグラウンドで処理中</string>
     <string name="local_inference_generation_channel">バックグラウンド処理</string>
+    <string name="local_inference_error_model_missing">この設定の端末上モデルは、このスマートフォンにありません。モデル設定で別のモデルを選んでください。</string>
+    <string name="local_inference_error_too_large">このモデルにはスマートフォンのメモリ以上が必要です。小さいモデルか短いコンテキストを選んでください。</string>
+    <string name="local_inference_error_load_failed">モデルを読み込めませんでした。ファイルが壊れている可能性があります。削除してから再度インポートまたはダウンロードしてください。</string>
+    <string name="local_inference_error_template">このモデルのチャットテンプレートで会話を整形できませんでした。別のモデルを試してください。</string>
+    <string name="local_inference_error_engine">このデバイスでは端末上のモデルを利用できません。</string>
+    <string name="local_inference_error_generation">端末上のモデルがエラーで停止しました。もう一度お試しください。</string>
 </resources>

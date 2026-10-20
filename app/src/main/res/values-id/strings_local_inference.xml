@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">Perubahan berlaku untuk balasan berikutnya.</string>
     <string name="local_inference_generation_notification">Bekerja di latar belakang</string>
     <string name="local_inference_generation_channel">Pekerjaan latar belakang</string>
+    <string name="local_inference_error_model_missing">Model untuk konfigurasi ini sudah tidak ada di ponsel ini. Pilih model lain di konfigurasi model.</string>
+    <string name="local_inference_error_too_large">Model ini butuh memori lebih besar daripada yang dimiliki ponsel ini. Pilih model yang lebih kecil atau konteks yang lebih pendek.</string>
+    <string name="local_inference_error_load_failed">Model tidak dapat dimuat. File mungkin rusak: hapus lalu impor atau unduh lagi.</string>
+    <string name="local_inference_error_template">Templat chat model ini tidak dapat memformat percakapan. Coba model lain.</string>
+    <string name="local_inference_error_engine">Model di perangkat tidak tersedia di perangkat ini.</string>
+    <string name="local_inference_error_generation">Model di perangkat berhenti karena galat. Coba lagi.</string>
 </resources>

@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">Changes apply to the next reply.</string>
     <string name="local_inference_generation_notification">Working in the background</string>
     <string name="local_inference_generation_channel">Background work</string>
+    <string name="local_inference_error_model_missing">The on-device model of this configuration is no longer on this phone. Pick another one in the model configuration.</string>
+    <string name="local_inference_error_too_large">This model needs more memory than this phone has. Choose a smaller model or a shorter context.</string>
+    <string name="local_inference_error_load_failed">The model could not be loaded. The file may be damaged: delete it and import or download it again.</string>
+    <string name="local_inference_error_template">This model\'s chat template could not format the conversation. Try another model.</string>
+    <string name="local_inference_error_engine">On-device models are not available on this device.</string>
+    <string name="local_inference_error_generation">The on-device model stopped with an error. Try again.</string>
 </resources>

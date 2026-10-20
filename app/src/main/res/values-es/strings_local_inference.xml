@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">Los cambios se aplican a la siguiente respuesta.</string>
     <string name="local_inference_generation_notification">Trabajando en segundo plano</string>
     <string name="local_inference_generation_channel">Trabajo en segundo plano</string>
+    <string name="local_inference_error_model_missing">El modelo de esta configuración ya no está en este teléfono. Elige otro en la configuración del modelo.</string>
+    <string name="local_inference_error_too_large">Este modelo necesita más memoria de la que tiene este teléfono. Elige un modelo más pequeño o un contexto más corto.</string>
+    <string name="local_inference_error_load_failed">No se pudo cargar el modelo. Puede que el archivo esté dañado: bórralo e impórtalo o descárgalo de nuevo.</string>
+    <string name="local_inference_error_template">La plantilla de chat de este modelo no pudo dar formato a la conversación. Prueba con otro modelo.</string>
+    <string name="local_inference_error_engine">Los modelos en el dispositivo no están disponibles en este teléfono.</string>
+    <string name="local_inference_error_generation">El modelo del dispositivo se detuvo con un error. Inténtalo de nuevo.</string>
 </resources>

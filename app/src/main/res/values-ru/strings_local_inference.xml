@@ -73,4 +73,10 @@
     <string name="local_models_performance_note">Изменения применятся к следующему ответу.</string>
     <string name="local_inference_generation_notification">Работа в фоновом режиме</string>
     <string name="local_inference_generation_channel">Фоновая работа</string>
+    <string name="local_inference_error_model_missing">Модели этой конфигурации больше нет на телефоне. Выберите другую в настройках модели.</string>
+    <string name="local_inference_error_too_large">Этой модели нужно больше памяти, чем есть у телефона. Выберите модель поменьше или более короткий контекст.</string>
+    <string name="local_inference_error_load_failed">Не удалось загрузить модель. Возможно, файл повреждён: удалите его и импортируйте или скачайте снова.</string>
+    <string name="local_inference_error_template">Шаблон чата этой модели не смог оформить диалог. Попробуйте другую модель.</string>
+    <string name="local_inference_error_engine">Модели на устройстве недоступны на этом устройстве.</string>
+    <string name="local_inference_error_generation">Модель на устройстве остановилась с ошибкой. Попробуйте ещё раз.</string>
 </resources>
