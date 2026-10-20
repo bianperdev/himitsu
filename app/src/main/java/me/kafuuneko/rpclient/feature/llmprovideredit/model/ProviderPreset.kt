@@ -1,9 +1,12 @@
 package me.kafuuneko.rpclient.feature.llmprovideredit.model
 
+import androidx.annotation.StringRes
+import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_CLAUDE_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_DEEPSEEK_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_GEMINI_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_GROK_REQUEST_BODY_PATCH_JSON
+import me.kafuuneko.rpclient.libs.llm.local.DEFAULT_LOCAL_SAMPLER_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.DEFAULT_OPENROUTER_REQUEST_BODY_PATCH_JSON
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderType
@@ -20,7 +23,9 @@ enum class ProviderPreset(
     val defaultModel: String,
     val defaultRequestBodyPatchJson: String,
     val defaultLocalTokenEstimatorType: LocalTokenEstimatorType = LocalTokenEstimatorType.Automatic,
-    val defaultUseServerReportedUsage: Boolean = false
+    val defaultUseServerReportedUsage: Boolean = false,
+    /** Localized display name; brand presets leave it null and use [displayName]. */
+    @param:StringRes val displayNameRes: Int? = null
 ) {
     DeepSeek(
         displayName = "DeepSeek",
@@ -77,6 +82,17 @@ enum class ProviderPreset(
         defaultModel = "grok-2-latest",
         defaultRequestBodyPatchJson = DEFAULT_GROK_REQUEST_BODY_PATCH_JSON,
         defaultLocalTokenEstimatorType = LocalTokenEstimatorType.O200kBase
+    ),
+    /** Himitsu: a model that runs on this device; the engine reports exact token counts. */
+    Local(
+        displayName = "Local",
+        providerType = LLMProviderType.Local,
+        protocol = LLMProviderProtocol.Local,
+        baseUrl = "",
+        defaultModel = "",
+        defaultRequestBodyPatchJson = DEFAULT_LOCAL_SAMPLER_PATCH_JSON,
+        defaultUseServerReportedUsage = true,
+        displayNameRes = R.string.local_inference_preset_name
     ),
     Custom(
         displayName = "Custom",

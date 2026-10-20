@@ -30,6 +30,7 @@ import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Dns
 import androidx.compose.material.icons.rounded.Hub
 import androidx.compose.material.icons.rounded.Memory
+import androidx.compose.material.icons.rounded.PhoneAndroid
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.SmartToy
 import androidx.compose.material3.Button
@@ -62,6 +63,7 @@ import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderLis
 import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderListLoadState
 import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderListUiIntent
 import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderListUiState
+import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderType
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
@@ -303,9 +305,14 @@ private fun ProviderListCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = provider.baseUrl
-                            .removePrefix("https://")
-                            .removePrefix("http://"),
+                        // Himitsu: local providers have no endpoint to show
+                        text = if (provider.protocol.usesNetworkEndpoint) {
+                            provider.baseUrl
+                                .removePrefix("https://")
+                                .removePrefix("http://")
+                        } else {
+                            stringResource(R.string.local_inference_endpoint_label)
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
                         maxLines = 1,
@@ -428,6 +435,7 @@ private fun ProviderBrandBadge(
         LLMProviderType.Grok -> Color(0xFF475569) to Icons.Rounded.Bolt
         LLMProviderType.OpenRouter -> Color(0xFF7C3AED) to Icons.Rounded.Hub
         LLMProviderType.Custom -> MaterialTheme.colorScheme.primary to Icons.Rounded.Dns
+        LLMProviderType.Local -> MaterialTheme.colorScheme.tertiary to Icons.Rounded.PhoneAndroid
     }
 
     val activeColor = if (isEnabled) brandColor else brandColor.copy(alpha = 0.4f)

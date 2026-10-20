@@ -5,8 +5,10 @@ import android.app.Activity
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.ui.graphics.vector.ImageVector
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.localmodels.LocalModelsActivity
 import me.kafuuneko.rpclient.feature.lock.settings.SecuritySettingsActivity
 
 /**
@@ -30,4 +32,10 @@ internal val himitsuSettingsEntries: List<HimitsuSettingsEntry> = listOf(
         icon = Icons.Rounded.Lock,
         activity = SecuritySettingsActivity::class.java
     ), // feat/security
+    HimitsuSettingsEntry(
+        titleRes = R.string.local_models_title,
+        subtitleRes = R.string.local_models_settings_desc,
+        icon = Icons.Rounded.Memory,
+        activity = LocalModelsActivity::class.java
+    ), // feat/local-inference
 )

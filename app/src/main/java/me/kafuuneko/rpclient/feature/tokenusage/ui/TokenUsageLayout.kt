@@ -948,6 +948,7 @@ private fun LLMProviderProtocol.shortName(): String {
         LLMProviderProtocol.OpenAICompatible -> "OpenAI"
         LLMProviderProtocol.Gemini -> "Gemini"
         LLMProviderProtocol.AnthropicMessages -> "Anthropic"
+        LLMProviderProtocol.Local -> "Local"
     }
 }
 

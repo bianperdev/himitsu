@@ -3,6 +3,7 @@ package me.kafuuneko.rpclient.libs.llm
 import me.kafuuneko.rpclient.libs.llm.adapter.AnthropicMessagesLLMClient
 import me.kafuuneko.rpclient.libs.llm.adapter.GeminiLLMClient
 import me.kafuuneko.rpclient.libs.llm.adapter.OpenAICompatibleLLMClient
+import me.kafuuneko.rpclient.libs.llm.local.LocalLLMClientFactory
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderConfig
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.media.MessageImageRuntime
@@ -10,6 +11,8 @@ import me.kafuuneko.rpclient.libs.prompt.PromptTokenizerRegistry
 import me.kafuuneko.rpclient.libs.room.repository.LLMRequestLogRepository
 import me.kafuuneko.rpclient.libs.room.repository.LLMTokenUsageRepository
 import okhttp3.OkHttpClient
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * 将持久化层的模型配置转换为对应协议的 [LLMClient]。
@@ -24,7 +27,10 @@ class LLMClientFactory(
     private val mPromptTokenizerRegistry: PromptTokenizerRegistry = PromptTokenizerRegistry(),
     private val mImageRuntime: MessageImageRuntime? = null,
     private val mImageCapabilities: ImageInputCapabilityResolver = ImageInputCapabilityResolver()
-) {
+) : KoinComponent {
+    // Lazy, so the upstream Koin registration of this factory stays unchanged
+    private val mLocalClientFactory by inject<LocalLLMClientFactory>()
+
     /**
      * 根据模型配置创建协议适配器，并在统计仓库可用时附加 Token 用量记录器。
      */
@@ -53,6 +59,9 @@ class LLMClientFactory(
                 mImageRuntime,
                 mImageCapabilities
             )
+
+            // Himitsu: resolved lazily from the local inference Koin module
+            LLMProviderProtocol.Local -> mLocalClientFactory.create(provider)
         }
         val usageRepository = mLLMTokenUsageRepository ?: return protocolClient
         return LLMTokenUsageTrackingClient(

@@ -301,14 +301,42 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 - The `when` branches in `…/libs/llm/catalog/LLMModelCatalogClientFactory.kt:15`, `…/libs/llm/model/LLMProviderCapabilities.kt:17`, `…/libs/llm/adapter/RequestBodyPatch.kt:114`, `…/libs/llm/adapter/MultimodalWireCodec.kt:74`, `…/feature/tokenusage/ui/TokenUsageLayout.kt:947`
 - Protocol checks in `…/libs/prompt/PromptPostProcessor.kt:225`, `…/libs/prompt/PromptRequestFinalizer.kt:107`, `…/libs/prompt/PromptTokenizer.kt:143-161`
 - `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**`
+- Additive changes only: `…/libs/prompt/model/PromptInspection.kt` (an optional rendered-prompt field) and `…/ui/dialog/PromptInspectorDialog.kt` (a collapsible section that shows it)
+- Additive changes only, approved by the maintainer on 2026-10-20: `…/feature/GenerationFailureMessage.kt` (messages for on-device model failures)
+
+**Design decisions (approved by the maintainer on 2026-10-20):**
+- Local engines plug in as `LLMProviderProtocol.Local` and a `LocalLLMClient` on top of a `LocalInferenceEngine` interface, so the prompt pipeline runs unchanged.
+- llama.cpp is a git submodule pinned to a release tag, built with the NDK and CMake behind a thin JNI layer of our own. No binding library. `llama-common` (which links an HTTP client) is not built; only its Jinja engine is compiled.
+- Changed during implementation and confirmed by the maintainer on 2026-10-20: ggml uses its upstream runtime CPU dispatch (`GGML_BACKEND_DL` + `GGML_CPU_ALL_VARIANTS`), which loads `libggml-cpu-*.so` by their fixed upstream names. The static, renamed build in the design only served to coexist with GenieX, which is paused. If GenieX returns, its libraries must be isolated (separate process or renamed build) before both ship together.
+- The model registry is a separate Room database (`local_models.sqlite`) in `noBackupFilesDir`, so this track never bumps the main schema. It must be opened with the encrypted helper from feat/security once that track is merged.
+- Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
+- Changed after testing on the S26 Ultra: Local messages get the same strict normalization as Gemini (one leading system message, mid-chat system messages become user turns, alternating roles), because GGUF templates such as Qwen3.5, Gemma and Mistral raise an error otherwise. The Prompt Inspector shows the normalized messages.
+- GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
+- Models are copied to `noBackupFilesDir` and are not encrypted. Their names and metadata live in the separate `local_models.sqlite` registry above, which is not encrypted until feat/security is merged.
+- The optional download list contains only Apache-2.0 models; any other model is imported by hand.
+- New permissions accepted for model downloads and background generation: `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_DATA_SYNC`, `POST_NOTIFICATIONS`.
 
 **Tasks, in order:**
-1. Design document, approved by the maintainer: engine interface, chat templates and how the Prompt Inspector shows them, llama.cpp from source (NDK, CMake, pinned commit) versus existing bindings, GenieX runtime detection, native library conflicts between llama.cpp and GenieX, licensing options for GenieX, model import and download, memory and thermal management, and a short list of recommended models.
-2. `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
-3. llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
-4. Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
-5. GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices.
-6. Performance settings (threads, context size, GPU or NPU) with sensible defaults.
+1. [x] Design document, approved by the maintainer: engine interface, chat templates and how the Prompt Inspector shows them, llama.cpp from source (NDK, CMake, pinned commit) versus existing bindings, GenieX runtime detection, native library conflicts between llama.cpp and GenieX, licensing options for GenieX, model import and download, memory and thermal management, and a short list of recommended models.
+2. [x] `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
+3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
+4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
+5. Moved to a later branch (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
+6. [x] Performance settings (threads, context size, GPU or NPU) with sensible defaults.
+
+**Follow-ups from the privacy review (2026-10-20):**
+- After feat/security merges: open `local_models.sqlite` with the encrypted helper (file names and model metadata are readable today, chats are not stored there). Local inference preferences are covered by security task P-03 (backups).
+- For feat/disguise: the model download and background-generation notifications show the app's label in their header (their icons and channel names are already neutral); the label must follow the disguise.
+- Chat templates from GGUF files are untrusted code. They render on their own thread with a 128 KB size limit and a 15 s time limit, but llama.cpp's Jinja runtime has no recursion or step limit, so a malicious template can still crash the app (never leak data). A real limit needs an upstream patch. A template that times out stays refused until the app restarts, even if a heavily throttled phone was the cause.
+
+**Contracts and extension points for other tracks:**
+- **New local engine:** implement `LocalInferenceEngine` (`…/libs/llm/local/LocalInferenceEngine.kt`), add a `LocalEngineKind` value and register the instance in `availableEngines()` in `…/libs/llm/local/LocalInferenceModule.kt`, guarded by a runtime capability check so unsupported devices never see it. Everything above the engine (provider type, prompt pipeline, Prompt Inspector, model screen, failure messages) is shared. Engine-specific errors must be mapped to the exceptions in `LocalInferenceExceptions.kt`, which `classifyGenerationFailure` turns into `GenerationFailure.Local` messages.
+- **Provider type:** `LLMProviderProtocol.Local` with `LocalLLMClient`. Any new `when` over `LLMProviderProtocol` needs a `Local` branch; Local prompts get the same strict normalization as Gemini in `PromptPostProcessor`.
+- **Model registry database (feat/security):** `LocalModelDatabase`, file `local_models.sqlite` in `noBackupFilesDir`, built in one place: the second `single {}` of `localInferenceModule`. Switching it to the encrypted helper only needs that builder changed; the schema is exported to `app/schemas/me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDatabase/`.
+- **Files:** models live in `noBackupFilesDir/models/<uuid>.gguf`, partial imports (`.part`, deleted at start-up) and partial downloads (`.download`, kept so the download can resume) next to them; OpenCL kernels are cached in `cacheDir/opencl-kernels`. None of this is backed up.
+- **Notifications (feat/disguise):** `LocalModelDownloadService` and `LocalGenerationService` post the only notifications of this track, on the channels `file_downloads` and `background_work`.
+- **Prompt Inspector:** `PromptInspection.renderedPrompt` is optional and only set for local providers, by `PromptRequestFinalizer` through `LocalPromptPreviewer`.
+- **Build and packaging (chore/release-readiness):** the native build needs the git submodules under `third_party/`, NDK `30.0.16248370` and CMake `3.31.6`. Keep `jniLibs.useLegacyPackaging = true` (ggml scans `nativeLibraryDir`), the `libOpenCL.so` exclusion and the optional `<uses-native-library>`; the F-Droid recipe must fetch submodules.
 
 **Done when:** a downloaded or imported GGUF can be used offline with the same presets, lorebooks, Regex and Prompt Inspector as remote providers; no network call is added except the explicit model download; nothing heavy runs on the main thread; generation can be cancelled and the model is released; the `fdroid` build contains only source-built llama.cpp and no GenieX; unsupported devices never crash; every new license is in `NOTICE` and in the table below; every flavor builds.
 
@@ -390,6 +418,10 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | JTokkit | 1.1.0 | MIT | No |
 | AndroidX biometric, lifecycle-process (feat/security; lifecycle-process was already a transitive dependency) | 1.1.0, 2.10.0 | Apache-2.0 | No |
 | SQLCipher for Android (`net.zetetic:sqlcipher-android`, bundles LibTomCrypt, public domain), pulls in AndroidX sqlite 2.7.0 (feat/security) | 4.19.1 | BSD-3-Clause (notice reproduced in `NOTICE`) | No |
+| llama.cpp and ggml (git submodule `third_party/llama.cpp`, built from source; local-inference) | b11748 (`3bb63cb`) | MIT | No (built without `llama-common`, OpenSSL or any downloader) |
+| JSON for Modern C++, vendored in llama.cpp (local-inference) | 3.12.0 | MIT | No |
+| LLVM libc++ (`libc++_shared.so` from NDK 30.0.16248370; local-inference) | NDK r30 | Apache-2.0 WITH LLVM-exception | No |
+| OpenCL-Headers (git submodule, compiled into `libggml-opencl.so`; local-inference) | v2026.05.29 | Apache-2.0 | No |
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 
@@ -403,5 +435,6 @@ Bundled resources: the launcher icon background vector is from the AOSP template
 | Room compiler, AndroidX Test, Espresso, Compose UI test | Apache-2.0 |
 | JUnit 4.13.2 | EPL-1.0 (not GPL-compatible, acceptable because it is never shipped) |
 | Hamcrest 1.3 | BSD-3-Clause |
+| OpenCL ICD Loader v2026.05.29 (git submodule; link-time stub, excluded from the APK; local-inference) | Apache-2.0 |
 
 No current dependency is incompatible with GPLv3.

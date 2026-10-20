@@ -2,6 +2,7 @@ package me.kafuuneko.rpclient.libs.prompt
 
 import me.kafuuneko.rpclient.libs.llm.ImageRequestException
 import me.kafuuneko.rpclient.libs.llm.ImageRequestFailure
+import me.kafuuneko.rpclient.libs.llm.local.LocalPromptPreviewer
 import me.kafuuneko.rpclient.libs.llm.model.LLMContentBlock
 import me.kafuuneko.rpclient.libs.llm.model.LLMGenerationOptions
 import me.kafuuneko.rpclient.libs.llm.model.LLMGenerationRequest
@@ -17,6 +18,8 @@ import me.kafuuneko.rpclient.libs.prompt.model.PromptPostProcessingMode
 import me.kafuuneko.rpclient.libs.prompt.model.requireAvailable
 import me.kafuuneko.rpclient.libs.room.entity.LLMProvider
 import me.kafuuneko.rpclient.libs.room.model.MessageImagePolicy
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /** 最终可发送请求及其同源检查报告。 */
 data class PromptFinalizationResult(
@@ -48,7 +51,10 @@ class PromptBudgetExceededException(
  */
 class PromptRequestFinalizer(
     private val mTokenizerResolver: PromptTokenizerResolver = PromptTokenizerRegistry()
-) {
+) : KoinComponent {
+    // Himitsu: lazy, so tests and remote providers never touch the local engine
+    private val mLocalPromptPreviewer by inject<LocalPromptPreviewer>()
+
     /** 为模型配置选择与预算统计一致的 Tokenizer。 */
     fun tokenizerFor(provider: LLMProvider?): PromptTokenizer {
         return mTokenizerResolver.resolve(provider)
@@ -88,6 +94,7 @@ class PromptRequestFinalizer(
         }
 
         val environment = PromptFinalizationEnvironment(
+            provider = provider,
             tokenizer = tokenizer,
             model = model,
             options = options,
@@ -297,7 +304,10 @@ class PromptRequestFinalizer(
                         imageTokenCounts = messages[index].images.map { environment.tokenizer.countImages(listOf(it)) }
                     )
                 },
-                omittedItems = omitted
+                omittedItems = omitted,
+                renderedPrompt = environment.provider
+                    ?.takeIf { it.protocol == LLMProviderProtocol.Local }
+                    ?.let { mLocalPromptPreviewer.preview(it, environment.model, messages) }
             )
         )
     }
@@ -343,6 +353,8 @@ private data class CountedPromptDraft(
 
 /** 一次最终化过程共享的模型配置、预算和 Tokenizer。 */
 private data class PromptFinalizationEnvironment(
+    /** Himitsu: the provider, used to show the rendered prompt of on-device models. */
+    val provider: LLMProvider?,
     /** 当前模型配置解析出的 Tokenizer。 */
     val tokenizer: PromptTokenizer,
     /** 实际提交给服务的模型名称。 */

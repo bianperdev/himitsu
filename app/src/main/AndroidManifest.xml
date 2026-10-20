@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- feat/local-inference: model downloads the user starts explicitly -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".RPClientApp"
         android:allowBackup="false"
@@ -142,6 +147,23 @@
             android:theme="@style/Theme.RPClient"
             android:windowSoftInputMode="adjustResize" />
         <!-- END feat/security -->
+        <!-- feat/local-inference -->
+        <uses-native-library
+            android:name="libOpenCL.so"
+            android:required="false" />
+        <activity
+            android:name=".feature.localmodels.LocalModelsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient" />
+        <service
+            android:name=".libs.llm.local.model.LocalModelDownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".libs.llm.local.LocalGenerationService"
+            android:exported="false"
+            android:foregroundServiceType="shortService" />
+        <!-- end feat/local-inference -->
 
         <!-- BEGIN disguise activity-aliases: reserved for the feat/disguise track (see ROADMAP.md).
              Other tracks must not add components between these markers. -->

@@ -49,7 +49,10 @@ enum class LLMProviderType {
     DeepSeek,
     Grok,
     OpenRouter,
-    Custom
+    Custom,
+
+    /** A model that runs on this device (Himitsu). */
+    Local
 }
 
 /**
@@ -60,7 +63,10 @@ enum class LLMProviderType {
 enum class LLMProviderProtocol {
     OpenAICompatible,
     Gemini,
-    AnthropicMessages
+    AnthropicMessages,
+
+    /** On-device inference through `libs/llm/local`; no network endpoint (Himitsu). */
+    Local
 }
 
 /**

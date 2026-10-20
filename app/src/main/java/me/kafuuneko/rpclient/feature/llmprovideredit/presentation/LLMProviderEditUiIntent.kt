@@ -1,5 +1,6 @@
 package me.kafuuneko.rpclient.feature.llmprovideredit.presentation
 
+import android.net.Uri
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.ProviderPreset
 import me.kafuuneko.rpclient.libs.llm.model.ImageInputSetting
 import me.kafuuneko.rpclient.libs.llm.model.ImageTokenEstimatorType
@@ -100,4 +101,10 @@ sealed class LLMProviderEditUiIntent {
     data object ConfirmDiscardChanges : LLMProviderEditUiIntent()
 
     data object DismissDialog : LLMProviderEditUiIntent()
+
+    /** Himitsu: the user asked to import a GGUF file for a local provider. */
+    data object ImportLocalModelClick : LLMProviderEditUiIntent()
+
+    /** Himitsu: the file picker returned a GGUF candidate, or null when cancelled. */
+    data class ImportLocalModelResult(val uri: Uri?) : LLMProviderEditUiIntent()
 }

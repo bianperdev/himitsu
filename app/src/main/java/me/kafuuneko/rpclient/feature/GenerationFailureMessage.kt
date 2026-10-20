@@ -6,6 +6,7 @@ import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.libs.llm.GenerationFailure
 import me.kafuuneko.rpclient.libs.llm.ImageRequestFailure
 import me.kafuuneko.rpclient.libs.llm.LLMProviderRequestException
+import me.kafuuneko.rpclient.libs.llm.LocalGenerationFailure
 import me.kafuuneko.rpclient.libs.llm.UnavailableLLMProviderSelectionException
 import me.kafuuneko.rpclient.libs.llm.classifyGenerationFailure
 
@@ -72,6 +73,15 @@ private fun GenerationFailure.toGenerationFailurePresentation(
             title = context.getString(R.string.model_request_failed_title),
             message = context.getString(R.string.model_request_failed_desc, message)
         )
+        // Himitsu: only a deleted model is fixed in the model configuration
+        is GenerationFailure.Local -> if (kind == LocalGenerationFailure.ModelMissing) {
+            ModelSettingsGuideContent(
+                title = context.getString(R.string.model_request_failed_title),
+                message = message
+            )
+        } else {
+            null
+        }
         is GenerationFailure.Image,
         is GenerationFailure.PromptBudget,
         GenerationFailure.Network,
@@ -125,5 +135,13 @@ private fun GenerationFailure.toGenerationFailureMessage(
     } ?: context.getString(R.string.generation_error_http, statusCode)
     GenerationFailure.Network -> context.getString(R.string.generation_error_network)
     is GenerationFailure.EmptyResponse -> context.getString(R.string.generation_error_empty_response)
+    is GenerationFailure.Local -> context.getString(when (kind) {
+        LocalGenerationFailure.ModelMissing -> R.string.local_inference_error_model_missing
+        LocalGenerationFailure.TooLarge -> R.string.local_inference_error_too_large
+        LocalGenerationFailure.LoadFailed -> R.string.local_inference_error_load_failed
+        LocalGenerationFailure.TemplateFailed -> R.string.local_inference_error_template
+        LocalGenerationFailure.EngineUnavailable -> R.string.local_inference_error_engine
+        LocalGenerationFailure.GenerationFailed -> R.string.local_inference_error_generation
+    })
     GenerationFailure.Unknown -> context.getString(fallbackMessageResId)
 }

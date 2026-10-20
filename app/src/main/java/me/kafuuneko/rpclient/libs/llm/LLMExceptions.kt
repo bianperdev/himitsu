@@ -1,6 +1,14 @@
 package me.kafuuneko.rpclient.libs.llm
 
 import kotlinx.coroutines.CancellationException
+import me.kafuuneko.rpclient.libs.llm.local.LocalChatTemplateException
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineUnavailableException
+import me.kafuuneko.rpclient.libs.llm.local.LocalGenerationException
+import me.kafuuneko.rpclient.libs.llm.local.LocalInferenceException
+import me.kafuuneko.rpclient.libs.llm.local.LocalModelLoadException
+import me.kafuuneko.rpclient.libs.llm.local.LocalModelTooLargeException
+import me.kafuuneko.rpclient.libs.llm.local.LocalModelUnavailableException
+import me.kafuuneko.rpclient.libs.llm.local.LocalPromptTooLongException
 import me.kafuuneko.rpclient.libs.prompt.PromptBudgetExceededException
 import java.io.IOException
 
@@ -55,7 +63,30 @@ sealed class GenerationFailure {
     data object RequestFailure : GenerationFailure()
     data object Network : GenerationFailure()
     data class EmptyResponse(val outputTokenLimitReached: Boolean = false) : GenerationFailure()
+    /** Himitsu: an on-device model failed. */
+    data class Local(val kind: LocalGenerationFailure) : GenerationFailure()
     data object Unknown : GenerationFailure()
+}
+
+/** Himitsu: why an on-device model could not reply. */
+enum class LocalGenerationFailure {
+    /** The provider points to a model that was deleted. */
+    ModelMissing,
+
+    /** The model needs more memory than the device has. */
+    TooLarge,
+
+    /** The model file could not be loaded. */
+    LoadFailed,
+
+    /** The model's chat template rejected the conversation. */
+    TemplateFailed,
+
+    /** The native engine is missing or failed to start on this device. */
+    EngineUnavailable,
+
+    /** Decoding failed inside the engine. */
+    GenerationFailed
 }
 
 /**
@@ -84,8 +115,20 @@ fun classifyGenerationFailure(throwable: Throwable): GenerationFailure? {
         is LLMRequestException -> if (throwable.cause is ImageRequestException) classifyGenerationFailure(throwable.cause!!) else GenerationFailure.RequestFailure
         is IOException -> GenerationFailure.Network
         is LLMEmptyResponseException -> GenerationFailure.EmptyResponse(throwable.outputTokenLimitReached)
+        is LocalInferenceException -> GenerationFailure.Local(throwable.toLocalFailure())
         else -> GenerationFailure.Unknown
     }
 }
 
 private const val MaxReportedTokenCount = 100_000_000
+
+private fun LocalInferenceException.toLocalFailure(): LocalGenerationFailure = when (this) {
+    is LocalModelUnavailableException -> LocalGenerationFailure.ModelMissing
+    is LocalModelTooLargeException -> LocalGenerationFailure.TooLarge
+    is LocalModelLoadException -> LocalGenerationFailure.LoadFailed
+    is LocalChatTemplateException -> LocalGenerationFailure.TemplateFailed
+    is LocalEngineUnavailableException -> LocalGenerationFailure.EngineUnavailable
+    // Prompt overflows are mapped to the prompt budget error by LocalLLMClient before they get here
+    is LocalPromptTooLongException,
+    is LocalGenerationException -> LocalGenerationFailure.GenerationFailed
+}
