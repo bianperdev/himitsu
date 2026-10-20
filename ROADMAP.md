@@ -15,7 +15,7 @@ Paths below are relative to `app/src/main/java/me/kafuuneko/rpclient/` (written 
 | 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | Next |
 | 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata | Not started |
 
-Side branches that run in parallel with `feat/disguise`: `feat/security-followups` (deferred security work), `feat/geniex` (blocked on the QAIRT EULA) and the local-inference follow-ups. See [Pending after stage 1](#pending-after-stage-1).
+Side work that runs in parallel with `feat/disguise`: `feat/geniex` (blocked on the QAIRT EULA), the local-inference follow-ups and the security leftovers. `feat/security-followups` (deferred security work) is merged (`85b362c`). See [Pending after stage 1](#pending-after-stage-1).
 
 ---
 
@@ -29,15 +29,27 @@ Side branches that run in parallel with `feat/disguise`: `feat/security-followup
 - privacy-reviewer on `c3ed325..main`: fit to close the stage, with follow-ups. No new Critical, High or Medium findings; the new Low ones are listed below.
 - Integration tests on the maintainer's phone combining the three tracks (local model chat with the lock, encrypted storage and the theme; multitasking during a generation; reboot; theme switching with a chat open).
 
+### `feat/security-followups` merged (2026-10-20)
+
+Merged into `main` as `85b362c`; local branch and worktree deleted (`origin/feat/security-followups` is kept until the maintainer decides). Checks run on `main` at `85b362c`:
+
+- `assemble{Fdroid,Github,Play}Debug` and `assemble{Fdroid,Github,Play}Release` (R8, unsigned) build.
+- Unit tests: 356 per flavor, no failures. `connectedFdroidDebugAndroidTest`: 121/121 (`Medium_Phone_API_37.0`, Android 17).
+- `lintFdroidDebug`: no errors in the code (the only error is the local, untracked `local.properties`).
+- The `play` APK has no donation screen, strings or URLs; the `fdroid` APK has no GenieX reference. The release dex has no remaining `android.util.Log` write calls.
+- Manual checks on the emulator: sealed avatars and chat images (`HMF1` in `app_repository/sealed/`), SQLCipher databases, keyboard flag, sensitive clipboard, lock and reauthentication, hidden recents preview, storage error screen and set-aside data, and a local Qwen3.5 2B download and reply.
+- privacy-reviewer on `8bb28ed..85b362c`: fit, no Critical or High findings; the new Low ones are listed below.
+
 ### Pending after stage 1
 
 Grouped by the branch that will do them. Details stay in each track's section.
 
-**`feat/security-followups`** (worktree `himitsu-security-followups`, in progress):
-- P-06 (encrypt avatars and chat images) and the rest of P-10 (in-flight image request file).
-- The 7 findings of the pre-merge privacy review and the items of the first and second privacy reviews (see the security track's Follow-ups).
-- `GatedDropdownMenu`, now that `feat/aesthetic` is merged.
-- New (stage 1 review): `openrouter_session_affinity_note` in every locale still says Himitsu sends a session ID in Auto mode; since P-16 it is only sent when `session_id` is in the request JSON (or the provider was migrated from RPClient).
+**Security leftovers** (were assigned to `feat/security-followups`, which merged without them; the maintainer assigns a branch):
+- The rest of P-10 (in-flight image request file), see the security track's Follow-ups.
+- `GatedDropdownMenu`.
+- `openrouter_session_affinity_note` in every locale still says Himitsu sends a session ID in Auto mode; since P-16 it is only sent when `session_id` is in the request JSON (or the provider was migrated from RPClient).
+- New (main verification, 2026-10-20): SQLCipher's native library writes SQLite error messages (SQL text and database paths, never bound values or keys) to Logcat through `__android_log_print`; R8 and `NoopTarget` only silence its Java logger. Turn the native log off when the database is opened (for example `PRAGMA cipher_log_level = NONE`).
+- New (main verification): the shared `OkHttpClient` (`…/RPClientApp.kt`) follows redirects. On a redirect to another host OkHttp drops only `Authorization`, so `x-api-key`, `x-goog-api-key` and custom headers (and, on 307/308, the prompt body) reach the new host. Use `followRedirects(false)` for providers and catalogs, or strip the sensitive headers when the host changes.
 
 **Local inference follow-ups** (new branch from `main`, not started):
 - Due before the first public release: encrypt `local_models.sqlite` through `EncryptedDatabase`, and make "start over" set the registry and `noBackupFilesDir/models/` aside. Remove the stale TODO in `…/libs/llm/local/model/LocalModelDatabase.kt` at the same time.
@@ -52,7 +64,11 @@ Grouped by the branch that will do them. Details stay in each track's section.
 **`chore/release-readiness`** (added to the Release phase below):
 - SQLCipher BSD-3 notice in the app; SQLCipher prebuilt libraries and the F-Droid scanner; llama.cpp, JSON for Modern C++, libc++ and OpenCL-Headers in the licenses screen.
 - Declare the `dataSync` foreground service type in the Play Console (or use a user-initiated data transfer job).
-- New (stage 1 review): in the `play` build, the About links to the GitHub repository become an indirect donation link as soon as `FUNDING.yml` or donation text exists there. Remove them from `play` or point them to a page without funding links.
+- New (stage 1 review): in the `play` build, the About links to the GitHub repository become an indirect donation link as soon as `FUNDING.yml` or donation text exists there. Remove them from `play` or point them to a page without funding links. Note: today they point to the upstream repository (`AppModel.GITHUB_REPO` = `KafuuNeko/RPClient`), which Himitsu does not control.
+- New (main verification): `androidx.emoji2`'s `EmojiCompatInitializer` runs at startup through `androidx.startup` and asks the system font provider (Google Play Services on most phones) for the emoji font, against "Google services: Never". Remove it with `tools:node="remove"` in the manifest, or document it.
+- New (main verification): document the permissions and components that dependencies add to the manifest (`USE_BIOMETRIC`, `USE_FINGERPRINT`, `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`, `ProfileInstallReceiver` behind `DUMP`) in `PRIVACY.md`. Debug builds also export `PreviewActivity` and `ComponentActivity` (Compose tooling, never in release).
+- New (main verification): `libandroidx.graphics.path.so` (`androidx.graphics:graphics-path` 1.0.1, Apache-2.0, a Compose dependency) is a prebuilt native library from Maven in every APK; check it with the F-Droid scanner together with SQLCipher.
+- New (main verification): add `/HANDOFF/` and `.kotlin/` to `.gitignore`; `HANDOFF/` is ignored today only through the local `.git/info/exclude`.
 - New (stage 1 review): `.idea/deploymentTargetSelector.xml` records the serial number of the device last used to run the app. Never commit it; untrack it and `deviceManager.xml` as part of O-03.
 - New (stage 1 review): before the history audit, replace the specific test device mentions (this file, `…/libs/llm/local/llamacpp/LlamaCppEngine.kt`) with a generic description, if the maintainer prefers.
 
@@ -86,7 +102,7 @@ Findings from the initial audit of the RPClient code base (commit `c3ed325`). Ea
 | P-15 | Medium | Exports (chat, story, characters) are plain text. They are user-initiated through the system file picker; consider an optional encrypted export. | `…/feature/chat/ChatActivity.kt:43`, `…/feature/storyeditor/StoryEditorActivity.kt:34-42` | security (decision) |
 | P-16 | Medium | A stable per-conversation routing ID is sent to OpenRouter by default. | `…/libs/llm/RoutingSessionId.kt:10-24`, `…/libs/llm/model/LLMModels.kt:14` | security (decision) |
 
-Already clean: no telemetry, no Firebase or Play Services, no third-party network SDKs, no `Log.*` calls, only the launcher activity is exported, the only permission is `INTERNET`, request logs are excluded from backup, and API keys are never displayed or logged.
+Already clean at the time of the audit (`c3ed325`; later tracks added permissions, see each track): no telemetry, no Firebase or Play Services, no third-party network SDKs, no `Log.*` calls, only the launcher activity is exported, the only permission is `INTERNET`, request logs are excluded from backup, and API keys are never displayed or logged.
 
 Other findings that are not privacy issues:
 
@@ -190,7 +206,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 
 ## Track: `feat/security`
 
-**Status:** completed. Merged into `main` on 2026-10-20 (`acc6de1`); branch and worktree deleted. Open work moved to `feat/security-followups`.
+**Status:** completed. Merged into `main` on 2026-10-20 (`acc6de1`); branch and worktree deleted. Open work moved to `feat/security-followups`, merged on 2026-10-20 (`85b362c`); what it left open is under "Security leftovers" in [Pending after stage 1](#pending-after-stage-1).
 
 **Goal:** no sensitive data stored in plain text on the device, and the app can be locked.
 
@@ -266,22 +282,22 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 | P-03 | Resolved | `a39fd4e`, `022e835` | `allowBackup="false"`; every domain excluded from full backup, cloud backup and device transfer. |
 | P-04 | Resolved | `1bb63d2` | Header values are masked in the editor; stored inside the encrypted database. |
 | P-05 | Resolved | `309abf8` | `AppModel` strings are sealed (AES-GCM, key derived from the master key). Numbers and booleans stay plain. |
-| P-06 | Resolved (feat/security-followups) | `a47334a`, `690a7e7`, `d9e5fc8`, `d153943`, `6f07d3e` | Files sealed with AES-256-GCM in 64 KiB segments under the `Files` key, keyed file names, drafts and their metadata sealed too; plain files of earlier builds sealed in the background with verification before each delete; chat archive temporaries sealed with an in-memory key. |
+| P-06 | Resolved (feat/security-followups) | `aa654d7`, `dbdd7cd`, `13ab10d`, `e716b2d`, `8452773` | Files sealed with AES-256-GCM in 64 KiB segments under the `Files` key, keyed file names, drafts and their metadata sealed too; plain files of earlier builds sealed in the background with verification before each delete; chat archive temporaries sealed with an in-memory key. |
 | P-07 | Resolved | `c7b1141`, `7d27cba` | Encrypted database, credentials redacted, 7 days / 200 entries, wiped when debug mode is turned off. |
 | P-08 | Resolved | `46a3959` | `x-goog-api-key` header. |
 | P-09 | Resolved (decision) | `f24e6ba`, `3fa3047` | Warning when saving a plain-HTTP remote provider; clear text stays allowed for LAN servers. Only system CAs are trusted (maintainer decision, 2026-10-20). |
 | P-10 | Partly, rest deferred (decision) | `0d782e4` | Leftover request files are deleted at startup. Encrypting the file while a request is in flight needs a change in `MultimodalWireCodec` (local-inference); the maintainer decided on 2026-10-20 to do it after `feat/local-inference` is on main (see "P-10 rest" in Follow-ups). |
-| P-11 | Resolved | `c3b12b1`, `3449426` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs, and on everything Compose copies (selection toolbar, text fields). Text fields ask keyboards not to learn. |
-| P-12 | Resolved | `655a726`, `5ea24c3` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on every version (on Android 12 and earlier through `FLAG_SECURE`, maintainer decision 2026-10-20). |
+| P-11 | Resolved | `c3b12b1`, `5852e73` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs, and on everything Compose copies (selection toolbar, text fields). Text fields ask keyboards not to learn. |
+| P-12 | Resolved | `655a726`, `5d78344` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on every version (on Android 12 and earlier through `FLAG_SECURE`, maintainer decision 2026-10-20). |
 | P-13 | Resolved | `1bb63d2` | Password keyboard without autocorrect. |
-| P-14 | Resolved | `2425e39` | `printStackTrace` removed; R8 strips `Log`, `printStackTrace` and SQLCipher logging in release (verified on the dex). |
+| P-14 | Resolved | `2425e39` | `printStackTrace` removed; R8 strips `Log`, `printStackTrace` and SQLCipher's Java logging in release (verified on the dex). SQLCipher's native error log is not covered yet (see "Security leftovers"). |
 | P-15 | Deferred (decision) | | Optional encrypted export, after P-06. |
-| P-16 | Resolved (decision) | `d31820e`, `d92a766` | The OpenRouter routing ID is no longer in the default template nor added by the 2 to 3 migration; opt-in through the request JSON. |
+| P-16 | Resolved (decision) | `d31820e`, `ff10060` | The OpenRouter routing ID is no longer in the default template nor added by the 2 to 3 migration; opt-in through the request JSON. |
 | O-01 | Resolved | `c7b1141`, `77ffea0` | Startup work runs off the main thread behind the gate. The theme stays plain so the first frame never waits; the first read of a sealed `AppModel` string may still perform one Keystore operation on the main thread (P-05). |
 
 ### Follow-ups (feat/security)
 
-Done in `feat/security-followups` (2026-10-20): P-06; reauthentication before turning the lock off and changing the recovery code (`2f3157b`); export of the files from the storage error screen, "set aside and continue" for a plain database that can never be encrypted, and a "Set-aside data" section that exports, deletes (ticked box and reauthentication) and restores set-aside copies (`c4ee750`, `4b05bf6`, `ff669e0`).
+Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthentication before turning the lock off and changing the recovery code (`a746cdb`); export of the files from the storage error screen, "set aside and continue" for a plain database that can never be encrypted, and a "Set-aside data" section that exports, deletes (ticked box and reauthentication) and restores set-aside copies (`ddaea4f`, `c3aa136`, `eae3fe5`). The items below that are still open have no branch yet (see "Security leftovers" in [Pending after stage 1](#pending-after-stage-1)).
 
 - **P-10 rest (unblocked: `feat/local-inference` is on main):** write the image request file with `FileCipher.ephemeral()` and decrypt while OkHttp streams it (`MultimodalWireCodec.prepare`, about 10 lines). The request JSON, with prompts and decoded images, is still plain in `cacheDir/image-requests` while a request runs.
 - **Dropdown menus while locked (unblocked: `feat/aesthetic` is on main):** a `GatedDropdownMenu` that reads `LocalAppGateOpen`, used by the 10 `DropdownMenu`/`ExposedDropdownMenu` calls in 7 files (`CharacterEditLayout`, `LLMProviderEditLayout`, `MainLayout`, `StoryEditorLayout`, `WorldBookEntryEditLayout`, `MessageImageGallery`, `MessageImages`).
@@ -384,11 +400,11 @@ Done in `feat/security-followups` (2026-10-20): P-06; reauthentication before tu
 - Local engines plug in as `LLMProviderProtocol.Local` and a `LocalLLMClient` on top of a `LocalInferenceEngine` interface, so the prompt pipeline runs unchanged.
 - llama.cpp is a git submodule pinned to a release tag, built with the NDK and CMake behind a thin JNI layer of our own. No binding library. `llama-common` (which links an HTTP client) is not built; only its Jinja engine is compiled.
 - Changed during implementation and confirmed by the maintainer on 2026-10-20: ggml uses its upstream runtime CPU dispatch (`GGML_BACKEND_DL` + `GGML_CPU_ALL_VARIANTS`), which loads `libggml-cpu-*.so` by their fixed upstream names. The static, renamed build in the design only served to coexist with GenieX, which is paused. If GenieX returns, its libraries must be isolated (separate process or renamed build) before both ship together.
-- The model registry is a separate Room database (`local_models.sqlite`) in `noBackupFilesDir`, so this track never bumps the main schema. It must be opened with the encrypted helper from feat/security once that track is merged.
+- The model registry is a separate Room database (`local_models.sqlite`) in `noBackupFilesDir`, so this track never bumps the main schema. It must be opened with the encrypted helper from feat/security, which is merged: this is now a follow-up (see below).
 - Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
 - Changed after testing on the S26 Ultra: Local messages get the same strict normalization as Gemini (one leading system message, mid-chat system messages become user turns, alternating roles), because GGUF templates such as Qwen3.5, Gemma and Mistral raise an error otherwise. The Prompt Inspector shows the normalized messages.
 - GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
-- Models are copied to `noBackupFilesDir` and are not encrypted. Their names and metadata live in the separate `local_models.sqlite` registry above, which is not encrypted until feat/security is merged.
+- Models are copied to `noBackupFilesDir` and are not encrypted. Their names and metadata live in the separate `local_models.sqlite` registry above, which is not encrypted yet (follow-up due before the first public release, see below).
 - The optional download list contains only Apache-2.0 models; any other model is imported by hand.
 - New permissions accepted for model downloads and background generation: `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_DATA_SYNC`, `POST_NOTIFICATIONS`.
 
