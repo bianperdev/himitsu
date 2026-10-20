@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Per questi dati non è stato configurato alcun codice di recupero.</string>
     <string name="security_recovery_error_failed">I tuoi dati sono stati sbloccati, ma non è stato possibile salvare la nuova chiave. Riprova.</string>
     <string name="security_start_over_title">Ricominciare da zero con dati vuoti?</string>
-    <string name="security_start_over_message">I dati cifrati attuali verranno messi da parte e l\'app partirà vuota. I vecchi file restano su questo dispositivo e non vengono eliminati, ma questa versione dell\'app non può riaprirli.</string>
+    <string name="security_start_over_message">I dati cifrati attuali, incluse le immagini, verranno messi da parte e l\'app partirà vuota. Non viene eliminato nulla. Se questi dati avevano un codice di recupero, potrai ripristinarli in seguito in Privacy e sicurezza, in Dati messi da parte.</string>
     <string name="security_start_over_confirm">Ricomincia da zero</string>
     <string name="security_lock_title">Bloccato</string>
     <string name="security_lock_unlock">Sblocca</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Elimina</string>
     <string name="security_set_aside_deleted">Eliminati.</string>
     <string name="security_set_aside_delete_failed">Non è stato possibile eliminare alcuni file. Riprova.</string>
+    <string name="security_set_aside_restore">Ripristina questi dati</string>
+    <string name="security_restore_title">Ripristinare questi dati?</string>
+    <string name="security_restore_message">I dati attuali verranno messi da parte, senza essere eliminati, e questa copia prenderà il loro posto. L\'app si riavvierà. Potrai ripristinare i dati attuali in seguito allo stesso modo.</string>
+    <string name="security_restore_confirm">Ripristina</string>
+    <string name="security_restore_code_title">Codice di recupero di questa copia</string>
+    <string name="security_restore_code_subtitle">L\'hardware sicuro di questo dispositivo non può più aprire questa copia. Inserisci il codice di recupero che aveva.</string>
+    <string name="security_restore_failed">Non è stato possibile ripristinare questa copia. Non è stato modificato nulla.</string>
+    <string name="security_restore_not_configured">Questa copia non ha un codice di recupero e questo dispositivo non può più aprirla, quindi non può essere ripristinata.</string>
 </resources>

@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Für diese Daten wurde kein Wiederherstellungscode eingerichtet.</string>
     <string name="security_recovery_error_failed">Deine Daten wurden entsperrt, aber der neue Schlüssel konnte nicht gespeichert werden. Versuche es erneut.</string>
     <string name="security_start_over_title">Mit leeren Daten neu beginnen?</string>
-    <string name="security_start_over_message">Deine aktuellen verschlüsselten Daten werden beiseitegelegt und die App startet leer. Die alten Dateien bleiben auf diesem Gerät und werden nicht gelöscht, aber diese Version der App kann sie nicht wieder öffnen.</string>
+    <string name="security_start_over_message">Deine aktuellen verschlüsselten Daten, einschließlich der Bilder, werden beiseitegelegt und die App startet leer. Es wird nichts gelöscht. Wenn diese Daten einen Wiederherstellungscode hatten, kannst du sie später unter Datenschutz und Sicherheit bei Beiseitegelegte Daten wiederherstellen.</string>
     <string name="security_start_over_confirm">Neu beginnen</string>
     <string name="security_lock_title">Gesperrt</string>
     <string name="security_lock_unlock">Entsperren</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Löschen</string>
     <string name="security_set_aside_deleted">Gelöscht.</string>
     <string name="security_set_aside_delete_failed">Einige Dateien konnten nicht gelöscht werden. Versuche es erneut.</string>
+    <string name="security_set_aside_restore">Diese Daten wiederherstellen</string>
+    <string name="security_restore_title">Diese Daten wiederherstellen?</string>
+    <string name="security_restore_message">Deine aktuellen Daten werden beiseitegelegt, nicht gelöscht, und diese Kopie tritt an ihre Stelle. Die App startet neu. Die aktuellen Daten kannst du später auf dieselbe Weise wiederherstellen.</string>
+    <string name="security_restore_confirm">Wiederherstellen</string>
+    <string name="security_restore_code_title">Wiederherstellungscode dieser Kopie</string>
+    <string name="security_restore_code_subtitle">Die sichere Hardware dieses Geräts kann diese Kopie nicht mehr öffnen. Gib den Wiederherstellungscode ein, den sie hatte.</string>
+    <string name="security_restore_failed">Diese Kopie konnte nicht wiederhergestellt werden. Es wurde nichts geändert.</string>
+    <string name="security_restore_not_configured">Diese Kopie hat keinen Wiederherstellungscode, und dieses Gerät kann sie nicht mehr öffnen. Sie lässt sich daher nicht wiederherstellen.</string>
 </resources>

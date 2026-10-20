@@ -34,8 +34,12 @@ data class SetAsideItem(
     val suffix: String,
     val kind: SetAsideKind,
     val time: Long?,
-    val sizeBytes: Long
+    val sizeBytes: Long,
+    val canRestore: Boolean = false
 )
+
+/** Why a recovery code did not restore a copy. */
+enum class RestoreCodeError { Malformed, WrongCode }
 
 /** Dialogs of the security settings screen. */
 sealed class SecuritySettingsDialogState {
@@ -44,6 +48,15 @@ sealed class SecuritySettingsDialogState {
     data object ConfirmReplaceRecoveryCode : SecuritySettingsDialogState()
     data object ConfirmRemoveRecoveryCode : SecuritySettingsDialogState()
     data class SetAsideActions(val item: SetAsideItem) : SecuritySettingsDialogState()
+
+    data class ConfirmRestoreSetAside(val item: SetAsideItem) : SecuritySettingsDialogState()
+
+    /** The copy's own key is gone; its recovery code is asked. The code is never kept here. */
+    data class RestoreCodeInput(
+        val item: SetAsideItem,
+        val isWorking: Boolean = false,
+        val error: RestoreCodeError? = null
+    ) : SecuritySettingsDialogState()
 
     /** Deleting needs the box ticked first, then the user's confirmation. */
     data class ConfirmDeleteSetAside(val item: SetAsideItem, val understood: Boolean = false) :

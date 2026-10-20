@@ -58,6 +58,7 @@ import me.kafuuneko.rpclient.libs.security.RequestLogGuard
 import me.kafuuneko.rpclient.libs.security.SecureStorageManager
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
+import me.kafuuneko.rpclient.libs.security.storage.RestoreJournal
 import me.kafuuneko.rpclient.libs.story.StoryArchiveCodec
 import me.kafuuneko.rpclient.libs.story.StoryArchiveRepository
 import me.kafuuneko.rpclient.libs.story.StoryCharacterActivator
@@ -83,6 +84,8 @@ class RPClientApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Himitsu: a restore chosen in the security settings swaps files before anything opens them
+        RestoreJournal.completePending(this)
         Kotpref.init(this)
         val koinApplication = startKoin {
             androidContext(this@RPClientApp)

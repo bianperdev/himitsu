@@ -12,6 +12,7 @@ import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import me.kafuuneko.rpclient.libs.security.storage.MASTER_KEY_FILE_NAME
 import me.kafuuneko.rpclient.libs.security.storage.ProtectedFiles
+import me.kafuuneko.rpclient.libs.security.storage.SetAsideRestorer
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -31,4 +32,5 @@ internal val securityModule = module {
     single<UnlockEntry> { LockActivityEntry }
     single { RequestLogGuard(get()) }
     single { ProtectedFiles(androidContext()) }
+    single { SetAsideRestorer(androidContext(), get(), get()) }
 }

@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Aucun code de récupération n\'a été configuré pour ces données.</string>
     <string name="security_recovery_error_failed">Vos données ont été déverrouillées, mais la nouvelle clé n\'a pas pu être enregistrée. Réessayez.</string>
     <string name="security_start_over_title">Repartir de zéro avec des données vides ?</string>
-    <string name="security_start_over_message">Vos données chiffrées actuelles seront mises de côté et l\'application démarrera vide. Les anciens fichiers restent sur cet appareil et ne sont pas supprimés, mais cette version de l\'application ne peut plus les ouvrir.</string>
+    <string name="security_start_over_message">Vos données chiffrées actuelles, images comprises, seront mises de côté et l\'application démarrera vide. Rien n\'est supprimé. Si ces données avaient un code de récupération, vous pourrez les restaurer plus tard dans Confidentialité et sécurité, sous Données mises de côté.</string>
     <string name="security_start_over_confirm">Repartir de zéro</string>
     <string name="security_lock_title">Verrouillé</string>
     <string name="security_lock_unlock">Déverrouiller</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Supprimer</string>
     <string name="security_set_aside_deleted">Supprimées.</string>
     <string name="security_set_aside_delete_failed">Certains fichiers n\'ont pas pu être supprimés. Réessayez.</string>
+    <string name="security_set_aside_restore">Restaurer ces données</string>
+    <string name="security_restore_title">Restaurer ces données ?</string>
+    <string name="security_restore_message">Vos données actuelles seront mises de côté, sans être supprimées, et cette copie prendra leur place. L\'application redémarrera. Vous pourrez restaurer les données actuelles plus tard de la même façon.</string>
+    <string name="security_restore_confirm">Restaurer</string>
+    <string name="security_restore_code_title">Code de récupération de cette copie</string>
+    <string name="security_restore_code_subtitle">Le matériel sécurisé de cet appareil ne peut plus ouvrir cette copie. Saisissez le code de récupération qu\'elle avait.</string>
+    <string name="security_restore_failed">Cette copie n\'a pas pu être restaurée. Rien n\'a été modifié.</string>
+    <string name="security_restore_not_configured">Cette copie n\'a pas de code de récupération et cet appareil ne peut plus l\'ouvrir : elle ne peut donc pas être restaurée.</string>
 </resources>

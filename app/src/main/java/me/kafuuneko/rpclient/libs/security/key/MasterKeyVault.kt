@@ -47,6 +47,23 @@ sealed class RecoveryResult {
     data class Failed(val failure: VaultFailure) : RecoveryResult()
 }
 
+/** Result of opening the key file of data that was set aside. */
+sealed class SetAsideUnlock {
+    /** The key was opened and a copy sealed with a new Keystore key was written. */
+    class Unlocked(val masterKey: MasterKey) : SetAsideUnlock()
+
+    /** Its Keystore key is gone; the recovery code of that data is needed. */
+    data object NeedsCode : SetAsideUnlock()
+
+    /** The code does not open the recovery slot. */
+    data object WrongCode : SetAsideUnlock()
+
+    /** Its Keystore key is gone and it never had a recovery code: it cannot be opened. */
+    data object NotConfigured : SetAsideUnlock()
+
+    data class Failed(val failure: VaultFailure) : SetAsideUnlock()
+}
+
 /**
  * Creates, loads and recovers the master key.
  *
@@ -155,6 +172,60 @@ class MasterKeyVault(
      */
     fun removeRecoveryCode() {
         mStore.write(mStore.read().withoutSlot(KeySlotType.RecoveryCode))
+    }
+
+    /**
+     * Opens the master key of a key file that was set aside, and writes a copy of it sealed
+     * under a new Keystore key to [target], keeping its recovery slot. [source] is never
+     * changed.
+     *
+     * Its own Keystore key is tried first, so data replaced by a restore comes back without a
+     * code; otherwise [code] must open its recovery slot.
+     *
+     * @return [SetAsideUnlock.Unlocked] with a key the caller destroys after use
+     */
+    fun unlockSetAside(source: MasterKeyFileStore, target: MasterKeyFileStore, code: RecoveryCode?): SetAsideUnlock {
+        val file = try {
+            source.read()
+        } catch (_: MasterKeyFileFormatException) {
+            return SetAsideUnlock.Failed(VaultFailure.KeyFileCorrupt)
+        } catch (_: IOException) {
+            return SetAsideUnlock.Failed(VaultFailure.StorageError)
+        }
+        val recoverySlot = file.slot(KeySlotType.RecoveryCode)
+        val bytes = openKeystoreSlot(file) ?: run {
+            if (recoverySlot == null) return SetAsideUnlock.NotConfigured
+            if (code == null) return SetAsideUnlock.NeedsCode
+            val kek = recoveryKek(code, recoverySlot.salt)
+            try {
+                AesGcm.open(kek, recoverySlot.sealedKey, MasterKeyFileCodec.slotAad(KeySlotType.RecoveryCode))
+            } catch (_: GeneralSecurityException) {
+                return SetAsideUnlock.WrongCode
+            } finally {
+                kek.fill(0)
+            }
+        }
+        val masterKey = adoptOrCorrupt(bytes) ?: return SetAsideUnlock.Failed(VaultFailure.KeyFileCorrupt)
+        return try {
+            target.write(MasterKeyFile(listOfNotNull(keystoreSlot(masterKey), recoverySlot)))
+            SetAsideUnlock.Unlocked(masterKey)
+        } catch (e: KeyWrapperException) {
+            masterKey.destroy()
+            SetAsideUnlock.Failed(e.failure.toVaultFailure())
+        } catch (_: IOException) {
+            masterKey.destroy()
+            SetAsideUnlock.Failed(VaultFailure.StorageError)
+        }
+    }
+
+    /** Opens the Keystore slot of [file], or returns null when it has none or its key is gone. */
+    private fun openKeystoreSlot(file: MasterKeyFile): ByteArray? {
+        val slot = file.slot(KeySlotType.Keystore) ?: return null
+        return try {
+            mKeyWrapper.open(slot.keystoreKeyId(), slot.sealedKey, MasterKeyFileCodec.slotAad(KeySlotType.Keystore))
+        } catch (_: KeyWrapperException) {
+            null
+        }
     }
 
     /**

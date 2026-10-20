@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">No recovery code was set up for this data.</string>
     <string name="security_recovery_error_failed">Your data was unlocked but the new key could not be saved. Try again.</string>
     <string name="security_start_over_title">Start over with empty data?</string>
-    <string name="security_start_over_message">Your current encrypted data will be set aside and the app will start empty. The old files stay on this device and are not deleted, but this version of the app cannot open them again.</string>
+    <string name="security_start_over_message">Your current encrypted data, including images, will be set aside and the app will start empty. Nothing is deleted. If this data had a recovery code, you can restore it later in Privacy and security, under Set-aside data.</string>
     <string name="security_start_over_confirm">Start over</string>
     <string name="security_lock_title">Locked</string>
     <string name="security_lock_unlock">Unlock</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Delete</string>
     <string name="security_set_aside_deleted">Deleted.</string>
     <string name="security_set_aside_delete_failed">Some files could not be deleted. Try again.</string>
+    <string name="security_set_aside_restore">Restore this data</string>
+    <string name="security_restore_title">Restore this data?</string>
+    <string name="security_restore_message">Your current data will be set aside, not deleted, and this copy will take its place. The app will restart. You can restore the current data later the same way.</string>
+    <string name="security_restore_confirm">Restore</string>
+    <string name="security_restore_code_title">Recovery code of this copy</string>
+    <string name="security_restore_code_subtitle">This device\'s secure hardware can no longer open this copy. Enter the recovery code it had.</string>
+    <string name="security_restore_failed">This copy could not be restored. Nothing was changed.</string>
+    <string name="security_restore_not_configured">This copy has no recovery code and this device can no longer open it, so it cannot be restored.</string>
 </resources>

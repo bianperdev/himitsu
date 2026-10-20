@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Tidak ada kode pemulihan yang disiapkan untuk data ini.</string>
     <string name="security_recovery_error_failed">Data Anda berhasil dibuka, tetapi kunci baru tidak dapat disimpan. Coba lagi.</string>
     <string name="security_start_over_title">Mulai dari awal dengan data kosong?</string>
-    <string name="security_start_over_message">Data terenkripsi Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap ada di perangkat ini dan tidak dihapus, tetapi versi aplikasi ini tidak dapat membukanya lagi.</string>
+    <string name="security_start_over_message">Data terenkripsi Anda saat ini, termasuk gambar, akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. Tidak ada yang dihapus. Jika data ini memiliki kode pemulihan, Anda dapat memulihkannya nanti di Privasi dan keamanan, pada Data yang disisihkan.</string>
     <string name="security_start_over_confirm">Mulai dari awal</string>
     <string name="security_lock_title">Terkunci</string>
     <string name="security_lock_unlock">Buka kunci</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Hapus</string>
     <string name="security_set_aside_deleted">Dihapus.</string>
     <string name="security_set_aside_delete_failed">Beberapa file tidak dapat dihapus. Coba lagi.</string>
+    <string name="security_set_aside_restore">Pulihkan data ini</string>
+    <string name="security_restore_title">Pulihkan data ini?</string>
+    <string name="security_restore_message">Data Anda saat ini akan disisihkan, tidak dihapus, dan salinan ini akan menggantikannya. Aplikasi akan dimulai ulang. Anda dapat memulihkan data saat ini nanti dengan cara yang sama.</string>
+    <string name="security_restore_confirm">Pulihkan</string>
+    <string name="security_restore_code_title">Kode pemulihan salinan ini</string>
+    <string name="security_restore_code_subtitle">Perangkat keras aman di perangkat ini tidak dapat lagi membuka salinan ini. Masukkan kode pemulihan yang dimilikinya.</string>
+    <string name="security_restore_failed">Salinan ini tidak dapat dipulihkan. Tidak ada yang diubah.</string>
+    <string name="security_restore_not_configured">Salinan ini tidak memiliki kode pemulihan dan perangkat ini tidak dapat lagi membukanya, jadi tidak dapat dipulihkan.</string>
 </resources>

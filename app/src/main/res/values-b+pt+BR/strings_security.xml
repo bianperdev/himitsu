@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Nenhum código de recuperação foi configurado para estes dados.</string>
     <string name="security_recovery_error_failed">Seus dados foram desbloqueados, mas não foi possível salvar a nova chave. Tente novamente.</string>
     <string name="security_start_over_title">Começar do zero sem dados?</string>
-    <string name="security_start_over_message">Seus dados criptografados atuais serão deixados de lado e o app começará vazio. Os arquivos antigos continuam neste dispositivo e não são excluídos, mas esta versão do app não consegue abri-los novamente.</string>
+    <string name="security_start_over_message">Seus dados criptografados atuais, incluindo as imagens, serão deixados de lado e o app começará vazio. Nada é excluído. Se estes dados tinham um código de recuperação, você poderá restaurá-los depois em Privacidade e segurança, em Dados deixados de lado.</string>
     <string name="security_start_over_confirm">Começar do zero</string>
     <string name="security_lock_title">Bloqueado</string>
     <string name="security_lock_unlock">Desbloquear</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Excluir</string>
     <string name="security_set_aside_deleted">Excluídos.</string>
     <string name="security_set_aside_delete_failed">Não foi possível excluir alguns arquivos. Tente novamente.</string>
+    <string name="security_set_aside_restore">Restaurar estes dados</string>
+    <string name="security_restore_title">Restaurar estes dados?</string>
+    <string name="security_restore_message">Seus dados atuais serão deixados de lado, sem serem excluídos, e esta cópia ocupará o lugar deles. O app será reiniciado. Você poderá restaurar os dados atuais depois da mesma forma.</string>
+    <string name="security_restore_confirm">Restaurar</string>
+    <string name="security_restore_code_title">Código de recuperação desta cópia</string>
+    <string name="security_restore_code_subtitle">O hardware seguro deste dispositivo não consegue mais abrir esta cópia. Digite o código de recuperação que ela tinha.</string>
+    <string name="security_restore_failed">Não foi possível restaurar esta cópia. Nada foi alterado.</string>
+    <string name="security_restore_not_configured">Esta cópia não tem código de recuperação e este dispositivo não consegue mais abri-la, então ela não pode ser restaurada.</string>
 </resources>

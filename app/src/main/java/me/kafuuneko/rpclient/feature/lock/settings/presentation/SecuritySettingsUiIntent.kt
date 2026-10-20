@@ -26,6 +26,13 @@ sealed class SecuritySettingsUiIntent {
     data object ShowDeleteSetAside : SecuritySettingsUiIntent()
     data class SetDeleteUnderstood(val understood: Boolean) : SecuritySettingsUiIntent()
     data object ConfirmDeleteSetAside : SecuritySettingsUiIntent()
+    data object ShowRestoreSetAside : SecuritySettingsUiIntent()
+    data object ConfirmRestoreSetAside : SecuritySettingsUiIntent()
+
+    /** Not a data class: its `toString` must never print the code. */
+    class SubmitRestoreCode(val code: String) : SecuritySettingsUiIntent() {
+        override fun toString(): String = "SubmitRestoreCode([REDACTED])"
+    }
 
     /** Result of the confirmation asked before a sensitive change; [confirmed] only after success. */
     data class ConfirmationFinished(val confirmed: Boolean) : SecuritySettingsUiIntent()

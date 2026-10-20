@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Для этих данных код восстановления не настроен.</string>
     <string name="security_recovery_error_failed">Данные разблокированы, но сохранить новый ключ не удалось. Повторите попытку.</string>
     <string name="security_start_over_title">Начать заново с пустыми данными?</string>
-    <string name="security_start_over_message">Текущие зашифрованные данные будут отложены, и приложение запустится пустым. Старые файлы остаются на устройстве и не удаляются, но эта версия приложения не сможет открыть их снова.</string>
+    <string name="security_start_over_message">Текущие зашифрованные данные, включая изображения, будут отложены, и приложение запустится пустым. Ничего не удаляется. Если у этих данных был код восстановления, позже их можно восстановить в разделе «Конфиденциальность и безопасность» → «Отложенные данные».</string>
     <string name="security_start_over_confirm">Начать заново</string>
     <string name="security_lock_title">Заблокировано</string>
     <string name="security_lock_unlock">Разблокировать</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Удалить</string>
     <string name="security_set_aside_deleted">Удалено.</string>
     <string name="security_set_aside_delete_failed">Не удалось удалить некоторые файлы. Повторите попытку.</string>
+    <string name="security_set_aside_restore">Восстановить эти данные</string>
+    <string name="security_restore_title">Восстановить эти данные?</string>
+    <string name="security_restore_message">Текущие данные будут отложены, а не удалены, и эта копия займёт их место. Приложение перезапустится. Позже вы сможете восстановить текущие данные тем же способом.</string>
+    <string name="security_restore_confirm">Восстановить</string>
+    <string name="security_restore_code_title">Код восстановления этой копии</string>
+    <string name="security_restore_code_subtitle">Защищённое оборудование устройства больше не может открыть эту копию. Введите её код восстановления.</string>
+    <string name="security_restore_failed">Не удалось восстановить эту копию. Ничего не изменено.</string>
+    <string name="security_restore_not_configured">У этой копии нет кода восстановления, а устройство больше не может её открыть, поэтому восстановить её нельзя.</string>
 </resources>

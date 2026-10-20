@@ -8,6 +8,7 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.lock.settings.presentation.RestoreCodeError
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsDialogState
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiIntent
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiState
@@ -17,10 +18,13 @@ import me.kafuuneko.rpclient.libs.core.AppViewEvent
 import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
 import me.kafuuneko.rpclient.libs.security.SecureStorageManager
+import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import me.kafuuneko.rpclient.libs.security.lock.SecurityPrefs
 import me.kafuuneko.rpclient.libs.security.storage.EncryptedExport
 import me.kafuuneko.rpclient.libs.security.storage.ProtectedFiles
+import me.kafuuneko.rpclient.libs.security.storage.RestorePreparation
+import me.kafuuneko.rpclient.libs.security.storage.SetAsideRestorer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -33,8 +37,9 @@ import org.koin.core.component.inject
  *   from state
  * - ask the user to confirm with biometrics or the device credential before turning the lock
  *   off or changing the recovery code, so an unlocked phone left on the table is not enough
- * - list the data that "start over" or "set aside" moved out of the way, save a copy of it, and
- *   delete it only after a ticked box and the user's confirmation
+ * - list the data that "start over" or "set aside" moved out of the way, save a copy of it,
+ *   restore it in place of the data in use (which is set aside in turn), and delete it only
+ *   after a ticked box and the user's confirmation
  */
 class SecuritySettingsViewModel :
     CoreViewModelWithEvent<SecuritySettingsUiIntent, SecuritySettingsUiState>(SecuritySettingsUiState.None),
@@ -42,6 +47,7 @@ class SecuritySettingsViewModel :
     private val mLockManager by inject<AppLockManager>()
     private val mStorage by inject<SecureStorageManager>()
     private val mProtectedFiles by inject<ProtectedFiles>()
+    private val mRestorer by inject<SetAsideRestorer>()
     private val mContext by inject<Context>()
 
     /** Set whose export waits for the file picker. */
@@ -150,7 +156,81 @@ class SecuritySettingsViewModel :
     }
 
     private suspend fun loadSetAside(): List<SetAsideItem> = withContext(Dispatchers.IO) {
-        mProtectedFiles.setAside().map { SetAsideItem(it.suffix, it.kind, it.time, it.sizeBytes) }
+        mProtectedFiles.setAside().map { SetAsideItem(it.suffix, it.kind, it.time, it.sizeBytes, mRestorer.canRestore(it)) }
+    }
+
+    @UiIntentObserver(SecuritySettingsUiIntent.ShowRestoreSetAside::class)
+    private fun onShowRestoreSetAside() {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        val dialog = uiState.dialogState as? SecuritySettingsDialogState.SetAsideActions ?: return
+        if (!dialog.item.canRestore) return
+        uiState.copy(dialogState = SecuritySettingsDialogState.ConfirmRestoreSetAside(dialog.item)).setup()
+    }
+
+    @UiIntentObserver(SecuritySettingsUiIntent.ConfirmRestoreSetAside::class)
+    private fun onConfirmRestoreSetAside() {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        val dialog = uiState.dialogState as? SecuritySettingsDialogState.ConfirmRestoreSetAside ?: return
+        if (uiState.isWorking) return
+        uiState.copy(dialogState = SecuritySettingsDialogState.None).setup()
+        requestConfirmation(ProtectedAction.RestoreSetAside(dialog.item))
+    }
+
+    /**
+     * Restores with the copy's own Keystore key when it still works; otherwise asks for the
+     * copy's recovery code.
+     */
+    private suspend fun restoreSetAside(item: SetAsideItem) {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        if (uiState.isWorking) return
+        uiState.copy(isWorking = true).setup()
+        val result = mRestorer.prepare(item.suffix, code = null)
+        val current = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        when (result) {
+            RestorePreparation.Scheduled -> SecuritySettingsViewEvent.RestartApp.tryEmit()
+            RestorePreparation.NeedsCode -> {
+                current.copy(isWorking = false, dialogState = SecuritySettingsDialogState.RestoreCodeInput(item)).setup()
+                return
+            }
+            RestorePreparation.NotConfigured ->
+                AppViewEvent.PopupToastMessageByResId(R.string.security_restore_not_configured).tryEmit()
+            RestorePreparation.WrongCode, RestorePreparation.Failed ->
+                AppViewEvent.PopupToastMessageByResId(R.string.security_restore_failed).tryEmit()
+        }
+        current.copy(isWorking = false).setup()
+    }
+
+    /** The typed code is parsed, used once and wiped; it is never stored in UI state. */
+    @UiIntentObserver(SecuritySettingsUiIntent.SubmitRestoreCode::class)
+    private suspend fun onSubmitRestoreCode(intent: SecuritySettingsUiIntent.SubmitRestoreCode) {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        val dialog = uiState.dialogState as? SecuritySettingsDialogState.RestoreCodeInput ?: return
+        if (dialog.isWorking) return
+        val code = RecoveryCode.parse(intent.code)
+        if (code == null) {
+            uiState.copy(dialogState = dialog.copy(error = RestoreCodeError.Malformed)).setup()
+            return
+        }
+        uiState.copy(dialogState = SecuritySettingsDialogState.RestoreCodeInput(dialog.item, isWorking = true)).setup()
+        val result = try {
+            mRestorer.prepare(dialog.item.suffix, code)
+        } finally {
+            code.wipe()
+        }
+        val current = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        when (result) {
+            RestorePreparation.Scheduled -> {
+                current.copy(dialogState = SecuritySettingsDialogState.None).setup()
+                SecuritySettingsViewEvent.RestartApp.tryEmit()
+            }
+            RestorePreparation.WrongCode -> current.copy(
+                dialogState = SecuritySettingsDialogState.RestoreCodeInput(dialog.item, error = RestoreCodeError.WrongCode)
+            ).setup()
+            RestorePreparation.NeedsCode, RestorePreparation.NotConfigured, RestorePreparation.Failed -> {
+                current.copy(dialogState = SecuritySettingsDialogState.None).setup()
+                AppViewEvent.PopupToastMessageByResId(R.string.security_restore_failed).tryEmit()
+            }
+        }
     }
 
     @UiIntentObserver(SecuritySettingsUiIntent.Back::class)
@@ -252,6 +332,7 @@ class SecuritySettingsViewModel :
             ProtectedAction.CreateRecoveryCode -> generateRecoveryCode()
             ProtectedAction.RemoveRecoveryCode -> removeRecoveryCode()
             is ProtectedAction.DeleteSetAside -> deleteSetAside(action.suffix)
+            is ProtectedAction.RestoreSetAside -> restoreSetAside(action.item)
         }
     }
 
@@ -276,6 +357,7 @@ class SecuritySettingsViewModel :
     @UiIntentObserver(SecuritySettingsUiIntent.DismissDialog::class)
     private fun onDismissDialog() {
         val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        if ((uiState.dialogState as? SecuritySettingsDialogState.RestoreCodeInput)?.isWorking == true) return
         uiState.copy(dialogState = SecuritySettingsDialogState.None).setup()
     }
 
@@ -310,5 +392,6 @@ class SecuritySettingsViewModel :
         data object CreateRecoveryCode : ProtectedAction
         data object RemoveRecoveryCode : ProtectedAction
         data class DeleteSetAside(val suffix: String) : ProtectedAction
+        data class RestoreSetAside(val item: SetAsideItem) : ProtectedAction
     }
 }

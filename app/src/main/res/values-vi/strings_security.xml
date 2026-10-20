@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Chưa thiết lập mã khôi phục cho dữ liệu này.</string>
     <string name="security_recovery_error_failed">Dữ liệu của bạn đã được mở khóa nhưng không thể lưu khóa mới. Hãy thử lại.</string>
     <string name="security_start_over_title">Bắt đầu lại với dữ liệu trống?</string>
-    <string name="security_start_over_message">Dữ liệu đã mã hóa hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn ở trên thiết bị này và không bị xóa, nhưng phiên bản ứng dụng này không thể mở lại chúng.</string>
+    <string name="security_start_over_message">Dữ liệu đã mã hóa hiện tại, kể cả hình ảnh, sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Không có gì bị xóa. Nếu dữ liệu này có mã khôi phục, bạn có thể khôi phục sau trong Quyền riêng tư và bảo mật, mục Dữ liệu để riêng.</string>
     <string name="security_start_over_confirm">Bắt đầu lại</string>
     <string name="security_lock_title">Đã khóa</string>
     <string name="security_lock_unlock">Mở khóa</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">Xóa</string>
     <string name="security_set_aside_deleted">Đã xóa.</string>
     <string name="security_set_aside_delete_failed">Không thể xóa một số tệp. Hãy thử lại.</string>
+    <string name="security_set_aside_restore">Khôi phục dữ liệu này</string>
+    <string name="security_restore_title">Khôi phục dữ liệu này?</string>
+    <string name="security_restore_message">Dữ liệu hiện tại sẽ được để riêng, không bị xóa, và bản sao này sẽ thay thế. Ứng dụng sẽ khởi động lại. Bạn có thể khôi phục dữ liệu hiện tại sau bằng cách tương tự.</string>
+    <string name="security_restore_confirm">Khôi phục</string>
+    <string name="security_restore_code_title">Mã khôi phục của bản sao này</string>
+    <string name="security_restore_code_subtitle">Phần cứng bảo mật của thiết bị không còn mở được bản sao này. Hãy nhập mã khôi phục mà nó có.</string>
+    <string name="security_restore_failed">Không thể khôi phục bản sao này. Không có gì thay đổi.</string>
+    <string name="security_restore_not_configured">Bản sao này không có mã khôi phục và thiết bị không còn mở được nó, nên không thể khôi phục.</string>
 </resources>

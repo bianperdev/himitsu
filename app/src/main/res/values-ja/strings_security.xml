@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">このデータにはリカバリーコードが設定されていません。</string>
     <string name="security_recovery_error_failed">データのロックは解除されましたが、新しい鍵を保存できませんでした。もう一度お試しください。</string>
     <string name="security_start_over_title">空のデータで最初からやり直しますか？</string>
-    <string name="security_start_over_message">現在の暗号化データは別の場所に移され、アプリは空の状態で起動します。古いファイルはこの端末に残り削除されませんが、このバージョンのアプリでは再び開くことはできません。</string>
+    <string name="security_start_over_message">画像を含む現在の暗号化データは別の場所に移され、アプリは空の状態で起動します。何も削除されません。このデータに復旧コードがあった場合は、後で「プライバシーとセキュリティ」の「別の場所に移したデータ」から復元できます。</string>
     <string name="security_start_over_confirm">最初からやり直す</string>
     <string name="security_lock_title">ロック中</string>
     <string name="security_lock_unlock">ロック解除</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">削除</string>
     <string name="security_set_aside_deleted">削除しました。</string>
     <string name="security_set_aside_delete_failed">一部のファイルを削除できませんでした。もう一度お試しください。</string>
+    <string name="security_set_aside_restore">このデータを復元</string>
+    <string name="security_restore_title">このデータを復元しますか？</string>
+    <string name="security_restore_message">現在のデータは削除されずに別の場所に移され、このコピーが代わりに使われます。アプリは再起動します。現在のデータは後で同じ方法で復元できます。</string>
+    <string name="security_restore_confirm">復元</string>
+    <string name="security_restore_code_title">このコピーの復旧コード</string>
+    <string name="security_restore_code_subtitle">この端末のセキュアハードウェアでは、このコピーを開けなくなっています。このコピーの復旧コードを入力してください。</string>
+    <string name="security_restore_failed">このコピーを復元できませんでした。何も変更されていません。</string>
+    <string name="security_restore_not_configured">このコピーには復旧コードがなく、この端末でも開けなくなっているため、復元できません。</string>
 </resources>

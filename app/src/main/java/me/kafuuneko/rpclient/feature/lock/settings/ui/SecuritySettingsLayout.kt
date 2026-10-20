@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.SaveAlt
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Checkbox
@@ -33,6 +34,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.lock.settings.presentation.RestoreCodeError
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsDialogState
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiIntent
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiState
@@ -53,6 +59,7 @@ import me.kafuuneko.rpclient.ui.dialog.AppActionItem
 import me.kafuuneko.rpclient.ui.dialog.AppActionListDialog
 import me.kafuuneko.rpclient.ui.dialog.AppConfirmDialog
 import me.kafuuneko.rpclient.ui.dialog.AppDialogScaffold
+import me.kafuuneko.rpclient.ui.dialog.AppInputDialog
 import me.kafuuneko.rpclient.ui.dialog.DialogBadgeTone
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
@@ -281,6 +288,16 @@ private fun DialogSwitch(
         )
         is SecuritySettingsDialogState.ShowRecoveryCode -> RecoveryCodeDialog(dialogState.code, dismiss)
         is SecuritySettingsDialogState.SetAsideActions -> SetAsideActionsDialog(dialogState, dismiss, emit)
+        is SecuritySettingsDialogState.ConfirmRestoreSetAside -> AppConfirmDialog(
+            onDismissRequest = dismiss,
+            title = stringResource(R.string.security_restore_title),
+            message = stringResource(R.string.security_restore_message),
+            badgeIcon = Icons.Rounded.Restore,
+            badgeTone = DialogBadgeTone.Warning,
+            confirmText = stringResource(R.string.security_restore_confirm),
+            onConfirm = { SecuritySettingsUiIntent.ConfirmRestoreSetAside.emit() }
+        )
+        is SecuritySettingsDialogState.RestoreCodeInput -> RestoreCodeDialog(dialogState, emit)
         is SecuritySettingsDialogState.ConfirmDeleteSetAside -> AppConfirmDialog(
             onDismissRequest = dismiss,
             title = stringResource(R.string.security_set_aside_delete_title),
@@ -327,7 +344,15 @@ private fun SetAsideActionsDialog(
         title = stringResource(dialogState.item.kind.labelRes()),
         subtitle = dialogState.item.details(),
         badgeIcon = Icons.Rounded.Archive,
-        actions = listOf(
+        actions = listOfNotNull(
+            AppActionItem(
+                icon = Icons.Rounded.Restore,
+                title = stringResource(R.string.security_set_aside_restore),
+                onClick = {
+                    chosen = true
+                    SecuritySettingsUiIntent.ShowRestoreSetAside.emit()
+                }
+            ).takeIf { dialogState.item.canRestore },
             AppActionItem(
                 icon = Icons.Rounded.SaveAlt,
                 title = stringResource(R.string.security_action_export),
@@ -343,6 +368,37 @@ private fun SetAsideActionsDialog(
                 }
             )
         )
+    )
+}
+
+/**
+ * Recovery code of a set-aside copy. The typed code lives only in this dialog's memory (not in
+ * saved instance state) and is handed to the ViewModel once, on confirm.
+ */
+@Composable
+private fun RestoreCodeDialog(state: SecuritySettingsDialogState.RestoreCodeInput, emit: SecuritySettingsUiIntent.() -> Unit) {
+    var code by remember { mutableStateOf("") }
+    AppInputDialog(
+        onDismissRequest = { SecuritySettingsUiIntent.DismissDialog.emit() },
+        title = stringResource(R.string.security_restore_code_title),
+        subtitle = stringResource(
+            when (state.error) {
+                RestoreCodeError.Malformed -> R.string.security_recovery_error_malformed
+                RestoreCodeError.WrongCode -> R.string.security_recovery_error_wrong
+                null -> R.string.security_restore_code_subtitle
+            }
+        ),
+        value = code,
+        onValueChange = { code = it },
+        label = stringResource(R.string.security_recovery_dialog_label),
+        placeholder = "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX",
+        password = true,
+        badgeIcon = Icons.Rounded.Key,
+        badgeTone = if (state.error == null) DialogBadgeTone.Primary else DialogBadgeTone.Danger,
+        confirmText = stringResource(R.string.security_restore_confirm),
+        enabled = !state.isWorking,
+        isConfirmLoading = state.isWorking,
+        onConfirm = { SecuritySettingsUiIntent.SubmitRestoreCode(code).emit() }
     )
 }
 

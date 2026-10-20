@@ -11,6 +11,9 @@ sealed class SecuritySettingsViewEvent : IViewEvent {
     /** Ask the user to confirm with biometrics or the device credential. */
     data object RequestConfirmation : SecuritySettingsViewEvent()
 
+    /** Restart the app, so the recorded restore swaps the files before anything opens them. */
+    data object RestartApp : SecuritySettingsViewEvent()
+
     /** Let the user choose where to save an export, suggesting [fileName]. */
     data class PickExportDestination(val fileName: String) : SecuritySettingsViewEvent()
 }

@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">这些数据没有设置恢复码。</string>
     <string name="security_recovery_error_failed">数据已解锁，但无法保存新密钥。请重试。</string>
     <string name="security_start_over_title">以空数据重新开始？</string>
-    <string name="security_start_over_message">当前的加密数据将被移到一旁，应用将以空数据启动。旧文件会保留在此设备上且不会被删除，但此版本的应用无法再次打开它们。</string>
+    <string name="security_start_over_message">当前的加密数据（包括图片）将被移到一旁，应用将以空数据启动。不会删除任何内容。如果这些数据设置过恢复码，之后可以在“隐私与安全”的“移到一旁的数据”中恢复。</string>
     <string name="security_start_over_confirm">重新开始</string>
     <string name="security_lock_title">已锁定</string>
     <string name="security_lock_unlock">解锁</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">删除</string>
     <string name="security_set_aside_deleted">已删除。</string>
     <string name="security_set_aside_delete_failed">部分文件无法删除。请重试。</string>
+    <string name="security_set_aside_restore">恢复这些数据</string>
+    <string name="security_restore_title">恢复这些数据？</string>
+    <string name="security_restore_message">你当前的数据将被移到一旁而不会被删除，此副本将取而代之。应用将重新启动。之后你可以用同样的方式恢复当前数据。</string>
+    <string name="security_restore_confirm">恢复</string>
+    <string name="security_restore_code_title">此副本的恢复码</string>
+    <string name="security_restore_code_subtitle">此设备的安全硬件已无法打开此副本。请输入它原有的恢复码。</string>
+    <string name="security_restore_failed">无法恢复此副本。未作任何更改。</string>
+    <string name="security_restore_not_configured">此副本没有恢复码，此设备也已无法打开它，因此无法恢复。</string>
 </resources>

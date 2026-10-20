@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">這些資料沒有設定復原碼。</string>
     <string name="security_recovery_error_failed">資料已解鎖，但無法儲存新金鑰。請再試一次。</string>
     <string name="security_start_over_title">以空白資料重新開始？</string>
-    <string name="security_start_over_message">目前的加密資料將被移到一旁，應用程式將以空白狀態啟動。舊檔案會保留在此裝置上且不會被刪除，但此版本的應用程式無法再次開啟它們。</string>
+    <string name="security_start_over_message">目前的加密資料（包括圖片）將被移到一旁，應用程式將以空白狀態啟動。不會刪除任何內容。如果這些資料設定過復原碼，之後可以在「隱私權與安全性」的「移到一旁的資料」中還原。</string>
     <string name="security_start_over_confirm">重新開始</string>
     <string name="security_lock_title">已鎖定</string>
     <string name="security_lock_unlock">解鎖</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">刪除</string>
     <string name="security_set_aside_deleted">已刪除。</string>
     <string name="security_set_aside_delete_failed">部分檔案無法刪除。請再試一次。</string>
+    <string name="security_set_aside_restore">還原這些資料</string>
+    <string name="security_restore_title">還原這些資料？</string>
+    <string name="security_restore_message">你目前的資料將被移到一旁而不會被刪除，此副本將取而代之。應用程式將重新啟動。之後你可以用同樣的方式還原目前的資料。</string>
+    <string name="security_restore_confirm">還原</string>
+    <string name="security_restore_code_title">此副本的復原碼</string>
+    <string name="security_restore_code_subtitle">此裝置的安全硬體已無法開啟此副本。請輸入它原有的復原碼。</string>
+    <string name="security_restore_failed">無法還原此副本。未進行任何變更。</string>
+    <string name="security_restore_not_configured">此副本沒有復原碼，此裝置也已無法開啟它，因此無法還原。</string>
 </resources>

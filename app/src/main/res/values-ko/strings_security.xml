@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">이 데이터에는 복구 코드가 설정되어 있지 않습니다.</string>
     <string name="security_recovery_error_failed">데이터의 잠금은 해제되었지만 새 키를 저장하지 못했습니다. 다시 시도하세요.</string>
     <string name="security_start_over_title">빈 데이터로 처음부터 다시 시작할까요?</string>
-    <string name="security_start_over_message">현재 암호화된 데이터는 따로 보관되고 앱은 빈 상태로 시작됩니다. 이전 파일은 이 기기에 남아 있으며 삭제되지 않지만, 이 버전의 앱으로는 다시 열 수 없습니다.</string>
+    <string name="security_start_over_message">이미지를 포함한 현재 암호화된 데이터는 따로 보관되고 앱은 빈 상태로 시작됩니다. 아무것도 삭제되지 않습니다. 이 데이터에 복구 코드가 있었다면 나중에 개인 정보 보호 및 보안의 따로 보관한 데이터에서 복원할 수 있습니다.</string>
     <string name="security_start_over_confirm">처음부터 다시 시작</string>
     <string name="security_lock_title">잠김</string>
     <string name="security_lock_unlock">잠금 해제</string>
@@ -70,7 +70,7 @@
     <string name="security_storage_error_plain_unusable">이전 버전 앱의 데이터가 손상되어 암호화된 저장소로 옮길 수 없습니다. 사본을 저장하거나, 따로 보관하고 빈 데이터로 계속할 수 있습니다.</string>
     <string name="security_action_set_aside">따로 보관하고 계속</string>
     <string name="security_set_aside_title">손상된 데이터를 따로 보관할까요?</string>
-    <string name="security_set_aside_message">손상된 데이터와 이미지는 따로 보관되고 앱은 빈 데이터로 계속됩니다. 아무것도 삭제되지 않지만, 따로 보관한 사본은 개인정보 보호 및 보안에서 삭제할 때까지 암호화되지 않은 채 앱의 비공개 저장소에 남습니다.</string>
+    <string name="security_set_aside_message">손상된 데이터와 이미지는 따로 보관되고 앱은 빈 데이터로 계속됩니다. 아무것도 삭제되지 않지만, 따로 보관한 사본은 개인 정보 보호 및 보안에서 삭제할 때까지 암호화되지 않은 채 앱의 비공개 저장소에 남습니다.</string>
     <string name="security_set_aside_confirm">따로 보관</string>
     <string name="security_action_export">파일 사본 저장</string>
     <string name="security_export_working">사본을 저장하는 중…</string>
@@ -92,4 +92,12 @@
     <string name="security_set_aside_delete_confirm">삭제</string>
     <string name="security_set_aside_deleted">삭제했습니다.</string>
     <string name="security_set_aside_delete_failed">일부 파일을 삭제하지 못했습니다. 다시 시도하세요.</string>
+    <string name="security_set_aside_restore">이 데이터 복원</string>
+    <string name="security_restore_title">이 데이터를 복원할까요?</string>
+    <string name="security_restore_message">현재 데이터는 삭제되지 않고 따로 보관되며, 이 사본이 그 자리를 대신합니다. 앱이 다시 시작됩니다. 현재 데이터는 나중에 같은 방법으로 복원할 수 있습니다.</string>
+    <string name="security_restore_confirm">복원</string>
+    <string name="security_restore_code_title">이 사본의 복구 코드</string>
+    <string name="security_restore_code_subtitle">이 기기의 보안 하드웨어로는 더 이상 이 사본을 열 수 없습니다. 이 사본의 복구 코드를 입력하세요.</string>
+    <string name="security_restore_failed">이 사본을 복원하지 못했습니다. 변경된 내용이 없습니다.</string>
+    <string name="security_restore_not_configured">이 사본에는 복구 코드가 없고 이 기기로도 더 이상 열 수 없어 복원할 수 없습니다.</string>
 </resources>
