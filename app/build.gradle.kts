@@ -130,6 +130,37 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+/**
+ * Himitsu: copies NOTICE, LICENSE and LICENSES/ into the assets (`licenses/`), so the open source
+ * licenses screen always shows the same files as the repository, which stay the only source.
+ */
+abstract class BundleLicenses : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val licenseFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun bundle() {
+        val target = outputDirectory.get().asFile.resolve("licenses")
+        target.deleteRecursively()
+        target.mkdirs()
+        licenseFiles.files.filter { it.isFile }.forEach { it.copyTo(target.resolve(it.name)) }
+    }
+}
+
+val bundleLicenses = tasks.register<BundleLicenses>("bundleLicenses") {
+    licenseFiles.from(rootProject.file("NOTICE"), rootProject.file("LICENSE"), rootProject.fileTree("LICENSES"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(bundleLicenses, BundleLicenses::outputDirectory)
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.exifinterface)
