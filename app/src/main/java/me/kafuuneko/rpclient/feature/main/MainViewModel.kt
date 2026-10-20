@@ -95,6 +95,7 @@ import me.kafuuneko.rpclient.libs.room.repository.LLMRepository
 import me.kafuuneko.rpclient.libs.room.repository.LorebookRepository
 import me.kafuuneko.rpclient.libs.room.repository.StoryRepository
 import me.kafuuneko.rpclient.libs.theme.AppThemeManager
+import me.kafuuneko.rpclient.ui.theme.isDynamicColorSupported
 import me.kafuuneko.rpclient.utils.formatTimestamp
 import me.kafuuneko.rpclient.utils.stripThinkBlocks
 import org.koin.core.component.KoinComponent
@@ -634,6 +635,20 @@ class MainViewModel : CoreViewModelWithEvent<MainUiIntent, MainUiState>(
             settingsState = uiState.settingsState.copy(
                 appearanceState = uiState.settingsState.appearanceState.copy(
                     themeMode = intent.themeMode
+                )
+            )
+        ).setup()
+    }
+
+    /** Turns Material You dynamic color on or off and refreshes the appearance panel. */
+    @UiIntentObserver(MainUiIntent.ToggleDynamicColor::class)
+    private fun onToggleDynamicColor(intent: MainUiIntent.ToggleDynamicColor) {
+        val uiState = getOrNull<MainUiState.Normal>() ?: return
+        mAppThemeManager.setDynamicColor(intent.enabled)
+        uiState.copy(
+            settingsState = uiState.settingsState.copy(
+                appearanceState = uiState.settingsState.appearanceState.copy(
+                    dynamicColor = intent.enabled
                 )
             )
         ).setup()
@@ -1476,7 +1491,9 @@ class MainViewModel : CoreViewModelWithEvent<MainUiIntent, MainUiState>(
         return MainSettingsState(
             imageSendState = MainImageSendState.from(ImageSendSettings.decode(AppModel.imageSendSettings)),
             appearanceState = MainAppearanceSettingsState(
-                themeMode = mAppThemeManager.themeModeFlow.value
+                themeMode = mAppThemeManager.themeModeFlow.value,
+                dynamicColor = mAppThemeManager.dynamicColorFlow.value,
+                dynamicColorSupported = isDynamicColorSupported()
             ),
             identityState = MainUserIdentityState(
                 userName = AppModel.resolvedUserName,

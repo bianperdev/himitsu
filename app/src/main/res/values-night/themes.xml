@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <style name="Theme.RPClient" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/himitsu_night</item>
+    </style>
+</resources>

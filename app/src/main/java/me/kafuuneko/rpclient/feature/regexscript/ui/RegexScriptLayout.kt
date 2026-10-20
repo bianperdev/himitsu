@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.DraggableItem
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
 import me.kafuuneko.rpclient.ui.widgets.RpScrollableOutlinedTextField
@@ -465,7 +466,7 @@ private fun EmptyScriptsCard() {
                 modifier = Modifier.size(44.dp)
             )
             Text(
-                text = stringResource(R.string.regex_no_scripts),
+                text = stringResource(R.string.himitsu_empty_regex_scripts),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -572,7 +573,7 @@ private fun ScriptCard(
                 ) {
                     Text(
                         text = script.findRegex,
-                        fontFamily = FontFamily.Monospace,
+                        fontFamily = HimitsuMonoFamily,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 3,
@@ -587,13 +588,13 @@ private fun ScriptCard(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = "➜ ",
-                                fontFamily = FontFamily.Monospace,
+                                fontFamily = HimitsuMonoFamily,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
                                 text = script.replaceString,
-                                fontFamily = FontFamily.Monospace,
+                                fontFamily = HimitsuMonoFamily,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 2,
@@ -722,7 +723,7 @@ private fun TestCard(
                 value = state.testInput,
                 onValueChange = { emitIntent(RegexScriptUiIntent.ChangeTestInput(it)) },
                 label = { Text(stringResource(R.string.regex_test_input)) },
-                textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+                textStyle = LocalTextStyle.current.copy(fontFamily = HimitsuMonoFamily),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
@@ -749,7 +750,7 @@ private fun TestCard(
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.regex_test_output)) },
-                    textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+                    textStyle = LocalTextStyle.current.copy(fontFamily = HimitsuMonoFamily),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -970,7 +971,7 @@ private fun DraftField(
         onValueChange = onValueChange,
         label = { Text(stringResource(labelRes)) },
         textStyle = if (isMonospace) {
-            LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace)
+            LocalTextStyle.current.copy(fontFamily = HimitsuMonoFamily)
         } else {
             LocalTextStyle.current
         },

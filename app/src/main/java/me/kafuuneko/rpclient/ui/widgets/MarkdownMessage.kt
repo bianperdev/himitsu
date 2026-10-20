@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.utils.MarkdownBlock
 import me.kafuuneko.rpclient.utils.MarkdownInline
 import me.kafuuneko.rpclient.utils.MarkdownParser
@@ -60,9 +61,9 @@ fun MarkdownMessageText(
     modifier: Modifier = Modifier
 ) {
     val blocks = remember(content) { MarkdownParser.parseBlocks(content) }
-    val textColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-    val linkColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
-    val strongColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+    val textColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+    val linkColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary
+    val strongColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
     val subtleColor = textColor.copy(alpha = if (isUser) 0.78f else 0.65f)
     val narrationColor = textColor.copy(alpha = if (isUser) 0.85f else 0.75f)
     val blockColor = if (isUser) {
@@ -71,7 +72,7 @@ fun MarkdownMessageText(
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
     }
     val selectionColor = if (isUser) {
-        MaterialTheme.colorScheme.onPrimary
+        MaterialTheme.colorScheme.onPrimaryContainer
     } else {
         MaterialTheme.colorScheme.primary
     }
@@ -214,7 +215,7 @@ private fun MarkdownCodeBlock(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 text = content.ifBlank { " " },
                 style = MaterialTheme.typography.bodySmall.copy(
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = HimitsuMonoFamily,
                     lineHeight = 18.sp
                 ),
                 color = color
@@ -308,7 +309,7 @@ private fun AnnotatedString.Builder.appendMarkdownInline(
             is MarkdownInline.Text -> append(part.content)
             is MarkdownInline.Code -> withStyle(
                 SpanStyle(
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = HimitsuMonoFamily,
                     background = textColor.copy(alpha = 0.10f)
                 )
             ) {

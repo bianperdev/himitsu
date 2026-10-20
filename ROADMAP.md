@@ -273,6 +273,8 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 - Launcher icons: `app/src/main/res/mipmap-*/**`, `app/src/main/res/drawable/ic_launcher_*`, `app/src/main/res/drawable/app_logo.png`, splash screen resources
 - `…/ui/widgets/**`, `…/ui/message/**` (appearance only)
 - Feature `ui/*Layout.kt` files: replacing hard-coded colors and text styles with theme tokens only, never structure or behavior. **Exception:** do not touch `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` or `…/feature/lock/**` until their owning tracks are merged; do those in a follow-up commit afterwards.
+- Approved by the maintainer: the other UI files of features (`…/feature/*/ui/*.kt`, for example `AboutBranding.kt`, `MainChatImportViews.kt`, `ImageSendPanel.kt`) and `…/ui/dialog/**`, under the same rule (theme tokens only), with the same exceptions.
+- Narrow edits: the `ToggleDynamicColor` entry in `…/feature/main/presentation/MainUiIntent.kt`, and one line in `initView` of `…/libs/core/CoreActivity.kt` (owned by security) that passes the dynamic color preference to `AppTheme`. Keep both when merging.
 
 **Tasks, in order:**
 1. Proposal, approved by the maintainer: complete dark Material 3 `ColorScheme` with a contrast table (WCAG AA), secondary light theme, OFL fonts bundled in the APK with a fallback for CJK and the other app languages, identity details, the icon system and two or three icon concepts.
@@ -283,8 +285,25 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 6. Icon (adaptive, with a monochrome version for Android 13+) and splash screen.
 7. Compose previews of the main screens in both themes.
 
+**Follow-ups after the owning tracks merge:** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (10 color literals, monospace fields) and `…/feature/requestlog/**` (monospace), and `…/utils/PromptMacroHighlighting.kt` (monospace).
+
+**Spanish register (decided by the maintainer):** Himitsu addresses the user with informal "tú" in Spanish. `strings_aesthetic.xml` already does; the inherited `values-es/strings.xml` still uses formal "usted" ("Cree", "Elija"). Converting it touches a file no track owns, so do it in one dedicated commit after every track is merged.
+
+**Kept on purpose:** the neutral "darkroom" greys of `…/feature/imagecrop/**` and the black/white overlays drawn on top of photos (`…/ui/message/**`, `MessageImageViewerDialog`), so images are judged without a color cast.
+
+**Possible follow-ups (not started):**
+- Subset the bundled fonts to Latin, Vietnamese and Cyrillic with fonttools (and drop Inter's `opsz` axis) to cut about 1.5 MB from the APK. This adds a build step, so it needs a decision first.
+
 **Contract this track must document here before it is merged:**
 - **Icon system:** where launcher icons live and how alternative icons are added, so `feat/disguise` can add generic calculator, compass and converter icons.
+  - Every launcher icon is an adaptive icon made only of vectors (minSdk 26 supports them everywhere, so there are no raster `mipmap-*dpi` files).
+  - An icon with id `<id>` has three layers in `app/src/main/res/drawable/`: `ic_launcher_<id>_background.xml`, `ic_launcher_<id>_foreground.xml` and `ic_launcher_<id>_monochrome.xml` (108 dp, artwork inside the 66 dp safe zone; the monochrome layer is a single-color silhouette for Android 13+ themed icons). They are combined by `app/src/main/res/mipmap-anydpi-v26/ic_launcher_<id>.xml`.
+  - Himitsu's own icon has id `himitsu`; it is wired as `@mipmap/ic_launcher` and `@mipmap/ic_launcher_round`, which the manifest already uses.
+  - `feat/disguise` adds `calculator`, `compass` and `converter` the same way and references `@mipmap/ic_launcher_<id>` from each `activity-alias` (`android:icon` and `android:roundIcon`). Decoy icons must be original and generic, never copies of real apps.
+  - The splash screen (Android 12+) does not set an icon, so it shows the icon of the entry that was tapped; a disguise alias never shows the Himitsu logo while starting. Its background is the neutral night or morning color.
+
+**Offered to `feat/security` (the maintainer chose this before the security contract existed):**
+- **Lock screen frame:** `RpLockScreenFrame(title, modifier, subtitle, mark, actions)` in `…/ui/widgets/RpLockScreenFrame.kt`. It only draws: the night background with the monitor glow, a mark (a glowing lock by default, `RpLockMark`), the title and subtitle, and an `actions` slot for the unlock controls. It holds no strings and no branding, so callers pass localized text and `feat/disguise` can pass a neutral `mark`. It has no animation. Security keeps all lock logic in `…/feature/lock/**` and can ignore or wrap the frame; if its own contract needs another shape, the aesthetic track adapts the frame.
 
 **Done when:** text contrast meets WCAG AA in both themes; no fonts or images are downloaded at runtime; every font and asset is original or has a verified free license recorded in `NOTICE`; animations respect the system "remove animations" setting; screen structure and behavior are unchanged; every flavor builds.
 
@@ -429,7 +448,13 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 
-Bundled resources: the launcher icon background vector is from the AOSP template (Apache-2.0). The provenance of `app/src/main/res/drawable/app_logo.png` is unverified; the aesthetic track replaces it.
+Bundled resources: the launcher icon background vector is from the AOSP template (Apache-2.0). The provenance of `app/src/main/res/drawable/app_logo.png` is unverified; the aesthetic track replaces it. **Update (aesthetic track):** both are removed; the launcher icon, the in-app logo (`app_logo.xml`) and the empty-state pictograms are original artwork made for Himitsu, under the project license.
+
+| Bundled font | Version | License | Network calls of its own |
+|---|---|---|---|
+| Inter (variable, regular and italic) | google/fonts `47d54ca1ebb1` | OFL-1.1 | No |
+| Unbounded (variable) | google/fonts `47d54ca1ebb1` | OFL-1.1 | No |
+| JetBrains Mono (variable) | google/fonts `47d54ca1ebb1` | OFL-1.1 | No |
 
 ### Build and test only (not shipped)
 

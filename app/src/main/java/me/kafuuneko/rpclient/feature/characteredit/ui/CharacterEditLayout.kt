@@ -71,7 +71,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.characteredit.model.CharacterEditForm
@@ -89,6 +88,8 @@ import me.kafuuneko.rpclient.ui.dialog.AppPromptEditorDialog
 import me.kafuuneko.rpclient.ui.dialog.DialogBadgeTone
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.theme.CharacterAccentColors
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.DEFAULT_PROMPT_MACROS
 import me.kafuuneko.rpclient.ui.widgets.DIALOGUE_EXAMPLE_MACROS
@@ -757,7 +758,7 @@ private fun RawExtensionsPanel(
             } else {
                 Text(
                     text = value.ifBlank { "{}" }.compactPreview(),
-                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = HimitsuMonoFamily),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f),
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -1227,7 +1228,7 @@ private fun String.compactPreview(limit: Int = 240): String {
     return if (compact.length <= limit) compact else compact.take(limit).trimEnd() + "..."
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun CharacterEditLayoutPreview() {
     AppTheme(dynamicColor = false) {

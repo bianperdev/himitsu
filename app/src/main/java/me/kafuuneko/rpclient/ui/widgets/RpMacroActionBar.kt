@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 
 /** 提示词通用宏变量列表。 */
 val DEFAULT_PROMPT_MACROS = listOf("{{char}}", "{{user}}", "{{original}}", "{{lastMessage}}")
@@ -70,7 +71,7 @@ fun RpMacroActionBar(
                         text = macro,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        fontFamily = FontFamily.Monospace,
+                        fontFamily = HimitsuMonoFamily,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )

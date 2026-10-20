@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/aesthetic track. Keep every locale in sync when adding a string. -->
+<resources>
+    <string name="appearance_dynamic_color">Dynamic color</string>
+    <string name="appearance_dynamic_color_desc">Use your wallpaper colors instead of the Himitsu palette</string>
+    <string name="himitsu_empty_characters_title">The shelf is empty</string>
+    <string name="himitsu_empty_characters_desc">Import a character card or create someone to talk to.</string>
+    <string name="himitsu_empty_recent_title">The cursor is blinking</string>
+    <string name="himitsu_empty_recent_desc">Start a chat, group chat or story. Nobody else is watching.</string>
+    <string name="himitsu_empty_chats_title">The screen is waiting</string>
+    <string name="himitsu_empty_chats_desc">Create a session and say the first word.</string>
+    <string name="himitsu_empty_provider_title">No model connected</string>
+    <string name="himitsu_empty_provider_desc">Not even the router knows you exist. Open the model manager to set one up.</string>
+    <string name="himitsu_empty_world_books_title">No world books yet</string>
+    <string name="himitsu_empty_world_books_desc">Every good story starts with one entry. Create a world book for your lore.</string>
+    <string name="himitsu_empty_regex_scripts">No scripts in this scope. Text arrives exactly as the model writes it.</string>
+</resources>

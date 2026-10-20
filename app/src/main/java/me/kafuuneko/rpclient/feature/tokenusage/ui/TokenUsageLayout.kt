@@ -64,7 +64,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.kafuuneko.rpclient.R
@@ -81,6 +80,7 @@ import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.room.entity.LLMTokenUsageSource
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.RankBronzeBadgeColor
 import me.kafuuneko.rpclient.ui.theme.RankBronzeTextColor
 import me.kafuuneko.rpclient.ui.theme.RankGoldBadgeColor
@@ -245,8 +245,11 @@ private fun UsageTrendCard(
     emit: TokenUsageUiIntent.() -> Unit
 ) {
     // 趋势点未变时复用图表数据；全零区间不显示峰值说明。
-    val chartPoints = remember(points) {
-        points.map { it.toChartDataPoint() }
+    // Segment colors follow the theme, so they are read here and passed into the remembered mapping.
+    val inputColor = TokenUsageInputColor
+    val outputColor = TokenUsageOutputColor
+    val chartPoints = remember(points, inputColor, outputColor) {
+        points.map { it.toChartDataPoint(inputColor, outputColor) }
     }
     val peakPoint = points.maxByOrNull { it.totalTokens }
     val peakText = if (peakPoint != null && peakPoint.totalTokens > 0L) {
@@ -965,20 +968,20 @@ private fun Long.formatted(): String {
     return "$formattedNumber$unit"
 }
 
-private fun TokenUsageTrendPoint.toChartDataPoint(): RpChartDataPoint {
+private fun TokenUsageTrendPoint.toChartDataPoint(inputColor: Color, outputColor: Color): RpChartDataPoint {
     return RpChartDataPoint(
         key = key,
         label = label,
         value = totalTokens.toFloat(),
         segments = listOf(
-            RpChartSegment(outputTokens.toFloat(), TokenUsageOutputColor),
-            RpChartSegment(inputTokens.toFloat(), TokenUsageInputColor)
+            RpChartSegment(outputTokens.toFloat(), outputColor),
+            RpChartSegment(inputTokens.toFloat(), inputColor)
         ),
         isCurrent = isCurrent
     )
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun TokenUsageLayoutPreview() {
     // 固定主题与多种用量来源，便于检查总览、趋势和明细的组合布局。

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/aesthetic track. Keep every locale in sync when adding a string. -->
+<resources>
+    <string name="appearance_dynamic_color">Màu động</string>
+    <string name="appearance_dynamic_color_desc">Dùng màu hình nền thay cho bảng màu Himitsu</string>
+    <string name="himitsu_empty_characters_title">Kệ sách còn trống</string>
+    <string name="himitsu_empty_characters_desc">Nhập thẻ nhân vật hoặc tạo một người để trò chuyện.</string>
+    <string name="himitsu_empty_recent_title">Con trỏ đang nhấp nháy</string>
+    <string name="himitsu_empty_recent_desc">Bắt đầu trò chuyện, trò chuyện nhóm hoặc câu chuyện. Không ai khác đang nhìn đâu.</string>
+    <string name="himitsu_empty_chats_title">Màn hình đang chờ</string>
+    <string name="himitsu_empty_chats_desc">Tạo một phiên và nói lời đầu tiên.</string>
+    <string name="himitsu_empty_provider_title">Chưa kết nối mô hình nào</string>
+    <string name="himitsu_empty_provider_desc">Ngay cả router cũng không biết bạn tồn tại. Mở trình quản lý mô hình để thiết lập.</string>
+    <string name="himitsu_empty_world_books_title">Chưa có sách thế giới nào</string>
+    <string name="himitsu_empty_world_books_desc">Câu chuyện hay nào cũng bắt đầu từ một mục. Tạo sách thế giới cho phần lore của bạn.</string>
+    <string name="himitsu_empty_regex_scripts">Không có tập lệnh nào trong phạm vi này. Văn bản hiển thị đúng như mô hình viết.</string>
+</resources>

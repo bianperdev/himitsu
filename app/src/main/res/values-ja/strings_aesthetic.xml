@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/aesthetic track. Keep every locale in sync when adding a string. -->
+<resources>
+    <string name="appearance_dynamic_color">ダイナミックカラー</string>
+    <string name="appearance_dynamic_color_desc">Himitsu の配色の代わりに壁紙の色を使います</string>
+    <string name="himitsu_empty_characters_title">棚はまだ空っぽです</string>
+    <string name="himitsu_empty_characters_desc">キャラクターカードをインポートするか、話し相手を作りましょう。</string>
+    <string name="himitsu_empty_recent_title">カーソルが点滅しています</string>
+    <string name="himitsu_empty_recent_desc">チャット、グループチャット、ストーリーを始めましょう。ほかに見ている人はいません。</string>
+    <string name="himitsu_empty_chats_title">画面が待っています</string>
+    <string name="himitsu_empty_chats_desc">セッションを作成して、最初のひと言を。</string>
+    <string name="himitsu_empty_provider_title">接続中のモデルはありません</string>
+    <string name="himitsu_empty_provider_desc">ルーターすらあなたの存在を知りません。モデルマネージャーで設定しましょう。</string>
+    <string name="himitsu_empty_world_books_title">ワールドブックはまだありません</string>
+    <string name="himitsu_empty_world_books_desc">良い物語はひとつのエントリーから始まります。設定用のワールドブックを作りましょう。</string>
+    <string name="himitsu_empty_regex_scripts">このスコープにスクリプトはありません。テキストはモデルが書いたまま表示されます。</string>
+</resources>

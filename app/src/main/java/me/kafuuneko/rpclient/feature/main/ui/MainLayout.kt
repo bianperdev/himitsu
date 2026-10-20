@@ -64,6 +64,7 @@ import androidx.compose.material.icons.rounded.Storage
 import androidx.compose.material.icons.rounded.Stream
 import androidx.compose.material.icons.rounded.Thermostat
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -100,7 +101,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.main.model.MainChatSessionGroup
@@ -157,10 +157,12 @@ import me.kafuuneko.rpclient.ui.theme.AccentRedColor
 import me.kafuuneko.rpclient.ui.theme.AccentSkyColor
 import me.kafuuneko.rpclient.ui.theme.AccentVioletColor
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.ProviderAvailableColor
 import me.kafuuneko.rpclient.ui.theme.ProviderDisabledColor
 import me.kafuuneko.rpclient.ui.theme.ProviderPendingColor
 import me.kafuuneko.rpclient.ui.theme.getMacaronColor
+import me.kafuuneko.rpclient.ui.widgets.HimitsuPictograms
 import me.kafuuneko.rpclient.ui.widgets.RpAvatar
 import me.kafuuneko.rpclient.ui.widgets.RpIconBubble
 import me.kafuuneko.rpclient.ui.widgets.RpInfoCard
@@ -885,9 +887,9 @@ private fun LazyListScope.homeContentSection(
                 item {
                     RpInfoCard(
                         modifier = Modifier.fillMaxWidth(),
-                        icon = Icons.Rounded.ChatBubble,
-                        title = stringResource(R.string.no_recent_content),
-                        subtitle = stringResource(R.string.no_recent_content_desc)
+                        icon = HimitsuPictograms.Monitor,
+                        title = stringResource(R.string.himitsu_empty_recent_title),
+                        subtitle = stringResource(R.string.himitsu_empty_recent_desc)
                     )
                 }
             } else {
@@ -905,9 +907,9 @@ private fun LazyListScope.homeContentSection(
                 MainRecentChatsState.Empty -> item {
                     RpInfoCard(
                         modifier = Modifier.fillMaxWidth(),
-                        icon = Icons.Rounded.ChatBubble,
-                        title = stringResource(R.string.no_recent_chats),
-                        subtitle = stringResource(R.string.no_recent_chats_desc)
+                        icon = HimitsuPictograms.Monitor,
+                        title = stringResource(R.string.himitsu_empty_chats_title),
+                        subtitle = stringResource(R.string.himitsu_empty_chats_desc)
                     )
                 }
 
@@ -1528,6 +1530,16 @@ private fun AppearancePanel(
                 )
             }
         }
+        if (state.dynamicColorSupported) {
+            RpSettingsDivider(startIndent = false)
+            RpSettingsSwitchTile(
+                icon = Icons.Rounded.Wallpaper,
+                title = stringResource(R.string.appearance_dynamic_color),
+                subtitle = stringResource(R.string.appearance_dynamic_color_desc),
+                checked = state.dynamicColor,
+                onCheckedChange = { MainUiIntent.ToggleDynamicColor(it).emit() }
+            )
+        }
     }
 }
 
@@ -1967,11 +1979,11 @@ private fun EmptyProviderCard(
 ) {
     RpSettingsGroup {
         RpSettingsTile(
-            icon = Icons.Rounded.Storage,
+            icon = HimitsuPictograms.Unplugged,
             iconColor = AccentAmberColor,
             iconContainerColor = AccentAmberColor.copy(alpha = 0.14f),
-            title = stringResource(R.string.no_enabled_model),
-            subtitle = stringResource(R.string.go_to_model_manager),
+            title = stringResource(R.string.himitsu_empty_provider_title),
+            subtitle = stringResource(R.string.himitsu_empty_provider_desc),
             onClick = onClick,
             trailing = {
                 Icon(
@@ -2612,7 +2624,7 @@ private object MaterialThemeLike {
     fun background() = MaterialTheme.colorScheme.background
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun MainLayoutPreview() {
     AppTheme(dynamicColor = false) {
@@ -2738,7 +2750,7 @@ private fun MainLayoutPreview() {
     }
 }
 
-@Preview(widthDp = 390, heightDp = 844, showBackground = true)
+@HimitsuPhonePreviews
 @Composable
 private fun MainSettingsLayoutPreview() {
     AppTheme(dynamicColor = false) {

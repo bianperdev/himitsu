@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.draggableScrollIndicator
 import me.kafuuneko.rpclient.utils.rememberJsonSyntaxVisualTransformation
 
@@ -126,7 +127,7 @@ fun AppCodeEditorDialog(
                                 .widthIn(min = minimumContentWidth)
                                 .heightIn(min = minimumContentHeight),
                             textStyle = MaterialTheme.typography.bodyMedium.copy(
-                                fontFamily = FontFamily.Monospace,
+                                fontFamily = HimitsuMonoFamily,
                                 color = MaterialTheme.colorScheme.onSurface
                             ),
                             visualTransformation = visualTransformation,

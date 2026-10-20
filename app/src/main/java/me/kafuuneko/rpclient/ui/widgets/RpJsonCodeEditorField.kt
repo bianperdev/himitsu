@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.utils.rememberJsonSyntaxVisualTransformation
 
 /**
@@ -108,7 +109,7 @@ fun RpJsonCodeEditorField(
                             .widthIn(min = minimumContentWidth)
                             .heightIn(min = minimumContentHeight),
                         textStyle = MaterialTheme.typography.bodyMedium.copy(
-                            fontFamily = FontFamily.Monospace,
+                            fontFamily = HimitsuMonoFamily,
                             color = MaterialTheme.colorScheme.onSurface
                         ),
                         visualTransformation = visualTransformation,

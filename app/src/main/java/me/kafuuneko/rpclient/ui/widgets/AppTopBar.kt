@@ -24,12 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.libs.core.ActivityPreview
+import me.kafuuneko.rpclient.ui.theme.HimitsuDisplayFamily
 
 /** 项目统一顶部栏，按需显示返回按钮和右侧操作区。 */
 @Composable
@@ -74,7 +76,10 @@ fun AppTopBar(
                 modifier = Modifier.weight(1f),
                 text = title,
                 maxLines = 1,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontFamily = HimitsuDisplayFamily,
+                    fontWeight = FontWeight.Medium
+                ),
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis
             )

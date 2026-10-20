@@ -230,7 +230,7 @@ private fun AboutRateButton(onRateApp: () -> Unit, modifier: Modifier = Modifier
             Brush.horizontalGradient(listOf(AccentVioletColor, MaterialTheme.colorScheme.primary))
         ),
         shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.White)
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onPrimary)
     ) {
         Text(stringResource(R.string.about_rate_action), fontWeight = FontWeight.SemiBold)
         Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = null,

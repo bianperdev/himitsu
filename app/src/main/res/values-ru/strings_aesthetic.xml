@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/aesthetic track. Keep every locale in sync when adding a string. -->
+<resources>
+    <string name="appearance_dynamic_color">Динамические цвета</string>
+    <string name="appearance_dynamic_color_desc">Использовать цвета обоев вместо палитры Himitsu</string>
+    <string name="himitsu_empty_characters_title">Полка пуста</string>
+    <string name="himitsu_empty_characters_desc">Импортируйте карточку персонажа или создайте собеседника.</string>
+    <string name="himitsu_empty_recent_title">Курсор мигает</string>
+    <string name="himitsu_empty_recent_desc">Начните чат, групповой чат или историю. Здесь больше никто не смотрит.</string>
+    <string name="himitsu_empty_chats_title">Экран ждёт</string>
+    <string name="himitsu_empty_chats_desc">Создайте сессию и скажите первое слово.</string>
+    <string name="himitsu_empty_provider_title">Модель не подключена</string>
+    <string name="himitsu_empty_provider_desc">Даже роутер не знает, что вы существуете. Откройте менеджер моделей, чтобы настроить её.</string>
+    <string name="himitsu_empty_world_books_title">Книг миров пока нет</string>
+    <string name="himitsu_empty_world_books_desc">Любая хорошая история начинается с одной записи. Создайте книгу мира для своего лора.</string>
+    <string name="himitsu_empty_regex_scripts">В этой области нет скриптов. Текст приходит ровно таким, каким его пишет модель.</string>
+</resources>

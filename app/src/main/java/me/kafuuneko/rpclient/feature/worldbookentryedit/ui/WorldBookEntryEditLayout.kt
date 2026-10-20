@@ -83,6 +83,7 @@ import me.kafuuneko.rpclient.libs.room.entity.LorebookEntry
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
 import me.kafuuneko.rpclient.ui.dialog.AppPromptEditorDialog
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.DEFAULT_PROMPT_MACROS
 import me.kafuuneko.rpclient.ui.widgets.RpChipInputField
@@ -824,7 +825,7 @@ private fun PlacementPanel(
                         text = stringResource(R.string.entry_outlet_preview, macroPreview),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        fontFamily = FontFamily.Monospace,
+                        fontFamily = HimitsuMonoFamily,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }

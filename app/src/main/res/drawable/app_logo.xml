@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- In-app logo for the About screen: the launcher icon's layers merged and cropped to the visible area. Original artwork for Himitsu. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+    <group
+        android:translateX="-18"
+        android:translateY="-18">
+        <path android:pathData="M0,0h108v108h-108z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:type="radial"
+                    android:centerX="54"
+                    android:centerY="52"
+                    android:gradientRadius="62">
+                    <item android:offset="0" android:color="#FF0B3940" />
+                    <item android:offset="0.62" android:color="#FF101824" />
+                    <item android:offset="1" android:color="#FF0E0B16" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path
+            android:pathData="M0,0.0 h108 v1.1 h-108 z M0,3.6 h108 v1.1 h-108 z M0,7.2 h108 v1.1 h-108 z M0,10.8 h108 v1.1 h-108 z M0,14.4 h108 v1.1 h-108 z M0,18.0 h108 v1.1 h-108 z M0,21.6 h108 v1.1 h-108 z M0,25.2 h108 v1.1 h-108 z M0,28.8 h108 v1.1 h-108 z M0,32.4 h108 v1.1 h-108 z M0,36.0 h108 v1.1 h-108 z M0,39.6 h108 v1.1 h-108 z M0,43.2 h108 v1.1 h-108 z M0,46.8 h108 v1.1 h-108 z M0,50.4 h108 v1.1 h-108 z M0,54.0 h108 v1.1 h-108 z M0,57.6 h108 v1.1 h-108 z M0,61.2 h108 v1.1 h-108 z M0,64.8 h108 v1.1 h-108 z M0,68.4 h108 v1.1 h-108 z M0,72.0 h108 v1.1 h-108 z M0,75.6 h108 v1.1 h-108 z M0,79.2 h108 v1.1 h-108 z M0,82.8 h108 v1.1 h-108 z M0,86.4 h108 v1.1 h-108 z M0,90.0 h108 v1.1 h-108 z M0,93.6 h108 v1.1 h-108 z M0,97.2 h108 v1.1 h-108 z M0,100.8 h108 v1.1 h-108 z M0,104.4 h108 v1.1 h-108 z"
+            android:fillColor="#5CE1E6"
+            android:fillAlpha="0.07" />
+        <path
+            android:pathData="M25,40 Q29,27 44,23.5 Q33,29 29,42 Z"
+            android:fillColor="#FFFFFF"
+            android:fillAlpha="0.06" />
+        <path
+            android:pathData="M44.05,33.75 Q39.55,36.00 32.80,37.08 M30.55,43.20 L45.22,42.12 M38.02,36.45 L38.02,73.80 M37.66,45.00 Q35.05,53.55 30.10,59.85 M39.10,48.60 L44.05,53.10 M56.65,35.55 L59.62,40.32 M50.80,52.65 Q49.72,57.60 48.10,61.65 M53.50,45.90 C53.50,60.30 54.40,69.75 60.25,70.20 C63.85,70.47 66.28,68.58 67.72,63.72 M63.85,49.05 L67.72,56.70 M66.10,38.25 Q59.80,55.80 48.55,73.35"
+            android:strokeColor="#5CE1E6"
+            android:strokeAlpha="0.1"
+            android:strokeWidth="12.0"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M44.05,33.75 Q39.55,36.00 32.80,37.08 M30.55,43.20 L45.22,42.12 M38.02,36.45 L38.02,73.80 M37.66,45.00 Q35.05,53.55 30.10,59.85 M39.10,48.60 L44.05,53.10 M56.65,35.55 L59.62,40.32 M50.80,52.65 Q49.72,57.60 48.10,61.65 M53.50,45.90 C53.50,60.30 54.40,69.75 60.25,70.20 C63.85,70.47 66.28,68.58 67.72,63.72 M63.85,49.05 L67.72,56.70 M66.10,38.25 Q59.80,55.80 48.55,73.35"
+            android:strokeColor="#5CE1E6"
+            android:strokeAlpha="0.22"
+            android:strokeWidth="8.0"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M44.05,33.75 Q39.55,36.00 32.80,37.08 M30.55,43.20 L45.22,42.12 M38.02,36.45 L38.02,73.80 M37.66,45.00 Q35.05,53.55 30.10,59.85 M39.10,48.60 L44.05,53.10 M56.65,35.55 L59.62,40.32 M50.80,52.65 Q49.72,57.60 48.10,61.65 M53.50,45.90 C53.50,60.30 54.40,69.75 60.25,70.20 C63.85,70.47 66.28,68.58 67.72,63.72 M63.85,49.05 L67.72,56.70 M66.10,38.25 Q59.80,55.80 48.55,73.35"
+            android:strokeColor="#5CE1E6"
+            android:strokeWidth="4.4"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M44.05,33.75 Q39.55,36.00 32.80,37.08 M30.55,43.20 L45.22,42.12 M38.02,36.45 L38.02,73.80 M37.66,45.00 Q35.05,53.55 30.10,59.85 M39.10,48.60 L44.05,53.10 M56.65,35.55 L59.62,40.32 M50.80,52.65 Q49.72,57.60 48.10,61.65 M53.50,45.90 C53.50,60.30 54.40,69.75 60.25,70.20 C63.85,70.47 66.28,68.58 67.72,63.72 M63.85,49.05 L67.72,56.70 M66.10,38.25 Q59.80,55.80 48.55,73.35"
+            android:strokeColor="#E4FDFF"
+            android:strokeAlpha="0.85"
+            android:strokeWidth="1.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M74.9,38.5 h6 v32 h-6 z"
+            android:fillColor="#FF6FB5"
+            android:fillAlpha="0.18" />
+        <path
+            android:pathData="M76.6,41 h2.6 v27 h-2.6 z"
+            android:fillColor="#FF6FB5" />
+    </group>
+</vector>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Launcher icon monochrome layer for themed icons (Android 13+). Only the alpha channel is used. Original artwork for Himitsu. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M44.05,33.75 Q39.55,36.00 32.80,37.08 M30.55,43.20 L45.22,42.12 M38.02,36.45 L38.02,73.80 M37.66,45.00 Q35.05,53.55 30.10,59.85 M39.10,48.60 L44.05,53.10 M56.65,35.55 L59.62,40.32 M50.80,52.65 Q49.72,57.60 48.10,61.65 M53.50,45.90 C53.50,60.30 54.40,69.75 60.25,70.20 C63.85,70.47 66.28,68.58 67.72,63.72 M63.85,49.05 L67.72,56.70 M66.10,38.25 Q59.80,55.80 48.55,73.35"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M76.6,41 h2.6 v27 h-2.6 z"
+        android:fillColor="#FFFFFFFF" />
+</vector>
