@@ -1,0 +1,31 @@
+Himitsu (秘密, «secreto») es un cliente de rol con IA libre y de código abierto, pensado para la privacidad y con los modelos en el propio dispositivo como opción de primera clase. Es un fork de RPClient, de Kafuu Neko.
+
+PRIVACIDAD ANTE TODO
+- Tus chats, personajes, lorebooks, ajustes y claves de API se guardan en bases de datos SQLCipher cifradas, con claves protegidas por el Android Keystore. Un código de recuperación opcional te permite recuperar tus datos si esa clave llegara a perderse.
+- Los avatares, las imágenes de los chats y los borradores se cifran con AES-256-GCM.
+- Bloqueo de la app con biometría o con el PIN, patrón o contraseña de tu dispositivo. Con el bloqueo activo, la vista previa en recientes se oculta, y puedes bloquear las capturas de pantalla.
+- Sin analíticas, sin telemetría, sin informes de errores, sin anuncios, sin servicios de Google. Himitsu solo se conecta al servicio de IA que tú configures y, cuando se lo pides, a Hugging Face para descargar un modelo.
+- Las copias de seguridad de Android y las transferencias entre dispositivos no exportan nada.
+
+MODELOS EN EL DISPOSITIVO
+- Ejecuta modelos GGUF sin conexión con llama.cpp, compilado desde el código fuente.
+- Aceleración opcional por GPU mediante OpenCL en los teléfonos compatibles.
+- Importa cualquier archivo GGUF o descarga un modelo sugerido de Hugging Face. Las descargas solo empiezan cuando tocas el botón y se comprueban con SHA-256.
+
+FUNCIONES DE ROL (de RPClient)
+- Importa tarjetas de personaje (JSON y PNG), lorebooks y scripts Regex compatibles con SillyTavern. Los scripts Regex incluidos en una tarjeta solo se ejecutan cuando tú los autorizas.
+- Chats individuales y de grupo, y Story Studio para historias de varios capítulos.
+- Memoria por resúmenes, presets de prompt y un Prompt Inspector que muestra exactamente lo que se envía.
+- Importa y exporta chats en formato .jsonl de SillyTavern.
+- Conéctate a APIs compatibles con OpenAI, Gemini, Claude, DeepSeek, OpenRouter, xAI o tu propio servidor.
+
+CAMUFLAJE OPCIONAL
+Himitsu puede cambiar su icono y su nombre para parecer una calculadora, una brújula o un conversor de unidades que funcionan de verdad. Un código o gesto secreto en la app señuelo abre la autenticación del sistema; nunca se salta el bloqueo de la app. El camuflaje viene desactivado y necesita el bloqueo de la app y un bloqueo de pantalla.
+El camuflaje es discreción, no seguridad. Los Ajustes de Android (Aplicaciones, notificaciones, batería, almacenamiento) siguen mostrando Himitsu, igual que el nombre del paquete, el historial de tu tienda de apps, el aviso del sistema de huella o PIN, la cabecera de algunas notificaciones y herramientas como adb. La app te explica estos límites antes de que lo actives.
+
+CONVIENE SABER
+- Himitsu no incluye ningún servicio de IA. Usa un modelo en el dispositivo o configura tu propio proveedor y tu clave de API; las peticiones van solo a ese proveedor, bajo su propia política de privacidad.
+- Lo que genera un modelo depende del modelo y del proveedor que elijas.
+- Requiere Android 8.0 o posterior en un dispositivo de 64 bits.
+
+Himitsu es software libre con licencia GPL-3.0-or-later. No está afiliado a SillyTavern, OpenAI, Google, Anthropic, DeepSeek, OpenRouter, xAI ni Hugging Face.

@@ -1,0 +1,91 @@
+name: Bug report
+description: Something in Himitsu does not work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+
+        **This repository is public.** Never paste API keys, tokens, passwords, private chats, personal data or copyrighted character cards. Use fake keys and invented test content, and redact logs before posting them.
+
+        Security or privacy vulnerabilities must be reported privately: see the [security policy](https://github.com/bianperdev/himitsu/security/policy).
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. See ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Himitsu version
+      description: Shown in Settings › About.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Where did you install it from?
+      options:
+        - F-Droid
+        - GitHub Releases
+        - Google Play
+        - My own build
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android version and kind of device
+      description: A generic description is enough, for example "Android 15, mid-range phone" or "emulator". No serial numbers.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - Chats, stories or characters
+        - Imports and exports (cards, lorebooks, Regex, chat archives)
+        - Remote AI provider
+        - On-device model (llama.cpp)
+        - App lock or encrypted storage
+        - Disguise
+        - Appearance
+        - Other
+  - type: textarea
+    id: provider
+    attributes:
+      label: Model or provider involved
+      description: For example "OpenAI-compatible, self-hosted", "Gemini", or the name of the GGUF model. Never your API key or credentials.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (redacted)
+      description: |
+        Optional. Himitsu never writes chat content to Logcat; if you ever see chat content, prompts or keys there, report it privately as a vulnerability instead.
+        If you share a debug request log, remove prompts, responses and anything personal first.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed API keys, private chats and personal data from this report.
+          required: true
+        - label: I searched existing issues for this bug.
+          required: true

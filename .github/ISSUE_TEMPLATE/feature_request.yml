@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest an idea or an improvement for Himitsu.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Himitsu puts privacy first: features must not send data anywhere except the AI endpoint the user configured or a model download the user started, and must not add tracking.
+
+        **This repository is public.** Do not paste API keys, private chats, personal data or copyrighted character cards.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe what you are trying to do and what gets in the way.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How you would like it to work.
+    validations:
+      required: true
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy impact
+      description: Would this store new data, make network requests or need new permissions? If so, how could it stay private?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and the roadmap for this idea.
+          required: true
+        - label: This request contains no API keys, private chats or personal data.
+          required: true

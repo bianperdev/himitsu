@@ -1,1 +1,1 @@
-AI roleplay chat and story writing client
+Private AI role-play with encryption, app lock and on-device models
