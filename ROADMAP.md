@@ -207,6 +207,9 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 **Contract this track must document here before it is merged:**
 - **Icon system:** where launcher icons live and how alternative icons are added, so `feat/disguise` can add generic calculator, compass and converter icons.
 
+**Offered to `feat/security` (the maintainer chose this before the security contract existed):**
+- **Lock screen frame:** `RpLockScreenFrame(title, modifier, subtitle, mark, actions)` in `…/ui/widgets/RpLockScreenFrame.kt`. It only draws: the night background with the monitor glow, a mark (a glowing lock by default, `RpLockMark`), the title and subtitle, and an `actions` slot for the unlock controls. It holds no strings and no branding, so callers pass localized text and `feat/disguise` can pass a neutral `mark`. It has no animation. Security keeps all lock logic in `…/feature/lock/**` and can ignore or wrap the frame; if its own contract needs another shape, the aesthetic track adapts the frame.
+
 **Done when:** text contrast meets WCAG AA in both themes; no fonts or images are downloaded at runtime; every font and asset is original or has a verified free license recorded in `NOTICE`; animations respect the system "remove animations" setting; screen structure and behavior are unchanged; every flavor builds.
 
 ## Track: `feat/local-inference`
