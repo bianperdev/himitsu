@@ -1,0 +1,59 @@
+Himitsu
+Copyright (C) 2026 The Himitsu contributors
+
+Himitsu is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version (SPDX: GPL-3.0-or-later). See the LICENSE file for the
+full text.
+
+Himitsu is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+
+Code derived from RPClient
+--------------------------
+
+Himitsu is a fork of RPClient (https://github.com/KafuuNeko/RPClient).
+It includes code from RPClient, Copyright (c) 2026 Kafuu Neko, licensed
+under the MIT License. The full, unmodified MIT notice is kept in
+LICENSES/MIT-RPClient.txt and applies to that code. The git history of
+this repository preserves the original authorship of every RPClient
+commit.
+
+
+Third-party components
+----------------------
+
+The following libraries are included in the application. Each remains
+under its own license.
+
+Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0):
+  - AndroidX (core-ktx, exifinterface, lifecycle, activity-compose,
+    appcompat, fragment, room, sqlite) - The Android Open Source Project
+  - Jetpack Compose (ui, foundation, material3, material3-adaptive,
+    material-icons-extended) - The Android Open Source Project
+  - Kotlin standard library and kotlin-reflect - JetBrains s.r.o.
+  - kotlinx.coroutines, kotlinx.serialization, atomicfu - JetBrains s.r.o.
+  - Koin - Kotzilla and Koin contributors
+  - Kotpref - Takao Chiba (chibatching)
+  - OkHttp and Okio - Square, Inc.
+  - Gson - Google LLC
+  - Error Prone annotations - Google LLC
+
+MIT License:
+  - JTokkit - Knuddels GmbH
+
+Resources:
+  - Launcher icon background vector, Apache License 2.0,
+    The Android Open Source Project
+
+Build and test tools (not shipped in the application): Android Gradle
+Plugin, Kotlin compiler plugins, KSP and the Gradle wrapper (Apache
+License 2.0); JUnit 4 (Eclipse Public License 1.0); Hamcrest (BSD
+3-Clause).
+
+This list must be kept up to date with every dependency change,
+including native libraries.
