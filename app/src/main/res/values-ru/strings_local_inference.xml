@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/local-inference track. -->
+<resources>
+    <string name="local_inference_preset_name">Модель на устройстве</string>
+    <string name="local_inference_provider_hint">Эта модель работает на вашем телефоне. Чаты, промпты и ответы никогда не покидают устройство. Нажмите кнопку обновления рядом с полем модели, чтобы увидеть модели, сохранённые на этом устройстве.</string>
+    <string name="local_inference_endpoint_label">На этом устройстве</string>
+</resources>

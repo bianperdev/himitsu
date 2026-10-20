@@ -48,6 +48,7 @@ import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Memory
+import androidx.compose.material.icons.rounded.PhoneAndroid
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Refresh
@@ -100,6 +101,7 @@ import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.CredentialEditMode
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.LLMProviderEditForm
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.ProviderPreset
+import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditDialogState
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditLoadState
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditMode
@@ -251,7 +253,7 @@ private fun ProviderPresetsSection(
                             if (preset == ProviderPreset.Custom) {
                                 stringResource(R.string.preset_custom)
                             } else {
-                                preset.displayName
+                                preset.displayNameRes?.let { stringResource(it) } ?: preset.displayName
                             }
                         )
                     },
@@ -263,6 +265,7 @@ private fun ProviderPresetsSection(
                             ProviderPreset.ChatGPT -> Icons.Rounded.SmartToy
                             ProviderPreset.OpenRouter -> Icons.Rounded.Hub
                             ProviderPreset.Grok -> Icons.Rounded.Bolt
+                            ProviderPreset.Local -> Icons.Rounded.PhoneAndroid
                             ProviderPreset.Custom -> Icons.Rounded.Dns
                         }
                         Icon(
@@ -296,28 +299,40 @@ private fun BasicPanel(
             stringResource(R.string.name),
             form.name
         ) { LLMProviderEditUiIntent.ChangeName(it).emit() }
-        FormTextField(
-            stringResource(R.string.base_url),
-            form.baseUrl
-        ) { LLMProviderEditUiIntent.ChangeBaseUrl(it).emit() }
-        ModernCredentialControl(
-            title = stringResource(R.string.api_key),
-            icon = Icons.Rounded.Key,
-            hasExistingValue = form.hasExistingApiKey,
-            editMode = form.apiKeyEditMode,
-            onEdit = { LLMProviderEditUiIntent.ShowApiKeyEditor.emit() },
-            onClear = { LLMProviderEditUiIntent.ClearApiKey.emit() },
-            onKeepExisting = { LLMProviderEditUiIntent.KeepExistingApiKey.emit() }
-        )
+        // Himitsu: a local provider has no endpoint, key or image input
+        val usesNetwork = form.protocol.usesNetworkEndpoint
+        if (usesNetwork) {
+            FormTextField(
+                stringResource(R.string.base_url),
+                form.baseUrl
+            ) { LLMProviderEditUiIntent.ChangeBaseUrl(it).emit() }
+            ModernCredentialControl(
+                title = stringResource(R.string.api_key),
+                icon = Icons.Rounded.Key,
+                hasExistingValue = form.hasExistingApiKey,
+                editMode = form.apiKeyEditMode,
+                onEdit = { LLMProviderEditUiIntent.ShowApiKeyEditor.emit() },
+                onClear = { LLMProviderEditUiIntent.ClearApiKey.emit() },
+                onKeepExisting = { LLMProviderEditUiIntent.KeepExistingApiKey.emit() }
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.local_inference_provider_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         ModelField(
             value = form.model,
             catalogState = modelCatalogState,
             emit = emit
         )
-        ImageInputCapabilityField(
-            selected = form.imageInputSetting,
-            onSelect = { LLMProviderEditUiIntent.ChangeImageInput(it).emit() }
-        )
+        if (usesNetwork) {
+            ImageInputCapabilityField(
+                selected = form.imageInputSetting,
+                onSelect = { LLMProviderEditUiIntent.ChangeImageInput(it).emit() }
+            )
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -756,27 +771,30 @@ private fun CollapsibleAdvancedPanel(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
                     )
 
-                    Text(
-                        stringResource(R.string.provider_type),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    EnumChipRow(
-                        values = LLMProviderType.entries,
-                        selected = form.providerType,
-                        label = { it.name },
-                        onSelect = { LLMProviderEditUiIntent.ChangeProviderType(it).emit() }
-                    )
+                    // Himitsu: the local preset fixes type and protocol; remote ones cannot switch to it
+                    if (form.protocol.usesNetworkEndpoint) {
+                        Text(
+                            stringResource(R.string.provider_type),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        EnumChipRow(
+                            values = LLMProviderType.entries - LLMProviderType.Local,
+                            selected = form.providerType,
+                            label = { it.name },
+                            onSelect = { LLMProviderEditUiIntent.ChangeProviderType(it).emit() }
+                        )
 
-                    Text(
-                        stringResource(R.string.protocol),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    EnumChipRow(
-                        values = LLMProviderProtocol.entries,
-                        selected = form.protocol,
-                        label = { it.name },
-                        onSelect = { LLMProviderEditUiIntent.ChangeProtocol(it).emit() }
-                    )
+                        Text(
+                            stringResource(R.string.protocol),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        EnumChipRow(
+                            values = LLMProviderProtocol.entries - LLMProviderProtocol.Local,
+                            selected = form.protocol,
+                            label = { it.name },
+                            onSelect = { LLMProviderEditUiIntent.ChangeProtocol(it).emit() }
+                        )
+                    }
 
                     ParameterSwitchRow(
                         title = stringResource(R.string.provider_use_server_reported_usage),
@@ -793,16 +811,18 @@ private fun CollapsibleAdvancedPanel(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    ModernCredentialControl(
-                        title = stringResource(R.string.custom_headers_json),
-                        hasExistingValue = form.hasExistingCustomHeaders,
-                        editMode = form.customHeadersEditMode,
-                        onEdit = { LLMProviderEditUiIntent.ShowCustomHeadersEditor.emit() },
-                        onClear = { LLMProviderEditUiIntent.ClearCustomHeaders.emit() },
-                        onKeepExisting = { LLMProviderEditUiIntent.KeepExistingCustomHeaders.emit() }
-                    )
+                    if (form.protocol.usesNetworkEndpoint) {
+                        ModernCredentialControl(
+                            title = stringResource(R.string.custom_headers_json),
+                            hasExistingValue = form.hasExistingCustomHeaders,
+                            editMode = form.customHeadersEditMode,
+                            onEdit = { LLMProviderEditUiIntent.ShowCustomHeadersEditor.emit() },
+                            onClear = { LLMProviderEditUiIntent.ClearCustomHeaders.emit() },
+                            onKeepExisting = { LLMProviderEditUiIntent.KeepExistingCustomHeaders.emit() }
+                        )
+                    }
 
-                    if (form.customHeadersJson.isNotBlank() && form.customHeadersJson.trim() != "{}" && form.customHeadersEditMode != CredentialEditMode.Clear) {
+                    if (form.protocol.usesNetworkEndpoint && form.customHeadersJson.isNotBlank() && form.customHeadersJson.trim() != "{}" && form.customHeadersEditMode != CredentialEditMode.Clear) {
                         JsonSyntaxHighlightPreview(
                             title = stringResource(R.string.custom_headers_preview),
                             jsonString = form.customHeadersJson,

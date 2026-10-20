@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/local-inference track. -->
+<resources>
+    <string name="local_inference_preset_name">Mô hình trên thiết bị</string>
+    <string name="local_inference_provider_hint">Mô hình này chạy trên điện thoại của bạn. Cuộc trò chuyện, prompt và phản hồi không bao giờ rời khỏi thiết bị. Nhấn nút làm mới bên cạnh ô mô hình để liệt kê các mô hình đã lưu trên thiết bị này.</string>
+    <string name="local_inference_endpoint_label">Trên thiết bị này</string>
+</resources>

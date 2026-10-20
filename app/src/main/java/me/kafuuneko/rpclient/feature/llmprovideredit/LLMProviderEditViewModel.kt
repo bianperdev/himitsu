@@ -1,5 +1,6 @@
 package me.kafuuneko.rpclient.feature.llmprovideredit
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonParser
 import kotlinx.coroutines.CancellationException
@@ -38,6 +39,7 @@ import me.kafuuneko.rpclient.libs.llm.adapter.withOpenRouterPreferredProviderEna
 import me.kafuuneko.rpclient.libs.llm.catalog.LLMModelCatalogRepository
 import me.kafuuneko.rpclient.libs.llm.catalog.classifyModelCatalogFailure
 import me.kafuuneko.rpclient.libs.llm.catalog.model.LLMAvailableModel
+import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.libs.llm.model.ImageInputSetting
 import me.kafuuneko.rpclient.libs.llm.model.ImageTokenEstimatorType
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderCapabilities
@@ -70,6 +72,7 @@ class LLMProviderEditViewModel :
     private val mLLMRepository by inject<LLMRepository>()
     private val mLLMClientFactory by inject<LLMClientFactory>()
     private val mModelCatalogRepository by inject<LLMModelCatalogRepository>()
+    private val mContext by inject<Context>()
 
     /** 当前连接测试任务；重复测试或离开页面时用于取消旧请求。 */
     private var mTestJob: Job? = null
@@ -132,7 +135,7 @@ class LLMProviderEditViewModel :
         // 更新表单字段并重置模型目录状态
         updateForm(invalidateModelCatalog = true) {
             copy(
-                name = if (name.isBlank() || ProviderPreset.entries.any { it.displayName == name }) preset.displayName else name,
+                name = if (name.isBlank() || ProviderPreset.entries.any { it.localizedName() == name }) preset.localizedName() else name,
                 providerType = preset.providerType,
                 protocol = preset.protocol,
                 baseUrl = preset.baseUrl,
@@ -142,10 +145,15 @@ class LLMProviderEditViewModel :
                 sendTopP = capabilities.defaultSendTopP,
                 localTokenEstimatorType = preset.defaultLocalTokenEstimatorType,
                 imageTokenEstimatorType = ImageTokenEstimatorType.Automatic,
-                useServerReportedUsage = preset.defaultUseServerReportedUsage
+                useServerReportedUsage = preset.defaultUseServerReportedUsage,
+                // Himitsu: local engines are text only
+                imageInputSetting = if (preset.protocol.usesNetworkEndpoint) imageInputSetting else ImageInputSetting.Unsupported
             )
         }
     }
+
+    /** Name a preset gives to a new provider, localized when the preset is not a brand. */
+    private fun ProviderPreset.localizedName(): String = displayNameRes?.let(mContext::getString) ?: displayName
 
     /** 保存图片预估类别，不改变实际发送参数。 */
     @UiIntentObserver(LLMProviderEditUiIntent.SelectImageTokenEstimator::class)
@@ -647,7 +655,7 @@ class LLMProviderEditViewModel :
 
     /** 将表单转换为用于模型目录查询的临时 Config 对象。 */
     private fun LLMProviderEditForm.toCatalogConfigOrNullWithToast(): LLMProviderConfig? {
-        if (baseUrl.isBlank()) {
+        if (protocol.usesNetworkEndpoint && baseUrl.isBlank()) {
             AppViewEvent.PopupToastMessageByResId(R.string.base_url_empty).tryEmit()
             return null
         }
@@ -670,6 +678,7 @@ class LLMProviderEditViewModel :
      *
      * 校验规则：
      * - 名称、Base URL、Model 不能为空；
+     * - Himitsu: local providers have no base URL;
      * - Max Tokens 不能大于等于 Context Tokens；
      * - Token 估算预留比例需在合法范围；
      * - RequestBodyPatch 需为合法 JSON 且不能覆盖协议保留字段；
@@ -681,7 +690,7 @@ class LLMProviderEditViewModel :
             AppViewEvent.PopupToastMessageByResId(R.string.model_name_empty).tryEmit()
             return null
         }
-        if (baseUrl.isBlank()) {
+        if (protocol.usesNetworkEndpoint && baseUrl.isBlank()) {
             AppViewEvent.PopupToastMessageByResId(R.string.base_url_empty).tryEmit()
             return null
         }

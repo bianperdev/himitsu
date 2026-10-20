@@ -63,6 +63,7 @@ import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderLis
 import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderListLoadState
 import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderListUiIntent
 import me.kafuuneko.rpclient.feature.llmproviderlist.presentation.LLMProviderListUiState
+import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderType
 import me.kafuuneko.rpclient.ui.dialog.AppDangerDialog
@@ -304,9 +305,14 @@ private fun ProviderListCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = provider.baseUrl
-                            .removePrefix("https://")
-                            .removePrefix("http://"),
+                        // Himitsu: local providers have no endpoint to show
+                        text = if (provider.protocol.usesNetworkEndpoint) {
+                            provider.baseUrl
+                                .removePrefix("https://")
+                                .removePrefix("http://")
+                        } else {
+                            stringResource(R.string.local_inference_endpoint_label)
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
                         maxLines = 1,

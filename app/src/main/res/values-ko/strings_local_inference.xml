@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/local-inference track. -->
+<resources>
+    <string name="local_inference_preset_name">기기 내 모델</string>
+    <string name="local_inference_provider_hint">이 모델은 휴대폰에서 실행됩니다. 채팅, 프롬프트, 응답은 기기 밖으로 나가지 않습니다. 모델 입력란 옆의 새로고침 버튼을 눌러 이 기기에 저장된 모델을 확인하세요.</string>
+    <string name="local_inference_endpoint_label">이 기기에서</string>
+</resources>

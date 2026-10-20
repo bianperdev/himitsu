@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/local-inference track. -->
+<resources>
+    <string name="local_inference_preset_name">Modelo en el dispositivo</string>
+    <string name="local_inference_provider_hint">Este modelo se ejecuta en tu teléfono. Los chats, los prompts y las respuestas nunca salen del dispositivo. Toca el botón de actualizar junto al campo del modelo para ver los modelos guardados en este dispositivo.</string>
+    <string name="local_inference_endpoint_label">En este dispositivo</string>
+</resources>

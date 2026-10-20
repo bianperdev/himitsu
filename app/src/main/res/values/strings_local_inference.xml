@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/local-inference track. -->
+<resources>
+    <string name="local_inference_preset_name">On-device model</string>
+    <string name="local_inference_provider_hint">This model runs on your phone. Chats, prompts and replies never leave the device. Tap refresh next to the model field to list the models stored on this device.</string>
+    <string name="local_inference_endpoint_label">On this device</string>
+</resources>

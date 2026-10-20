@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/local-inference track. -->
+<resources>
+    <string name="local_inference_preset_name">本机模型</string>
+    <string name="local_inference_provider_hint">此模型在你的手机上运行。聊天、提示词和回复都不会离开设备。点击模型字段旁的刷新按钮，即可列出此设备上保存的模型。</string>
+    <string name="local_inference_endpoint_label">在此设备上</string>
+</resources>
