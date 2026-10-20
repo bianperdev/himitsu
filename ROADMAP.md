@@ -482,12 +482,22 @@ The full design (in Spanish) is a Claude Doc kept by the maintainer. Summary:
 - **D7, channels.** Disguise ships in `fdroid`, `github` and `play`, disclosed in every store listing.
 - **D8, milestones.** A minimal settings screen arrives with the lock integration so every later milestone can be tested on a phone end to end.
 
+**Leaks and limits confirmed on the emulator (Android 17), 2026-10-20:**
+- Recents: the card shows the decoy's label and icon (task description set by `CoreActivity` and the decoy), with a blank preview while the lock is on. The launcher's spoken description still starts with the application label ("Himitsu (Dev) Calculator"): only screen reader users hear it; it cannot be changed by the app.
+- System authentication prompt: shows the application label above our neutral title. It cannot be changed (system permission). Documented limit.
+- Notifications: local generation starts no foreground service while disguise is on. A model download still shows its notification with the application label in the header; its confirmation dialog warns first.
+- Before Android 13, the disguise settings ask to turn on "hide content" in Security, since only `FLAG_SECURE` hides the recents preview there.
+- Shortcuts, widgets, share targets: none exist. Any future one must hang from the `HimitsuLauncher` alias so it disappears with disguise.
+- Android 17 refuses component state changes from `adb shell pm`; only the app can switch aliases.
+
+**Narrow edits outside the track (for the pull request):** `…/libs/core/CoreActivity.kt` (task description, one line), `…/libs/llm/local/LocalGenerationService.kt` (no foreground service while disguised), `…/feature/localmodels/{LocalModelsViewModel.kt,presentation/LocalModelsUiState.kt,ui/LocalModelsLayout.kt}` (download notice), `…/feature/main/model/HimitsuSettingsEntry.kt` (settings entry), `…/feature/main/MainActivity` manifest entry (launcher filter moved to the alias, `exported="false"`).
+
 **Tasks, in order:**
 1. [x] Design document, approved by the maintainer: activity-alias switching and launcher quirks; functional decoys; secret shortcuts that always lead to authentication; recovery; leaks (recents, notifications, shortcuts, share targets); honest limits; store policies per flavor.
-2. [ ] Activity aliases and the appearance switch, with warnings to the user.
-3. [ ] Calculator with secret code and recovery.
-4. [ ] Integration with the app lock, plus a minimal settings screen (enable, code, practice).
-5. [ ] Leak fixes.
+2. [x] Activity aliases and the appearance switch, with warnings to the user.
+3. [x] Calculator with secret code and recovery.
+4. [x] Integration with the app lock, plus a minimal settings screen (enable, code, practice).
+5. [x] Leak fixes.
 6. [ ] Compass and unit converter.
 7. [ ] Full disguise settings screen.
 8. [ ] Quick exit.
