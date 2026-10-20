@@ -178,24 +178,30 @@ private fun StorageErrorContent(state: LockContentState.StorageError, emit: Lock
         title = stringResource(R.string.security_storage_error_title),
         message = message
     ) {
-        if (state.canRetry) {
-            Button(onClick = { LockUiIntent.Retry.emit() }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.security_action_retry))
+        val recoveryFirst = state.canUseRecoveryCode && (state.preferRecoveryCode || !state.canRetry)
+        val recoveryButton: @Composable () -> Unit = {
+            Icon(Icons.Rounded.Key, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Text(stringResource(R.string.security_action_use_recovery_code))
+        }
+        if (recoveryFirst) {
+            Button(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                recoveryButton()
             }
         }
-        if (state.canUseRecoveryCode) {
-            val recoveryButton: @Composable () -> Unit = {
-                Icon(Icons.Rounded.Key, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-                Text(stringResource(R.string.security_action_use_recovery_code))
-            }
-            if (state.canRetry) {
-                OutlinedButton(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
-                    recoveryButton()
+        if (state.canRetry) {
+            if (recoveryFirst) {
+                OutlinedButton(onClick = { LockUiIntent.Retry.emit() }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.security_action_retry))
                 }
             } else {
-                Button(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
-                    recoveryButton()
+                Button(onClick = { LockUiIntent.Retry.emit() }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.security_action_retry))
                 }
+            }
+        }
+        if (state.canUseRecoveryCode && !recoveryFirst) {
+            OutlinedButton(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                recoveryButton()
             }
         }
         if (state.canSetAside) {
@@ -308,9 +314,10 @@ private fun LockLayoutStorageErrorPreview() {
             uiState = LockUiState.Normal(
                 LockContentState.StorageError(
                     failure = StorageFailure.KeystoreKeyLost,
-                    canRetry = false,
+                    canRetry = true,
                     canUseRecoveryCode = true,
-                    canStartOver = true
+                    canStartOver = true,
+                    preferRecoveryCode = true
                 )
             ),
             emit = {}

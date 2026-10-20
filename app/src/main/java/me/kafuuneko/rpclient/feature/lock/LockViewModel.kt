@@ -312,7 +312,9 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
             SecureStorageState.Starting -> LockContentState.Loading
             is SecureStorageState.Failed -> LockContentState.StorageError(
                 failure = storage.failure,
-                canRetry = storage.failure != StorageFailure.KeystoreKeyLost,
+                // Some devices report a lost key for errors that pass, so retrying is always offered
+                canRetry = true,
+                preferRecoveryCode = storage.failure == StorageFailure.KeystoreKeyLost,
                 canUseRecoveryCode = storage.recoveryAvailable && storage.failure != StorageFailure.RestoreIncomplete,
                 canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED,
                 canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable,

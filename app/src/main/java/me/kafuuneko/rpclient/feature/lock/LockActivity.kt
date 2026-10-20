@@ -83,6 +83,11 @@ class LockActivity : FragmentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
         WindowProtection.apply(this)
+        // A prompt counted as showing must have its fragment; otherwise its callback was lost
+        supportFragmentManager.executePendingTransactions()
+        if (mLockManager.isAuthenticating && supportFragmentManager.findFragmentByTag(BIOMETRIC_FRAGMENT_TAG) == null) {
+            mLockManager.clearStaleAuthentication()
+        }
         mViewModel.emit(LockUiIntent.Resume)
     }
 
@@ -134,6 +139,9 @@ class LockActivity : FragmentActivity(), KoinComponent {
         finish()
     }
 }
+
+/** Tag under which `androidx.biometric` 1.1.0 adds the fragment of a prompt on screen. */
+private const val BIOMETRIC_FRAGMENT_TAG = "androidx.biometric.BiometricFragment"
 
 /** [UnlockEntry] that opens [LockActivity]. */
 object LockActivityEntry : UnlockEntry {

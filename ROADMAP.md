@@ -301,14 +301,14 @@ Done in `feat/security-followups` (2026-10-20): P-06; reauthentication before tu
   - Dropdown menus and small popups are not hidden while locked; only the dialogs that show private content are (`AppDialogScaffold`, `PromptInspectorDialog`, `MessageImageViewerDialog`). The gate screen covers them right after. Planned: `GatedDropdownMenu`, see above.
   - With only system CAs trusted, self-hosted HTTPS servers with a self-signed certificate no longer work; plain HTTP on the LAN still does, with the warning.
   - Done in `feat/security-followups`: a way out for permanent failures that are not about the key, and restoring set-aside copies with their recovery code.
-- **Pre-merge privacy review (2026-10-20), assigned to `feat/security-followups` (maintainer decision relayed on 2026-10-20), waiting for design approval:**
-  - Medium: with `KeystoreKeyLost` the error screen offers no Retry (`LockViewModel`, `canRetry`), although `UnrecoverableKeyException` and `AEADBadTagException` can be temporary on some devices; the user may start over with data that was still readable.
-  - Medium: start over sets `app_repository/` aside even when a plain database survives and is re-encrypted with the new key (only reachable from earlier debug builds); that database then loses its images. Set the files aside only when the primary database was moved aside.
-  - Low: `OpenedValue.Plain` and `OpenedValue.Value` in `SealedSharedPreferences` are data classes, so their `toString` would print decrypted text; override it with `[REDACTED]`.
-  - Low: `AppLockManager.mAuthenticating` can stay true if the `BiometricPrompt` callback is lost (API 26-29), so "Unlock" does nothing until the process dies; reset it when `LockActivity` resumes without a prompt.
-  - Low: the licenses table lists Kotlin stdlib 2.0.21, but SQLCipher pulls in 2.2.10 (same license).
-  - Low: retrying a start over that failed halfway sets aside one more empty `app_repository` directory.
-  - Low: no automated test covers start over keeping stored files (verified manually on the emulator).
+- **Pre-merge privacy review (2026-10-20), resolved in `feat/security-followups` (maintainer decision, 2026-10-20):**
+  - Medium, done: the error screen always offers Retry; with a lost Keystore key the recovery code stays the first button.
+  - Medium, done: when a plain main database survives start over, only `app_repository/sealed/` goes aside (it needs the lost key); its plain files from builds before P-06 stay with it.
+  - Low, done: `OpenedValue.Plain` and `OpenedValue.Value` print `[REDACTED]`.
+  - Low, done: `LockActivity` forgets a prompt whose fragment is gone, so "Unlock" works after a lost callback.
+  - Low, done: the licenses table lists the Kotlin stdlib that is packaged (2.2.10).
+  - Low, done: retrying a half-finished start over sets no empty directory aside.
+  - Low, done: `StartOverAndroidTest` covers start over keeping stored files.
 - **Build:** a combined `assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest` once failed in KSP with Room errors on `MutableDao<T>`; rerunning passed. Probably KSP incremental state; watch for it.
 
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
@@ -510,7 +510,8 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | AndroidX core-ktx, exifinterface, lifecycle-runtime-ktx, activity-compose | 1.18.0, 1.3.6, 2.10.0, 1.13.0 | Apache-2.0 | No |
 | Jetpack Compose BOM (ui, foundation, material3, material3-adaptive, material-icons-extended) | 2026.05.00 | Apache-2.0 | No |
 | AndroidX Room (runtime, ktx) | 2.8.4 | Apache-2.0 | No |
-| Kotlin stdlib, kotlin-reflect | 2.0.21 | Apache-2.0 | No |
+| Kotlin stdlib | 2.2.10 (resolved; SQLCipher and other libraries need it) | Apache-2.0 | No |
+| kotlin-reflect | 2.0.21 | Apache-2.0 | No |
 | kotlinx-serialization-core | 1.8.1 | Apache-2.0 | No |
 | Koin (koin-android) | 4.0.0-RC1 | Apache-2.0 | No |
 | Kotpref | 2.13.2 | Apache-2.0 | No |

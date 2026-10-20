@@ -70,6 +70,14 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
     fun isDeviceSecure(): Boolean =
         mContext.getSystemService(KeyguardManager::class.java)?.isDeviceSecure == true
 
+    /**
+     * Forgets a prompt that is no longer on screen. The platform can drop the prompt's callback
+     * (API 26-29); without this, "Unlock" would do nothing until the process ends.
+     */
+    fun clearStaleAuthentication() {
+        mAuthenticating = false
+    }
+
     /** Turns the lock on or off. Turning it on does not lock the current session. */
     fun setEnabled(enabled: Boolean) {
         SecurityPrefs.appLockEnabled = enabled

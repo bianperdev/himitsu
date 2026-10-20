@@ -31,6 +31,7 @@ sealed class LockContentState {
      *
      * @property canRetry whether the failure may be temporary
      * @property canUseRecoveryCode whether a recovery code is configured for this data
+     * @property preferRecoveryCode whether the recovery code is the likely way out, so it comes first
      * @property canStartOver whether retrying cannot help, so setting the data aside is offered
      * @property canSetAside whether a plain database can never be encrypted, so setting it
      *   aside and continuing is offered
@@ -41,6 +42,7 @@ sealed class LockContentState {
         val canRetry: Boolean,
         val canUseRecoveryCode: Boolean,
         val canStartOver: Boolean,
+        val preferRecoveryCode: Boolean = false,
         val canSetAside: Boolean = false,
         val isExporting: Boolean = false
     ) : LockContentState()

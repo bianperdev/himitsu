@@ -206,9 +206,13 @@ class SecureStorageManager(
                 val state = mState.value as? SecureStorageState.Failed ?: return@withLock
                 if (state.failure !in StorageFailure.START_OVER_ALLOWED) return@withLock
                 val suffix = ".unrecoverable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                // Decided before anything moves: a plain main database stays and is encrypted with the new key
+                val primary = mContext.getDatabasePath(EncryptedDatabase.Primary.fileName)
+                val primaryStaysPlain = DatabaseFiles.kindOf(primary) == DatabaseFileKind.Plaintext ||
+                    (DatabaseFiles.kindOf(primary) == DatabaseFileKind.Missing && File(primary.path + ".plaintext").exists())
                 try {
                     mVault.moveKeyFileAside(suffix)
-                    setAsideStoredFiles(suffix)
+                    setAsideStoredFiles(suffix, keepPlainFiles = primaryStaysPlain)
                     EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     SealedPreferencesProvider.setAside(mContext, suffix)
                     synchronized(mKeyLock) {
@@ -231,12 +235,24 @@ class SecureStorageManager(
      * The startup cleanup deletes every stored file the database does not reference, so with
      * the new empty database it would delete them all. An empty directory for the new storage
      * is created in its place.
+     *
+     * @param keepPlainFiles true when a plain main database survives and is encrypted with the
+     *   new key: its plain files (from builds before P-06) stay with it, and only the sealed
+     *   files, which need the lost key, go aside
      */
-    private fun setAsideStoredFiles(suffix: String) {
+    private fun setAsideStoredFiles(suffix: String, keepPlainFiles: Boolean = false) {
         val directory = mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE)
         // An unreadable directory must not pass as empty, or the cleanup would delete its files
-        val entries = directory.list() ?: throw IOException("Stored files directory is unreadable")
-        if (entries.isEmpty()) return
+        directory.list() ?: throw IOException("Stored files directory is unreadable")
+        // Only empty directories, as a retry after a half-finished start over finds: nothing to keep
+        if (directory.walk().none { it.isFile }) return
+        if (keepPlainFiles) {
+            val sealed = File(directory, StoredFileLayout.SEALED_DIRECTORY)
+            if (sealed.walk().none { it.isFile }) return
+            val target = File(directory.path + suffix).apply { mkdirs() }
+            Files.move(sealed.toPath(), File(target, StoredFileLayout.SEALED_DIRECTORY).toPath())
+            return
+        }
         Files.move(directory.toPath(), File(directory.path + suffix).toPath())
         File(mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE), FILE_REPOSITORY_STAGING_DIR_NAME).mkdirs()
     }
