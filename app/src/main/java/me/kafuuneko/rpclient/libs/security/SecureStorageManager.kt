@@ -4,6 +4,7 @@ package me.kafuuneko.rpclient.libs.security
 import android.content.Context
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,6 +36,8 @@ import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.RecoveryResult
 import me.kafuuneko.rpclient.libs.security.key.VaultFailure
 import me.kafuuneko.rpclient.libs.security.key.VaultLoadResult
+import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_DIR_NAME
+import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_STAGING_DIR_NAME
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
 import net.zetetic.database.Logger
 import net.zetetic.database.NoopTarget
@@ -167,10 +170,13 @@ class SecureStorageManager(
     }
 
     /**
-     * Sets the current databases and key file aside and starts with empty storage.
+     * Sets the key file, stored files, databases and sealed preferences aside and starts with
+     * empty storage.
      *
      * Nothing is deleted: the old files keep their content under an `.unrecoverable-<time>`
-     * suffix, in case the user later finds a way to recover them.
+     * suffix, in case the user later finds a way to recover them. The key file goes first, so
+     * if a later move fails, the retry finds encrypted data without a key file and offers start
+     * over again instead of opening empty databases with the old key.
      */
     fun startOver() {
         mScope.launch {
@@ -179,8 +185,9 @@ class SecureStorageManager(
                 if (state.failure !in StorageFailure.START_OVER_ALLOWED) return@withLock
                 val suffix = ".unrecoverable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
                 try {
-                    EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     mVault.moveKeyFileAside(suffix)
+                    setAsideStoredFiles(suffix)
+                    EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     SealedPreferencesProvider.setAside(mContext, suffix)
                     synchronized(mKeyLock) {
                         mLoadedKey?.destroy()
@@ -194,6 +201,20 @@ class SecureStorageManager(
                 load()
             }
         }
+    }
+
+    /**
+     * Sets the `FileRepository` directory (avatars, chat images, drafts) aside for "start over".
+     *
+     * The startup cleanup deletes every stored file the database does not reference, so with
+     * the new empty database it would delete them all. An empty directory for the new storage
+     * is created in its place.
+     */
+    private fun setAsideStoredFiles(suffix: String) {
+        val directory = mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE)
+        if (directory.list().isNullOrEmpty()) return
+        Files.move(directory.toPath(), File(directory.path + suffix).toPath())
+        File(mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE), FILE_REPOSITORY_STAGING_DIR_NAME).mkdirs()
     }
 
     /**
