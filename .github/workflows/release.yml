@@ -113,7 +113,10 @@ jobs:
         shell: bash
         run: |
           sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          # `yes` ends with a broken pipe once sdkmanager stops reading, which pipefail would report
+          set +o pipefail
           yes | "$sdkmanager" --licenses >/dev/null
+          set -o pipefail
           "$sdkmanager" --install "ndk;$NDK_VERSION" "cmake;$CMAKE_VERSION" >/dev/null
 
       - name: Set up Gradle
