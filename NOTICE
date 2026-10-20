@@ -28,9 +28,11 @@ Third-party components
 ----------------------
 
 The following libraries are included in the application. Each remains
-under its own license.
+under its own license. The full license texts are in LICENSES/, and the
+application shows this notice and those texts under About > Open source
+licenses.
 
-Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0):
+Apache License 2.0 (LICENSES/Apache-2.0.txt):
   - AndroidX (core-ktx, exifinterface, lifecycle, activity-compose,
     appcompat, fragment, room, sqlite, biometric, and the libraries they
     pull in, such as emoji2, startup, profileinstaller, window,
@@ -58,15 +60,17 @@ Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0):
     Khronos Group Inc.
 
 MIT License:
-  - JTokkit - Knuddels GmbH
+  - JTokkit - Knuddels, Philip Müller (LICENSES/MIT-JTokkit.txt)
   - uuid (com.benasher44:uuid), pulled in by Koin - Ben Asher
+    (LICENSES/MIT-uuid.txt)
   - llama.cpp and ggml (https://github.com/ggml-org/llama.cpp), built from
     source at release b11748, including its Jinja chat template engine -
-    The ggml authors
+    The ggml authors (LICENSES/MIT-llama.cpp.txt)
   - JSON for Modern C++ 3.12.0, vendored in llama.cpp - Niels Lohmann
+    (LICENSES/MIT-nlohmann-json.txt)
 
-Apache License 2.0 with LLVM Exceptions
-(https://llvm.org/LICENSE.txt):
+Apache License 2.0 with LLVM Exceptions (LICENSES/Apache-2.0.txt and
+LICENSES/LLVM-exception.txt):
   - LLVM libc++ (libc++_shared.so from the Android NDK) - The LLVM Project
 
 BSD 3-Clause License:
