@@ -77,7 +77,7 @@ class RPClientApp : Application() {
         Kotpref.init(this)
         val koinApplication = startKoin {
             androidContext(this@RPClientApp)
-            modules(appModules)
+            modules(listOf(appModules) + himitsuModules)
         }
         runBlocking(Dispatchers.IO) {
             contentResolver.releaseObsoletePersistedUriPermissions()
