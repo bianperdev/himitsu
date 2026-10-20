@@ -9,10 +9,13 @@ import android.app.Activity
  */
 interface AboutChannel {
     /**
-     * Whether the repository and issue tracker are linked. False in `play`: the repository may
-     * hold donation links, which Google Play forbids even indirectly.
+     * Himitsu's repository, also used for the issue tracker; null in `play`, whose APK must not
+     * contain it: the repository may hold donation links, which Google Play forbids even indirectly.
      */
-    val linksRepository: Boolean
+    val repositoryUrl: String?
+
+    /** RPClient's repository, for the credit; null in `play` for the same reason. */
+    val upstreamUrl: String?
 
     /** Whether the "rate the app" card is shown; only the store build has one. */
     val ratesInStore: Boolean

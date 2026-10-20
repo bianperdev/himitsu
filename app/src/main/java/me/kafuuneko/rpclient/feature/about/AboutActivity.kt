@@ -19,7 +19,6 @@ import me.kafuuneko.rpclient.feature.about.presentation.AboutAppInfoState
 import me.kafuuneko.rpclient.feature.about.ui.AboutLayout
 import me.kafuuneko.rpclient.feature.licenses.LicensesActivity
 import me.kafuuneko.rpclient.R
-import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.core.CoreActivity
 
 /** 关于页面宿主，负责提供版本、社区反馈和项目联系信息。 */
@@ -29,6 +28,8 @@ class AboutActivity : CoreActivity() {
     override fun ViewContent() {
         // - 读取应用包信息与静态链接，构造页面展示状态
         val uiState = remember {
+            // Himitsu: links come from the flavor; the play build has none (see AboutChannel)
+            val repositoryUrl = FlavorAboutChannel.repositoryUrl
             val packageInfo = packageManager.getPackageInfo(packageName, 0)
             AboutUiState(
                 appInfo = AboutAppInfoState(
@@ -36,10 +37,10 @@ class AboutActivity : CoreActivity() {
                     buildNumber = PackageInfoCompat.getLongVersionCode(packageInfo).toString(),
                     isDevelopmentBuild = applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
                 ),
-                githubRepoUrl = AppModel.GITHUB_REPO,
-                githubRepoName = AppModel.GITHUB_REPO.removePrefix("https://github.com/"),
-                githubIssuesUrl = "${AppModel.GITHUB_REPO}/issues",
-                linksRepository = FlavorAboutChannel.linksRepository,
+                githubRepoUrl = repositoryUrl.orEmpty(),
+                githubRepoName = repositoryUrl.orEmpty().removePrefix("https://github.com/"),
+                githubIssuesUrl = repositoryUrl?.let { "$it/issues" }.orEmpty(),
+                linksRepository = repositoryUrl != null,
                 ratesInStore = FlavorAboutChannel.ratesInStore
             )
         }
@@ -53,7 +54,7 @@ class AboutActivity : CoreActivity() {
                 onRateApp = { FlavorAboutChannel.openStore(this) },
                 onOpenFeedback = { safeOpenUrl(uiState.githubIssuesUrl) },
                 onOpenLicenses = { startActivity(Intent(this, LicensesActivity::class.java)) },
-                onOpenUpstream = { safeOpenUrl(RPCLIENT_REPO) }
+                onOpenUpstream = { FlavorAboutChannel.upstreamUrl?.let(::safeOpenUrl) }
             )
         }
     }
@@ -69,10 +70,5 @@ class AboutActivity : CoreActivity() {
             )
             Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private companion object {
-        /** Himitsu is a fork of RPClient; credited in About (MIT notice in LICENSES/). */
-        const val RPCLIENT_REPO = "https://github.com/KafuuNeko/RPClient"
     }
 }

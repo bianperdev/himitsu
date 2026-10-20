@@ -11,7 +11,8 @@ import androidx.core.net.toUri
  * donation links, which Google Play forbids even indirectly.
  */
 object FlavorAboutChannel : AboutChannel {
-    override val linksRepository: Boolean = false
+    override val repositoryUrl: String? = null
+    override val upstreamUrl: String? = null
     override val ratesInStore: Boolean = true
 
     /** Opens the Play Store app, then any store app, then the web page. */
