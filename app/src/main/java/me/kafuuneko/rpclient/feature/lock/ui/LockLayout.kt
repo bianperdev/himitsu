@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
@@ -214,7 +213,6 @@ private fun RecoveryCodeDialog(state: LockDialogState.RecoveryCodeInput, emit: L
         label = stringResource(R.string.security_recovery_dialog_label),
         placeholder = "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX",
         password = true,
-        keyboardType = KeyboardType.Password,
         badgeIcon = Icons.Rounded.Key,
         badgeTone = if (state.error == null) DialogBadgeTone.Primary else DialogBadgeTone.Danger,
         confirmText = stringResource(R.string.security_recovery_dialog_confirm),

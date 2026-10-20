@@ -48,6 +48,7 @@ import me.kafuuneko.rpclient.libs.room.entity.MAX_TOKEN_ESTIMATE_RESERVE_PERCENT
 import me.kafuuneko.rpclient.libs.room.entity.MIN_TOKEN_ESTIMATE_RESERVE_PERCENT
 import me.kafuuneko.rpclient.libs.room.entity.toConfig
 import me.kafuuneko.rpclient.libs.room.repository.LLMRepository
+import me.kafuuneko.rpclient.libs.security.CustomHeaderMasking
 import me.kafuuneko.rpclient.utils.formatJsonPretty
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -81,6 +82,9 @@ class LLMProviderEditViewModel :
     private var mInitialApiKey = ""
     private var mInitialCustomHeaders = ""
 
+    /** Real header JSON behind the masked form value (Himitsu, P-04); the form only shows names. */
+    private var mCustomHeadersPlain = ""
+
     /** 初始化编辑页，依据传入的提供商 ID 读取配置或展示空白创建表单。 */
     @UiIntentObserver(LLMProviderEditUiIntent.Init::class)
     private suspend fun onInit(intent: LLMProviderEditUiIntent.Init) {
@@ -88,7 +92,8 @@ class LLMProviderEditViewModel :
         val provider = intent.providerId?.let { mLLMRepository.getProviderById(it) }
         mInitialApiKey = provider?.apiKey.orEmpty()
         mInitialCustomHeaders = provider?.customHeadersJson.orEmpty()
-        val form = provider?.toEditForm() ?: LLMProviderEditForm()
+        mCustomHeadersPlain = formatJsonPretty(mInitialCustomHeaders)
+        val form = (provider?.toEditForm() ?: LLMProviderEditForm()).withMaskedCustomHeaders()
         LLMProviderEditUiState.Normal(
             mode = if (provider == null) LLMProviderEditMode.Create else LLMProviderEditMode.Edit,
             form = form,
@@ -351,11 +356,12 @@ class LLMProviderEditViewModel :
             AppViewEvent.PopupToastMessageByResId(R.string.custom_headers_json_invalid).tryEmit()
             return
         }
-        val formatted = formatJsonPretty(intent.value)
+        // Values left hidden keep their real value; only the masked form is shown again
+        mCustomHeadersPlain = formatJsonPretty(CustomHeaderMasking.unmask(intent.value, mCustomHeadersPlain))
         updateForm(invalidateModelCatalog = true) {
             copy(
                 customHeadersEditMode = CredentialEditMode.Replace,
-                customHeadersJson = formatted
+                customHeadersJson = CustomHeaderMasking.mask(mCustomHeadersPlain)
             )
         }
         closeDialog()
@@ -364,6 +370,7 @@ class LLMProviderEditViewModel :
     /** 清空自定义 Header。 */
     @UiIntentObserver(LLMProviderEditUiIntent.ClearCustomHeaders::class)
     private fun onClearCustomHeaders() {
+        mCustomHeadersPlain = ""
         updateForm(invalidateModelCatalog = true) {
             copy(
                 customHeadersEditMode = CredentialEditMode.Clear,
@@ -375,11 +382,11 @@ class LLMProviderEditViewModel :
     /** 保留已持久化的自定义 Header 不变。 */
     @UiIntentObserver(LLMProviderEditUiIntent.KeepExistingCustomHeaders::class)
     private fun onKeepExistingCustomHeaders() {
-        val formatted = formatJsonPretty(mInitialCustomHeaders)
+        mCustomHeadersPlain = formatJsonPretty(mInitialCustomHeaders)
         updateForm(invalidateModelCatalog = true) {
             copy(
                 customHeadersEditMode = CredentialEditMode.KeepExisting,
-                customHeadersJson = formatted
+                customHeadersJson = CustomHeaderMasking.mask(mCustomHeadersPlain)
             )
         }
     }
@@ -638,7 +645,7 @@ class LLMProviderEditViewModel :
             baseUrl = baseUrl.trim(),
             apiKey = resolveApiKey().orEmpty().trim(),
             model = model.trim(),
-            customHeadersJson = customHeadersJson.trim(),
+            customHeadersJson = mCustomHeadersPlain.trim(),
             requestBodyPatchJson = requestBodyPatchJson.trim().ifBlank { "{}" },
             imageInputSetting = imageInputSetting
         )
@@ -660,7 +667,7 @@ class LLMProviderEditViewModel :
             baseUrl = baseUrl.trim(),
             apiKey = apiKey.trim(),
             model = model.trim(),
-            customHeadersJson = customHeadersJson.trim(),
+            customHeadersJson = mCustomHeadersPlain.trim(),
             requestBodyPatchJson = requestBodyPatchJson.trim().ifBlank { "{}" }
         )
     }
@@ -728,7 +735,7 @@ class LLMProviderEditViewModel :
         }
         // 解析 API Key 凭据
         val apiKey = resolveApiKey() ?: return null
-        val provider = toProviderOrNull(apiKey = apiKey)
+        val provider = copy(customHeadersJson = mCustomHeadersPlain).toProviderOrNull(apiKey = apiKey)
         if (provider == null) {
             AppViewEvent.PopupToastMessageByResId(R.string.generation_params_invalid).tryEmit()
         }
@@ -801,6 +808,11 @@ class LLMProviderEditViewModel :
         mApiKeyReplacement = null
         mInitialApiKey = ""
         mInitialCustomHeaders = ""
+        mCustomHeadersPlain = ""
     }
+
+    /** Replaces the header JSON in the form with its masked version (Himitsu, P-04). */
+    private fun LLMProviderEditForm.withMaskedCustomHeaders(): LLMProviderEditForm =
+        copy(customHeadersJson = CustomHeaderMasking.mask(customHeadersJson))
 
 }
