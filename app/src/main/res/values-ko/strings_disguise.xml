@@ -45,7 +45,7 @@
     <string name="disguise_settings_lock_off_text">코드는 여전히 인증을 요구하지만, 앱으로 돌아오면 위장 화면 대신 Himitsu가 보입니다. 눌러서 보안을 엽니다.</string>
     <string name="disguise_settings_recovery_title">들어가는 방법을 잊었다면</string>
     <string name="disguise_code_title">코드 정하기</string>
-    <string name="disguise_code_hint">숫자 4~10자리. 계산기에서 입력하고 “=”를 누르세요.</string>
+    <string name="disguise_code_hint">기억할 수 있는 4~10자리 숫자.</string>
     <string name="disguise_code_field">코드</string>
     <string name="disguise_code_repeat_field">코드 다시 입력</string>
     <string name="disguise_code_error_length">숫자 4~10자리를 사용하세요.</string>
@@ -59,4 +59,38 @@
     <string name="disguise_download_notice">위장이 켜져 있습니다. 파일을 내려받는 동안 알림에 앱의 실제 이름인 Himitsu가 표시됩니다.</string>
     <string name="disguise_settings_recents_title">최근 앱에 미리보기가 보일 수 있습니다</string>
     <string name="disguise_settings_recents_text">이 Android 버전에서는 최근 앱 화면에 Himitsu가 표시하던 내용이 보일 수 있습니다. 보안에서 “%1$s”를 켜면 빈 화면으로 표시됩니다.</string>
+    <string name="disguise_compass_dir_n">북</string>
+    <string name="disguise_compass_dir_ne">북동</string>
+    <string name="disguise_compass_dir_e">동</string>
+    <string name="disguise_compass_dir_se">남동</string>
+    <string name="disguise_compass_dir_s">남</string>
+    <string name="disguise_compass_dir_sw">남서</string>
+    <string name="disguise_compass_dir_w">서</string>
+    <string name="disguise_compass_dir_nw">북서</string>
+    <string name="disguise_compass_north">북</string>
+    <string name="disguise_compass_east">동</string>
+    <string name="disguise_compass_south">남</string>
+    <string name="disguise_compass_west">서</string>
+    <string name="disguise_compass_magnetic">자북</string>
+    <string name="disguise_compass_calibrate">나침반을 보정하려면 휴대전화를 8자 모양으로 움직이세요.</string>
+    <string name="disguise_compass_no_sensor">이 기기에는 나침반 센서가 없습니다.</string>
+    <string name="disguise_compass_level">대신 수평계를 표시합니다.</string>
+    <string name="disguise_conv_length">길이</string>
+    <string name="disguise_conv_mass">질량</string>
+    <string name="disguise_conv_temperature">온도</string>
+    <string name="disguise_conv_volume">부피</string>
+    <string name="disguise_conv_area">넓이</string>
+    <string name="disguise_conv_speed">속도</string>
+    <string name="disguise_conv_time">시간</string>
+    <string name="disguise_conv_data">데이터</string>
+    <string name="disguise_conv_swap">단위 바꾸기</string>
+    <string name="disguise_choose_title">위장 선택</string>
+    <string name="disguise_practice_converter_text">변환기에서처럼 두 단위를 고르고 코드를 입력한 뒤 ⇅를 누르세요. 고른 단위도 바로가기의 일부가 됩니다.</string>
+    <string name="disguise_sequence_title">순서 정하기</string>
+    <string name="disguise_sequence_title_repeat">순서 다시 입력</string>
+    <string name="disguise_sequence_text">다이얼의 글자를 4~8번 누르세요. 나침반에서 같은 글자를 같은 순서로 누르고 잠시 기다리세요.</string>
+    <string name="disguise_sequence_clear">지우기</string>
+    <string name="disguise_sequence_next">다음</string>
+    <string name="disguise_sequence_error_length">4~8번 누르세요.</string>
+    <string name="disguise_sequence_error_mismatch">순서가 일치하지 않습니다. 다시 시작하세요.</string>
 </resources>

@@ -45,7 +45,7 @@
     <string name="disguise_settings_lock_off_text">Kode Anda tetap meminta autentikasi, tetapi saat kembali ke aplikasi Anda akan melihat Himitsu, bukan penyamaran. Ketuk untuk membuka Keamanan.</string>
     <string name="disguise_settings_recovery_title">Jika lupa cara masuk</string>
     <string name="disguise_code_title">Pilih kode</string>
-    <string name="disguise_code_hint">4 sampai 10 angka. Di kalkulator, ketik lalu ketuk “=”.</string>
+    <string name="disguise_code_hint">4 sampai 10 angka yang akan Anda ingat.</string>
     <string name="disguise_code_field">Kode</string>
     <string name="disguise_code_repeat_field">Ulangi kode</string>
     <string name="disguise_code_error_length">Gunakan 4 sampai 10 angka.</string>
@@ -59,4 +59,38 @@
     <string name="disguise_download_notice">Penyamaran aktif: selama file diunduh, notifikasinya menampilkan nama asli aplikasi, Himitsu.</string>
     <string name="disguise_settings_recents_title">Aplikasi terbaru bisa menampilkan pratinjau</string>
     <string name="disguise_settings_recents_text">Di versi Android ini, layar aplikasi terbaru bisa menampilkan isi Himitsu. Aktifkan “%1$s” di Keamanan agar tetap kosong.</string>
+    <string name="disguise_compass_dir_n">U</string>
+    <string name="disguise_compass_dir_ne">TL</string>
+    <string name="disguise_compass_dir_e">T</string>
+    <string name="disguise_compass_dir_se">TG</string>
+    <string name="disguise_compass_dir_s">S</string>
+    <string name="disguise_compass_dir_sw">BD</string>
+    <string name="disguise_compass_dir_w">B</string>
+    <string name="disguise_compass_dir_nw">BL</string>
+    <string name="disguise_compass_north">Utara</string>
+    <string name="disguise_compass_east">Timur</string>
+    <string name="disguise_compass_south">Selatan</string>
+    <string name="disguise_compass_west">Barat</string>
+    <string name="disguise_compass_magnetic">Utara magnetik</string>
+    <string name="disguise_compass_calibrate">Gerakkan ponsel membentuk angka 8 untuk mengkalibrasi kompas.</string>
+    <string name="disguise_compass_no_sensor">Perangkat ini tidak punya sensor kompas.</string>
+    <string name="disguise_compass_level">Menampilkan waterpas sebagai gantinya.</string>
+    <string name="disguise_conv_length">Panjang</string>
+    <string name="disguise_conv_mass">Massa</string>
+    <string name="disguise_conv_temperature">Suhu</string>
+    <string name="disguise_conv_volume">Volume</string>
+    <string name="disguise_conv_area">Luas</string>
+    <string name="disguise_conv_speed">Kecepatan</string>
+    <string name="disguise_conv_time">Waktu</string>
+    <string name="disguise_conv_data">Data</string>
+    <string name="disguise_conv_swap">Tukar satuan</string>
+    <string name="disguise_choose_title">Pilih penyamaran</string>
+    <string name="disguise_practice_converter_text">Pilih dua satuan Anda, ketik kode, lalu ketuk ⇅, seperti nanti di konverter. Satuan yang dipilih menjadi bagian dari pintasan.</string>
+    <string name="disguise_sequence_title">Pilih urutan Anda</string>
+    <string name="disguise_sequence_title_repeat">Ulangi urutan Anda</string>
+    <string name="disguise_sequence_text">Ketuk 4 sampai 8 huruf pada piringan. Di kompas, ketuk huruf yang sama dengan urutan yang sama lalu tunggu sebentar.</string>
+    <string name="disguise_sequence_clear">Hapus</string>
+    <string name="disguise_sequence_next">Berikutnya</string>
+    <string name="disguise_sequence_error_length">Gunakan 4 sampai 8 ketukan.</string>
+    <string name="disguise_sequence_error_mismatch">Urutan tidak cocok. Mulai lagi.</string>
 </resources>

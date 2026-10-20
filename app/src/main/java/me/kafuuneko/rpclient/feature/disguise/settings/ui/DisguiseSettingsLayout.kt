@@ -4,9 +4,7 @@ package me.kafuuneko.rpclient.feature.disguise.settings.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,19 +20,15 @@ import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.TheaterComedy
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,13 +38,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.disguise.calculator.CALCULATOR_CODE_LENGTHS
-import me.kafuuneko.rpclient.feature.disguise.calculator.presentation.CalculatorUiIntent
-import me.kafuuneko.rpclient.feature.disguise.calculator.ui.CalculatorLayout
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseCodeError
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSettingsUiIntent
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSettingsUiState
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSetupStep
-import me.kafuuneko.rpclient.feature.disguise.ui.DisguiseTheme
 import me.kafuuneko.rpclient.libs.disguise.Appearance
 import me.kafuuneko.rpclient.ui.dialog.AppDialogScaffold
 import me.kafuuneko.rpclient.ui.theme.AppTheme
@@ -70,7 +61,12 @@ fun DisguiseSettingsLayout(uiState: DisguiseSettingsUiState, emit: DisguiseSetti
         DisguiseSettingsUiState.None -> Unit
         is DisguiseSettingsUiState.Normal -> {
             val step = uiState.step
-            if (step is DisguiseSetupStep.Practice) PracticeView(step, emit) else NormalView(uiState, emit)
+            when (step) {
+                is DisguiseSetupStep.PracticeCalculator -> PracticeCalculatorView(step, emit)
+                is DisguiseSetupStep.PracticeConverter -> PracticeConverterView(step, emit)
+                is DisguiseSetupStep.CompassSequence -> CompassSequenceView(step, emit)
+                else -> NormalView(uiState, emit)
+            }
             StepDialog(uiState, emit)
         }
         is DisguiseSettingsUiState.Finished -> DisguiseSettingsLayout(uiState.previous) { }
@@ -157,45 +153,10 @@ private fun DisguiseGroup(uiState: DisguiseSettingsUiState.Normal, emit: Disguis
     }
 }
 
-/** A working calculator where the user types the new code once before it is applied. */
-@Composable
-private fun PracticeView(step: DisguiseSetupStep.Practice, emit: DisguiseSettingsUiIntent.() -> Unit) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets(0.dp),
-        topBar = { AppTopBar(title = stringResource(R.string.disguise_practice_title), onBack = { DisguiseSettingsUiIntent.Cancel.emit() }) }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier.padding(paddingValues).fillMaxSize().navigationBarsPadding().padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text(
-                text = stringResource(if (step.matched) R.string.disguise_practice_done else R.string.disguise_practice_text),
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (step.matched) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
-            Box(Modifier.weight(1f).fillMaxWidth()) {
-                DisguiseTheme {
-                    Surface(Modifier.fillMaxSize(), shape = MaterialTheme.shapes.large) {
-                        CalculatorLayout(step.calculator) {
-                            if (this is CalculatorUiIntent.Press) DisguiseSettingsUiIntent.PracticePress(key).emit()
-                        }
-                    }
-                }
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)) {
-                TextButton(onClick = { DisguiseSettingsUiIntent.Cancel.emit() }) { Text(stringResource(R.string.cancel)) }
-                Button(onClick = { DisguiseSettingsUiIntent.FinishPractice.emit() }, enabled = step.matched) {
-                    Text(stringResource(R.string.disguise_practice_continue))
-                }
-            }
-        }
-    }
-}
-
 @Composable
 private fun StepDialog(uiState: DisguiseSettingsUiState.Normal, emit: DisguiseSettingsUiIntent.() -> Unit) {
     when (val step = uiState.step) {
+        is DisguiseSetupStep.ChooseDecoy -> ChooseDecoyDialog(step.selected, emit)
         is DisguiseSetupStep.EnterCode -> CodeDialog(step.error, emit)
         is DisguiseSetupStep.ConfirmChange -> AppearanceChangeDialog(
             target = step.target,
@@ -203,7 +164,7 @@ private fun StepDialog(uiState: DisguiseSettingsUiState.Normal, emit: DisguiseSe
             onConfirm = { DisguiseSettingsUiIntent.ConfirmChange.emit() },
             onDismiss = { DisguiseSettingsUiIntent.Cancel.emit() }
         )
-        DisguiseSetupStep.None, is DisguiseSetupStep.Practice -> Unit
+        else -> Unit
     }
 }
 

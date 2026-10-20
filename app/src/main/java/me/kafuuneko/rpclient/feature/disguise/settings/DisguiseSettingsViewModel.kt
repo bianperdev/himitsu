@@ -5,6 +5,9 @@ import android.os.Build
 import java.util.Locale
 import me.kafuuneko.rpclient.feature.disguise.calculator.CALCULATOR_CODE_LENGTHS
 import me.kafuuneko.rpclient.feature.disguise.calculator.calculatorUiState
+import me.kafuuneko.rpclient.feature.disguise.compass.COMPASS_SEQUENCE_LENGTHS
+import me.kafuuneko.rpclient.feature.disguise.converter.converterUiState
+import me.kafuuneko.rpclient.feature.disguise.converter.presentation.ConverterUiIntent
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseCodeError
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSettingsUiIntent
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSettingsUiState
@@ -18,6 +21,10 @@ import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorEngine
 import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorFormat
 import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorKey
 import me.kafuuneko.rpclient.libs.disguise.calculator.CalculatorState
+import me.kafuuneko.rpclient.libs.disguise.compass.CardinalPoint
+import me.kafuuneko.rpclient.libs.disguise.compass.CompassMath
+import me.kafuuneko.rpclient.libs.disguise.converter.ConverterEngine
+import me.kafuuneko.rpclient.libs.disguise.converter.ConverterState
 import me.kafuuneko.rpclient.libs.disguise.secret.DisguiseSecretStore
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import me.kafuuneko.rpclient.libs.security.lock.SecurityPrefs
@@ -29,13 +36,14 @@ import org.koin.core.component.inject
  *
  * Responsibilities:
  * - turn disguise on only when the app lock can protect what is behind it
- * - collect a new code, then make the user type it on a real calculator before anything
- *   changes, so nobody applies a code they cannot reproduce
- * - store the code as a hash, switch the launcher icon and close the app; turning disguise off
- *   restores the Himitsu icon and deletes the code
+ * - let the user pick a decoy and set its shortcut, then make them use the shortcut once on a
+ *   working copy of the decoy before anything changes, so nobody applies a shortcut they cannot
+ *   reproduce
+ * - store the shortcut as a hash, switch the launcher icon and close the app; turning disguise
+ *   off restores the Himitsu icon and deletes the shortcut
  *
- * The code being set up lives only in [mPendingCode], never in UI state, and is wiped as soon
- * as it is stored or the setup is canceled. No step touches the user's data.
+ * The shortcut being set up lives only in the private fields below, never in UI state, and is
+ * wiped as soon as it is stored or the setup is canceled. No step touches the user's data.
  */
 class DisguiseSettingsViewModel :
     CoreViewModelWithEvent<DisguiseSettingsUiIntent, DisguiseSettingsUiState>(DisguiseSettingsUiState.None),
@@ -44,7 +52,16 @@ class DisguiseSettingsViewModel :
     private val mSecretStore by inject<DisguiseSecretStore>()
     private val mLockManager by inject<AppLockManager>()
     private val mFormat = CalculatorFormat(Locale.getDefault())
+
+    /** The numeric code typed twice, for the calculator and the converter. */
     private var mPendingCode: CharArray? = null
+
+    /** The complete shortcut to store once the practice succeeded. */
+    private var mPendingSecret: CharArray? = null
+
+    /** Compass sequence: the first entry, and the taps of the current entry. */
+    private var mFirstSequence: List<CardinalPoint>? = null
+    private val mSequenceTaps = mutableListOf<CardinalPoint>()
 
     @UiIntentObserver(DisguiseSettingsUiIntent.Init::class)
     private fun onInit() {
@@ -87,7 +104,7 @@ class DisguiseSettingsViewModel :
     private fun onStartEnable() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
         if (!uiState.canEnable || uiState.appearance.isDecoy || uiState.isWorking) return
-        uiState.copy(step = DisguiseSetupStep.EnterCode()).setup()
+        uiState.copy(step = DisguiseSetupStep.ChooseDecoy()).setup()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.StartDisable::class)
@@ -97,51 +114,152 @@ class DisguiseSettingsViewModel :
         uiState.copy(step = DisguiseSetupStep.ConfirmChange(Appearance.Himitsu)).setup()
     }
 
+    @UiIntentObserver(DisguiseSettingsUiIntent.SelectDecoy::class)
+    private fun onSelectDecoy(intent: DisguiseSettingsUiIntent.SelectDecoy) {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        if (uiState.step !is DisguiseSetupStep.ChooseDecoy || !intent.appearance.isDecoy) return
+        uiState.copy(step = DisguiseSetupStep.ChooseDecoy(intent.appearance)).setup()
+    }
+
+    /** The compass shortcut is a tap sequence; the others start with a numeric code. */
+    @UiIntentObserver(DisguiseSettingsUiIntent.ConfirmDecoy::class)
+    private fun onConfirmDecoy() {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        val step = uiState.step as? DisguiseSetupStep.ChooseDecoy ?: return
+        val next = if (step.selected == Appearance.Compass) {
+            resetSequence()
+            DisguiseSetupStep.CompassSequence()
+        } else {
+            DisguiseSetupStep.EnterCode(step.selected)
+        }
+        uiState.copy(step = next).setup()
+    }
+
     /** Accepts a code of the allowed length typed the same way twice, then starts the practice. */
     @UiIntentObserver(DisguiseSettingsUiIntent.SubmitCode::class)
     private fun onSubmitCode(intent: DisguiseSettingsUiIntent.SubmitCode) {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
-        if (uiState.step !is DisguiseSetupStep.EnterCode) return
+        val step = uiState.step as? DisguiseSetupStep.EnterCode ?: return
         val error = when {
             intent.code.length !in CALCULATOR_CODE_LENGTHS || !intent.code.all { it in '0'..'9' } -> DisguiseCodeError.Length
             intent.code != intent.repeated -> DisguiseCodeError.Mismatch
             else -> null
         }
         if (error != null) {
-            uiState.copy(step = DisguiseSetupStep.EnterCode(error)).setup()
+            uiState.copy(step = step.copy(error = error)).setup()
             return
         }
-        wipePendingCode()
+        wipePending()
         mPendingCode = intent.code.toCharArray()
-        uiState.copy(step = DisguiseSetupStep.Practice(calculatorUiState(CalculatorState(), mFormat))).setup()
+        val practice = if (step.target == Appearance.Converter) {
+            DisguiseSetupStep.PracticeConverter(converterUiState(ConverterState(), mFormat))
+        } else {
+            DisguiseSetupStep.PracticeCalculator(calculatorUiState(CalculatorState(), mFormat))
+        }
+        uiState.copy(step = practice).setup()
     }
 
     /** Runs the practice calculator; typing the pending code and "=" marks the practice as done. */
     @UiIntentObserver(DisguiseSettingsUiIntent.PracticePress::class)
     private fun onPracticePress(intent: DisguiseSettingsUiIntent.PracticePress) {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
-        val step = uiState.step as? DisguiseSetupStep.Practice ?: return
+        val step = uiState.step as? DisguiseSetupStep.PracticeCalculator ?: return
         val engine = step.calculator.engine
         val candidate = if (intent.key == CalculatorKey.Equals) CalculatorEngine.shortcutCandidate(engine, CALCULATOR_CODE_LENGTHS) else null
-        val matched = step.matched || (candidate != null && mPendingCode?.contentEquals(candidate.toCharArray()) == true)
+        val matched = candidate != null && mPendingCode?.contentEquals(candidate.toCharArray()) == true
+        if (matched) replacePendingSecret(candidate!!.toCharArray())
         val calculator = calculatorUiState(CalculatorEngine.press(engine, intent.key), mFormat)
-        uiState.copy(step = DisguiseSetupStep.Practice(calculator, matched)).setup()
+        uiState.copy(step = DisguiseSetupStep.PracticeCalculator(calculator, step.matched || matched)).setup()
+    }
+
+    /**
+     * Runs the practice converter. Swapping with the pending code typed records the units on
+     * screen as part of the shortcut; a later successful swap replaces them.
+     */
+    @UiIntentObserver(DisguiseSettingsUiIntent.PracticeConverter::class)
+    private fun onPracticeConverter(intent: DisguiseSettingsUiIntent.PracticeConverter) {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        val step = uiState.step as? DisguiseSetupStep.PracticeConverter ?: return
+        val engine = step.converter.engine
+        var matched = step.matched
+        val next = when (val action = intent.intent) {
+            is ConverterUiIntent.Press -> ConverterEngine.press(engine, action.key)
+            is ConverterUiIntent.SelectCategory -> ConverterEngine.selectCategory(engine, action.category)
+            is ConverterUiIntent.SelectFrom -> ConverterEngine.selectFrom(engine, action.unit)
+            is ConverterUiIntent.SelectTo -> ConverterEngine.selectTo(engine, action.unit)
+            ConverterUiIntent.Swap -> {
+                if (mPendingCode?.contentEquals(engine.input.toCharArray()) == true) {
+                    replacePendingSecret(ConverterEngine.shortcutText(engine.category, engine.from, engine.to, engine.input).toCharArray())
+                    matched = true
+                }
+                ConverterEngine.swap(engine)
+            }
+            ConverterUiIntent.Init -> engine
+        }
+        uiState.copy(step = DisguiseSetupStep.PracticeConverter(converterUiState(next, mFormat), matched)).setup()
+    }
+
+    @UiIntentObserver(DisguiseSettingsUiIntent.TapSequence::class)
+    private fun onTapSequence(intent: DisguiseSettingsUiIntent.TapSequence) {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        val step = uiState.step as? DisguiseSetupStep.CompassSequence ?: return
+        if (mSequenceTaps.size >= COMPASS_SEQUENCE_LENGTHS.last) return
+        mSequenceTaps += intent.point
+        uiState.copy(step = step.copy(taps = mSequenceTaps.size, error = null)).setup()
+    }
+
+    @UiIntentObserver(DisguiseSettingsUiIntent.ClearSequence::class)
+    private fun onClearSequence() {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        val step = uiState.step as? DisguiseSetupStep.CompassSequence ?: return
+        mSequenceTaps.clear()
+        uiState.copy(step = step.copy(taps = 0, error = null)).setup()
+    }
+
+    /** Stores the first sequence, then checks the repetition; a mismatch starts over. */
+    @UiIntentObserver(DisguiseSettingsUiIntent.NextSequence::class)
+    private fun onNextSequence() {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        val step = uiState.step as? DisguiseSetupStep.CompassSequence ?: return
+        val taps = mSequenceTaps.toList()
+        mSequenceTaps.clear()
+        val first = mFirstSequence
+        val next = when {
+            taps.size !in COMPASS_SEQUENCE_LENGTHS -> step.copy(taps = 0, error = DisguiseCodeError.Length)
+            first == null -> {
+                mFirstSequence = taps
+                DisguiseSetupStep.CompassSequence(repeating = true)
+            }
+            first == taps -> {
+                replacePendingSecret(CompassMath.sequenceCode(taps).toCharArray())
+                mFirstSequence = null
+                DisguiseSetupStep.ConfirmChange(Appearance.Compass)
+            }
+            else -> {
+                mFirstSequence = null
+                DisguiseSetupStep.CompassSequence(error = DisguiseCodeError.Mismatch)
+            }
+        }
+        uiState.copy(step = next).setup()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.FinishPractice::class)
     private fun onFinishPractice() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
-        val step = uiState.step as? DisguiseSetupStep.Practice ?: return
-        if (!step.matched) return
-        uiState.copy(step = DisguiseSetupStep.ConfirmChange(Appearance.Calculator)).setup()
+        val target = when (val step = uiState.step) {
+            is DisguiseSetupStep.PracticeCalculator -> Appearance.Calculator.takeIf { step.matched }
+            is DisguiseSetupStep.PracticeConverter -> Appearance.Converter.takeIf { step.matched }
+            else -> null
+        } ?: return
+        uiState.copy(step = DisguiseSetupStep.ConfirmChange(target)).setup()
     }
 
     /**
      * Applies the change confirmed in the warning.
      *
-     * - Turning on stores the code hash first, then switches the icon, so the decoy never shows
-     *   up without a working code.
-     * - Turning off restores the icon first, then deletes the code.
+     * - Turning on stores the shortcut hash first, then switches the icon, so the decoy never
+     *   shows up without a working shortcut.
+     * - Turning off restores the icon first, then deletes the shortcut.
      */
     @UiIntentObserver(DisguiseSettingsUiIntent.ConfirmChange::class)
     private suspend fun onConfirmChange() {
@@ -150,41 +268,50 @@ class DisguiseSettingsViewModel :
         if (uiState.isWorking) return
         uiState.copy(isWorking = true).setup()
         if (step.target.isDecoy) {
-            val code = mPendingCode ?: return onCancel()
-            mPendingCode = null
-            mSecretStore.set(step.target, code)
+            val secret = mPendingSecret ?: return onCancel()
+            mPendingSecret = null
+            mSecretStore.set(step.target, secret)
+            wipePending()
             mAppearanceSwitcher.apply(step.target)
         } else {
             mAppearanceSwitcher.apply(Appearance.Himitsu)
             mSecretStore.clear()
         }
-        DisguiseSettingsUiState.Normal(
-            appearance = mAppearanceSwitcher.current,
-            appLockEnabled = uiState.appLockEnabled,
-            deviceSecure = uiState.deviceSecure,
-            recentsPreviewVisible = uiState.recentsPreviewVisible
-        ).setup()
+        uiState.copy(appearance = mAppearanceSwitcher.current, step = DisguiseSetupStep.None, isWorking = false).setup()
         DisguiseSettingsViewEvent.CloseApp.tryEmit()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.Cancel::class)
     private fun onCancel() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
-        wipePendingCode()
+        wipePending()
         uiState.copy(step = DisguiseSetupStep.None, isWorking = false).setup()
     }
 
     override fun onCleared() {
         super.onCleared()
-        wipePendingCode()
+        wipePending()
     }
 
     /** Android 13 and later hide the preview with the app lock alone; earlier versions need `FLAG_SECURE`. */
     private fun isRecentsPreviewVisible(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU && !SecurityPrefs.secureScreenEnabled
 
-    private fun wipePendingCode() {
+    private fun replacePendingSecret(secret: CharArray) {
+        mPendingSecret?.fill('\u0000')
+        mPendingSecret = secret
+    }
+
+    private fun resetSequence() {
+        mFirstSequence = null
+        mSequenceTaps.clear()
+    }
+
+    private fun wipePending() {
         mPendingCode?.fill('\u0000')
         mPendingCode = null
+        mPendingSecret?.fill('\u0000')
+        mPendingSecret = null
+        resetSequence()
     }
 }

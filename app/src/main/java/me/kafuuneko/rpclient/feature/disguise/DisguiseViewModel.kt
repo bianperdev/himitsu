@@ -7,8 +7,6 @@ import me.kafuuneko.rpclient.feature.disguise.presentation.DisguiseViewEvent
 import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
 import me.kafuuneko.rpclient.libs.disguise.AfterAuthentication
-import me.kafuuneko.rpclient.libs.disguise.Appearance
-import me.kafuuneko.rpclient.libs.disguise.AppearanceSwitcher
 import me.kafuuneko.rpclient.libs.disguise.DisguiseUnlockRouter
 import me.kafuuneko.rpclient.libs.disguise.ShortcutAction
 import me.kafuuneko.rpclient.libs.security.AppGate
@@ -23,14 +21,12 @@ import org.koin.core.component.inject
  * ViewModel of the frame around every decoy.
  *
  * Responsibilities:
- * - pick the decoy for the saved appearance
  * - drive the overflow menu and the About dialog
  * - turn the shortcut and the recovery gesture into authentication through
  *   [DisguiseUnlockRouter]; content opens only after a successful prompt, and a canceled or
  *   failed one leaves the decoy exactly as it was
  */
 class DisguiseViewModel : CoreViewModelWithEvent<DisguiseUiIntent, DisguiseUiState>(DisguiseUiState.None), KoinComponent {
-    private val mAppearanceSwitcher by inject<AppearanceSwitcher>()
     private val mStorage by inject<SecureStorageManager>()
     private val mLockManager by inject<AppLockManager>()
     private val mAppGate by inject<AppGate>()
@@ -38,9 +34,7 @@ class DisguiseViewModel : CoreViewModelWithEvent<DisguiseUiIntent, DisguiseUiSta
     @UiIntentObserver(DisguiseUiIntent.Init::class)
     private fun onInit(intent: DisguiseUiIntent.Init) {
         if (!isStateOf<DisguiseUiState.None>()) return
-        // This screen only opens from a decoy alias; Himitsu itself falls back to the calculator
-        val appearance = mAppearanceSwitcher.current.takeIf { it.isDecoy } ?: Appearance.Calculator
-        DisguiseUiState.Normal(appearance = appearance, versionName = intent.versionName, covering = intent.covering).setup()
+        DisguiseUiState.Normal(appearance = intent.appearance, versionName = intent.versionName, covering = intent.covering).setup()
     }
 
     @UiIntentObserver(DisguiseUiIntent.ShowMenu::class)

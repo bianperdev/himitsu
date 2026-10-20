@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.feature.disguise.presentation
 
+import me.kafuuneko.rpclient.libs.disguise.Appearance
 import me.kafuuneko.rpclient.libs.security.lock.AuthOutcome
 
 /** User actions on the decoy frame. */
 sealed class DisguiseUiIntent {
-    data class Init(val versionName: String, val covering: Boolean) : DisguiseUiIntent()
+    data class Init(val appearance: Appearance, val versionName: String, val covering: Boolean) : DisguiseUiIntent()
     data object ShowMenu : DisguiseUiIntent()
     data object DismissMenu : DisguiseUiIntent()
     data object ShowAbout : DisguiseUiIntent()

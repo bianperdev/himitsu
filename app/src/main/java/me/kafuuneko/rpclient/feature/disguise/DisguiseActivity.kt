@@ -8,8 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -21,6 +23,14 @@ import me.kafuuneko.rpclient.feature.disguise.calculator.CalculatorViewModel
 import me.kafuuneko.rpclient.feature.disguise.calculator.presentation.CalculatorUiIntent
 import me.kafuuneko.rpclient.feature.disguise.calculator.presentation.CalculatorViewEvent
 import me.kafuuneko.rpclient.feature.disguise.calculator.ui.CalculatorLayout
+import me.kafuuneko.rpclient.feature.disguise.compass.CompassViewModel
+import me.kafuuneko.rpclient.feature.disguise.compass.presentation.CompassUiIntent
+import me.kafuuneko.rpclient.feature.disguise.compass.presentation.CompassViewEvent
+import me.kafuuneko.rpclient.feature.disguise.compass.ui.CompassLayout
+import me.kafuuneko.rpclient.feature.disguise.converter.ConverterViewModel
+import me.kafuuneko.rpclient.feature.disguise.converter.presentation.ConverterUiIntent
+import me.kafuuneko.rpclient.feature.disguise.converter.presentation.ConverterViewEvent
+import me.kafuuneko.rpclient.feature.disguise.converter.ui.ConverterLayout
 import me.kafuuneko.rpclient.feature.disguise.presentation.DisguiseUiIntent
 import me.kafuuneko.rpclient.feature.disguise.presentation.DisguiseViewEvent
 import me.kafuuneko.rpclient.feature.disguise.ui.DisguiseLayout
@@ -29,6 +39,8 @@ import me.kafuuneko.rpclient.feature.lock.LockActivityEntry
 import me.kafuuneko.rpclient.feature.main.MainActivity
 import me.kafuuneko.rpclient.libs.core.IViewEvent
 import me.kafuuneko.rpclient.libs.core.ViewEventWrapper
+import me.kafuuneko.rpclient.libs.disguise.Appearance
+import me.kafuuneko.rpclient.libs.disguise.AppearanceSwitcher
 import me.kafuuneko.rpclient.libs.disguise.DisguiseTaskDescription
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import org.koin.core.component.KoinComponent
@@ -39,6 +51,7 @@ import org.koin.core.component.inject
  *
  * - It must work while the app is locked, so it does not extend `CoreActivity` and never shows
  *   user data (security contract).
+ * - It shows the decoy of the saved appearance; only that decoy's ViewModel is created.
  * - The shortcut and the recovery gesture show the system prompt through [AppLockManager]; the
  *   app unlocks only in its success callback. Canceling or failing leaves the decoy as it was.
  * - In covering mode, Back leaves the app instead of revealing the page underneath.
@@ -46,8 +59,16 @@ import org.koin.core.component.inject
 class DisguiseActivity : FragmentActivity(), KoinComponent {
     private val mViewModel by viewModels<DisguiseViewModel>()
     private val mCalculatorViewModel by viewModels<CalculatorViewModel>()
+    private val mCompassViewModel by viewModels<CompassViewModel>()
+    private val mConverterViewModel by viewModels<ConverterViewModel>()
     private val mLockManager by inject<AppLockManager>()
+    private val mAppearanceSwitcher by inject<AppearanceSwitcher>()
     private lateinit var mPrompt: BiometricPrompt
+
+    /** The decoy on screen. This screen only opens from a decoy; Himitsu itself falls back to the calculator. */
+    private val mAppearance: Appearance by lazy {
+        mAppearanceSwitcher.current.takeIf { it.isDecoy } ?: Appearance.Calculator
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,17 +88,62 @@ class DisguiseActivity : FragmentActivity(), KoinComponent {
         }
         setContent {
             val uiState by mViewModel.uiStateFlow.collectAsState()
-            val calculatorUiState by mCalculatorViewModel.uiStateFlow.collectAsState()
             DisguiseTheme {
-                DisguiseLayout(uiState = uiState, emit = { mViewModel.emit(this) }) {
-                    CalculatorLayout(uiState = calculatorUiState, emit = { mCalculatorViewModel.emit(this) })
-                }
+                DisguiseLayout(uiState = uiState, emit = { mViewModel.emit(this) }) { DecoyContent() }
             }
         }
         collectViewEvents(mViewModel.viewEventFlow)
-        collectViewEvents(mCalculatorViewModel.viewEventFlow)
-        mViewModel.emit(DisguiseUiIntent.Init(versionName(), covering))
-        mCalculatorViewModel.emit(CalculatorUiIntent.Init)
+        initDecoy()
+        mViewModel.emit(DisguiseUiIntent.Init(mAppearance, versionName(), covering))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mAppearance == Appearance.Compass) {
+            val rotation = ContextCompat.getDisplayOrDefault(this).rotation
+            mCompassViewModel.emit(CompassUiIntent.Resume(rotation))
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (mAppearance == Appearance.Compass) mCompassViewModel.emit(CompassUiIntent.Pause)
+    }
+
+    /** Starts the ViewModel of the decoy on screen and listens for its shortcut. */
+    private fun initDecoy() {
+        when (mAppearance) {
+            Appearance.Compass -> {
+                collectViewEvents(mCompassViewModel.viewEventFlow)
+                mCompassViewModel.emit(CompassUiIntent.Init)
+            }
+            Appearance.Converter -> {
+                collectViewEvents(mConverterViewModel.viewEventFlow)
+                mConverterViewModel.emit(ConverterUiIntent.Init)
+            }
+            Appearance.Calculator, Appearance.Himitsu -> {
+                collectViewEvents(mCalculatorViewModel.viewEventFlow)
+                mCalculatorViewModel.emit(CalculatorUiIntent.Init)
+            }
+        }
+    }
+
+    @Composable
+    private fun DecoyContent() {
+        when (mAppearance) {
+            Appearance.Compass -> {
+                val state by mCompassViewModel.uiStateFlow.collectAsState()
+                CompassLayout(uiState = state, emit = { mCompassViewModel.emit(this) })
+            }
+            Appearance.Converter -> {
+                val state by mConverterViewModel.uiStateFlow.collectAsState()
+                ConverterLayout(uiState = state, emit = { mConverterViewModel.emit(this) })
+            }
+            Appearance.Calculator, Appearance.Himitsu -> {
+                val state by mCalculatorViewModel.uiStateFlow.collectAsState()
+                CalculatorLayout(uiState = state, emit = { mCalculatorViewModel.emit(this) })
+            }
+        }
     }
 
     private fun collectViewEvents(events: Flow<ViewEventWrapper>) {
@@ -90,7 +156,8 @@ class DisguiseActivity : FragmentActivity(), KoinComponent {
 
     private fun onViewEvent(event: IViewEvent) {
         when (event) {
-            CalculatorViewEvent.ShortcutMatched -> mViewModel.emit(DisguiseUiIntent.ShortcutMatched)
+            CalculatorViewEvent.ShortcutMatched, CompassViewEvent.ShortcutMatched, ConverterViewEvent.ShortcutMatched ->
+                mViewModel.emit(DisguiseUiIntent.ShortcutMatched)
             DisguiseViewEvent.ShowPrompt -> showPrompt()
             // The gate screen is opened directly: UnlockEntry would bring this decoy back
             DisguiseViewEvent.OpenGateScreen -> LockActivityEntry.open(this)

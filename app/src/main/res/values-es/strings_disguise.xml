@@ -45,7 +45,7 @@
     <string name="disguise_settings_lock_off_text">Tu código sigue pidiendo autenticación, pero al volver a la app verás Himitsu en lugar del disfraz. Toca para abrir Seguridad.</string>
     <string name="disguise_settings_recovery_title">Si olvidas cómo entrar</string>
     <string name="disguise_code_title">Elige un código</string>
-    <string name="disguise_code_hint">De 4 a 10 dígitos. En la calculadora, escríbelo y pulsa «=».</string>
+    <string name="disguise_code_hint">De 4 a 10 dígitos que recuerdes.</string>
     <string name="disguise_code_field">Código</string>
     <string name="disguise_code_repeat_field">Repite el código</string>
     <string name="disguise_code_error_length">Usa de 4 a 10 dígitos.</string>
@@ -59,4 +59,38 @@
     <string name="disguise_download_notice">El camuflaje está activo: mientras se descarga el archivo, su notificación muestra el nombre real de la app, Himitsu.</string>
     <string name="disguise_settings_recents_title">Multitarea puede mostrar una vista previa</string>
     <string name="disguise_settings_recents_text">En esta versión de Android, la pantalla de apps recientes puede mostrar lo que enseñaba Himitsu. Activa «%1$s» en Seguridad para que salga en blanco.</string>
+    <string name="disguise_compass_dir_n">N</string>
+    <string name="disguise_compass_dir_ne">NE</string>
+    <string name="disguise_compass_dir_e">E</string>
+    <string name="disguise_compass_dir_se">SE</string>
+    <string name="disguise_compass_dir_s">S</string>
+    <string name="disguise_compass_dir_sw">SO</string>
+    <string name="disguise_compass_dir_w">O</string>
+    <string name="disguise_compass_dir_nw">NO</string>
+    <string name="disguise_compass_north">Norte</string>
+    <string name="disguise_compass_east">Este</string>
+    <string name="disguise_compass_south">Sur</string>
+    <string name="disguise_compass_west">Oeste</string>
+    <string name="disguise_compass_magnetic">Norte magnético</string>
+    <string name="disguise_compass_calibrate">Mueve el móvil trazando un 8 para calibrar la brújula.</string>
+    <string name="disguise_compass_no_sensor">Este dispositivo no tiene sensor de brújula.</string>
+    <string name="disguise_compass_level">Se muestra un nivel en su lugar.</string>
+    <string name="disguise_conv_length">Longitud</string>
+    <string name="disguise_conv_mass">Masa</string>
+    <string name="disguise_conv_temperature">Temperatura</string>
+    <string name="disguise_conv_volume">Volumen</string>
+    <string name="disguise_conv_area">Superficie</string>
+    <string name="disguise_conv_speed">Velocidad</string>
+    <string name="disguise_conv_time">Tiempo</string>
+    <string name="disguise_conv_data">Datos</string>
+    <string name="disguise_conv_swap">Intercambiar unidades</string>
+    <string name="disguise_choose_title">Elige un disfraz</string>
+    <string name="disguise_practice_converter_text">Elige tus dos unidades, escribe tu código y pulsa ⇅, como harás en el conversor. Las unidades que elijas forman parte del atajo.</string>
+    <string name="disguise_sequence_title">Elige tu secuencia</string>
+    <string name="disguise_sequence_title_repeat">Repite tu secuencia</string>
+    <string name="disguise_sequence_text">Toca de 4 a 8 letras en el dial. En la brújula, toca las mismas letras en el mismo orden y espera un momento.</string>
+    <string name="disguise_sequence_clear">Borrar</string>
+    <string name="disguise_sequence_next">Siguiente</string>
+    <string name="disguise_sequence_error_length">Usa de 4 a 8 toques.</string>
+    <string name="disguise_sequence_error_mismatch">Las secuencias no coinciden. Empieza de nuevo.</string>
 </resources>
