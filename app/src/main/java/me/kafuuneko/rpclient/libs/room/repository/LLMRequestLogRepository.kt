@@ -1,5 +1,7 @@
 package me.kafuuneko.rpclient.libs.room.repository
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.llm.adapter.ImageLogSanitizer
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderConfig
@@ -69,9 +71,16 @@ class LLMRequestLogRepository(
         mLLMRequestLogDao.keepNewest(MAX_LOGS)
     }
 
-    /** 清空本地调试日志。 */
+    /**
+     * 清空本地调试日志。
+     *
+     * Himitsu (P-07): VACUUM rewrites the file so the deleted pages are not left behind.
+     */
     suspend fun deleteAll() {
         mLLMRequestLogDao.deleteAll()
+        withContext(Dispatchers.IO) {
+            mRequestLogDatabase.openHelper.writableDatabase.execSQL("VACUUM")
+        }
     }
 
     private companion object {

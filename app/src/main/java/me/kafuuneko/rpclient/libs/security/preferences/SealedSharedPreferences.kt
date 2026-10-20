@@ -76,17 +76,22 @@ internal class PreferenceCipher(
  * [SharedPreferences] whose strings and string sets are stored sealed (P-05).
  *
  * - Numbers and booleans pass through: they are switches and sizes, not personal text.
+ * - Strings named in `mPlainKeys` pass through too: settings such as the theme, which are read
+ *   by the first frame and must not wait for the Keystore.
  * - While the key is unavailable, sealed values read as their defaults and writes of strings
  *   are dropped instead of being stored in plain text. This only happens behind the gate
  *   screen, where the user cannot edit anything.
  */
 internal class SealedSharedPreferences(
     private val mDelegate: SharedPreferences,
-    private val mCipher: PreferenceCipher
+    private val mCipher: PreferenceCipher,
+    private val mPlainKeys: Set<String> = emptySet()
 ) : SharedPreferences {
 
     override fun getString(key: String, defValue: String?): String? {
         val stored = mDelegate.getString(key, null) ?: return defValue
+        // Plain settings are returned as is; one sealed by an earlier build is still opened
+        if (key in mPlainKeys && !PreferenceCipher.isSealed(stored)) return stored
         return when (val opened = mCipher.open(key, stored)) {
             is OpenedValue.Plain -> opened.value
             is OpenedValue.Value -> opened.value
@@ -145,6 +150,7 @@ internal class SealedSharedPreferences(
         // Seal each plain string or string set; stop if the key disappears midway
         for ((key, value) in mDelegate.all) {
             when {
+                key in mPlainKeys -> Unit
                 value is String && !PreferenceCipher.isSealed(value) -> {
                     editor.putString(key, mCipher.seal(key, value) ?: return 0)
                     count++
@@ -172,6 +178,10 @@ internal class SealedSharedPreferences(
         override fun putString(key: String, value: String?): SharedPreferences.Editor {
             if (value == null) {
                 mEditor.remove(key)
+                return this
+            }
+            if (key in mPlainKeys) {
+                mEditor.putString(key, value)
                 return this
             }
             mCipher.seal(key, value)?.let { mEditor.putString(key, it) }

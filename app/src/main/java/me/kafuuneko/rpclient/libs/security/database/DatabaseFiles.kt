@@ -31,13 +31,22 @@ internal object DatabaseFiles {
     private val SQLITE_HEADER = "SQLite format 3\u0000".toByteArray(Charsets.US_ASCII)
     private val COMPANION_SUFFIXES = listOf("-wal", "-shm", "-journal")
 
-    /** Classifies [file] by its first 16 bytes. */
+    /**
+     * Classifies [file] by its first 16 bytes.
+     *
+     * A file that exists but cannot be read counts as encrypted: the safe answer, because it
+     * prevents a new key from being created over data that may be there.
+     */
     fun kindOf(file: File): DatabaseFileKind {
         if (!file.isFile) return DatabaseFileKind.Missing
         if (file.length() == 0L) return DatabaseFileKind.Empty
         if (file.length() < SQLITE_HEADER.size) return DatabaseFileKind.Encrypted
         val header = ByteArray(SQLITE_HEADER.size)
-        RandomAccessFile(file, "r").use { it.readFully(header) }
+        try {
+            RandomAccessFile(file, "r").use { it.readFully(header) }
+        } catch (_: IOException) {
+            return DatabaseFileKind.Encrypted
+        }
         return if (header.contentEquals(SQLITE_HEADER)) DatabaseFileKind.Plaintext else DatabaseFileKind.Encrypted
     }
 

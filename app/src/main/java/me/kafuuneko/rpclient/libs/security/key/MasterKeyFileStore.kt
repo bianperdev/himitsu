@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.libs.security.key
 
+import android.system.Os
+import android.system.OsConstants
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -46,6 +48,24 @@ class MasterKeyFileStore(private val mFile: File) {
             StandardCopyOption.REPLACE_EXISTING,
             StandardCopyOption.ATOMIC_MOVE
         )
+        syncDirectory()
+    }
+
+    /**
+     * Makes the rename durable: without syncing the directory, a power loss right after the
+     * first key creation could lose the key file while the encrypted database survives.
+     * Best effort; the platform call is unavailable in JVM unit tests.
+     */
+    private fun syncDirectory() {
+        val directory = mFile.parentFile ?: return
+        runCatching {
+            val fd = Os.open(directory.path, OsConstants.O_RDONLY, 0)
+            try {
+                Os.fsync(fd)
+            } finally {
+                Os.close(fd)
+            }
+        }
     }
 
     /**

@@ -22,8 +22,16 @@ object SealedPreferencesProvider : PreferencesProvider {
     private val mCipher = PreferenceCipher({ keySource() })
     private val mInstances = ConcurrentHashMap<String, SealedSharedPreferences>()
 
+    /**
+     * Non-sensitive settings kept plain per preference file, so the first frame (theme) and
+     * image settings never wait for the Keystore. Personal text is never listed here.
+     */
+    private val mPlainKeys = mapOf("AppModel" to setOf("themeMode", "imageSendSettings"))
+
     override fun get(context: Context, name: String, mode: Int): SharedPreferences =
-        mInstances.getOrPut(name) { SealedSharedPreferences(context.getSharedPreferences(name, mode), mCipher) }
+        mInstances.getOrPut(name) {
+            SealedSharedPreferences(context.getSharedPreferences(name, mode), mCipher, mPlainKeys[name].orEmpty())
+        }
 
     /**
      * Seals the plain strings of [model] when it uses this provider.

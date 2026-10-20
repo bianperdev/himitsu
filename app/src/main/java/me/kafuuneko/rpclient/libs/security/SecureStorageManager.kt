@@ -130,11 +130,13 @@ class SecureStorageManager(
      * Starts the storage once per process. [startupTasks] run after the databases are usable
      * and before the state becomes [SecureStorageState.Ready].
      */
-    fun start(startupTasks: suspend () -> Unit) {
+    fun start(beforeKey: () -> Unit = {}, startupTasks: suspend () -> Unit) {
         // SQLCipher must be loaded explicitly, and its Java logging silenced before any use
         System.loadLibrary("sqlcipher")
         Logger.setTarget(NoopTarget())
         mStartupTasks = startupTasks
+        // Cleanup that needs no key runs even when the key turns out to be unavailable
+        mScope.launch { mMutex.withLock { beforeKey() } }
         launchSequence()
     }
 
@@ -149,12 +151,15 @@ class SecureStorageManager(
      *
      * @return the vault result; on success the startup sequence resumes
      */
-    suspend fun recover(code: RecoveryCode): RecoveryResult = mMutex.withLock {
-        val result = mVault.recover(code)
-        if (result is RecoveryResult.Recovered) {
-            continueWith(result.masterKey)
+    suspend fun recover(code: RecoveryCode): RecoveryResult = withContext(Dispatchers.IO) {
+        // Keystore key generation, the key file write and the startup tasks must not run on Main
+        mMutex.withLock {
+            val result = mVault.recover(code)
+            if (result is RecoveryResult.Recovered) {
+                continueWith(result.masterKey)
+            }
+            result
         }
-        result
     }
 
     /**

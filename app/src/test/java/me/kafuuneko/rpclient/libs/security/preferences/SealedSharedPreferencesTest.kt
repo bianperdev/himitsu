@@ -63,6 +63,24 @@ class SealedSharedPreferencesTest {
     }
 
     @Test
+    fun listedSettingsStayPlainAndEarlierSealedOnesStillOpen() {
+        prefs.edit().putString("themeMode", "dark").commit()
+        val sealedTheme = backing.values["themeMode"] as String
+        val withPlainTheme = SealedSharedPreferences(
+            backing,
+            PreferenceCipher({ key.copyOf() }, random),
+            setOf("themeMode")
+        )
+
+        assertEquals("dark", withPlainTheme.getString("themeMode", null))
+        withPlainTheme.edit().putString("themeMode", "light").commit()
+
+        assertTrue(sealedTheme.startsWith(PreferenceCipher.PREFIX))
+        assertEquals("light", backing.values["themeMode"])
+        assertEquals(0, withPlainTheme.sealPlainValues())
+    }
+
+    @Test
     fun nullStringRemovesTheValue() {
         prefs.edit().putString("userName", "placeholder").commit()
         prefs.edit().putString("userName", null).commit()
