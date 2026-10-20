@@ -13,6 +13,7 @@ import me.kafuuneko.rpclient.libs.llm.model.LLMMessageRole
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderConfig
 import me.kafuuneko.rpclient.libs.llm.model.LLMStreamEvent
 import me.kafuuneko.rpclient.libs.llm.model.LLMUsage
+import me.kafuuneko.rpclient.libs.prompt.PromptBudgetExceededException
 
 /**
  * [LLMClient] for providers whose model runs on this device.
@@ -58,25 +59,33 @@ class LocalLLMClient(
         val sampling = LocalSamplingParamsResolver.resolve(mProvider, request.options)
         val config = LocalLoadConfig(contextTokens = mProvider.contextTokens)
         emit(LLMStreamEvent.Connected)
-        mRuntime.withModel(modelId, config) { engine, model ->
-            val prompt = engine.renderChat(request.messages.map { it.toLocalMessage() })
-            // Cancelling this collector cancels the engine flow, which stops decoding
-            engine.generate(prompt, sampling).collect { event ->
-                when (event) {
-                    is LocalGenerationEvent.Token -> emit(LLMStreamEvent.Delta(event.text, rawChunk = ""))
-                    is LocalGenerationEvent.Finished -> emit(
-                        LLMStreamEvent.Finished(
-                            finishReason = event.reason.wireName,
-                            model = model.id,
-                            usage = LLMUsage(
-                                promptTokens = event.promptTokens,
-                                completionTokens = event.completionTokens,
-                                totalTokens = event.promptTokens + event.completionTokens
+        try {
+            mRuntime.withModel(modelId, config) { engine, model ->
+                val prompt = engine.renderChat(request.messages.toLocalMessages())
+                // Cancelling this collector cancels the engine flow, which stops decoding
+                engine.generate(prompt, sampling).collect { event ->
+                    when (event) {
+                        is LocalGenerationEvent.Token -> emit(LLMStreamEvent.Delta(event.text, rawChunk = ""))
+                        is LocalGenerationEvent.Finished -> emit(
+                            LLMStreamEvent.Finished(
+                                finishReason = event.reason.wireName,
+                                model = model.id,
+                                usage = LLMUsage(
+                                    promptTokens = event.promptTokens,
+                                    completionTokens = event.completionTokens,
+                                    totalTokens = event.promptTokens + event.completionTokens
+                                )
                             )
                         )
-                    )
+                    }
                 }
             }
+        } catch (error: LocalPromptTooLongException) {
+            // Same message as the prompt budget check, which only estimated the tokens
+            throw PromptBudgetExceededException(
+                requiredTokens = error.promptTokens,
+                promptBudget = (mProvider.contextTokens - sampling.maxTokens).coerceAtLeast(0)
+            )
         }
     }
 
@@ -84,13 +93,17 @@ class LocalLLMClient(
         return request.model?.takeIf { it.isNotBlank() } ?: mProvider.model
     }
 
-    private fun LLMMessage.toLocalMessage(): LocalChatMessage = LocalChatMessage(
-        role = when (role) {
+}
+
+/** Converts finalized messages to the text-only messages local engines take. */
+internal fun List<LLMMessage>.toLocalMessages(): List<LocalChatMessage> = map { message ->
+    LocalChatMessage(
+        role = when (message.role) {
             LLMMessageRole.System -> LocalChatRole.System
             LLMMessageRole.User -> LocalChatRole.User
             LLMMessageRole.Assistant -> LocalChatRole.Assistant
         },
-        content = content
+        content = message.content
     )
 }
 

@@ -3,9 +3,16 @@ package me.kafuuneko.rpclient.libs.llm.local
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.os.Build
+import androidx.room.Room
+import me.kafuuneko.rpclient.libs.llm.local.llamacpp.LlamaCppEngine
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDatabase
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImporter
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import java.io.File
 
 /**
  * Koin module of the feat/local-inference track, appended to `himitsuModules`.
@@ -14,6 +21,15 @@ import org.koin.dsl.module
  */
 val localInferenceModule = module {
     single { LocalEngineRegistry(availableEngines(androidContext())) }
+    single {
+        // In noBackupFilesDir, so Android backups never export the model list
+        val path = File(androidContext().noBackupFilesDir, LocalModelDatabase.FILE_NAME).path
+        Room.databaseBuilder(androidContext(), LocalModelDatabase::class.java, path).build()
+    }
+    single { get<LocalModelDatabase>().localModelDao() }
+    // Partial copies left by a killed process are useless; nothing can be importing yet
+    single { LocalModelFiles(androidContext()).also { it.deletePartialFiles() } }
+    singleOf(::LocalModelImporter)
     singleOf(::LocalModelRepository)
     singleOf(::LocalModelRuntime)
     singleOf(::LocalLLMClientFactory)
@@ -22,7 +38,10 @@ val localInferenceModule = module {
 
 private fun availableEngines(context: Context): List<LocalInferenceEngine> {
     val isDebuggable = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+    // llama.cpp is built for these ABIs only, see app/build.gradle.kts
+    val hasLlamaCppAbi = Build.SUPPORTED_ABIS.any { it == "arm64-v8a" || it == "x86_64" }
     return buildList {
         if (isDebuggable) add(FakeLocalInferenceEngine())
+        if (hasLlamaCppAbi) add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir))
     }
 }

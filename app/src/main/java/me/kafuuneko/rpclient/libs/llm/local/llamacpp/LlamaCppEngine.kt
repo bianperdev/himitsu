@@ -1,0 +1,236 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+package me.kafuuneko.rpclient.libs.llm.local.llamacpp
+
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.libs.llm.local.ChatTemplateSource
+import me.kafuuneko.rpclient.libs.llm.local.LocalChatMessage
+import me.kafuuneko.rpclient.libs.llm.local.LocalChatTemplateException
+import me.kafuuneko.rpclient.libs.llm.local.LocalComputeBackend
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineCapabilities
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineKind
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineState
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineUnavailableException
+import me.kafuuneko.rpclient.libs.llm.local.LocalFinishReason
+import me.kafuuneko.rpclient.libs.llm.local.LocalGenerationEvent
+import me.kafuuneko.rpclient.libs.llm.local.LocalGenerationException
+import me.kafuuneko.rpclient.libs.llm.local.LocalInferenceEngine
+import me.kafuuneko.rpclient.libs.llm.local.LocalLoadConfig
+import me.kafuuneko.rpclient.libs.llm.local.LocalModelDescriptor
+import me.kafuuneko.rpclient.libs.llm.local.LocalModelLoadException
+import me.kafuuneko.rpclient.libs.llm.local.LocalPromptTooLongException
+import me.kafuuneko.rpclient.libs.llm.local.LocalSamplingParams
+import me.kafuuneko.rpclient.libs.llm.local.PromptSegment
+import me.kafuuneko.rpclient.libs.llm.local.RenderedPrompt
+import me.kafuuneko.rpclient.libs.llm.local.StopSequenceFilter
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
+
+/**
+ * [LocalInferenceEngine] backed by llama.cpp, built from source (see `app/src/main/cpp`).
+ *
+ * - All native calls run on one dedicated thread; llama.cpp contexts are not thread-safe.
+ * - Chat templates are the Jinja templates bundled in the GGUF, rendered natively; models without
+ *   one fall back to ChatML.
+ * - Cancelling [generate]'s collector sets the native abort flag, which stops decoding at the next
+ *   token or prompt batch.
+ * - The KV cache keeps the previous prompt, so a follow-up message only evaluates the new tokens.
+ */
+class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
+    private val mDispatcher = Executors.newSingleThreadExecutor { runnable ->
+        Thread(runnable, THREAD_NAME).apply { isDaemon = true }
+    }.asCoroutineDispatcher()
+    private val mState = MutableStateFlow<LocalEngineState>(LocalEngineState.Idle)
+    private var mInitialized = false
+
+    // Written only on the engine thread; read from other threads to abort
+    @Volatile
+    private var mHandle = 0L
+    private var mModelId: String? = null
+    private var mInfo: ModelInfo? = null
+
+    override val kind: LocalEngineKind = LocalEngineKind.LlamaCpp
+
+    override val state: StateFlow<LocalEngineState> = mState.asStateFlow()
+
+    override fun capabilities(): LocalEngineCapabilities = LocalEngineCapabilities(
+        backends = setOf(LocalComputeBackend.Cpu),
+        hasExactTokenizer = true,
+        usesModelChatTemplate = true
+    )
+
+    override suspend fun load(model: LocalModelDescriptor, config: LocalLoadConfig) = withContext(mDispatcher) {
+        ensureInitialized()
+        releaseCurrent()
+        val path = model.filePath ?: throw LocalModelLoadException()
+        mState.value = LocalEngineState.Loading(model.id)
+        val handle = LlamaCppNative.nativeLoad(path, config.contextTokens, threadsFor(config), false)
+        if (handle == 0L) {
+            mState.value = LocalEngineState.Idle
+            throw LocalModelLoadException()
+        }
+        mHandle = handle
+        mModelId = model.id
+        mInfo = readInfo(handle)
+        mState.value = LocalEngineState.Ready(model.id)
+    }
+
+    override suspend fun unload() = withContext(mDispatcher) {
+        releaseCurrent()
+        mState.value = LocalEngineState.Idle
+    }
+
+    override suspend fun renderChat(messages: List<LocalChatMessage>): RenderedPrompt = withContext(mDispatcher) {
+        val info = mInfo ?: throw LocalModelLoadException()
+        val template = info.chatTemplate?.takeIf { it.isNotBlank() }
+        val result = try {
+            LlamaCppNative.nativeRender(
+                template = (template ?: CHATML_TEMPLATE).toByteArray(),
+                roles = messages.map { it.role.name.lowercase().toByteArray() }.toTypedArray(),
+                contents = messages.map { it.content.toByteArray() }.toTypedArray(),
+                addGenerationPrompt = true,
+                enableThinking = false,
+                bos = info.bos.toByteArray(),
+                eos = info.eos.toByteArray()
+            )
+        } catch (_: IllegalStateException) {
+            throw LocalChatTemplateException()
+        }
+        @Suppress("UNCHECKED_CAST")
+        val texts = result[0] as Array<ByteArray>
+        val flags = result[1] as BooleanArray
+        val segments = texts.mapIndexed { index, bytes -> PromptSegment(String(bytes), flags[index]) }
+        RenderedPrompt(
+            text = segments.joinToString("") { it.text },
+            templateName = if (template == null) FALLBACK_TEMPLATE_NAME else null,
+            templateSource = if (template == null) ChatTemplateSource.Fallback else ChatTemplateSource.Model,
+            segments = segments
+        )
+    }
+
+    override suspend fun countTokens(text: String): Int = withContext(mDispatcher) {
+        val handle = mHandle.takeIf { it != 0L } ?: throw LocalModelLoadException()
+        LlamaCppNative.nativeCountTokens(handle, arrayOf(text.toByteArray()), booleanArrayOf(true))
+            .takeIf { it >= 0 } ?: throw LocalGenerationException()
+    }
+
+    override suspend fun countPromptTokens(prompt: RenderedPrompt): Int = withContext(mDispatcher) {
+        val handle = mHandle.takeIf { it != 0L } ?: throw LocalModelLoadException()
+        LlamaCppNative.nativeCountTokens(
+            handle,
+            prompt.segments.map { it.text.toByteArray() }.toTypedArray(),
+            prompt.segments.map { it.isMessageContent }.toBooleanArray()
+        ).takeIf { it >= 0 } ?: throw LocalGenerationException()
+    }
+
+    override fun generate(prompt: RenderedPrompt, sampling: LocalSamplingParams): Flow<LocalGenerationEvent> = callbackFlow {
+        val running = AtomicBoolean(true)
+        val handle = mHandle
+        val worker = launch(mDispatcher) {
+            val modelId = mModelId
+            if (handle == 0L || modelId == null) throw LocalModelLoadException()
+            mState.value = LocalEngineState.Generating(modelId)
+            try {
+                val filter = StopSequenceFilter(sampling.stop)
+                // The sink runs on the engine thread inside the native decode loop
+                val sink = LlamaTokenSink { bytes ->
+                    val text = filter.accept(String(bytes))
+                    if (text.isNotEmpty()) trySendBlocking(LocalGenerationEvent.Token(text))
+                    !filter.stopped
+                }
+                val result = LlamaCppNative.nativeGenerate(
+                    handle = handle,
+                    parts = prompt.segments.map { it.text.toByteArray() }.toTypedArray(),
+                    isInput = prompt.segments.map { it.isMessageContent }.toBooleanArray(),
+                    maxTokens = sampling.maxTokens,
+                    temperature = sampling.temperature ?: DEFAULT_TEMPERATURE,
+                    topP = sampling.topP ?: 1f,
+                    topK = sampling.topK ?: 0,
+                    minP = sampling.minP ?: 0f,
+                    repeatPenalty = sampling.repeatPenalty ?: 1f,
+                    seed = sampling.seed ?: RANDOM_SEED,
+                    sink = sink
+                )
+                val (code, promptTokens, completionTokens) = result.toList()
+                // Map native finish codes; an abort means the collector is already gone
+                val reason = when (code) {
+                    LlamaCppNative.FINISH_ABORTED -> return@launch
+                    LlamaCppNative.FINISH_PROMPT_TOO_LONG -> throw LocalPromptTooLongException(promptTokens)
+                    LlamaCppNative.FINISH_DECODE_ERROR -> throw LocalGenerationException()
+                    LlamaCppNative.FINISH_MAX_TOKENS,
+                    LlamaCppNative.FINISH_CONTEXT_FULL -> LocalFinishReason.Length
+                    else -> LocalFinishReason.Stop
+                }
+                filter.flush().takeIf { it.isNotEmpty() }?.let { send(LocalGenerationEvent.Token(it)) }
+                send(LocalGenerationEvent.Finished(reason, promptTokens, completionTokens))
+                channel.close()
+            } finally {
+                running.set(false)
+                mState.value = LocalEngineState.Ready(modelId)
+            }
+        }
+        // The native call ignores coroutine cancellation, so stop it explicitly
+        awaitClose { if (running.get() && handle != 0L) LlamaCppNative.nativeAbort(handle) }
+        worker.join()
+    }.buffer(Channel.UNLIMITED)
+
+    private fun ensureInitialized() {
+        if (mInitialized) return
+        if (!LlamaCppNative.loadLibrary()) throw LocalEngineUnavailableException()
+        LlamaCppNative.nativeInit(mNativeLibDir)
+        mInitialized = true
+    }
+
+    private fun releaseCurrent() {
+        val handle = mHandle
+        if (handle != 0L) LlamaCppNative.nativeFree(handle)
+        mHandle = 0L
+        mModelId = null
+        mInfo = null
+    }
+
+    private fun readInfo(handle: Long): ModelInfo {
+        val values = LlamaCppNative.nativeInfo(handle)
+        return ModelInfo(
+            chatTemplate = values[0]?.let { String(it) },
+            bos = values[1]?.let { String(it) }.orEmpty(),
+            eos = values[2]?.let { String(it) }.orEmpty()
+        )
+    }
+
+    private fun threadsFor(config: LocalLoadConfig): Int {
+        if (config.threads > 0) return config.threads
+        // Leave cores for the UI; more threads than performance cores slows decoding down
+        return (Runtime.getRuntime().availableProcessors() - 2).coerceIn(MIN_THREADS, MAX_DEFAULT_THREADS)
+    }
+
+    private data class ModelInfo(
+        val chatTemplate: String?,
+        val bos: String,
+        val eos: String
+    )
+
+    private companion object {
+        const val THREAD_NAME = "himitsu-llama"
+        const val DEFAULT_TEMPERATURE = 0.8f
+        const val RANDOM_SEED = -1L
+        const val MIN_THREADS = 2
+        const val MAX_DEFAULT_THREADS = 4
+        const val FALLBACK_TEMPLATE_NAME = "chatml"
+
+        // Used when a GGUF has no chat template; ChatML is the most widely trained format
+        const val CHATML_TEMPLATE =
+            "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\\n' + message['content'] + '<|im_end|>\\n' }}{% endfor %}" +
+                "{% if add_generation_prompt %}{{ '<|im_start|>assistant\\n' }}{% endif %}"
+    }
+}

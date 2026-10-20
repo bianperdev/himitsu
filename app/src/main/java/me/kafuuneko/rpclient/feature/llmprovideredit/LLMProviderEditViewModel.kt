@@ -24,6 +24,8 @@ import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEdi
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditTestState
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditUiIntent
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditUiState
+import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditViewEvent
+import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LocalModelImportState
 import me.kafuuneko.rpclient.libs.core.AppViewEvent
 import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
@@ -39,6 +41,9 @@ import me.kafuuneko.rpclient.libs.llm.adapter.withOpenRouterPreferredProviderEna
 import me.kafuuneko.rpclient.libs.llm.catalog.LLMModelCatalogRepository
 import me.kafuuneko.rpclient.libs.llm.catalog.classifyModelCatalogFailure
 import me.kafuuneko.rpclient.libs.llm.catalog.model.LLMAvailableModel
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImportException
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImportFailure
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImporter
 import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.libs.llm.model.ImageInputSetting
 import me.kafuuneko.rpclient.libs.llm.model.ImageTokenEstimatorType
@@ -73,6 +78,10 @@ class LLMProviderEditViewModel :
     private val mLLMClientFactory by inject<LLMClientFactory>()
     private val mModelCatalogRepository by inject<LLMModelCatalogRepository>()
     private val mContext by inject<Context>()
+    private val mLocalModelImporter by inject<LocalModelImporter>()
+
+    /** Himitsu: running GGUF import; cancelling it deletes the partial copy. */
+    private var mLocalModelImportJob: Job? = null
 
     /** 当前连接测试任务；重复测试或离开页面时用于取消旧请求。 */
     private var mTestJob: Job? = null
@@ -146,10 +155,20 @@ class LLMProviderEditViewModel :
                 localTokenEstimatorType = preset.defaultLocalTokenEstimatorType,
                 imageTokenEstimatorType = ImageTokenEstimatorType.Automatic,
                 useServerReportedUsage = preset.defaultUseServerReportedUsage,
-                // Himitsu: local engines are text only
-                imageInputSetting = if (preset.protocol.usesNetworkEndpoint) imageInputSetting else ImageInputSetting.Unsupported
+                // Himitsu: local engines are text only, and a phone cannot hold a 32K context
+                imageInputSetting = if (preset.protocol.usesNetworkEndpoint) imageInputSetting else ImageInputSetting.Unsupported,
+                contextTokens = if (preset.protocol.usesNetworkEndpoint) contextTokens else LOCAL_CONTEXT_TOKENS.toString(),
+                maxTokens = if (preset.protocol.usesNetworkEndpoint) maxTokens else LOCAL_MAX_TOKENS.toString()
             )
         }
+    }
+
+    private companion object {
+        /** Himitsu: context that fits the KV cache of a 3-4B model in a few hundred MB. */
+        const val LOCAL_CONTEXT_TOKENS = 4096
+
+        /** Himitsu: reply length for local models, where every token costs battery. */
+        const val LOCAL_MAX_TOKENS = 512
     }
 
     /** Name a preset gives to a new provider, localized when the preset is not a brand. */
@@ -590,6 +609,7 @@ class LLMProviderEditViewModel :
     }
 
     override fun onCleared() {
+        mLocalModelImportJob?.cancel()
         cancelNetworkTasks()
         clearSensitiveDrafts()
         super.onCleared()
@@ -601,6 +621,56 @@ class LLMProviderEditViewModel :
         if (!isStateOf<LLMProviderEditUiState.Normal>()) return
         cancelNetworkTasks()
         finishPage()
+    }
+
+    /** Himitsu: opens the system file picker for a GGUF model. */
+    @UiIntentObserver(LLMProviderEditUiIntent.ImportLocalModelClick::class)
+    private fun onImportLocalModelClick() {
+        if (mLocalModelImportJob?.isActive == true) return
+        LLMProviderEditViewEvent.OpenLocalModelPicker.tryEmit()
+    }
+
+    /**
+     * Himitsu: copies the picked GGUF into app storage and selects it for this provider.
+     *
+     * - The copy runs on IO inside the importer; progress updates only when the percentage changes.
+     * - Leaving the page cancels the copy, and the importer deletes the partial file.
+     */
+    @UiIntentObserver(LLMProviderEditUiIntent.ImportLocalModelResult::class)
+    private fun onImportLocalModelResult(intent: LLMProviderEditUiIntent.ImportLocalModelResult) {
+        val uri = intent.uri ?: return
+        if (mLocalModelImportJob?.isActive == true) return
+        setLocalModelImportState(LocalModelImportState.Copying(percent = null))
+        mLocalModelImportJob = viewModelScope.launch {
+            var shownPercent: Int? = null
+            try {
+                val model = mLocalModelImporter.import(uri) { copied, total ->
+                    val percent = if (total > 0) (copied * 100 / total).toInt().coerceIn(0, 100) else null
+                    // The callback runs on IO for every chunk; only hop to the UI on a visible change
+                    if (percent != null && percent != shownPercent) {
+                        shownPercent = percent
+                        viewModelScope.launch { setLocalModelImportState(LocalModelImportState.Copying(percent)) }
+                    }
+                }
+                updateForm(invalidateModelCatalog = true) { copy(model = model.id) }
+                AppViewEvent.PopupToastMessageByResId(R.string.local_inference_import_done).tryEmit()
+            } catch (error: LocalModelImportException) {
+                AppViewEvent.PopupToastMessageByResId(error.failure.messageRes()).tryEmit()
+            } finally {
+                setLocalModelImportState(LocalModelImportState.Idle)
+            }
+        }
+    }
+
+    private fun setLocalModelImportState(state: LocalModelImportState) {
+        val uiState = getOrNull<LLMProviderEditUiState.Normal>() ?: return
+        uiState.copy(localModelImportState = state).setup()
+    }
+
+    private fun LocalModelImportFailure.messageRes(): Int = when (this) {
+        LocalModelImportFailure.NotGguf -> R.string.local_inference_import_not_gguf
+        LocalModelImportFailure.Unreadable -> R.string.local_inference_import_unreadable
+        LocalModelImportFailure.NoSpace -> R.string.local_inference_import_no_space
     }
 
     /** 关闭当前弹窗。 */

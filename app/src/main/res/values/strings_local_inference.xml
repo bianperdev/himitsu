@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">On-device model</string>
     <string name="local_inference_provider_hint">This model runs on your phone. Chats, prompts and replies never leave the device. Tap refresh next to the model field to list the models stored on this device.</string>
     <string name="local_inference_endpoint_label">On this device</string>
+    <string name="local_inference_import_button">Import GGUF file</string>
+    <string name="local_inference_importing">Copying model…</string>
+    <string name="local_inference_importing_percent">Copying model… %1$d%%</string>
+    <string name="local_inference_import_done">Model imported</string>
+    <string name="local_inference_import_not_gguf">This file is not a GGUF model</string>
+    <string name="local_inference_import_unreadable">The file could not be read</string>
+    <string name="local_inference_import_no_space">Not enough free space for this model</string>
 </resources>

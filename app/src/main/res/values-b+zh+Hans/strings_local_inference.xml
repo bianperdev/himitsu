@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">本机模型</string>
     <string name="local_inference_provider_hint">此模型在你的手机上运行。聊天、提示词和回复都不会离开设备。点击模型字段旁的刷新按钮，即可列出此设备上保存的模型。</string>
     <string name="local_inference_endpoint_label">在此设备上</string>
+    <string name="local_inference_import_button">导入 GGUF 文件</string>
+    <string name="local_inference_importing">正在复制模型…</string>
+    <string name="local_inference_importing_percent">正在复制模型… %1$d%%</string>
+    <string name="local_inference_import_done">模型已导入</string>
+    <string name="local_inference_import_not_gguf">此文件不是 GGUF 模型</string>
+    <string name="local_inference_import_unreadable">无法读取该文件</string>
+    <string name="local_inference_import_no_space">可用空间不足，无法存放此模型</string>
 </resources>

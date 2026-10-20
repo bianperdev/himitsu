@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">Model di perangkat</string>
     <string name="local_inference_provider_hint">Model ini berjalan di ponsel Anda. Obrolan, prompt, dan balasan tidak pernah keluar dari perangkat. Ketuk tombol muat ulang di samping kolom model untuk menampilkan model yang tersimpan di perangkat ini.</string>
     <string name="local_inference_endpoint_label">Di perangkat ini</string>
+    <string name="local_inference_import_button">Impor file GGUF</string>
+    <string name="local_inference_importing">Menyalin model…</string>
+    <string name="local_inference_importing_percent">Menyalin model… %1$d%%</string>
+    <string name="local_inference_import_done">Model diimpor</string>
+    <string name="local_inference_import_not_gguf">File ini bukan model GGUF</string>
+    <string name="local_inference_import_unreadable">File tidak dapat dibaca</string>
+    <string name="local_inference_import_no_space">Ruang kosong tidak cukup untuk model ini</string>
 </resources>

@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.libs.llm.local
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDao
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
 
 /** The engines available in this build, keyed by kind. */
 class LocalEngineRegistry(engines: List<LocalInferenceEngine>) {
@@ -19,21 +23,38 @@ class LocalEngineRegistry(engines: List<LocalInferenceEngine>) {
 /**
  * Lists the models a local provider can use.
  *
- * - The fake engine contributes one built-in model.
- * - Imported GGUF files are added with the llama.cpp engine.
+ * - The fake engine contributes one built-in model in debuggable builds.
+ * - GGUF files in the registry are offered when the llama.cpp engine is available and their file
+ *   still exists.
  */
-class LocalModelRepository(private val mEngines: LocalEngineRegistry) {
+class LocalModelRepository(
+    private val mEngines: LocalEngineRegistry,
+    private val mDao: LocalModelDao,
+    private val mFiles: LocalModelFiles
+) {
     /** Every model the user can pick, in display order. */
-    suspend fun listModels(): List<LocalModelDescriptor> {
-        val builtIn = mutableListOf<LocalModelDescriptor>()
+    suspend fun listModels(): List<LocalModelDescriptor> = withContext(Dispatchers.IO) {
+        val models = mutableListOf<LocalModelDescriptor>()
         if (mEngines.find(LocalEngineKind.Fake) != null) {
-            builtIn += LocalModelDescriptor(
+            models += LocalModelDescriptor(
                 id = FakeLocalInferenceEngine.MODEL_ID,
                 displayName = FAKE_MODEL_DISPLAY_NAME,
                 engine = LocalEngineKind.Fake
             )
         }
-        return builtIn
+        if (mEngines.find(LocalEngineKind.LlamaCpp) != null) {
+            models += mDao.getAll().mapNotNull { entity ->
+                val file = mFiles.fileFor(entity.id).takeIf { it.isFile } ?: return@mapNotNull null
+                LocalModelDescriptor(
+                    id = entity.id,
+                    displayName = entity.displayName,
+                    engine = LocalEngineKind.LlamaCpp,
+                    trainedContextTokens = entity.trainedContextTokens,
+                    filePath = file.absolutePath
+                )
+            }
+        }
+        models
     }
 
     /** Returns the model with [id], or null when it was removed or is not offered in this build. */
@@ -46,7 +67,7 @@ class LocalModelRepository(private val mEngines: LocalEngineRegistry) {
 }
 
 /** The model a local provider points to is not available any more. */
-class LocalModelUnavailableException : IllegalStateException("The selected local model is not available")
+class LocalModelUnavailableException : LocalInferenceException("The selected local model is not available")
 
 /**
  * Owns the model that is loaded in memory.
@@ -74,13 +95,19 @@ class LocalModelRuntime(
     ): T = mMutex.withLock {
         val model = mModels.findModel(modelId) ?: throw LocalModelUnavailableException()
         val engine = mEngines.find(model.engine) ?: throw LocalModelUnavailableException()
+        // A context beyond what the model was trained on only wastes memory
+        val effective = if (model.trainedContextTokens > 0) {
+            config.copy(contextTokens = config.contextTokens.coerceAtMost(model.trainedContextTokens))
+        } else {
+            config
+        }
         val loaded = mLoaded
-        if (loaded == null || loaded.model != model || loaded.config != config) {
+        if (loaded == null || loaded.model != model || loaded.config != effective) {
             // Release the previous model before loading, so two never share memory
             loaded?.engine?.unload()
             mLoaded = null
-            engine.load(model, config)
-            mLoaded = LoadedModel(engine, model, config)
+            engine.load(model, effective)
+            mLoaded = LoadedModel(engine, model, effective)
         }
         block(engine, model)
     }

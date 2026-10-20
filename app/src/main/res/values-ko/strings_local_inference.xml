@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">기기 내 모델</string>
     <string name="local_inference_provider_hint">이 모델은 휴대폰에서 실행됩니다. 채팅, 프롬프트, 응답은 기기 밖으로 나가지 않습니다. 모델 입력란 옆의 새로고침 버튼을 눌러 이 기기에 저장된 모델을 확인하세요.</string>
     <string name="local_inference_endpoint_label">이 기기에서</string>
+    <string name="local_inference_import_button">GGUF 파일 가져오기</string>
+    <string name="local_inference_importing">모델 복사 중…</string>
+    <string name="local_inference_importing_percent">모델 복사 중… %1$d%%</string>
+    <string name="local_inference_import_done">모델을 가져왔습니다</string>
+    <string name="local_inference_import_not_gguf">이 파일은 GGUF 모델이 아닙니다</string>
+    <string name="local_inference_import_unreadable">파일을 읽을 수 없습니다</string>
+    <string name="local_inference_import_no_space">이 모델을 저장할 여유 공간이 부족합니다</string>
 </resources>

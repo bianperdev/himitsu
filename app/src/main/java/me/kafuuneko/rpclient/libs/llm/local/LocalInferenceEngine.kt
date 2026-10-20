@@ -41,6 +41,9 @@ interface LocalInferenceEngine {
     /** Counts the tokens of [text] with the loaded model's tokenizer, or estimates them. */
     suspend fun countTokens(text: String): Int
 
+    /** Counts the tokens of a rendered prompt exactly as [generate] would feed them. */
+    suspend fun countPromptTokens(prompt: RenderedPrompt): Int = countTokens(prompt.text)
+
     /** Streams the model's reply to [prompt]; ends with exactly one [LocalGenerationEvent.Finished]. */
     fun generate(prompt: RenderedPrompt, sampling: LocalSamplingParams): Flow<LocalGenerationEvent>
 }
@@ -88,7 +91,9 @@ data class LocalModelDescriptor(
     /** Engine that runs this model. */
     val engine: LocalEngineKind,
     /** Context length the model was trained with; 0 when unknown. */
-    val trainedContextTokens: Int = 0
+    val trainedContextTokens: Int = 0,
+    /** Model file on this device, for engines that load files; never logged. */
+    val filePath: String? = null
 )
 
 /** Settings that apply while a model stays loaded. */
@@ -121,7 +126,19 @@ data class RenderedPrompt(
     /** Template name, or null when it has no known name. */
     val templateName: String?,
     /** Where the template came from. */
-    val templateSource: ChatTemplateSource
+    val templateSource: ChatTemplateSource,
+    /**
+     * [text] split by origin. Segments that hold message content are tokenized without parsing
+     * special tokens, so chat text cannot inject control tokens.
+     */
+    val segments: List<PromptSegment> = listOf(PromptSegment(text, isMessageContent = false))
+)
+
+/** A piece of a rendered prompt. */
+data class PromptSegment(
+    val text: String,
+    /** True when the text came from a chat message rather than from the template itself. */
+    val isMessageContent: Boolean
 )
 
 /** Origin of the chat template that produced a [RenderedPrompt]. */

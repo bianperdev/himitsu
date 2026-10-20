@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">Modello sul dispositivo</string>
     <string name="local_inference_provider_hint">Questo modello viene eseguito sul tuo telefono. Chat, prompt e risposte non lasciano mai il dispositivo. Tocca il pulsante di aggiornamento accanto al campo del modello per elencare i modelli salvati su questo dispositivo.</string>
     <string name="local_inference_endpoint_label">Su questo dispositivo</string>
+    <string name="local_inference_import_button">Importa file GGUF</string>
+    <string name="local_inference_importing">Copia del modello…</string>
+    <string name="local_inference_importing_percent">Copia del modello… %1$d%%</string>
+    <string name="local_inference_import_done">Modello importato</string>
+    <string name="local_inference_import_not_gguf">Questo file non è un modello GGUF</string>
+    <string name="local_inference_import_unreadable">Impossibile leggere il file</string>
+    <string name="local_inference_import_no_space">Spazio libero insufficiente per questo modello</string>
 </resources>

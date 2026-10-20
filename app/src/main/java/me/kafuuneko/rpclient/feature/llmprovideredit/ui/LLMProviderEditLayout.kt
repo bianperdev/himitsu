@@ -43,6 +43,7 @@ import androidx.compose.material.icons.rounded.CloudDone
 import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Dns
 import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.FileOpen
 import androidx.compose.material.icons.rounded.Hub
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -65,6 +66,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -101,6 +103,7 @@ import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.CredentialEditMode
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.LLMProviderEditForm
 import me.kafuuneko.rpclient.feature.llmprovideredit.model.ProviderPreset
+import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LocalModelImportState
 import me.kafuuneko.rpclient.libs.llm.local.usesNetworkEndpoint
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditDialogState
 import me.kafuuneko.rpclient.feature.llmprovideredit.presentation.LLMProviderEditLoadState
@@ -210,7 +213,7 @@ private fun LLMProviderEditNormal(
                     )
                 }
             }
-            item { BasicPanel(state.form, state.modelCatalogState, emit) }
+            item { BasicPanel(state.form, state.modelCatalogState, state.localModelImportState, emit) }
             item { ParameterPanel(state.form, emit) }
             item {
                 CollapsibleAdvancedPanel(
@@ -291,6 +294,7 @@ private fun ProviderPresetsSection(
 private fun BasicPanel(
     form: LLMProviderEditForm,
     modelCatalogState: LLMProviderEditModelCatalogState,
+    localModelImportState: LocalModelImportState,
     emit: LLMProviderEditUiIntent.() -> Unit
 ) {
     Panel {
@@ -327,6 +331,9 @@ private fun BasicPanel(
             catalogState = modelCatalogState,
             emit = emit
         )
+        if (!usesNetwork) {
+            LocalModelImportRow(localModelImportState, emit)
+        }
         if (usesNetwork) {
             ImageInputCapabilityField(
                 selected = form.imageInputSetting,
@@ -349,6 +356,40 @@ private fun BasicPanel(
                 checked = form.isEnabled,
                 onCheckedChange = { LLMProviderEditUiIntent.ToggleEnabled(it).emit() }
             )
+        }
+    }
+}
+
+/** Himitsu: imports a GGUF file for a local provider and shows the copy progress. */
+@Composable
+private fun LocalModelImportRow(
+    state: LocalModelImportState,
+    emit: LLMProviderEditUiIntent.() -> Unit
+) {
+    when (state) {
+        LocalModelImportState.Idle -> OutlinedButton(
+            onClick = { LLMProviderEditUiIntent.ImportLocalModelClick.emit() },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Icon(Icons.Rounded.FileOpen, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.local_inference_import_button))
+        }
+
+        is LocalModelImportState.Copying -> Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                text = state.percent?.let { stringResource(R.string.local_inference_importing_percent, it) }
+                    ?: stringResource(R.string.local_inference_importing),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            val percent = state.percent
+            if (percent == null) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            } else {
+                LinearProgressIndicator(progress = { percent / 100f }, modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }

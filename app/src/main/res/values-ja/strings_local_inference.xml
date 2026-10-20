@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">端末上のモデル</string>
     <string name="local_inference_provider_hint">このモデルはスマートフォン上で動作します。チャット、プロンプト、応答が端末の外に送信されることはありません。モデル欄の横にある更新ボタンをタップすると、この端末に保存されたモデルが一覧表示されます。</string>
     <string name="local_inference_endpoint_label">この端末上</string>
+    <string name="local_inference_import_button">GGUF ファイルをインポート</string>
+    <string name="local_inference_importing">モデルをコピー中…</string>
+    <string name="local_inference_importing_percent">モデルをコピー中… %1$d%%</string>
+    <string name="local_inference_import_done">モデルをインポートしました</string>
+    <string name="local_inference_import_not_gguf">このファイルは GGUF モデルではありません</string>
+    <string name="local_inference_import_unreadable">ファイルを読み取れませんでした</string>
+    <string name="local_inference_import_no_space">このモデルを保存する空き容量が足りません</string>
 </resources>

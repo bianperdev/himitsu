@@ -5,4 +5,11 @@
     <string name="local_inference_preset_name">Модель на устройстве</string>
     <string name="local_inference_provider_hint">Эта модель работает на вашем телефоне. Чаты, промпты и ответы никогда не покидают устройство. Нажмите кнопку обновления рядом с полем модели, чтобы увидеть модели, сохранённые на этом устройстве.</string>
     <string name="local_inference_endpoint_label">На этом устройстве</string>
+    <string name="local_inference_import_button">Импортировать файл GGUF</string>
+    <string name="local_inference_importing">Копирование модели…</string>
+    <string name="local_inference_importing_percent">Копирование модели… %1$d%%</string>
+    <string name="local_inference_import_done">Модель импортирована</string>
+    <string name="local_inference_import_not_gguf">Этот файл не является моделью GGUF</string>
+    <string name="local_inference_import_unreadable">Не удалось прочитать файл</string>
+    <string name="local_inference_import_no_space">Недостаточно свободного места для этой модели</string>
 </resources>
