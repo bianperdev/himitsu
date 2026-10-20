@@ -21,6 +21,9 @@ object LocalInferencePrefs : KotprefModel() {
     /** Loading the GPU driver closed the app; set until the user turns the GPU on again. */
     var gpuDriverFailed by booleanPref(default = false)
 
+    /** A model already generated a reply on the GPU, so its driver is no longer watched. */
+    var gpuVerified by booleanPref(default = false)
+
     /** Store the KV cache in 8-bit instead of 16-bit: half the memory, slightly lower quality. */
     var quantizedKvCache by booleanPref(default = false)
 

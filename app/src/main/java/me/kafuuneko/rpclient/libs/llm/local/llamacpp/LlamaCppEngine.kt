@@ -56,8 +56,10 @@ import java.util.concurrent.atomic.AtomicLong
  * - The KV cache keeps the previous prompt, so a follow-up message only evaluates the new tokens.
  * - A GGUF's chat template is untrusted code: it renders on its own thread, with a size limit and a
  *   time limit.
- * - The GPU driver loads only after the user turned the GPU on. [mGpuMarker] exists while it
- *   loads, so a driver that kills the process is found at the next start and the GPU turned off.
+ * - The GPU driver loads only after the user turned the GPU on. Until a reply was generated on
+ *   the GPU, [mGpuMarker] exists during every native call that uses the driver (backend load,
+ *   model load, generation), so a driver that kills the process is found at the next start and
+ *   the GPU turned off. Between calls the marker is gone, so a normal process kill is not blamed.
  */
 class LlamaCppEngine(
     private val mNativeLibDir: String,
@@ -76,6 +78,9 @@ class LlamaCppEngine(
 
     // Whether loading the GPU backend was attempted in this process; engine thread only
     private var mGpuLoadTried = false
+
+    // Whether the loaded model offloads layers to the GPU; engine thread only
+    private var mModelOnGpu = false
 
     // Written only on the engine thread, under mHandleLock; other threads abort through it while
     // holding the lock, so the session cannot be freed under them
@@ -114,9 +119,12 @@ class LlamaCppEngine(
         // "All layers": llama.cpp caps the count at the model's real layer count
         val gpuLayers = if (config.backend == LocalComputeBackend.Gpu && !mGpuDevices.isNullOrEmpty()) ALL_LAYERS else 0
         val (threads, batchThreads) = threadsFor(config)
-        val handle = LlamaCppNative.nativeLoad(
-            path, config.contextTokens, threads, batchThreads, false, gpuLayers, config.quantizedKvCache
-        )
+        val handle = watchGpu(gpuLayers > 0) {
+            LlamaCppNative.nativeLoad(
+                path, config.contextTokens, threads, batchThreads, false, gpuLayers, config.quantizedKvCache
+            )
+        }
+        mModelOnGpu = gpuLayers > 0 && handle != 0L
         if (handle == 0L) {
             mState.value = LocalEngineState.Idle
             throw LocalModelLoadException()
@@ -182,7 +190,8 @@ class LlamaCppEngine(
                     if (text.isNotEmpty()) trySendBlocking(LocalGenerationEvent.Token(text))
                     !filter.stopped && isActive
                 }
-                val result = LlamaCppNative.nativeGenerate(
+                val onGpu = mModelOnGpu
+                val result = watchGpu(onGpu) { LlamaCppNative.nativeGenerate(
                     handle = handle,
                     parts = prompt.segments.map { it.text.toByteArray() }.toTypedArray(),
                     isInput = prompt.segments.map { it.isMessageContent }.toBooleanArray(),
@@ -194,8 +203,10 @@ class LlamaCppEngine(
                     repeatPenalty = sampling.repeatPenalty ?: 1f,
                     seed = sampling.seed ?: RANDOM_SEED,
                     sink = sink
-                )
+                ) }
                 val (code, promptTokens, completionTokens) = result.toList()
+                // A reply decoded on the GPU proves the driver: stop watching it
+                if (onGpu && code != LlamaCppNative.FINISH_DECODE_ERROR) LocalInferencePrefs.gpuVerified = true
                 // Map native finish codes; an abort means the collector is already gone
                 val reason = when (code) {
                     LlamaCppNative.FINISH_ABORTED -> return@launch
@@ -294,10 +305,7 @@ class LlamaCppEngine(
         mInitialized = true
     }
 
-    /**
-     * Loads the GPU backend once per process. The marker file brackets the native call: only a
-     * process killed inside it leaves the file behind.
-     */
+    /** Loads the GPU backend once per process, watched like every driver call. */
     private fun ensureGpuLoaded() {
         if (mGpuLoadTried) return
         mGpuLoadTried = true
@@ -305,13 +313,27 @@ class LlamaCppEngine(
             mGpuDevices = emptyList()
             return
         }
-        runCatching { mGpuMarker.createNewFile() }
-        val loaded = LlamaCppNative.nativeLoadGpu(mNativeLibDir)
-        mGpuDevices = if (loaded) LlamaCppNative.nativeGpuDevices().map { String(it) } else emptyList()
-        mGpuMarker.delete()
+        mGpuDevices = watchGpu(true) {
+            val loaded = LlamaCppNative.nativeLoadGpu(mNativeLibDir)
+            if (loaded) LlamaCppNative.nativeGpuDevices().map { String(it) } else emptyList()
+        }
     }
 
-    /** Turns the GPU off when an earlier process died while loading its driver. */
+    /**
+     * Runs [block] with the marker file present while the GPU driver is not verified yet. Only a
+     * process killed inside [block] leaves the file behind; an exception removes it.
+     */
+    private inline fun <T> watchGpu(active: Boolean, block: () -> T): T {
+        if (!active || LocalInferencePrefs.gpuVerified) return block()
+        runCatching { mGpuMarker.createNewFile() }
+        try {
+            return block()
+        } finally {
+            mGpuMarker.delete()
+        }
+    }
+
+    /** Turns the GPU off when an earlier process died inside a GPU driver call. */
     private fun checkGpuCrash() {
         if (mGpuLoadTried || !mGpuMarker.exists()) return
         mGpuMarker.delete()
