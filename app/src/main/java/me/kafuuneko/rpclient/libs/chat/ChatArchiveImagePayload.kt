@@ -9,6 +9,7 @@ import java.util.Base64
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import me.kafuuneko.rpclient.libs.room.model.MessageImagePolicy
+import me.kafuuneko.rpclient.libs.room.repository.StoredFile
 
 /**
  * 归档图片字节的无损传输封装。
@@ -55,13 +56,13 @@ internal object ChatArchiveImagePayload {
     }
 
     /** 为文件导出试压缩；临时文件由调用方拥有并在成功、异常或取消后释放。 */
-    fun compress(file: File, temporary: File, hash: String, checkActive: () -> Unit): Boolean {
-        file.inputStream().use { input ->
+    fun compress(file: StoredFile, temporary: File, hash: String, checkActive: () -> Unit): Boolean {
+        file.openStream().use { input ->
             GZIPOutputStream(temporary.outputStream()).use { output ->
                 copyOriginal(input, output, hash, checkActive)
             }
         }
-        return shouldCompress(file.length(), temporary.length())
+        return shouldCompress(file.length, temporary.length())
     }
 
     /** 小型内存归档入口；正式文件导出使用 compress 和分块 Base64，不缓存整张图片。 */

@@ -27,7 +27,7 @@ class FileRepositoryThumbnailTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = FileRepository(context, database)
+        repository = FileRepository(context, database, TestFileCipher)
     }
 
     @After

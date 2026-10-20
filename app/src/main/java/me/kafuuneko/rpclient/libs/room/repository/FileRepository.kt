@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.security.MessageDigest
 import java.util.Properties
@@ -32,6 +32,9 @@ import me.kafuuneko.rpclient.libs.room.AppDatabase
 import me.kafuuneko.rpclient.libs.room.entity.FileEntity
 import me.kafuuneko.rpclient.libs.room.model.MessageImagePolicy
 import me.kafuuneko.rpclient.libs.room.model.PreparedFile
+import me.kafuuneko.rpclient.libs.security.files.FileCipher
+import me.kafuuneko.rpclient.libs.security.files.FileCipherSource
+import me.kafuuneko.rpclient.libs.security.files.StoredFileLayout
 import me.kafuuneko.rpclient.libs.utils.withBlockingIoCancellation
 import me.kafuuneko.rpclient.model.SquareCropSelection
 
@@ -46,19 +49,29 @@ internal const val FILE_REPOSITORY_STAGING_DIR_NAME = "staging"
  *
  * 该存储库将文件保存在应用的私有数据目录下（repository/），
  * 并使用文件的 SHA-256 哈希值作为文件名，以确保相同内容的文件不会被重复保存。
+ *
+ * Himitsu (P-06): files are sealed with [FileCipher] in `repository/sealed/`, under a keyed
+ * name derived from the hash, and read as streams through [StoredFile]. Files left in plain
+ * form by earlier builds stay readable.
  */
 class FileRepository(
     private val mContext: Context,
-    private val mAppDatabase: AppDatabase
+    private val mAppDatabase: AppDatabase,
+    private val mCipherSource: FileCipherSource
 ) {
     private val mFileDao = mAppDatabase.getFileDao()
 
     /**
      * 私有存储目录，用于存放所有通过该 Repository 保存的文件。
      */
-    private val mRepositoryDir: File by lazy {
-        mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE)
-    }
+    private val mRepositoryDir: File by lazy { StoredFileLayout.repositoryDirectory(mContext) }
+
+    /** Himitsu (P-06): sealed files; created on demand, since "start over" may move the directory aside. */
+    private val mSealedDir: File
+        get() = File(mRepositoryDir, StoredFileLayout.SEALED_DIRECTORY).apply { mkdirs() }
+
+    /** Waits until the encrypted storage is open, like the databases. */
+    private val mCipher: FileCipher get() = mCipherSource.fileCipher()
 
     /**
      * 从给定的 [Uri] 保存文件。
@@ -116,7 +129,10 @@ class FileRepository(
         }
     }
 
-    private val mStagingDir: File by lazy { File(mRepositoryDir, FILE_REPOSITORY_STAGING_DIR_NAME).apply { mkdirs() } }
+    private val mStagingDir: File get() = File(mSealedDir, FILE_REPOSITORY_STAGING_DIR_NAME).apply { mkdirs() }
+
+    /** Himitsu (P-06): plain drafts of earlier builds. */
+    private val mLegacyStagingDir: File get() = File(mRepositoryDir, FILE_REPOSITORY_STAGING_DIR_NAME)
     private val mState by lazy { mStorageStates.getOrPut(mRepositoryDir.absolutePath) { StorageState() } }
     private val mActiveDrafts get() = mState.activeDrafts
     private val mLeases get() = mState.leases
@@ -187,7 +203,8 @@ class FileRepository(
             val digest = MessageDigest.getInstance("SHA-256")
             var size = 0L
             withContext(Dispatchers.IO) {
-                FileOutputStream(temporary).use { output ->
+                // Himitsu (P-06): sealed and synced as it is copied; a draft never exists in plain form
+                mCipher.sealFile(temporary) { output ->
                     val buffer = ByteArray(8192)
                     while (true) {
                         currentCoroutineContext().ensureActive()
@@ -198,7 +215,6 @@ class FileRepository(
                         digest.update(buffer, 0, count)
                         size += count
                     }
-                    output.fd.sync()
                 }
             }
             require(size > 0) { "The image file is empty" }
@@ -224,19 +240,23 @@ class FileRepository(
      * @param write 将最终内容写入目标文件并返回 MIME 的操作。
      * @return 尚未入库的最终文件凭据。
      */
-    suspend fun prepareGenerated(ownerId: String, write: suspend (File) -> String): PreparedFile {
+    suspend fun prepareGenerated(ownerId: String, write: suspend (StoredFileTarget) -> String): PreparedFile {
         require(ownerId.isNotBlank()) { "The file owner cannot be empty" }
         val handle = UUID.randomUUID().toString()
         try {
             return withContext(Dispatchers.IO) {
                 mStorageMutex.withLock { mActiveDrafts.add(handle) }
-                val target = File(mStagingDir, handle)
+                val target = StoredFileTarget(File(mStagingDir, handle), mCipher)
                 val mime = write(target)
                 currentCoroutineContext().ensureActive()
                 // 最终编码完成后计算哈希，去重和回收均以实际存储字节为准。
-                require(target.isFile && target.length() > 0) { "The generated file is empty" }
+                // Himitsu (P-06): every write of the target is sealed and synced.
+                require(target.exists) { "The generated file is empty" }
+                val content = target.content()
+                val size = content.length
+                require(size > 0) { "The generated file is empty" }
                 val digest = MessageDigest.getInstance("SHA-256")
-                target.inputStream().use { input ->
+                content.openStream().use { input ->
                     val buffer = ByteArray(8192)
                     while (true) {
                         currentCoroutineContext().ensureActive()
@@ -245,9 +265,8 @@ class FileRepository(
                         digest.update(buffer, 0, count)
                     }
                 }
-                FileOutputStream(target, true).use { it.fd.sync() }
                 val hash = digest.digest().joinToString("") { "%02x".format(it) }
-                val prepared = PreparedFile(ownerId, handle, FileEntity(handle, hash, mime), target.length())
+                val prepared = PreparedFile(ownerId, handle, FileEntity(handle, hash, mime), size)
                 writePreparedMetadata(prepared)
                 prepared
             }
@@ -259,18 +278,18 @@ class FileRepository(
         }
     }
 
-    /** 暂存字节完整落盘后发布凭据；所有入口共享相同恢复格式。 */
-    private fun writePreparedMetadata(prepared: PreparedFile) {
+    /**
+     * 暂存字节完整落盘后发布凭据；所有入口共享相同恢复格式。
+     * Himitsu (P-06): sealed, since it holds the hash.
+     */
+    private suspend fun writePreparedMetadata(prepared: PreparedFile) {
         val metadata = Properties().apply {
             setProperty("owner", prepared.ownerId)
             setProperty("hash", prepared.file.hash)
             setProperty("size", prepared.byteCount.toString())
             prepared.file.mimeType?.let { setProperty("mime", it) }
         }
-        FileOutputStream(File(mStagingDir, "${prepared.handle}.meta")).use {
-            metadata.store(it, null)
-            it.fd.sync()
-        }
+        mCipher.sealFile(File(mStagingDir, "${prepared.handle}.meta")) { metadata.store(it, null) }
     }
 
     /** 根据草稿所有者和句柄恢复暂存引用；资源失效时返回 null，要求重新选择。 */
@@ -280,7 +299,7 @@ class FileRepository(
                 val prepared =
                     readPrepared(handle)?.takeIf { it.ownerId == ownerId } ?: return@withLock null
                 val file = File(mStagingDir, handle)
-                if (!file.isFile || file.length() != prepared.byteCount || mFileDao.getByUuid(handle) != null) {
+                if (!file.isFile || sealedLength(file) != prepared.byteCount || mFileDao.getByUuid(handle) != null) {
                     return@withLock null
                 }
                 mActiveDrafts.add(handle)
@@ -349,9 +368,9 @@ class FileRepository(
     /** 文件锁及数据库读取事务已由外层持有；仅供仓库导出消费文件。 */
     internal inner class ReadSnapshot {
         /** 在快照保护中消费文件与索引；hash 用于归档去重，物理缺失以 null 表达。 */
-        suspend fun <T> withFile(uuid: String, block: (File?, FileEntity?) -> T): T {
+        suspend fun <T> withFile(uuid: String, block: (StoredFile?, FileEntity?) -> T): T {
             val entity = mFileDao.getByUuid(uuid)
-            val file = entity?.let { File(mRepositoryDir, it.hash).takeIf(File::isFile) }
+            val file = entity?.let { resolve(it.hash) }
             return block(file, entity)
         }
     }
@@ -382,33 +401,34 @@ class FileRepository(
     suspend fun copyFileReference(uuid: String): String = mutate { copyReference(uuid).uuid }
 
     /** 在文件锁内读取已签发暂存，避免图像验证与释放草稿竞争。 */
-    suspend fun <T> withPreparedFile(prepared: PreparedFile, block: suspend (File) -> T): T =
+    suspend fun <T> withPreparedFile(prepared: PreparedFile, block: suspend (StoredFile) -> T): T =
         withContext(Dispatchers.IO) {
             mStorageMutex.withLock {
                 require(readPrepared(prepared.handle) == prepared) { "The image draft is stale, select the image again" }
-                block(File(mStagingDir, prepared.handle))
+                block(StoredFile(File(mStagingDir, prepared.handle), mCipher))
             }
         }
 
     /** 持租约读取原图；使用结束或协程取消后释放保护并尝试回收。 */
-    suspend fun <T> withFileLease(uuid: String, block: suspend (File) -> T): T =
+    suspend fun <T> withFileLease(uuid: String, block: suspend (StoredFile) -> T): T =
         readWithLease(uuid, { throw ImageRequestException(ImageRequestFailure.Missing) }, block)
 
     /** 缺失判断与租约登记在同一锁内完成，兼容头像返回 null 和发送请求明确失败两种语义。 */
     private suspend fun <T> readWithLease(
         uuid: String,
         onMissing: () -> T,
-        block: suspend (File) -> T
+        block: suspend (StoredFile) -> T
     ): T = withContext(Dispatchers.IO) {
         // 读取索引和登记租约必须与删除共用文件锁。
-        val entity = mStorageMutex.withLock {
+        // Himitsu (P-06): the lease also keeps a plain file in place until it is sealed.
+        val (entity, file) = mStorageMutex.withLock {
             val entity = mFileDao.getByUuid(uuid) ?: return@withLock null
-            if (!File(mRepositoryDir, entity.hash).isFile) return@withLock null
+            val file = resolve(entity.hash) ?: return@withLock null
             mLeases[entity.hash] = mLeases.getOrDefault(entity.hash, 0) + 1
-            entity
+            entity to file
         } ?: return@withContext onMissing()
         try {
-            block(File(mRepositoryDir, entity.hash))
+            block(file)
         } finally {
             withContext(NonCancellable) {
                 mStorageMutex.withLock {
@@ -426,18 +446,32 @@ class FileRepository(
         withContext(Dispatchers.IO) {
             mStorageMutex.withLock {
                 // 已有文件索引全部视为有效所有权，不能按“没有附件关系”删除头像。
-                mRepositoryDir.listFiles()?.filter { it.name.matches(Regex("[0-9a-f]{64}")) }
+                mRepositoryDir.listFiles()?.filter { it.name.matches(HASH_NAME) }
                     ?.forEach { collectHash(it.name) }
-                mStagingDir.listFiles()?.forEach {
-                    val handle = it.name.removeSuffix(".meta")
-                    if (handle !in mActiveDrafts && now - it.lastModified() > STAGING_RETENTION_MILLIS) {
-                        discardStaging(handle)
+                // Himitsu (P-06): a keyed name cannot be turned back into its hash, so the names
+                // of every indexed or leased hash are computed and any other sealed file is an orphan
+                val cipher = mCipher
+                val live = (mFileDao.getAllHashes() + mLeases.keys).mapTo(HashSet()) { cipher.sealedName(it) }
+                mSealedDir.listFiles()?.filter { it.isFile && it.name.matches(HASH_NAME) && it.name !in live }
+                    ?.forEach { it.delete() }
+                listOf(mStagingDir, mLegacyStagingDir).forEach { directory ->
+                    directory.listFiles()?.forEach {
+                        val handle = it.name.removeSuffix(".meta")
+                        if (handle !in mActiveDrafts && now - it.lastModified() > STAGING_RETENTION_MILLIS) {
+                            discardStaging(handle)
+                        }
                     }
                 }
                 // 旧版中断保存留下的临时文件没有索引，也没有可恢复草稿凭据。
                 mRepositoryDir.listFiles()
                     ?.filter { it.name.startsWith("temp_") || it.name.endsWith(".publishing") }
                     ?.forEach { it.delete() }
+                // Copies left by a publish or a sealing step that the process did not finish
+                listOf(mSealedDir, mStagingDir).forEach { directory ->
+                    directory.listFiles()
+                        ?.filter { it.name.endsWith(".publishing") || it.name.endsWith(SEALING_SUFFIX) }
+                        ?.forEach { it.delete() }
+                }
             }
         }
 
@@ -447,7 +481,7 @@ class FileRepository(
         val metadata = File(mStagingDir, "$handle.meta")
         if (!metadata.isFile) return null
         return runCatching {
-            val values = Properties().apply { metadata.inputStream().use { load(it) } }
+            val values = Properties().apply { mCipher.open(metadata).use { load(it) } }
             require(values.getProperty("hash").matches(Regex("[0-9a-f]{64}")))
             require(
                 values.getProperty("owner").isNotBlank() && values.getProperty("size").toLong() > 0
@@ -463,14 +497,15 @@ class FileRepository(
     /** 复制到同目录临时文件并同步落盘，检查原图哈希和最终原子重命名的结果。 */
     private suspend fun publish(prepared: PreparedFile) {
         val source = File(mStagingDir, prepared.handle)
-        require(source.isFile && source.length() == prepared.byteCount) { "The image draft file is missing or damaged" }
-        val target = File(mRepositoryDir, prepared.file.hash)
-        val temporary = File(mRepositoryDir, "${prepared.handle}.publishing")
+        require(source.isFile && sealedLength(source) == prepared.byteCount) { "The image draft file is missing or damaged" }
+        val cipher = mCipher
+        val target = File(mSealedDir, cipher.sealedName(prepared.file.hash))
+        val temporary = File(mSealedDir, "${prepared.handle}.publishing")
         try {
             // 即使已有相同 hash，也重新校验暂存内容，避免把损坏草稿绑定到其他原图。
             val digest = MessageDigest.getInstance("SHA-256")
-            source.inputStream().use { input ->
-                FileOutputStream(temporary).use { output ->
+            cipher.open(source).use { input ->
+                cipher.sealFile(temporary) { output ->
                     val buffer = ByteArray(8192)
                     while (true) {
                         currentCoroutineContext().ensureActive()
@@ -479,14 +514,13 @@ class FileRepository(
                         output.write(buffer, 0, count)
                         digest.update(buffer, 0, count)
                     }
-                    output.fd.sync()
                 }
             }
             require(digest.digest().joinToString("") { "%02x".format(it) } == prepared.file.hash) {
                 "Image draft verification failed"
             }
             if (!target.exists()) check(temporary.renameTo(target)) { "Could not commit the original image file" }
-            else check(target.isFile && target.length() == prepared.byteCount) { "The existing original image file is damaged" }
+            else check(target.isFile && sealedLength(target) == prepared.byteCount) { "The existing original image file is damaged" }
         } finally {
             temporary.delete()
         }
@@ -495,15 +529,32 @@ class FileRepository(
     /** 只回收数据库和所有读取者都已释放的物理资源。 */
     private suspend fun collectHash(hash: String) {
         if (mLeases.getOrDefault(hash, 0) == 0 && mFileDao.countByHash(hash) == 0) {
+            File(mSealedDir, mCipher.sealedName(hash)).delete()
             File(mRepositoryDir, hash).delete()
         }
     }
 
     /** 删除操作独占的暂存字节及元数据；失败残留由恢复清理再次处理。 */
     private fun discardStaging(handle: String) {
-        File(mStagingDir, handle).delete()
-        File(mStagingDir, "$handle.meta").delete()
+        listOf(mStagingDir, mLegacyStagingDir).forEach { directory ->
+            File(directory, handle).delete()
+            File(directory, "$handle.meta").delete()
+        }
         mActiveDrafts.remove(handle)
+    }
+
+    /** Himitsu (P-06): the stored copy of [hash], sealed or still plain from an earlier build. */
+    private fun resolve(hash: String): StoredFile? {
+        val cipher = mCipher
+        File(mSealedDir, cipher.sealedName(hash)).takeIf(File::isFile)?.let { return StoredFile(it, cipher) }
+        return File(mRepositoryDir, hash).takeIf(File::isFile)?.let { StoredFile(it, null) }
+    }
+
+    /** Plaintext size of a sealed file, or null when no sealed file can have its length. */
+    private fun sealedLength(file: File): Long? = try {
+        FileCipher.plainLength(file.length())
+    } catch (_: IOException) {
+        null
     }
 
     /**
@@ -517,16 +568,13 @@ class FileRepository(
     }
 
     /**
-     * 根据 UUID 获取对应的物理文件对象。
+     * Himitsu (P-06): reads a whole stored file under a lease. Replaces the inherited `getFile`,
+     * which handed out a path, and a sealed file cannot be read through its path.
      *
-     * @param uuid 文件的唯一标识符。
-     * @return 对应的物理 [File] 对象，如果文件或记录不存在则返回 null。
+     * @return the content, or null when the index or the file is missing
+     * @throws IOException when the file does not verify
      */
-    suspend fun getFile(uuid: String): File? = withContext(Dispatchers.IO) {
-        val entity = mFileDao.getByUuid(uuid) ?: return@withContext null
-        val file = File(mRepositoryDir, entity.hash)
-        if (file.exists()) file else null
-    }
+    suspend fun readBytes(uuid: String): ByteArray? = readWithLease(uuid, { null }) { it.readBytes() }
 
     /**
      * 解码供界面显示的头像，并限制输出尺寸以避免将原图完整载入内存。
@@ -652,13 +700,14 @@ class FileRepository(
 
     /** 在已有租约保护下解码头像，物理回收不能在边界读取和解码之间发生。 */
     private fun decodeSampledBitmap(
-        file: File,
+        file: StoredFile,
         requestedWidthPx: Int,
         requestedHeightPx: Int
     ): Bitmap? {
         // 先读取尺寸，采样解码仍处于文件租约保护内。
+        // Himitsu (P-06): decrypted as a stream, once for the bounds and once to decode.
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeFile(file.absolutePath, bounds)
+        file.openStream().use { BitmapFactory.decodeStream(it, null, bounds) }
         val sourceWidth = bounds.outWidth.takeIf { it > 0 } ?: return null
         val sourceHeight = bounds.outHeight.takeIf { it > 0 } ?: return null
         val sampleSize = calculateInSampleSize(
@@ -667,13 +716,16 @@ class FileRepository(
             requestedWidthPx,
             requestedHeightPx
         )
-        val decoded = BitmapFactory.decodeFile(
-            file.absolutePath,
-            BitmapFactory.Options().apply {
-                inSampleSize = sampleSize
-                inPreferredConfig = Bitmap.Config.ARGB_8888
-            }
-        ) ?: return null
+        val decoded = file.openStream().use {
+            BitmapFactory.decodeStream(
+                it,
+                null,
+                BitmapFactory.Options().apply {
+                    inSampleSize = sampleSize
+                    inPreferredConfig = Bitmap.Config.ARGB_8888
+                }
+            )
+        } ?: return null
         if (decoded.width <= requestedWidthPx && decoded.height <= requestedHeightPx) {
             return decoded
         }
@@ -769,6 +821,8 @@ class FileRepository(
     private companion object {
         val mStorageStates = ConcurrentHashMap<String, StorageState>()
         val mStorageMutex = Mutex()
+        val HASH_NAME = Regex("[0-9a-f]{64}")
+        const val SEALING_SUFFIX = ".sealing"
         const val STAGING_RETENTION_MILLIS = 24L * 60 * 60 * 1000
         const val MAX_THUMBNAIL_DIMENSION = 4_096
         const val MAX_CROP_SOURCE_DIMENSION = 2_048

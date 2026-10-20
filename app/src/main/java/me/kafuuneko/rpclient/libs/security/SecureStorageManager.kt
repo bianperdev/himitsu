@@ -29,6 +29,9 @@ import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.database.SqlCipherKey
+import me.kafuuneko.rpclient.libs.security.files.FileCipher
+import me.kafuuneko.rpclient.libs.security.files.FileCipherSource
+import me.kafuuneko.rpclient.libs.security.files.StoredFileLayout
 import me.kafuuneko.rpclient.libs.security.key.KeyPurpose
 import me.kafuuneko.rpclient.libs.security.key.MasterKey
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
@@ -99,7 +102,7 @@ class SecureStorageManager(
     private val mContext: Context,
     private val mVault: MasterKeyVault,
     private val mMigrator: PlaintextDatabaseMigrator
-) : DatabaseKeySource {
+) : DatabaseKeySource, FileCipherSource {
     private val mScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val mMutex = Mutex()
     private val mState = MutableStateFlow<SecureStorageState>(SecureStorageState.Starting)
@@ -121,6 +124,10 @@ class SecureStorageManager(
     /** Key released to Room once every database is encrypted. Never reset within a process. */
     private val mReleasedKey = MutableStateFlow<MasterKey?>(null)
     private var mStartupTasks: suspend () -> Unit = {}
+
+    /** Cipher of stored files, created from [mReleasedKey] on first use. Written only under [mKeyLock]. */
+    @Volatile
+    private var mFileCipher: FileCipher? = null
 
     /** Current storage state. */
     val state: StateFlow<SecureStorageState> = mState.asStateFlow()
@@ -291,6 +298,14 @@ class SecureStorageManager(
         }
     }
 
+    override fun fileCipher(): FileCipher {
+        mFileCipher?.let { return it }
+        val masterKey = mReleasedKey.value ?: runBlocking { mReleasedKey.first { it != null } }!!
+        return synchronized(mKeyLock) {
+            mFileCipher ?: FileCipher.create(masterKey.derive(KeyPurpose.Files)).also { mFileCipher = it }
+        }
+    }
+
     private fun launchSequence() {
         mScope.launch { mMutex.withLock { load() } }
     }
@@ -362,8 +377,11 @@ class SecureStorageManager(
         mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode())
     }
 
-    /** Whether any database or preference is already encrypted, so a missing key file must not be replaced. */
+    /**
+     * Whether any database, preference or stored file is already encrypted, so a missing key
+     * file must not be replaced.
+     */
     private fun hasEncryptedData(): Boolean = EncryptedDatabase.entries.any { database ->
         DatabaseFiles.kindOf(mContext.getDatabasePath(database.fileName)) == DatabaseFileKind.Encrypted
-    } || SealedPreferencesProvider.hasSealedFiles(mContext)
+    } || SealedPreferencesProvider.hasSealedFiles(mContext) || StoredFileLayout.hasSealedFiles(mContext)
 }

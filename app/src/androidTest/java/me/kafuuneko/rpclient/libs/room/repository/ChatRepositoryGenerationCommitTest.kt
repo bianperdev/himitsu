@@ -30,7 +30,7 @@ class ChatRepositoryGenerationCommitTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = ChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database)))
+        repository = ChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database, TestFileCipher)))
         val characterId = database.getCharacterDao().insertOrReplace(
             Character(
                 name = "Character",

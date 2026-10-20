@@ -5,6 +5,7 @@ import java.io.File
 import java.security.SecureRandom
 import me.kafuuneko.rpclient.feature.lock.LockActivityEntry
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
+import me.kafuuneko.rpclient.libs.security.files.FileCipherSource
 import me.kafuuneko.rpclient.libs.security.key.AndroidKeystoreKeyWrapper
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyFileStore
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
@@ -25,6 +26,7 @@ internal val securityModule = module {
         )
     }
     single { SecureStorageManager(androidContext(), get(), PlaintextDatabaseMigrator()) }
+    single<FileCipherSource> { get<SecureStorageManager>() }
     single { AppLockManager(androidContext()) }
     single { AppGate(get(), get()) }
     single<UnlockEntry> { LockActivityEntry }

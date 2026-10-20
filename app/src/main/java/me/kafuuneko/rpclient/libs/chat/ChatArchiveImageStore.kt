@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.libs.room.repository.StoredFile
 
 /**
  * 归档读写阶段的私有图片暂存及用户授权目录解析。
@@ -57,7 +58,7 @@ class ChatArchiveImageStore(private val mContext: Context) {
 
     /** 尝试无损压缩后分块写出图片，只有原始字节参与 hash 校验。 */
     fun writeExportImage(
-        owner: String, source: File, hash: String, mimeType: String, writer: Writer,
+        owner: String, source: StoredFile, hash: String, mimeType: String, writer: Writer,
         checkActive: () -> Unit
     ) {
         val temporary = file(owner, UUID.randomUUID().toString())
@@ -67,7 +68,7 @@ class ChatArchiveImageStore(private val mContext: Context) {
                 compression = if (useGzip) "gzip" else "none")
             // 试压缩使用磁盘暂存；不把原图或压缩结果整体放入内存。
             ChatArchiveImageCodec.writeImage(image, writer) { output ->
-                (if (useGzip) temporary else source).inputStream().use { input ->
+                (if (useGzip) temporary.inputStream() else source.openStream()).use { input ->
                     val buffer = ByteArray(8192)
                     while (true) {
                         checkActive()

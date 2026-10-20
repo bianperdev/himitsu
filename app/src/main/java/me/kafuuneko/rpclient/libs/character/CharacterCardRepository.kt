@@ -137,9 +137,7 @@ class CharacterCardRepository(
         val json = exportJson(characterId)
         val avatarBytes = character.avatar
             .takeIf { it.isNotBlank() }
-            ?.let { mFileRepository.getFile(it) }
-            ?.takeIf { it.exists() }
-            ?.readBytes()
+            ?.let { mFileRepository.readBytes(it) }
             ?: ByteArray(0)
         val pngBytes = avatarBytes.toPngOrFallback()
         CharacterCardPngCodec.writeCharacterJson(pngBytes, json)
