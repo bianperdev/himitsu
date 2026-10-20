@@ -193,6 +193,47 @@ Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design
 
 **Lock screen styling.** `LockScreenFrame(icon, title, message, modifier, actions)` in `…/feature/lock/ui/LockLayout.kt` draws every gate state and reads only `MaterialTheme` tokens, so `feat/aesthetic` can restyle it through the theme.
 
+### Findings status (feat/security)
+
+Final review of the [privacy audit findings](#privacy-audit-findings) on this branch.
+
+| ID | Status | Commits | Notes |
+|---|---|---|---|
+| P-01 | Resolved | `c7b1141`, `1bb63d2` | API keys stay in `llm_providers.apiKey`, now inside the SQLCipher database; plain databases from earlier builds are migrated and the plain copy deleted after verification. No key was ever in Kotpref. |
+| P-02 | Resolved | `c7b1141` | `primary.sqlite` is SQLCipher with a per-database key derived from the Keystore-wrapped master key. |
+| P-03 | Resolved | `a39fd4e`, `022e835` | `allowBackup="false"`; every domain excluded from full backup, cloud backup and device transfer. |
+| P-04 | Resolved | `1bb63d2` | Header values are masked in the editor; stored inside the encrypted database. |
+| P-05 | Resolved | `309abf8` | `AppModel` strings are sealed (AES-GCM, key derived from the master key). Numbers and booleans stay plain. |
+| P-06 | **Open** | | Needs changes outside this track's files (`CharacterCardRepository`, `ChatArchiveRepository`); plan in "Follow-ups", awaiting approval. |
+| P-07 | Resolved | `c7b1141`, `7d27cba` | Encrypted database, credentials redacted, 7 days / 200 entries, wiped when debug mode is turned off. |
+| P-08 | Resolved | `46a3959` | `x-goog-api-key` header. |
+| P-09 | Partly | `f24e6ba` | Warning when saving a plain-HTTP remote provider. Clear text stays allowed for LAN servers. Trust in user-installed CAs is unchanged: open decision. |
+| P-10 | Partly | `0d782e4` | Leftover request files are deleted at startup. The file is still plain while a request is in flight; encrypting it needs a change in `MultimodalWireCodec` (local-inference). |
+| P-11 | Resolved | `c3b12b1` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs. |
+| P-12 | Resolved | `655a726` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on Android 13+. |
+| P-13 | Resolved | `1bb63d2` | Password keyboard without autocorrect. |
+| P-14 | Resolved | `2425e39` | `printStackTrace` removed; R8 strips `Log`, `printStackTrace` and SQLCipher logging in release (verified on the dex). |
+| P-15 | Deferred (decision) | | Optional encrypted export, after P-06. |
+| P-16 | Resolved (decision) | `d31820e` | The OpenRouter routing ID is no longer in the default template; opt-in through the request JSON. |
+| O-01 | Resolved | `c7b1141`, `77ffea0` | Startup work runs off the main thread behind the gate. The theme stays plain so the first frame never waits; the first read of a sealed `AppModel` string may still perform one Keystore operation on the main thread (P-05). |
+
+### Follow-ups (feat/security)
+
+- **P-06 plan (needs approval):** encrypt `app_repository/` files with AES-256-GCM in 64 KiB segments under the `Files` key (no new dependency); name files by HMAC instead of the plain SHA-256 so names do not reveal known images; replace `File`-based leases with streams (`BitmapFactory.decodeStream`, `ExifInterface(InputStream)`); adapt `MessageImageRuntime`, `CharacterCardRepository.exportPng` and `ChatArchiveRepository` (narrow edits outside this track); migrate existing files in the background at startup.
+- **P-10 rest:** write the image request file with an ephemeral in-memory key and decrypt while streaming (`MultimodalWireCodec`, local-inference).
+- **User-installed CAs** (`network_security_config.xml`): keep trusting them (needed for some self-hosted setups, allows interception by anyone who installs a CA) or trust only system CAs. Maintainer decision.
+- **Paranoid mode:** a PIN or passphrase key slot with Argon2id (`argon2kt`, MIT); the key file format already supports extra slots.
+- **Keystore error screen:** add an option to export the encrypted files through the system file picker, and a way to delete `.unrecoverable-*` copies left by "start over".
+- **F-Droid:** SQLCipher ships prebuilt native libraries from Maven Central; confirm the F-Droid scanner accepts them or build `sqlcipher-android` from source in the recipe (release-readiness).
+- **Privacy review (2026-10-20), not fixed in this track:**
+  - Ship the SQLCipher BSD-3 notice inside the app (licenses screen or packaged `NOTICE`) before any release (release-readiness).
+  - Text copied through the system selection toolbar (`MarkdownMessage`, `PromptInspectorDialog`) is not marked `IS_SENSITIVE`; needs a clipboard manager that flags it.
+  - Turning the lock off and creating, replacing or removing the recovery code need no fresh authentication; consider a prompt for these actions.
+  - `AppDatabaseAutoMigrationSpec` (2 to 3) still injects `session_id` into OpenRouter providers migrated from RPClient databases, and the provider editor's example JSON shows it.
+  - Chat, persona and character inputs do not set the IME "no personalized learning" flag.
+  - Recents previews: on Android 12 and earlier only `FLAG_SECURE` hides them; the app lock alone does not.
+- **Build:** a combined `assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest` once failed in KSP with Room errors on `MutableDao<T>`; rerunning passed. Probably KSP incremental state; watch for it.
+
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
 
 ## Track: `feat/aesthetic`
