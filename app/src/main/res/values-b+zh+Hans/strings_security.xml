@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">尚未设置恢复码</string>
     <string name="security_settings_recovery_desc">如果此设备的安全硬件丢失了保护你数据的密钥，恢复码是重新打开数据的唯一方法。</string>
     <string name="security_settings_about_title">受保护的内容</string>
-    <string name="security_settings_about_text">聊天、角色、服务商和 API 密钥都以加密形式保存在此设备上；图片和头像暂未加密。应用锁会在每次打开应用时增加一次验证。两者都不会隐藏应用已安装这一事实。</string>
+    <string name="security_settings_about_text">聊天、角色、服务商、API 密钥、图片和头像都以加密形式保存在此设备上。应用锁会在每次打开应用时增加一次验证。两者都不会隐藏应用已安装这一事实。</string>
     <string name="security_recovery_replace_title">替换恢复码？</string>
     <string name="security_recovery_replace_message">当前恢复码将失效，并会显示新的恢复码。</string>
     <string name="security_recovery_remove_title">移除恢复码？</string>

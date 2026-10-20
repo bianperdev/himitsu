@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">No recovery code yet</string>
     <string name="security_settings_recovery_desc">If the secure hardware of this device ever loses the key that protects your data, the recovery code is the only way to open it again.</string>
     <string name="security_settings_about_title">What is protected</string>
-    <string name="security_settings_about_text">Chats, characters, providers and API keys are stored encrypted on this device; images and avatars are not encrypted yet. The app lock adds a check every time the app is opened. Neither hides that the app is installed.</string>
+    <string name="security_settings_about_text">Chats, characters, providers, API keys, images and avatars are stored encrypted on this device. The app lock adds a check every time the app is opened. Neither hides that the app is installed.</string>
     <string name="security_recovery_replace_title">Replace the recovery code?</string>
     <string name="security_recovery_replace_message">The current code will stop working and a new one will be shown.</string>
     <string name="security_recovery_remove_title">Remove the recovery code?</string>

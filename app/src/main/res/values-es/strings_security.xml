@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Aún no hay código de recuperación</string>
     <string name="security_settings_recovery_desc">Si el hardware seguro de este dispositivo pierde algún día la clave que protege tus datos, el código de recuperación es la única forma de volver a abrirlos.</string>
     <string name="security_settings_about_title">Qué está protegido</string>
-    <string name="security_settings_about_text">Los chats, personajes, proveedores y API keys se guardan cifrados en este dispositivo; las imágenes y los avatares aún no se cifran. El bloqueo de la app añade una comprobación cada vez que se abre. Ninguno de los dos oculta que la app está instalada.</string>
+    <string name="security_settings_about_text">Los chats, personajes, proveedores, API keys, imágenes y avatares se guardan cifrados en este dispositivo. El bloqueo de la app añade una comprobación cada vez que se abre. Ninguno de los dos oculta que la app está instalada.</string>
     <string name="security_recovery_replace_title">¿Sustituir el código de recuperación?</string>
     <string name="security_recovery_replace_message">El código actual dejará de funcionar y se mostrará uno nuevo.</string>
     <string name="security_recovery_remove_title">¿Quitar el código de recuperación?</string>

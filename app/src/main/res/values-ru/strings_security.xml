@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Код восстановления ещё не создан</string>
     <string name="security_settings_recovery_desc">Если защищённое хранилище устройства потеряет ключ, защищающий ваши данные, код восстановления будет единственным способом снова их открыть.</string>
     <string name="security_settings_about_title">Что защищено</string>
-    <string name="security_settings_about_text">Чаты, персонажи, провайдеры и API-ключи хранятся на устройстве в зашифрованном виде; изображения и аватары пока не шифруются. Блокировка добавляет проверку при каждом открытии приложения. Ни то, ни другое не скрывает, что приложение установлено.</string>
+    <string name="security_settings_about_text">Чаты, персонажи, провайдеры, API-ключи, изображения и аватары хранятся на устройстве в зашифрованном виде. Блокировка добавляет проверку при каждом открытии приложения. Ни то, ни другое не скрывает, что приложение установлено.</string>
     <string name="security_recovery_replace_title">Заменить код восстановления?</string>
     <string name="security_recovery_replace_message">Текущий код перестанет работать, и будет показан новый.</string>
     <string name="security_recovery_remove_title">Удалить код восстановления?</string>

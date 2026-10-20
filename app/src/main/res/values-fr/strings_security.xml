@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Aucun code de récupération pour l\'instant</string>
     <string name="security_settings_recovery_desc">Si le matériel sécurisé de cet appareil perd un jour la clé qui protège vos données, le code de récupération est le seul moyen de les rouvrir.</string>
     <string name="security_settings_about_title">Ce qui est protégé</string>
-    <string name="security_settings_about_text">Les discussions, personnages, fournisseurs et clés API sont stockés chiffrés sur cet appareil ; les images et les avatars ne sont pas encore chiffrés. Le verrouillage ajoute une vérification à chaque ouverture. Aucun des deux ne cache que l\'application est installée.</string>
+    <string name="security_settings_about_text">Les discussions, personnages, fournisseurs, clés API, images et avatars sont stockés chiffrés sur cet appareil. Le verrouillage ajoute une vérification à chaque ouverture. Aucun des deux ne cache que l\'application est installée.</string>
     <string name="security_recovery_replace_title">Remplacer le code de récupération ?</string>
     <string name="security_recovery_replace_message">Le code actuel ne fonctionnera plus et un nouveau code sera affiché.</string>
     <string name="security_recovery_remove_title">Supprimer le code de récupération ?</string>

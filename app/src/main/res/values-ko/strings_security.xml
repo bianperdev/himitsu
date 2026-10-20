@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">아직 복구 코드가 없습니다</string>
     <string name="security_settings_recovery_desc">이 기기의 보안 하드웨어가 데이터를 보호하는 키를 잃어버리면, 복구 코드만이 데이터를 다시 열 수 있는 유일한 방법입니다.</string>
     <string name="security_settings_about_title">보호되는 항목</string>
-    <string name="security_settings_about_text">채팅, 캐릭터, 제공업체, API 키는 이 기기에 암호화되어 저장됩니다. 이미지와 아바타는 아직 암호화되지 않습니다. 앱 잠금은 앱을 열 때마다 확인 절차를 추가합니다. 둘 다 앱이 설치되어 있다는 사실은 숨기지 않습니다.</string>
+    <string name="security_settings_about_text">채팅, 캐릭터, 제공업체, API 키, 이미지, 아바타는 이 기기에 암호화되어 저장됩니다. 앱 잠금은 앱을 열 때마다 확인 절차를 추가합니다. 둘 다 앱이 설치되어 있다는 사실은 숨기지 않습니다.</string>
     <string name="security_recovery_replace_title">복구 코드를 교체할까요?</string>
     <string name="security_recovery_replace_message">현재 코드는 더 이상 사용할 수 없으며 새 코드가 표시됩니다.</string>
     <string name="security_recovery_remove_title">복구 코드를 삭제할까요?</string>

@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">リカバリーコードはまだありません</string>
     <string name="security_settings_recovery_desc">この端末のセキュアハードウェアがデータを保護する鍵を失った場合、データを再び開く唯一の方法がリカバリーコードです。</string>
     <string name="security_settings_about_title">保護される内容</string>
-    <string name="security_settings_about_text">チャット、キャラクター、プロバイダー、API キーはこの端末に暗号化して保存されます。画像とアバターはまだ暗号化されていません。アプリのロックは、アプリを開くたびに確認を追加します。どちらもアプリがインストールされていること自体は隠しません。</string>
+    <string name="security_settings_about_text">チャット、キャラクター、プロバイダー、API キー、画像、アバターはこの端末に暗号化して保存されます。アプリのロックは、アプリを開くたびに確認を追加します。どちらもアプリがインストールされていること自体は隠しません。</string>
     <string name="security_recovery_replace_title">リカバリーコードを置き換えますか？</string>
     <string name="security_recovery_replace_message">現在のコードは使えなくなり、新しいコードが表示されます。</string>
     <string name="security_recovery_remove_title">リカバリーコードを削除しますか？</string>

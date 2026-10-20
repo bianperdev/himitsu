@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Belum ada kode pemulihan</string>
     <string name="security_settings_recovery_desc">Jika perangkat keras aman di perangkat ini kehilangan kunci yang melindungi data Anda, kode pemulihan adalah satu-satunya cara untuk membukanya lagi.</string>
     <string name="security_settings_about_title">Apa yang dilindungi</string>
-    <string name="security_settings_about_text">Obrolan, karakter, penyedia, dan kunci API disimpan terenkripsi di perangkat ini; gambar dan avatar belum dienkripsi. Kunci aplikasi menambahkan pemeriksaan setiap kali aplikasi dibuka. Keduanya tidak menyembunyikan bahwa aplikasi terpasang.</string>
+    <string name="security_settings_about_text">Obrolan, karakter, penyedia, kunci API, gambar, dan avatar disimpan terenkripsi di perangkat ini. Kunci aplikasi menambahkan pemeriksaan setiap kali aplikasi dibuka. Keduanya tidak menyembunyikan bahwa aplikasi terpasang.</string>
     <string name="security_recovery_replace_title">Ganti kode pemulihan?</string>
     <string name="security_recovery_replace_message">Kode saat ini tidak akan berfungsi lagi dan kode baru akan ditampilkan.</string>
     <string name="security_recovery_remove_title">Hapus kode pemulihan?</string>
