@@ -15,7 +15,7 @@ Paths below are relative to `app/src/main/java/me/kafuuneko/rpclient/` (written 
 | 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | Next |
 | 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata | Not started |
 
-Side work that runs in parallel with `feat/disguise`: `feat/geniex` (blocked on the QAIRT EULA), the local-inference follow-ups and the security leftovers. `feat/security-followups` (deferred security work) is merged (`85b362c`). See [Pending after stage 1](#pending-after-stage-1).
+Side work that runs in parallel with `feat/disguise`: `feat/geniex` (planned for version 0.20; blocked on the QAIRT EULA), the local-inference follow-ups and the security leftovers. `feat/security-followups` (deferred security work) is merged (`85b362c`). See [Pending after stage 1](#pending-after-stage-1).
 
 ---
 
@@ -57,7 +57,7 @@ Grouped by the branch that will do them. Details stay in each track's section.
 - `LocalModelDownloadService.onTimeout`, OpenCL loaded only with the GPU on, and the low findings of the final review.
 - Jinja templates: a recursion or step limit needs an upstream patch.
 
-**`feat/geniex`** (worktree `himitsu-geniex`, blocked): the maintainer must read the QAIRT EULA and pick a licensing option; then rebase onto `main` and isolate GenieX's native libraries from Himitsu's `libggml-*.so`.
+**`feat/geniex`** (worktree `himitsu-geniex`, blocked; planned for version 0.20 of the app, maintainer decision 2026-10-20, so earlier releases ship without GenieX): the maintainer must read the QAIRT EULA and pick a licensing option; then rebase onto `main` and isolate GenieX's native libraries from Himitsu's `libggml-*.so`.
 
 **`feat/disguise`**: the notification header label, the system authentication prompt label, and the leaks listed in its section.
 
@@ -134,6 +134,7 @@ Rules:
 - Donation code and resources live only in a source set used by `fdroid` and `github` (proposed: `app/src/donations/`, added to both flavors' `java.srcDirs` and `res.srcDirs`). The `play` APK must not contain the donation screen, its strings or its URLs. Verify by inspecting the `play` APK resources before every Play release.
 - Play-specific code (store link, "rate the app" card) lives only in `app/src/play/`. Shared code calls it through an interface with a no-op implementation in `app/src/main/` or in the other flavors.
 - GenieX lives only in flavor source sets (`app/src/github/`, `app/src/play/`) and is wired in through the local engine abstraction. The `fdroid` build must not reference it, not even as a `compileOnly` dependency.
+- **GenieX is planned for version 0.20** (maintainer decision, 2026-10-20); no release before it includes GenieX in any flavor.
 - **GenieX licensing is undecided.** The SDK is BSD-3-Clause, but its native Qualcomm runtime may be proprietary, which conflicts with the GPL. Until the maintainer chooses an option (a GPL linking exception limited to those components, GitHub-only distribution, or no GenieX), GenieX may be developed behind the flavor boundary but must not be shipped.
 - Build types stay as they are: `debug` (application ID suffix `.dev`) and `release`.
 - Every published binary must have a matching git tag with its source, as the GPL requires.
@@ -413,7 +414,7 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 2. [x] `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
 3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
-5. Moved to `feat/geniex` (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
+5. Moved to `feat/geniex` (maintainer, 2026-10-20), planned for version 0.20: GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
 6. [x] Performance settings (threads, context size, GPU or NPU) with sensible defaults.
 
 **Follow-ups from the privacy review (2026-10-20):**
@@ -499,7 +500,7 @@ Starts when every track, including disguise, is merged.
 
 - [ ] Audit the full git history for secrets and personal data. This is the requirement for making the repository public.
 - [ ] Check the "Himitsu" name for conflicts with other apps, projects or trademarks.
-- [ ] Verify licensing: official GPLv3 text in `LICENSE`, intact RPClient notice in `LICENSES/MIT-RPClient.txt`, SPDX headers on new files, and a GenieX exception text if one was approved.
+- [ ] Verify licensing: official GPLv3 text in `LICENSE`, intact RPClient notice in `LICENSES/MIT-RPClient.txt`, SPDX headers on new files, and a GenieX exception text if one was approved (not needed before version 0.20, when GenieX is planned).
 - [ ] Full README, `PRIVACY.md` (must match what the code does), `SECURITY.md`, `CONTRIBUTING.md`, issue and pull request templates, `.github/FUNDING.yml`.
 - [ ] Donation screen in `fdroid` and `github` only; open source licenses screen with every dependency, including native ones.
 - [ ] `fastlane/metadata/android/`: store descriptions, changelogs and screenshots still describe RPClient. Rewrite them for Himitsu in every locale.
