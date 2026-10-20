@@ -72,6 +72,20 @@ android {
         compose = true
     }
     sourceSets["androidTest"].assets.directories.add("$projectDir/schemas")
+
+    // Himitsu distribution channels. See "Distribution flavors" in ROADMAP.md
+    // for what each channel may include.
+    flavorDimensions += "channel"
+    productFlavors {
+        create("fdroid") { dimension = "channel" }
+        create("github") { dimension = "channel" }
+        create("play") { dimension = "channel" }
+    }
+    // Donation code and resources ship only in the fdroid and github channels.
+    listOf("fdroid", "github").forEach { flavor ->
+        sourceSets[flavor].java.directories.add("src/donations/java")
+        sourceSets[flavor].res.directories.add("src/donations/res")
+    }
 }
 
 ksp {
