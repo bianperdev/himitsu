@@ -28,7 +28,7 @@
     <string name="section_about">Giới thiệu &amp; Hỗ trợ</string>
     <string name="copy_email_hint">Chạm để sao chép email</string>
     <string name="open_source_license">Giấy phép mã nguồn mở</string>
-    <string name="open_source_license_desc">Tự do &amp; Mã nguồn mở · Theo giấy phép MIT</string>
+    <string name="open_source_license_desc">Tự do &amp; Mã nguồn mở · Theo giấy phép GPLv3</string>
     <string name="about_app_summary">Ứng dụng nhập vai AI &amp; sáng tác câu chuyện sống động</string>
     <string name="about_crafted_with_love">Được tạo ra với niềm đam mê dành cho người nhập vai &amp; người kể chuyện</string>
     <string name="about_copyright">Himitsu · Phần mềm mã nguồn mở</string>

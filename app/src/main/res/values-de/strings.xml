@@ -29,7 +29,7 @@
     <string name="section_about">Über die App &amp; Support</string>
     <string name="copy_email_hint">Tippen zum Kopieren der Entwickler-E-Mail</string>
     <string name="open_source_license">Open-Source-Lizenz</string>
-    <string name="open_source_license_desc">Frei &amp; Open-Source · Unter MIT-Lizenz</string>
+    <string name="open_source_license_desc">Frei &amp; Open-Source · Unter GPLv3-Lizenz</string>
     <string name="about_app_summary">Immersiver KI-Rollenspiel- und Storytelling-Client</string>
     <string name="about_crafted_with_love">Mit Leidenschaft für Rollenspieler und Geschichtenerzähler entwickelt</string>
     <string name="about_copyright">Himitsu · Open-Source-Software</string>

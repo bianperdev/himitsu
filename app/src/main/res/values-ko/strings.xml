@@ -28,7 +28,7 @@
     <string name="section_about">정보 및 지원</string>
     <string name="copy_email_hint">탭하여 개발자 이메일 주소 복사</string>
     <string name="open_source_license">오픈 소스 라이선스</string>
-    <string name="open_source_license_desc">자유와 개방 · MIT License</string>
+    <string name="open_source_license_desc">자유와 개방 · GPLv3 License</string>
     <string name="about_app_summary">몰입형 AI 롤플레잉 및 스토리 창작 클라이언트</string>
     <string name="about_crafted_with_love">롤플레이어와 스토리 작가를 위해 정성껏 제작되었습니다</string>
     <string name="about_copyright">Himitsu · 오픈 소스 소프트웨어</string>

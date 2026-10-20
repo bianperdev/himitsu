@@ -28,7 +28,7 @@
     <string name="section_about">Acerca de y soporte</string>
     <string name="copy_email_hint">Toca para copiar el correo del desarrollador</string>
     <string name="open_source_license">Licencia de código abierto</string>
-    <string name="open_source_license_desc">Libre y abierto · Bajo licencia MIT</string>
+    <string name="open_source_license_desc">Libre y abierto · Bajo licencia GPLv3</string>
     <string name="about_app_summary">Cliente inmersivo de rol e historias con IA</string>
     <string name="about_crafted_with_love">Creado con pasión para jugadores de rol y narradores</string>
     <string name="about_copyright">Himitsu · Software de código abierto</string>

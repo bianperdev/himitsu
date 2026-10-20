@@ -28,7 +28,7 @@
     <string name="section_about">关于与支持</string>
     <string name="copy_email_hint">点击复制开发者邮箱</string>
     <string name="open_source_license">开源协议</string>
-    <string name="open_source_license_desc">自由与开放 · 基于 MIT License</string>
+    <string name="open_source_license_desc">自由与开放 · 基于 GPLv3 License</string>
     <string name="about_app_summary">沉浸式 AI 角色扮演与故事创作客户端</string>
     <string name="about_crafted_with_love">为角色扮演与故事创作者精心打造</string>
     <string name="about_copyright">Himitsu · 基于开源协议发布</string>

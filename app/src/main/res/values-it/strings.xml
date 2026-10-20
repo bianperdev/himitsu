@@ -28,7 +28,7 @@
     <string name="section_about">Info e supporto</string>
     <string name="copy_email_hint">Tocca per copiare l\'email</string>
     <string name="open_source_license">Licenza Open Source</string>
-    <string name="open_source_license_desc">Gratuito e open source · Con licenza MIT</string>
+    <string name="open_source_license_desc">Gratuito e open source · Con licenza GPLv3</string>
     <string name="about_app_summary">Client immersivo per giochi di ruolo e narrazione con IA</string>
     <string name="about_crafted_with_love">Creato con passione per appassionati di giochi di ruolo e narratori</string>
     <string name="about_copyright">Himitsu · Software open source</string>

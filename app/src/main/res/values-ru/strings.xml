@@ -28,7 +28,7 @@
     <string name="section_about">О приложении и поддержка</string>
     <string name="copy_email_hint">Нажмите, чтобы скопировать почту разработчика</string>
     <string name="open_source_license">Лицензия открытого ПО</string>
-    <string name="open_source_license_desc">Свободно и открыто · Лицензия MIT</string>
+    <string name="open_source_license_desc">Свободно и открыто · Лицензия GPLv3</string>
     <string name="about_app_summary">Иммерсивный клиент для ролевых игр и создания историй с ИИ</string>
     <string name="about_crafted_with_love">Создано с заботой для ролевиков и рассказчиков</string>
     <string name="about_copyright">Himitsu · Открытое программное обеспечение</string>

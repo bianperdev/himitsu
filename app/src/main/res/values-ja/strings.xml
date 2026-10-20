@@ -29,7 +29,7 @@
     <string name="section_about">アプリ情報とサポート</string>
     <string name="copy_email_hint">タップしてメールアドレスをコピー</string>
     <string name="open_source_license">オープンソースライセンス</string>
-    <string name="open_source_license_desc">自由とオープン · MIT License</string>
+    <string name="open_source_license_desc">自由とオープン · GPLv3 License</string>
     <string name="about_app_summary">没入型 AI ロールプレイ＆ストーリー執筆クライアント</string>
     <string name="about_crafted_with_love">ロールプレイヤーとストーリーテラーのために情熱を込めて制作</string>
     <string name="about_copyright">Himitsu · オープンソースソフトウェア</string>
