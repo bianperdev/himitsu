@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">このデータにはリカバリーコードが設定されていません。</string>
     <string name="security_recovery_error_failed">データのロックは解除されましたが、新しい鍵を保存できませんでした。もう一度お試しください。</string>
     <string name="security_start_over_title">空のデータで最初からやり直しますか？</string>
-    <string name="security_start_over_message">現在の暗号化データは別の場所に移され、アプリは空の状態で起動します。古いファイルは削除されずに残りますが、再び開けるのはリカバリーコードを使う場合か、この端末の元の鍵が再び利用できるようになった場合だけです。</string>
+    <string name="security_start_over_message">現在の暗号化データは別の場所に移され、アプリは空の状態で起動します。古いファイルはこの端末に残り削除されませんが、このバージョンのアプリでは再び開くことはできません。</string>
     <string name="security_start_over_confirm">最初からやり直す</string>
     <string name="security_lock_title">ロック中</string>
     <string name="security_lock_unlock">ロック解除</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">リカバリーコードはまだありません</string>
     <string name="security_settings_recovery_desc">この端末のセキュアハードウェアがデータを保護する鍵を失った場合、データを再び開く唯一の方法がリカバリーコードです。</string>
     <string name="security_settings_about_title">保護される内容</string>
-    <string name="security_settings_about_text">チャット、キャラクター、プロバイダー、API キーはこの端末に暗号化して保存されます。アプリのロックは、アプリを開くたびに確認を追加します。どちらもアプリがインストールされていること自体は隠しません。</string>
+    <string name="security_settings_about_text">チャット、キャラクター、プロバイダー、API キーはこの端末に暗号化して保存されます。画像とアバターはまだ暗号化されていません。アプリのロックは、アプリを開くたびに確認を追加します。どちらもアプリがインストールされていること自体は隠しません。</string>
     <string name="security_recovery_replace_title">リカバリーコードを置き換えますか？</string>
     <string name="security_recovery_replace_message">現在のコードは使えなくなり、新しいコードが表示されます。</string>
     <string name="security_recovery_remove_title">リカバリーコードを削除しますか？</string>

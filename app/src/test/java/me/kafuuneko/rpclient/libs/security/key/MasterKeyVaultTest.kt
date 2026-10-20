@@ -107,6 +107,17 @@ class MasterKeyVaultTest {
     }
 
     @Test
+    fun slotsWithoutKeyIdFromEarlierBuildsStillOpen() {
+        val raw = ByteArray(MasterKey.SIZE_BYTES).also(random::nextBytes)
+        val sealed = wrapper.seal("", raw, MasterKeyFileCodec.slotAad(KeySlotType.Keystore))
+        MasterKeyFileStore(keyFile).write(MasterKeyFile(listOf(KeySlot(KeySlotType.Keystore, ByteArray(0), sealed))))
+
+        val loaded = vault.loadOrCreate(hasEncryptedData = true) as VaultLoadResult.Loaded
+
+        assertTrue(sameKey(MasterKey.adopt(raw.copyOf()), loaded.masterKey))
+    }
+
+    @Test
     fun purposesGetIndependentKeys() {
         val key = (vault.loadOrCreate(hasEncryptedData = false) as VaultLoadResult.Loaded).masterKey
 

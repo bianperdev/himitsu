@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Tidak ada kode pemulihan yang disiapkan untuk data ini.</string>
     <string name="security_recovery_error_failed">Data Anda berhasil dibuka, tetapi kunci baru tidak dapat disimpan. Coba lagi.</string>
     <string name="security_start_over_title">Mulai dari awal dengan data kosong?</string>
-    <string name="security_start_over_message">Data terenkripsi Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap disimpan, tidak dihapus, tetapi hanya dapat dibuka lagi dengan kode pemulihan atau jika kunci asli perangkat ini tersedia kembali.</string>
+    <string name="security_start_over_message">Data terenkripsi Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap ada di perangkat ini dan tidak dihapus, tetapi versi aplikasi ini tidak dapat membukanya lagi.</string>
     <string name="security_start_over_confirm">Mulai dari awal</string>
     <string name="security_lock_title">Terkunci</string>
     <string name="security_lock_unlock">Buka kunci</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Belum ada kode pemulihan</string>
     <string name="security_settings_recovery_desc">Jika perangkat keras aman di perangkat ini kehilangan kunci yang melindungi data Anda, kode pemulihan adalah satu-satunya cara untuk membukanya lagi.</string>
     <string name="security_settings_about_title">Apa yang dilindungi</string>
-    <string name="security_settings_about_text">Obrolan, karakter, penyedia, dan kunci API disimpan terenkripsi di perangkat ini. Kunci aplikasi menambahkan pemeriksaan setiap kali aplikasi dibuka. Keduanya tidak menyembunyikan bahwa aplikasi terpasang.</string>
+    <string name="security_settings_about_text">Obrolan, karakter, penyedia, dan kunci API disimpan terenkripsi di perangkat ini; gambar dan avatar belum dienkripsi. Kunci aplikasi menambahkan pemeriksaan setiap kali aplikasi dibuka. Keduanya tidak menyembunyikan bahwa aplikasi terpasang.</string>
     <string name="security_recovery_replace_title">Ganti kode pemulihan?</string>
     <string name="security_recovery_replace_message">Kode saat ini tidak akan berfungsi lagi dan kode baru akan ditampilkan.</string>
     <string name="security_recovery_remove_title">Hapus kode pemulihan?</string>

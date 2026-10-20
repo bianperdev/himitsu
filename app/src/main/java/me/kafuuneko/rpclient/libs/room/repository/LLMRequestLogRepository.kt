@@ -78,8 +78,9 @@ class LLMRequestLogRepository(
      */
     suspend fun deleteAll() {
         mLLMRequestLogDao.deleteAll()
+        // Best effort: VACUUM needs free space, and a full disk must not break startup
         withContext(Dispatchers.IO) {
-            mRequestLogDatabase.openHelper.writableDatabase.execSQL("VACUUM")
+            runCatching { mRequestLogDatabase.openHelper.writableDatabase.execSQL("VACUUM") }
         }
     }
 

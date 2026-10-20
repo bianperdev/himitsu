@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Für diese Daten wurde kein Wiederherstellungscode eingerichtet.</string>
     <string name="security_recovery_error_failed">Deine Daten wurden entsperrt, aber der neue Schlüssel konnte nicht gespeichert werden. Versuche es erneut.</string>
     <string name="security_start_over_title">Mit leeren Daten neu beginnen?</string>
-    <string name="security_start_over_message">Deine aktuellen verschlüsselten Daten werden beiseitegelegt und die App startet leer. Die alten Dateien bleiben erhalten und werden nicht gelöscht, lassen sich aber nur mit einem Wiederherstellungscode wieder öffnen oder wenn der ursprüngliche Schlüssel dieses Geräts wieder verfügbar ist.</string>
+    <string name="security_start_over_message">Deine aktuellen verschlüsselten Daten werden beiseitegelegt und die App startet leer. Die alten Dateien bleiben auf diesem Gerät und werden nicht gelöscht, aber diese Version der App kann sie nicht wieder öffnen.</string>
     <string name="security_start_over_confirm">Neu beginnen</string>
     <string name="security_lock_title">Gesperrt</string>
     <string name="security_lock_unlock">Entsperren</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Noch kein Wiederherstellungscode</string>
     <string name="security_settings_recovery_desc">Falls die sichere Hardware dieses Geräts den Schlüssel verliert, der deine Daten schützt, ist der Wiederherstellungscode die einzige Möglichkeit, sie wieder zu öffnen.</string>
     <string name="security_settings_about_title">Was geschützt ist</string>
-    <string name="security_settings_about_text">Chats, Charaktere, Anbieter und API-Schlüssel werden verschlüsselt auf diesem Gerät gespeichert. Die App-Sperre fügt bei jedem Öffnen eine Prüfung hinzu. Beides verbirgt nicht, dass die App installiert ist.</string>
+    <string name="security_settings_about_text">Chats, Charaktere, Anbieter und API-Schlüssel werden verschlüsselt auf diesem Gerät gespeichert; Bilder und Avatare werden noch nicht verschlüsselt. Die App-Sperre fügt bei jedem Öffnen eine Prüfung hinzu. Beides verbirgt nicht, dass die App installiert ist.</string>
     <string name="security_recovery_replace_title">Wiederherstellungscode ersetzen?</string>
     <string name="security_recovery_replace_message">Der aktuelle Code funktioniert dann nicht mehr und ein neuer wird angezeigt.</string>
     <string name="security_recovery_remove_title">Wiederherstellungscode entfernen?</string>

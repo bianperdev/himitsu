@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">這些資料沒有設定復原碼。</string>
     <string name="security_recovery_error_failed">資料已解鎖，但無法儲存新金鑰。請再試一次。</string>
     <string name="security_start_over_title">以空白資料重新開始？</string>
-    <string name="security_start_over_message">目前的加密資料將被移到一旁，應用程式將以空白狀態啟動。舊檔案會保留而不會刪除，但只有使用復原碼，或此裝置的原始金鑰重新可用時，才能再次開啟。</string>
+    <string name="security_start_over_message">目前的加密資料將被移到一旁，應用程式將以空白狀態啟動。舊檔案會保留在此裝置上且不會被刪除，但此版本的應用程式無法再次開啟它們。</string>
     <string name="security_start_over_confirm">重新開始</string>
     <string name="security_lock_title">已鎖定</string>
     <string name="security_lock_unlock">解鎖</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">尚未設定復原碼</string>
     <string name="security_settings_recovery_desc">如果此裝置的安全硬體遺失了保護你資料的金鑰，復原碼是重新開啟資料的唯一方法。</string>
     <string name="security_settings_about_title">受保護的內容</string>
-    <string name="security_settings_about_text">聊天、角色、服務供應商和 API 金鑰都以加密形式儲存在此裝置上。應用程式鎖會在每次開啟應用程式時增加一次驗證。兩者都不會隱藏應用程式已安裝這件事。</string>
+    <string name="security_settings_about_text">聊天、角色、服務供應商和 API 金鑰都以加密形式儲存在此裝置上；圖片和頭像暫未加密。應用程式鎖會在每次開啟應用程式時增加一次驗證。兩者都不會隱藏應用程式已安裝這件事。</string>
     <string name="security_recovery_replace_title">取代復原碼？</string>
     <string name="security_recovery_replace_message">目前的復原碼將失效，並會顯示新的復原碼。</string>
     <string name="security_recovery_remove_title">移除復原碼？</string>

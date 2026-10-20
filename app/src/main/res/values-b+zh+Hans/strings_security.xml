@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">这些数据没有设置恢复码。</string>
     <string name="security_recovery_error_failed">数据已解锁，但无法保存新密钥。请重试。</string>
     <string name="security_start_over_title">以空数据重新开始？</string>
-    <string name="security_start_over_message">当前的加密数据将被移到一旁，应用将以空数据启动。旧文件会被保留而不会删除，但只有使用恢复码，或此设备的原始密钥重新可用时，才能再次打开。</string>
+    <string name="security_start_over_message">当前的加密数据将被移到一旁，应用将以空数据启动。旧文件会保留在此设备上且不会被删除，但此版本的应用无法再次打开它们。</string>
     <string name="security_start_over_confirm">重新开始</string>
     <string name="security_lock_title">已锁定</string>
     <string name="security_lock_unlock">解锁</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">尚未设置恢复码</string>
     <string name="security_settings_recovery_desc">如果此设备的安全硬件丢失了保护你数据的密钥，恢复码是重新打开数据的唯一方法。</string>
     <string name="security_settings_about_title">受保护的内容</string>
-    <string name="security_settings_about_text">聊天、角色、服务商和 API 密钥都以加密形式保存在此设备上。应用锁会在每次打开应用时增加一次验证。两者都不会隐藏应用已安装这一事实。</string>
+    <string name="security_settings_about_text">聊天、角色、服务商和 API 密钥都以加密形式保存在此设备上；图片和头像暂未加密。应用锁会在每次打开应用时增加一次验证。两者都不会隐藏应用已安装这一事实。</string>
     <string name="security_recovery_replace_title">替换恢复码？</string>
     <string name="security_recovery_replace_message">当前恢复码将失效，并会显示新的恢复码。</string>
     <string name="security_recovery_remove_title">移除恢复码？</string>

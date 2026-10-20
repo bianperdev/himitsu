@@ -6,7 +6,9 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
+import androidx.annotation.VisibleForTesting
 import java.security.KeyStore
+import java.security.ProviderException
 import java.security.UnrecoverableKeyException
 import javax.crypto.AEADBadTagException
 import javax.crypto.KeyGenerator
@@ -36,6 +38,7 @@ class AndroidKeystoreKeyWrapper(private val mAliasPrefix: String = DEFAULT_ALIAS
     }
 
     /** Deletes the key [keyId]. Only for tests that clean up their own keys. */
+    @VisibleForTesting
     fun deleteKey(keyId: String) {
         guard { keyStore().deleteEntry(alias(keyId)) }
     }
@@ -52,6 +55,8 @@ class AndroidKeystoreKeyWrapper(private val mAliasPrefix: String = DEFAULT_ALIAS
                 return generateKey(alias, strongBox = true)
             } catch (_: StrongBoxUnavailableException) {
                 // The device has no StrongBox; the TEE-backed key below is the normal case.
+            } catch (_: ProviderException) {
+                // A StrongBox that fails to generate keys must not block the app; use the TEE.
             }
         }
         return generateKey(alias, strongBox = false)

@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Aucun code de récupération n\'a été configuré pour ces données.</string>
     <string name="security_recovery_error_failed">Vos données ont été déverrouillées, mais la nouvelle clé n\'a pas pu être enregistrée. Réessayez.</string>
     <string name="security_start_over_title">Repartir de zéro avec des données vides ?</string>
-    <string name="security_start_over_message">Vos données chiffrées actuelles seront mises de côté et l\'application démarrera vide. Les anciens fichiers sont conservés, pas supprimés, mais ils ne pourront être rouverts qu\'avec un code de récupération ou si la clé d\'origine de cet appareil redevient disponible.</string>
+    <string name="security_start_over_message">Vos données chiffrées actuelles seront mises de côté et l\'application démarrera vide. Les anciens fichiers restent sur cet appareil et ne sont pas supprimés, mais cette version de l\'application ne peut plus les ouvrir.</string>
     <string name="security_start_over_confirm">Repartir de zéro</string>
     <string name="security_lock_title">Verrouillé</string>
     <string name="security_lock_unlock">Déverrouiller</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Aucun code de récupération pour l\'instant</string>
     <string name="security_settings_recovery_desc">Si le matériel sécurisé de cet appareil perd un jour la clé qui protège vos données, le code de récupération est le seul moyen de les rouvrir.</string>
     <string name="security_settings_about_title">Ce qui est protégé</string>
-    <string name="security_settings_about_text">Les discussions, personnages, fournisseurs et clés API sont stockés chiffrés sur cet appareil. Le verrouillage ajoute une vérification à chaque ouverture. Aucun des deux ne cache que l\'application est installée.</string>
+    <string name="security_settings_about_text">Les discussions, personnages, fournisseurs et clés API sont stockés chiffrés sur cet appareil ; les images et les avatars ne sont pas encore chiffrés. Le verrouillage ajoute une vérification à chaque ouverture. Aucun des deux ne cache que l\'application est installée.</string>
     <string name="security_recovery_replace_title">Remplacer le code de récupération ?</string>
     <string name="security_recovery_replace_message">Le code actuel ne fonctionnera plus et un nouveau code sera affiché.</string>
     <string name="security_recovery_remove_title">Supprimer le code de récupération ?</string>

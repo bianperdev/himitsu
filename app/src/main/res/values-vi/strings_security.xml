@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Chưa thiết lập mã khôi phục cho dữ liệu này.</string>
     <string name="security_recovery_error_failed">Dữ liệu của bạn đã được mở khóa nhưng không thể lưu khóa mới. Hãy thử lại.</string>
     <string name="security_start_over_title">Bắt đầu lại với dữ liệu trống?</string>
-    <string name="security_start_over_message">Dữ liệu đã mã hóa hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn được giữ lại, không bị xóa, nhưng chỉ có thể mở lại bằng mã khôi phục hoặc khi khóa gốc của thiết bị này khả dụng trở lại.</string>
+    <string name="security_start_over_message">Dữ liệu đã mã hóa hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn ở trên thiết bị này và không bị xóa, nhưng phiên bản ứng dụng này không thể mở lại chúng.</string>
     <string name="security_start_over_confirm">Bắt đầu lại</string>
     <string name="security_lock_title">Đã khóa</string>
     <string name="security_lock_unlock">Mở khóa</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Chưa có mã khôi phục</string>
     <string name="security_settings_recovery_desc">Nếu phần cứng bảo mật của thiết bị này làm mất khóa bảo vệ dữ liệu của bạn, mã khôi phục là cách duy nhất để mở lại dữ liệu.</string>
     <string name="security_settings_about_title">Những gì được bảo vệ</string>
-    <string name="security_settings_about_text">Cuộc trò chuyện, nhân vật, nhà cung cấp và khóa API được lưu trữ ở dạng mã hóa trên thiết bị này. Khóa ứng dụng thêm một bước xác minh mỗi khi mở ứng dụng. Cả hai đều không ẩn việc ứng dụng đã được cài đặt.</string>
+    <string name="security_settings_about_text">Cuộc trò chuyện, nhân vật, nhà cung cấp và khóa API được lưu trữ ở dạng mã hóa trên thiết bị này; hình ảnh và ảnh đại diện chưa được mã hóa. Khóa ứng dụng thêm một bước xác minh mỗi khi mở ứng dụng. Cả hai đều không ẩn việc ứng dụng đã được cài đặt.</string>
     <string name="security_recovery_replace_title">Thay mã khôi phục?</string>
     <string name="security_recovery_replace_message">Mã hiện tại sẽ ngừng hoạt động và một mã mới sẽ được hiển thị.</string>
     <string name="security_recovery_remove_title">Xóa mã khôi phục?</string>

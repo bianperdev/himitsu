@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Nenhum código de recuperação foi configurado para estes dados.</string>
     <string name="security_recovery_error_failed">Seus dados foram desbloqueados, mas não foi possível salvar a nova chave. Tente novamente.</string>
     <string name="security_start_over_title">Começar do zero sem dados?</string>
-    <string name="security_start_over_message">Seus dados criptografados atuais serão deixados de lado e o app começará vazio. Os arquivos antigos são mantidos, não excluídos, mas só poderão ser abertos novamente com um código de recuperação ou se a chave original deste dispositivo voltar a ficar disponível.</string>
+    <string name="security_start_over_message">Seus dados criptografados atuais serão deixados de lado e o app começará vazio. Os arquivos antigos continuam neste dispositivo e não são excluídos, mas esta versão do app não consegue abri-los novamente.</string>
     <string name="security_start_over_confirm">Começar do zero</string>
     <string name="security_lock_title">Bloqueado</string>
     <string name="security_lock_unlock">Desbloquear</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Ainda não há código de recuperação</string>
     <string name="security_settings_recovery_desc">Se o hardware seguro deste dispositivo perder a chave que protege seus dados, o código de recuperação será a única forma de abri-los novamente.</string>
     <string name="security_settings_about_title">O que está protegido</string>
-    <string name="security_settings_about_text">Conversas, personagens, provedores e chaves de API são armazenados criptografados neste dispositivo. O bloqueio do app adiciona uma verificação sempre que ele é aberto. Nenhum dos dois esconde que o app está instalado.</string>
+    <string name="security_settings_about_text">Conversas, personagens, provedores e chaves de API são armazenados criptografados neste dispositivo; imagens e avatares ainda não são criptografados. O bloqueio do app adiciona uma verificação sempre que ele é aberto. Nenhum dos dois esconde que o app está instalado.</string>
     <string name="security_recovery_replace_title">Substituir o código de recuperação?</string>
     <string name="security_recovery_replace_message">O código atual deixará de funcionar e um novo será exibido.</string>
     <string name="security_recovery_remove_title">Remover o código de recuperação?</string>

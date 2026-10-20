@@ -22,7 +22,7 @@
     <string name="security_recovery_error_not_configured">Per questi dati non è stato configurato alcun codice di recupero.</string>
     <string name="security_recovery_error_failed">I tuoi dati sono stati sbloccati, ma non è stato possibile salvare la nuova chiave. Riprova.</string>
     <string name="security_start_over_title">Ricominciare da zero con dati vuoti?</string>
-    <string name="security_start_over_message">I dati cifrati attuali verranno messi da parte e l\'app partirà vuota. I vecchi file vengono conservati, non eliminati, ma potranno essere riaperti solo con un codice di recupero o se la chiave originale di questo dispositivo tornerà disponibile.</string>
+    <string name="security_start_over_message">I dati cifrati attuali verranno messi da parte e l\'app partirà vuota. I vecchi file restano su questo dispositivo e non vengono eliminati, ma questa versione dell\'app non può riaprirli.</string>
     <string name="security_start_over_confirm">Ricomincia da zero</string>
     <string name="security_lock_title">Bloccato</string>
     <string name="security_lock_unlock">Sblocca</string>
@@ -50,7 +50,7 @@
     <string name="security_settings_recovery_status_none">Ancora nessun codice di recupero</string>
     <string name="security_settings_recovery_desc">Se l\'hardware sicuro di questo dispositivo dovesse perdere la chiave che protegge i tuoi dati, il codice di recupero è l\'unico modo per riaprirli.</string>
     <string name="security_settings_about_title">Cosa è protetto</string>
-    <string name="security_settings_about_text">Chat, personaggi, provider e chiavi API sono salvati cifrati su questo dispositivo. Il blocco dell\'app aggiunge un controllo a ogni apertura. Nessuno dei due nasconde che l\'app è installata.</string>
+    <string name="security_settings_about_text">Chat, personaggi, provider e chiavi API sono salvati cifrati su questo dispositivo; immagini e avatar non sono ancora cifrati. Il blocco dell\'app aggiunge un controllo a ogni apertura. Nessuno dei due nasconde che l\'app è installata.</string>
     <string name="security_recovery_replace_title">Sostituire il codice di recupero?</string>
     <string name="security_recovery_replace_message">Il codice attuale smetterà di funzionare e ne verrà mostrato uno nuovo.</string>
     <string name="security_recovery_remove_title">Rimuovere il codice di recupero?</string>

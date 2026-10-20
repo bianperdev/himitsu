@@ -135,9 +135,13 @@ class SecureStorageManager(
         System.loadLibrary("sqlcipher")
         Logger.setTarget(NoopTarget())
         mStartupTasks = startupTasks
-        // Cleanup that needs no key runs even when the key turns out to be unavailable
-        mScope.launch { mMutex.withLock { beforeKey() } }
-        launchSequence()
+        // Cleanup that needs no key runs first, and even when the key turns out to be unavailable
+        mScope.launch {
+            mMutex.withLock {
+                runCatching(beforeKey)
+                load()
+            }
+        }
     }
 
     /** Retries after a failure that may be temporary. */
@@ -202,10 +206,12 @@ class SecureStorageManager(
      *   migration itself would have done.
      */
     private fun setAside(file: File, suffix: String) {
-        val plainCopy = File(file.path + ".plaintext")
-        if (plainCopy.exists() && DatabaseFiles.kindOf(file) == DatabaseFileKind.Encrypted) DatabaseFiles.delete(plainCopy)
         DatabaseFiles.delete(File(file.path + ".encrypting"))
         if (DatabaseFiles.kindOf(file) == DatabaseFileKind.Encrypted) DatabaseFiles.move(file, File(file.path + suffix))
+        // A verified plain copy from an interrupted migration is the only copy readable without
+        // the lost key: put it back so it is encrypted with the new key instead of deleted
+        val plainCopy = File(file.path + ".plaintext")
+        if (plainCopy.exists() && DatabaseFiles.kindOf(file) == DatabaseFileKind.Missing) DatabaseFiles.move(plainCopy, file)
     }
 
     /** Whether a recovery code is configured for the current data. */
