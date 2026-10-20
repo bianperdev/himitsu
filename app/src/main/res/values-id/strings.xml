@@ -9,7 +9,7 @@
     <string name="image_crop_shape_squircle">Kotak Bulat</string>
     <string name="image_crop_shape_circle">Lingkaran</string>
     <string name="about">Tentang</string>
-    <string name="about_desc">Versi aplikasi, email, dan repositori</string>
+    <string name="about_desc">Versi aplikasi, lisensi sumber terbuka, dan kredit</string>
     <string name="unknown_version">Versi tidak diketahui</string>
     <string name="developer_contact">Kontak Pengembang</string>
     <string name="tech_stack_label">Tumpukan Teknologi</string>

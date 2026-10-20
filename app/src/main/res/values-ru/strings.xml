@@ -9,7 +9,7 @@
     <string name="image_crop_shape_squircle">Скруглённый</string>
     <string name="image_crop_shape_circle">Круг</string>
     <string name="about">О приложении</string>
-    <string name="about_desc">Версия приложения, эл. почта и репозиторий</string>
+    <string name="about_desc">Версия приложения, лицензии открытого ПО и благодарности</string>
     <string name="unknown_version">Неизвестная версия</string>
     <string name="developer_contact">Контакты разработчика</string>
     <string name="tech_stack_label">Стек технологий</string>

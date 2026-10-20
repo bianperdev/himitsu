@@ -9,7 +9,7 @@
     <string name="image_crop_shape_squircle">方圆</string>
     <string name="image_crop_shape_circle">圆形</string>
     <string name="about">关于</string>
-    <string name="about_desc">应用版本、联系邮箱与开源仓库</string>
+    <string name="about_desc">应用版本、开源许可证与致谢</string>
     <string name="unknown_version">未知版本</string>
     <string name="developer_contact">开发者邮箱</string>
     <string name="tech_stack_label">技术栈</string>

@@ -581,7 +581,8 @@ Done (2026-10-20):
 
 Still open:
 - [ ] Donations: no platform chosen yet (maintainer, 2026-10-20). Then `.github/FUNDING.yml`, the "Support Himitsu" screen in `app/src/donations/` and the F-Droid `Donate`/`Liberapay` fields. The `play` build must stay without any link to the repository.
-- [ ] Screenshots of a release build for the README and every store listing (none are published yet), and a 512 px Play icon made from the launcher artwork.
+- [x] Screenshots of the 0.1.0 release in the README and the store listings (2026-10-21).
+- [ ] A 512 px Play icon made from the launcher artwork (only for Google Play).
 - [x] Repository made public with private vulnerability reporting enabled (maintainer authorization in the chat, 2026-10-20).
 - [x] Release workflow: build and publish jobs split (only publish may write), actions pinned by SHA, signing secrets added (release key RSA 4096, certificate SHA-256 `39:01:DE:B1:C8:C5:54:FA:D8:8C:83:BE:CC:2B:FA:37:4A:CC:92:49:68:7D:96:50:5D:A6:CB:05:EC:0D:DF:C5`, kept by the maintainer outside the repository), dry run passed on 2026-10-21 and its APK started on the emulator. Still manual only.
 - [ ] F-Droid: run `fdroid scanner` locally on the recipe and add `scandelete` entries for what it flags in the llama.cpp submodule; confirm CMake 3.31.6 and NDK r30 on the build server; maintainers may ask to build SQLCipher from source. Possible anti-features: NSFW (role-play with user-chosen models) and NonFreeNet (presets for proprietary AI services); see the release documentation report.

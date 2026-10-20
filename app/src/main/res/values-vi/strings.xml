@@ -9,7 +9,7 @@
     <string name="image_crop_shape_squircle">Hình vuông bo góc</string>
     <string name="image_crop_shape_circle">Hình tròn</string>
     <string name="about">Giới thiệu</string>
-    <string name="about_desc">Phiên bản ứng dụng, email và kho lưu trữ mã nguồn</string>
+    <string name="about_desc">Phiên bản ứng dụng, giấy phép nguồn mở và ghi công</string>
     <string name="unknown_version">Phiên bản không xác định</string>
     <string name="developer_contact">Liên hệ nhà phát triển</string>
     <string name="tech_stack_label">Ngăn xếp công nghệ</string>

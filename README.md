@@ -65,7 +65,10 @@ Every published binary has a matching git tag (`v<version>`) with its complete s
 
 ## Screenshots
 
-Screenshots are coming with the first release.
+Taken from the 0.1.0 release on an emulator. The character is an original demo, and the replies come from Qwen3.5 2B running on the device.
+
+<p><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="200" alt="A chat with an original character, answered by an on-device model"> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="200" alt="On-device models"> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="200" alt="Privacy and security settings"></p>
+<p><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="200" alt="Home screen"> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="200" alt="Disguise settings, with their limits"> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="200" alt="The calculator decoy"></p>
 
 ## Building from source
 

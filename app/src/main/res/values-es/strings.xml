@@ -9,7 +9,7 @@
     <string name="image_crop_shape_squircle">Cuadrado redondeado</string>
     <string name="image_crop_shape_circle">Círculo</string>
     <string name="about">Acerca de</string>
-    <string name="about_desc">Versión de la app, correo electrónico y repositorio</string>
+    <string name="about_desc">Versión de la app, licencias de código abierto y créditos</string>
     <string name="unknown_version">Versión desconocida</string>
     <string name="developer_contact">Contacto del desarrollador</string>
     <string name="tech_stack_label">Pila tecnológica</string>
