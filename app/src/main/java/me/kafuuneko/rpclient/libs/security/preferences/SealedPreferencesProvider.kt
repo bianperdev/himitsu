@@ -52,9 +52,9 @@ object SealedPreferencesProvider : PreferencesProvider {
      */
     fun hasSealedFiles(context: Context): Boolean = sharedPrefsDir(context).listFiles().orEmpty().any(::hasSealedValues)
 
-    /** Whether [file] is a preference file that holds sealed values. */
+    /** Whether [file] is a preference file, or Android's `.bak` backup of one, that holds sealed values. */
     fun hasSealedValues(file: File): Boolean =
-        file.isFile && file.name.endsWith(".xml") && runCatching { file.readText().contains(">" + PreferenceCipher.PREFIX) }
+        file.isFile && (file.name.endsWith(".xml") || file.name.endsWith(".xml.bak")) && runCatching { file.readText().contains(">" + PreferenceCipher.PREFIX) }
             .getOrDefault(false)
 
     /**

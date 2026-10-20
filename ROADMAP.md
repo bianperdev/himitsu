@@ -287,6 +287,12 @@ Done in `feat/security-followups` (2026-10-20): P-06; reauthentication before tu
 - **Dropdown menus while locked (after `feat/aesthetic` is on main):** a `GatedDropdownMenu` that reads `LocalAppGateOpen`, used by the 10 `DropdownMenu` calls in 7 files (2 of them touched by aesthetic).
 - **Paranoid mode (not in this branch, maintainer decision 2026-10-20):** a PIN or passphrase key slot with Argon2id. `argon2kt` 1.6.0 (MIT) ships prebuilt native libraries (F-Droid would need them built from source) whose 16 KB page alignment is unverified; the reference Argon2 (CC0 or Apache-2.0) could be built with the local-inference CMake instead.
 - **Set-aside data:** importing an exported `.zip` back is not supported yet. A restore leaves the copy's original key file as a small set-aside entry (it held only a lost Keystore slot), which the user can delete.
+- **Known limits (privacy review of the follow-ups, 2026-10-20):**
+  - A restore restarts the app with `Runtime.exit`, which can cut a pending `SharedPreferences.apply()`; the journal finishes the swap on the next start either way, and some OEMs may not relaunch the app by themselves.
+  - Sealing a plain file renames and then deletes without syncing the directory in between; a plain file whose content does not match its name stays plain and is retried at every start.
+  - On a device without a screen lock, the confirmation passes at once, also before "Delete permanently" (the ticked box remains), like the gate.
+  - `PreparedFile` and `FileEntity` are inherited data classes whose `toString` prints the image hash; nothing logs them.
+  - If a restore can never finish (a destination that stays taken), the error screen offers only a restart and an export; an "abandon the restore" action that undoes phase 1 would be the way out.
 - **F-Droid:** SQLCipher ships prebuilt native libraries from Maven Central; confirm the F-Droid scanner accepts them or build `sqlcipher-android` from source in the recipe (release-readiness).
 - **Privacy review (2026-10-20), not fixed in this track:**
   - Ship the SQLCipher BSD-3 notice inside the app (licenses screen or packaged `NOTICE`) before any release (release-readiness).

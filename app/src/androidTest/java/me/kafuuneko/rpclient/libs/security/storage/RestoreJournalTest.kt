@@ -84,6 +84,20 @@ class RestoreJournalTest {
     }
 
     @Test
+    fun aLoneBackupOfSealedPreferencesGoesAsideToo() {
+        // The process died during a write: only Android's backup of the file is left
+        File(root, "shared_prefs/AppModel.xml").delete()
+        write("shared_prefs/AppModel.xml.bak", "<string>${PreferenceCipher.PREFIX}live</string>")
+        assertTrue(RestoreJournal.schedule(context, source, replaced))
+
+        assertTrue(RestoreJournal.completePending(context))
+
+        assertEquals("copy prefs", read("shared_prefs/AppModel.xml"))
+        assertFalse(File(root, "shared_prefs/AppModel.xml.bak").exists())
+        assertEquals("<string>${PreferenceCipher.PREFIX}live</string>", read("shared_prefs/AppModel.xml.bak$replaced"))
+    }
+
+    @Test
     fun aTakenDestinationStopsTheSwapAndKeepsTheJournal() {
         assertTrue(RestoreJournal.schedule(context, source, replaced))
         write("databases/primary.sqlite$replaced", "something else")

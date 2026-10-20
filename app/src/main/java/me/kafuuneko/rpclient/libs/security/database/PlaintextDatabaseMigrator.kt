@@ -47,7 +47,7 @@ class PlaintextDatabaseMigrator {
         val backup = File(databaseFile.path + PLAINTEXT_SUFFIX)
         val temp = File(databaseFile.path + ENCRYPTING_SUFFIX)
         // Finish or roll back a run interrupted between the two renames
-        if (backup.exists()) {
+        if (DatabaseFiles.anyExists(backup)) {
             when (DatabaseFiles.kindOf(databaseFile)) {
                 DatabaseFileKind.Encrypted -> DatabaseFiles.delete(backup)
                 DatabaseFileKind.Missing, DatabaseFileKind.Empty -> DatabaseFiles.move(backup, databaseFile)

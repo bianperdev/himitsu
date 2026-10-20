@@ -181,6 +181,8 @@ class SecureStorageManager(
     suspend fun recover(code: RecoveryCode): RecoveryResult = withContext(Dispatchers.IO) {
         // Keystore key generation, the key file write and the startup tasks must not run on Main
         mMutex.withLock {
+            // Halfway through a restore the live key file may be the restored one: finish the swap first
+            if (RestoreJournal.isPending(mContext)) return@withLock RecoveryResult.Failed(VaultFailure.StorageError)
             val result = mVault.recover(code)
             if (result is RecoveryResult.Recovered) {
                 continueWith(result.masterKey)

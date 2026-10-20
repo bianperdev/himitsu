@@ -313,7 +313,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
             is SecureStorageState.Failed -> LockContentState.StorageError(
                 failure = storage.failure,
                 canRetry = storage.failure != StorageFailure.KeystoreKeyLost,
-                canUseRecoveryCode = storage.recoveryAvailable,
+                canUseRecoveryCode = storage.recoveryAvailable && storage.failure != StorageFailure.RestoreIncomplete,
                 canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED,
                 canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable,
                 isExporting = (previous as? LockContentState.StorageError)?.isExporting == true

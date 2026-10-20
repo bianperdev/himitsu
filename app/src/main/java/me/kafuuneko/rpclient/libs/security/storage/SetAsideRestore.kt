@@ -196,8 +196,15 @@ object RestoreJournal {
         // the new file.
         val preferences = File(context.applicationInfo.dataDir, "shared_prefs")
         if (toAside) {
+            // A `.bak` may be alone when the process died during a write; Android would restore it
             preferences.listFiles().orEmpty()
-                .filter { it.name.endsWith(".xml") && (SealedPreferencesProvider.hasSealedValues(it) || File(it.path + source).exists()) }
+                .filter { it.name.endsWith(".xml") || it.name.endsWith(".xml.bak") }
+                .map { File(preferences, it.name.removeSuffix(".bak")) }
+                .distinct()
+                .filter { live ->
+                    File(live.path + source).exists() || SealedPreferencesProvider.hasSealedValues(live) ||
+                        SealedPreferencesProvider.hasSealedValues(File(live.path + ".bak"))
+                }
                 .forEach { live ->
                     move(File(live.path + ".bak"), File(live.path + ".bak" + aside))
                     move(live, File(live.path + aside))
