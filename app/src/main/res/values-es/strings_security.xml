@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Apúntalo y guárdalo en un lugar seguro, lejos de este móvil. Solo se muestra una vez. Cualquiera con este código y una copia de los archivos de la app podría leer tus datos.</string>
     <string name="security_recovery_show_confirm">Ya lo he apuntado</string>
     <string name="security_recovery_update_failed">No se pudo actualizar el código de recuperación. Inténtalo de nuevo.</string>
+    <string name="security_settings_section_screen">Pantalla</string>
+    <string name="security_settings_secure_screen">Ocultar el contenido en capturas y recientes</string>
+    <string name="security_settings_secure_screen_desc">Bloquea las capturas y la grabación de pantalla, y muestra una vista previa en blanco en recientes. Con el bloqueo de la app activo, Android 13 o superior ya oculta la vista previa.</string>
 </resources>

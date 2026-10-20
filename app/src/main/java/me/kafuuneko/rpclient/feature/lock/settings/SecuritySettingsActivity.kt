@@ -9,8 +9,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiIntent
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiState
+import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsViewEvent
 import me.kafuuneko.rpclient.feature.lock.settings.ui.SecuritySettingsLayout
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
+import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
 
 /** Host of the security settings screen, opened from the main settings page. */
 class SecuritySettingsActivity : CoreActivityWithEvent() {
@@ -40,5 +43,12 @@ class SecuritySettingsActivity : CoreActivityWithEvent() {
     override fun onResume() {
         super.onResume()
         mViewModel.emit(SecuritySettingsUiIntent.Resume)
+    }
+
+    override suspend fun onReceivedViewEvent(viewEvent: IViewEvent) {
+        when (viewEvent) {
+            SecuritySettingsViewEvent.ApplyWindowProtection -> WindowProtection.apply(this)
+            else -> super.onReceivedViewEvent(viewEvent)
+        }
     }
 }

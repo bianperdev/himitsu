@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Anote e guarde em um lugar seguro, longe deste celular. Ele é exibido apenas uma vez. Qualquer pessoa com este código e uma cópia dos arquivos do app poderia ler seus dados.</string>
     <string name="security_recovery_show_confirm">Já anotei</string>
     <string name="security_recovery_update_failed">Não foi possível atualizar o código de recuperação. Tente novamente.</string>
+    <string name="security_settings_section_screen">Tela</string>
+    <string name="security_settings_secure_screen">Ocultar conteúdo de capturas e recentes</string>
+    <string name="security_settings_secure_screen_desc">Bloqueia capturas e gravação de tela e mostra uma prévia em branco nos apps recentes. Com o bloqueio do app ativo, o Android 13 ou mais recente já oculta a prévia.</string>
 </resources>

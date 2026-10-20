@@ -5,6 +5,7 @@ import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsDialogState
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiIntent
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiState
+import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsViewEvent
 import me.kafuuneko.rpclient.libs.core.AppViewEvent
 import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
@@ -35,7 +36,8 @@ class SecuritySettingsViewModel :
             appLockEnabled = SecurityPrefs.appLockEnabled,
             deviceSecure = mLockManager.isDeviceSecure(),
             lockTimeout = mLockManager.timeout,
-            hasRecoveryCode = mStorage.hasRecoveryCode()
+            hasRecoveryCode = mStorage.hasRecoveryCode(),
+            secureScreenEnabled = SecurityPrefs.secureScreenEnabled
         ).setup()
     }
 
@@ -63,6 +65,17 @@ class SecuritySettingsViewModel :
         }
         mLockManager.setEnabled(intent.enabled)
         uiState.copy(appLockEnabled = intent.enabled).setup()
+        // The recents preview depends on the lock too
+        SecuritySettingsViewEvent.ApplyWindowProtection.tryEmit()
+    }
+
+    /** Turns screenshot and recents protection on or off for every screen. */
+    @UiIntentObserver(SecuritySettingsUiIntent.ToggleSecureScreen::class)
+    private fun onToggleSecureScreen(intent: SecuritySettingsUiIntent.ToggleSecureScreen) {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        SecurityPrefs.secureScreenEnabled = intent.enabled
+        uiState.copy(secureScreenEnabled = intent.enabled).setup()
+        SecuritySettingsViewEvent.ApplyWindowProtection.tryEmit()
     }
 
     @UiIntentObserver(SecuritySettingsUiIntent.ShowTimeoutPicker::class)

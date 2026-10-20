@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">请把它写下来，保存在远离这部手机的安全地方。它只会显示一次。任何拥有此恢复码和应用文件副本的人都可能读取你的数据。</string>
     <string name="security_recovery_show_confirm">我已记下</string>
     <string name="security_recovery_update_failed">无法更新恢复码。请重试。</string>
+    <string name="security_settings_section_screen">屏幕</string>
+    <string name="security_settings_secure_screen">在截图和最近任务中隐藏内容</string>
+    <string name="security_settings_secure_screen_desc">阻止截图和录屏，并在最近任务中显示空白预览。开启应用锁后，Android 13 及更高版本已会隐藏预览。</string>
 </resources>

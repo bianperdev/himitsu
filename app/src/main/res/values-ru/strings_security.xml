@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Запишите его и храните в надёжном месте отдельно от телефона. Код показывается только один раз. Любой, у кого есть этот код и копия файлов приложения, сможет прочитать ваши данные.</string>
     <string name="security_recovery_show_confirm">Я записал код</string>
     <string name="security_recovery_update_failed">Не удалось обновить код восстановления. Повторите попытку.</string>
+    <string name="security_settings_section_screen">Экран</string>
+    <string name="security_settings_secure_screen">Скрывать содержимое на скриншотах и в недавних</string>
+    <string name="security_settings_secure_screen_desc">Блокирует скриншоты и запись экрана и показывает пустой эскиз в недавних приложениях. При включённой блокировке Android 13 и новее уже скрывает эскиз.</string>
 </resources>

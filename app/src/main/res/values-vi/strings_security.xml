@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Hãy ghi lại và cất ở nơi an toàn, tách biệt với điện thoại này. Mã chỉ hiển thị một lần. Bất kỳ ai có mã này và bản sao các tệp của ứng dụng đều có thể đọc dữ liệu của bạn.</string>
     <string name="security_recovery_show_confirm">Tôi đã ghi lại</string>
     <string name="security_recovery_update_failed">Không thể cập nhật mã khôi phục. Hãy thử lại.</string>
+    <string name="security_settings_section_screen">Màn hình</string>
+    <string name="security_settings_secure_screen">Ẩn nội dung khỏi ảnh chụp màn hình và mục gần đây</string>
+    <string name="security_settings_secure_screen_desc">Chặn chụp và quay màn hình, đồng thời hiển thị bản xem trước trống trong mục ứng dụng gần đây. Khi bật khóa ứng dụng, Android 13 trở lên đã ẩn bản xem trước.</string>
 </resources>

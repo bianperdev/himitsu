@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Write it down and keep it somewhere safe, away from this phone. It is shown only once. Anyone with this code and a copy of the app\'s files could read your data.</string>
     <string name="security_recovery_show_confirm">I wrote it down</string>
     <string name="security_recovery_update_failed">The recovery code could not be updated. Try again.</string>
+    <string name="security_settings_section_screen">Screen</string>
+    <string name="security_settings_secure_screen">Hide content from screenshots and recents</string>
+    <string name="security_settings_secure_screen_desc">Blocks screenshots and screen recording, and shows a blank preview in recent apps. With the app lock on, Android 13 and later already hide the preview.</string>
 </resources>

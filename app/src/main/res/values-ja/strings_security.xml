@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">書き留めて、この端末とは別の安全な場所に保管してください。表示されるのは一度だけです。このコードとアプリのファイルのコピーがあれば、誰でもデータを読み取れる可能性があります。</string>
     <string name="security_recovery_show_confirm">書き留めました</string>
     <string name="security_recovery_update_failed">リカバリーコードを更新できませんでした。もう一度お試しください。</string>
+    <string name="security_settings_section_screen">画面</string>
+    <string name="security_settings_secure_screen">スクリーンショットと履歴で内容を隠す</string>
+    <string name="security_settings_secure_screen_desc">スクリーンショットと画面録画をブロックし、最近使ったアプリには空白のプレビューを表示します。アプリのロックがオンの場合、Android 13 以降ではプレビューがすでに非表示になります。</string>
 </resources>

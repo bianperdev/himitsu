@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Timer
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -93,6 +94,7 @@ private fun NormalView(uiState: SecuritySettingsUiState.Normal, emit: SecuritySe
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             LockSection(uiState, emit)
+            ScreenSection(uiState, emit)
             RecoverySection(uiState, emit)
             AboutSection()
         }
@@ -121,6 +123,20 @@ private fun LockSection(uiState: SecuritySettingsUiState.Normal, emit: SecurityS
             icon = Icons.Rounded.Timer,
             enabled = uiState.appLockEnabled,
             onClick = { SecuritySettingsUiIntent.ShowTimeoutPicker.emit() }
+        )
+    }
+}
+
+@Composable
+private fun ScreenSection(uiState: SecuritySettingsUiState.Normal, emit: SecuritySettingsUiIntent.() -> Unit) {
+    RpSectionHeader(title = stringResource(R.string.security_settings_section_screen))
+    RpSettingsGroup {
+        RpSettingsSwitchTile(
+            title = stringResource(R.string.security_settings_secure_screen),
+            subtitle = stringResource(R.string.security_settings_secure_screen_desc),
+            icon = Icons.Rounded.VisibilityOff,
+            checked = uiState.secureScreenEnabled,
+            onCheckedChange = { SecuritySettingsUiIntent.ToggleSecureScreen(it).emit() }
         )
     }
 }
@@ -275,7 +291,8 @@ private fun SecuritySettingsLayoutPreview() {
                 appLockEnabled = true,
                 deviceSecure = true,
                 lockTimeout = LockTimeout.OneMinute,
-                hasRecoveryCode = true
+                hasRecoveryCode = true,
+                secureScreenEnabled = false
             ),
             emit = {}
         )

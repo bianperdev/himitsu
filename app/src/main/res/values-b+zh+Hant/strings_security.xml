@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">請把它寫下來，保存在遠離這支手機的安全地方。它只會顯示一次。任何擁有此復原碼和應用程式檔案副本的人都可能讀取你的資料。</string>
     <string name="security_recovery_show_confirm">我已記下</string>
     <string name="security_recovery_update_failed">無法更新復原碼。請再試一次。</string>
+    <string name="security_settings_section_screen">螢幕</string>
+    <string name="security_settings_secure_screen">在螢幕截圖和最近使用中隱藏內容</string>
+    <string name="security_settings_secure_screen_desc">封鎖螢幕截圖和螢幕錄影，並在最近使用的應用程式中顯示空白預覽。開啟應用程式鎖後，Android 13 以上版本已會隱藏預覽。</string>
 </resources>

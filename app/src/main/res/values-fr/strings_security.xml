@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Notez-le et gardez-le en lieu sûr, loin de ce téléphone. Il n\'est affiché qu\'une seule fois. Toute personne disposant de ce code et d\'une copie des fichiers de l\'application pourrait lire vos données.</string>
     <string name="security_recovery_show_confirm">Je l\'ai noté</string>
     <string name="security_recovery_update_failed">Le code de récupération n\'a pas pu être mis à jour. Réessayez.</string>
+    <string name="security_settings_section_screen">Écran</string>
+    <string name="security_settings_secure_screen">Masquer le contenu des captures et des applis récentes</string>
+    <string name="security_settings_secure_screen_desc">Bloque les captures et l\'enregistrement d\'écran, et affiche un aperçu vide dans les applis récentes. Avec le verrouillage activé, Android 13 et versions ultérieures masquent déjà l\'aperçu.</string>
 </resources>

@@ -15,6 +15,7 @@ sealed class SecuritySettingsUiState {
         val deviceSecure: Boolean,
         val lockTimeout: LockTimeout,
         val hasRecoveryCode: Boolean,
+        val secureScreenEnabled: Boolean,
         val isWorking: Boolean = false,
         val dialogState: SecuritySettingsDialogState = SecuritySettingsDialogState.None
     ) : SecuritySettingsUiState()

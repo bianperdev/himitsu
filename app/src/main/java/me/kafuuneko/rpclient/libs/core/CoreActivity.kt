@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
+import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
 import me.kafuuneko.rpclient.libs.theme.AppThemeManager
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import org.koin.core.component.KoinComponent
@@ -51,6 +52,12 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
         initView()
         observeAppGate()
+    }
+
+    /** Re-applies the screen privacy settings, which may have changed on another page (Himitsu, P-12). */
+    override fun onResume() {
+        super.onResume()
+        WindowProtection.apply(this)
     }
 
     /** Opens the gate screen whenever this page is visible and the gate is blocked (Himitsu). */

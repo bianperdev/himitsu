@@ -27,6 +27,7 @@ import me.kafuuneko.rpclient.feature.lock.ui.LockLayout
 import me.kafuuneko.rpclient.feature.main.MainActivity
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
+import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
 import me.kafuuneko.rpclient.libs.theme.AppThemeManager
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import org.koin.core.component.KoinComponent
@@ -73,6 +74,7 @@ class LockActivity : FragmentActivity(), KoinComponent {
 
     override fun onResume() {
         super.onResume()
+        WindowProtection.apply(this)
         mViewModel.emit(LockUiIntent.Resume)
     }
 

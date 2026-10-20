@@ -60,4 +60,7 @@
     <string name="security_recovery_show_message">Annotalo e conservalo in un luogo sicuro, lontano da questo telefono. Viene mostrato una sola volta. Chiunque abbia questo codice e una copia dei file dell\'app potrebbe leggere i tuoi dati.</string>
     <string name="security_recovery_show_confirm">L\'ho annotato</string>
     <string name="security_recovery_update_failed">Impossibile aggiornare il codice di recupero. Riprova.</string>
+    <string name="security_settings_section_screen">Schermo</string>
+    <string name="security_settings_secure_screen">Nascondi i contenuti da screenshot e app recenti</string>
+    <string name="security_settings_secure_screen_desc">Blocca screenshot e registrazione dello schermo e mostra un\'anteprima vuota nelle app recenti. Con il blocco dell\'app attivo, Android 13 e versioni successive nascondono già l\'anteprima.</string>
 </resources>

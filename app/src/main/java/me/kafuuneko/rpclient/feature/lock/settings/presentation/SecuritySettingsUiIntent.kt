@@ -9,6 +9,7 @@ sealed class SecuritySettingsUiIntent {
     data object Resume : SecuritySettingsUiIntent()
     data object Back : SecuritySettingsUiIntent()
     data class ToggleAppLock(val enabled: Boolean) : SecuritySettingsUiIntent()
+    data class ToggleSecureScreen(val enabled: Boolean) : SecuritySettingsUiIntent()
     data object ShowTimeoutPicker : SecuritySettingsUiIntent()
     data class SelectTimeout(val timeout: LockTimeout) : SecuritySettingsUiIntent()
     data object CreateRecoveryCode : SecuritySettingsUiIntent()
