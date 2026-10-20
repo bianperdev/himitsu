@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Data Anda tidak dapat dibuka</string>
+    <string name="security_storage_error_key_file_missing">File kunci yang melindungi data Anda tidak ditemukan. Tanpa file ini, data terenkripsi tidak dapat dibaca.</string>
+    <string name="security_storage_error_key_file_corrupt">File kunci yang melindungi data Anda rusak.</string>
+    <string name="security_storage_error_keystore_key_lost">Perangkat keras aman di perangkat ini tidak lagi memiliki kunci yang melindungi data Anda. Ini dapat terjadi setelah beberapa pembaruan sistem atau reset keamanan. Jika Anda menyimpan kode pemulihan, Anda dapat menggunakannya sekarang.</string>
+    <string name="security_storage_error_keystore_unavailable">Perangkat keras aman di perangkat ini tidak merespons. Biasanya ini hanya sementara.</string>
+    <string name="security_storage_error_storage">File kunci tidak dapat dibaca. Pastikan perangkat memiliki ruang kosong, lalu coba lagi.</string>
+    <string name="security_storage_error_migration_failed">Data Anda yang ada tidak dapat dipindahkan ke penyimpanan terenkripsi. Data tersebut masih utuh. Pastikan perangkat memiliki ruang kosong, lalu coba lagi.</string>
+    <string name="security_storage_error_nothing_deleted">Tidak ada yang dihapus.</string>
+    <string name="security_action_retry">Coba lagi</string>
+    <string name="security_action_use_recovery_code">Gunakan kode pemulihan</string>
+    <string name="security_action_start_over">Mulai dari awal</string>
+    <string name="security_recovery_dialog_title">Kode pemulihan</string>
+    <string name="security_recovery_dialog_subtitle">Masukkan kode 28 karakter yang Anda simpan saat menyiapkan pemulihan.</string>
+    <string name="security_recovery_dialog_label">Kode pemulihan</string>
+    <string name="security_recovery_dialog_confirm">Buka kunci</string>
+    <string name="security_recovery_error_malformed">Itu bukan kode pemulihan yang valid. Kode terdiri dari 28 huruf dan angka.</string>
+    <string name="security_recovery_error_wrong">Kode ini tidak membuka kunci data Anda.</string>
+    <string name="security_recovery_error_not_configured">Tidak ada kode pemulihan yang disiapkan untuk data ini.</string>
+    <string name="security_recovery_error_failed">Data Anda berhasil dibuka, tetapi kunci baru tidak dapat disimpan. Coba lagi.</string>
+    <string name="security_start_over_title">Mulai dari awal dengan data kosong?</string>
+    <string name="security_start_over_message">Data Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap disimpan, tidak dihapus, tetapi tidak dapat dibuka tanpa kunci asli atau kode pemulihan.</string>
+    <string name="security_start_over_confirm">Mulai dari awal</string>
+</resources>

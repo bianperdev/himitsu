@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Impossible d\'ouvrir vos données</string>
+    <string name="security_storage_error_key_file_missing">Le fichier de clé qui protège vos données est introuvable. Sans lui, les données chiffrées ne peuvent pas être lues.</string>
+    <string name="security_storage_error_key_file_corrupt">Le fichier de clé qui protège vos données est endommagé.</string>
+    <string name="security_storage_error_keystore_key_lost">Le matériel sécurisé de cet appareil ne contient plus la clé qui protège vos données. Cela peut arriver après certaines mises à jour du système ou une réinitialisation de sécurité. Si vous avez enregistré un code de récupération, vous pouvez l\'utiliser maintenant.</string>
+    <string name="security_storage_error_keystore_unavailable">Le matériel sécurisé de cet appareil n\'a pas répondu. C\'est généralement temporaire.</string>
+    <string name="security_storage_error_storage">Le fichier de clé n\'a pas pu être lu. Vérifiez que l\'appareil dispose d\'espace libre, puis réessayez.</string>
+    <string name="security_storage_error_migration_failed">Vos données existantes n\'ont pas pu être déplacées vers le stockage chiffré. Elles sont toujours intactes. Vérifiez que l\'appareil dispose d\'espace libre, puis réessayez.</string>
+    <string name="security_storage_error_nothing_deleted">Rien n\'a été supprimé.</string>
+    <string name="security_action_retry">Réessayer</string>
+    <string name="security_action_use_recovery_code">Utiliser le code de récupération</string>
+    <string name="security_action_start_over">Repartir de zéro</string>
+    <string name="security_recovery_dialog_title">Code de récupération</string>
+    <string name="security_recovery_dialog_subtitle">Saisissez le code de 28 caractères que vous avez enregistré lors de la configuration de la récupération.</string>
+    <string name="security_recovery_dialog_label">Code de récupération</string>
+    <string name="security_recovery_dialog_confirm">Déverrouiller</string>
+    <string name="security_recovery_error_malformed">Ce n\'est pas un code de récupération valide. Il comporte 28 lettres et chiffres.</string>
+    <string name="security_recovery_error_wrong">Ce code ne déverrouille pas vos données.</string>
+    <string name="security_recovery_error_not_configured">Aucun code de récupération n\'a été configuré pour ces données.</string>
+    <string name="security_recovery_error_failed">Vos données ont été déverrouillées, mais la nouvelle clé n\'a pas pu être enregistrée. Réessayez.</string>
+    <string name="security_start_over_title">Repartir de zéro avec des données vides ?</string>
+    <string name="security_start_over_message">Vos données actuelles seront mises de côté et l\'application démarrera vide. Les anciens fichiers sont conservés, pas supprimés, mais ils ne peuvent pas être ouverts sans la clé d\'origine ou un code de récupération.</string>
+    <string name="security_start_over_confirm">Repartir de zéro</string>
+</resources>

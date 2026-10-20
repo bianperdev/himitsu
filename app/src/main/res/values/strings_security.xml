@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Your data can\'t be opened</string>
+    <string name="security_storage_error_key_file_missing">The key file that protects your data is missing. Without it the encrypted data cannot be read.</string>
+    <string name="security_storage_error_key_file_corrupt">The key file that protects your data is damaged.</string>
+    <string name="security_storage_error_keystore_key_lost">The secure hardware of this device no longer has the key that protects your data. This can happen after some system updates or a security reset. If you saved a recovery code, you can use it now.</string>
+    <string name="security_storage_error_keystore_unavailable">The secure hardware of this device did not respond. This is usually temporary.</string>
+    <string name="security_storage_error_storage">The key file could not be read. Check that the device has free space and try again.</string>
+    <string name="security_storage_error_migration_failed">Your existing data could not be moved to encrypted storage. It is still intact. Check that the device has free space and try again.</string>
+    <string name="security_storage_error_nothing_deleted">Nothing has been deleted.</string>
+    <string name="security_action_retry">Try again</string>
+    <string name="security_action_use_recovery_code">Use recovery code</string>
+    <string name="security_action_start_over">Start over</string>
+    <string name="security_recovery_dialog_title">Recovery code</string>
+    <string name="security_recovery_dialog_subtitle">Enter the 28-character code you saved when you set up recovery.</string>
+    <string name="security_recovery_dialog_label">Recovery code</string>
+    <string name="security_recovery_dialog_confirm">Unlock</string>
+    <string name="security_recovery_error_malformed">That is not a valid recovery code. It has 28 letters and digits.</string>
+    <string name="security_recovery_error_wrong">This code does not unlock your data.</string>
+    <string name="security_recovery_error_not_configured">No recovery code was set up for this data.</string>
+    <string name="security_recovery_error_failed">Your data was unlocked but the new key could not be saved. Try again.</string>
+    <string name="security_start_over_title">Start over with empty data?</string>
+    <string name="security_start_over_message">Your current data will be set aside and the app will start empty. The old files are kept, not deleted, but they cannot be opened without the original key or a recovery code.</string>
+    <string name="security_start_over_confirm">Start over</string>
+</resources>

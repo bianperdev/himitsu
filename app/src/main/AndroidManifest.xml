@@ -129,6 +129,15 @@
             </intent-filter>
         </activity>
 
+        <!-- BEGIN feat/security -->
+        <activity
+            android:name=".feature.lock.LockActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.RPClient"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- END feat/security -->
+
         <!-- BEGIN disguise activity-aliases: reserved for the feat/disguise track (see ROADMAP.md).
              Other tracks must not add components between these markers. -->
         <!-- END disguise activity-aliases -->

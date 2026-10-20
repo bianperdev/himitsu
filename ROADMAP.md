@@ -172,6 +172,23 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - **Unlock extension point:** an interchangeable "unlocker" entry so that `feat/disguise` can start authentication from a decoy. The lock never has a bypass: every entry point leads to authentication.
 - The lock screen composable API, so `feat/aesthetic` can style it with theme tokens.
 
+### Contracts (feat/security)
+
+Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design.md).
+
+**Opening the databases.** `AppDatabase` and `RequestLogDatabase` are SQLCipher databases. Other tracks keep using `get<AppDatabase>()` from Koin exactly as before; nothing else is required.
+
+- The builders in `RPClientApp.kt` pass `SecureStorageManager.openHelperFactory(EncryptedDatabase.…)`. Do not build another `Room.databaseBuilder` for these files, and never open them with `android.database.sqlite`: the file is unreadable without the key.
+- The key is derived from the master key per database (`KeyPurpose`). The first query waits on a background thread until the key is loaded; Room never queries on the main thread, so do not enable `allowMainThreadQueries`.
+- If the key cannot be loaded, queries keep waiting and the app gate shows the error screen with retry, recovery code and start over. Nothing is deleted automatically, and no screen crashes.
+- A new database file must be added to `EncryptedDatabase` with its own `KeyPurpose` so it is encrypted, migrated from plain form and moved aside on "start over".
+- Schema versions and auto-migrations work as before; this track did not change the schema.
+- Startup work that needs the database (upgrades, file cleanup) runs in the block passed to `SecureStorageManager.start` in `RPClientApp.onCreate`, off the main thread. Screens stay behind the gate curtain until it finishes.
+
+**Unlock extension point.** `UnlockEntry` (`…/libs/security/AppGate.kt`), resolved from Koin, opens the gate screen. A decoy calls `get<UnlockEntry>().open(context)` from its secret entry. It only shows the gate screen; authentication happens there, so there is no bypass. `AppGate.state` tells whether content may be shown.
+
+**Lock screen styling.** `LockScreenFrame(icon, title, message, modifier, actions)` in `…/feature/lock/ui/LockLayout.kt` draws every gate state and reads only `MaterialTheme` tokens, so `feat/aesthetic` can restyle it through the theme.
+
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
 
 ## Track: `feat/aesthetic`
@@ -300,6 +317,7 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | OkHttp (with Okio) | 4.12.0 | Apache-2.0 | Only the requests the app makes |
 | Gson | 2.11.0 | Apache-2.0 | No |
 | JTokkit | 1.1.0 | MIT | No |
+| SQLCipher for Android (`net.zetetic:sqlcipher-android`, bundles LibTomCrypt, public domain), pulls in AndroidX sqlite 2.7.0 (feat/security) | 4.19.1 | BSD-3-Clause (notice reproduced in `NOTICE`) | No |
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 

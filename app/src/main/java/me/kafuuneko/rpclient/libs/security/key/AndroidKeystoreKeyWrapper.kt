@@ -20,7 +20,7 @@ import javax.crypto.SecretKey
  * - StrongBox is used when the device has it, with a fallback to the TEE.
  * - The key cannot be exported and is deleted by the system when the app is uninstalled.
  */
-class AndroidKeystoreKeyWrapper : KeyWrapper {
+class AndroidKeystoreKeyWrapper(private val mAlias: String = DEFAULT_ALIAS) : KeyWrapper {
 
     override fun seal(plaintext: ByteArray, aad: ByteArray): ByteArray = guard {
         AesGcm.seal(existingKey() ?: generateKey(), plaintext, aad)
@@ -32,12 +32,12 @@ class AndroidKeystoreKeyWrapper : KeyWrapper {
     }
 
     override fun resetKey() {
-        guard { keyStore().deleteEntry(ALIAS) }
+        guard { keyStore().deleteEntry(mAlias) }
     }
 
     private fun keyStore(): KeyStore = KeyStore.getInstance(PROVIDER).apply { load(null) }
 
-    private fun existingKey(): SecretKey? = keyStore().getKey(ALIAS, null) as? SecretKey
+    private fun existingKey(): SecretKey? = keyStore().getKey(mAlias, null) as? SecretKey
 
     private fun generateKey(): SecretKey {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -52,7 +52,7 @@ class AndroidKeystoreKeyWrapper : KeyWrapper {
 
     private fun generateKey(strongBox: Boolean): SecretKey {
         val spec = KeyGenParameterSpec.Builder(
-            ALIAS,
+            mAlias,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
@@ -89,6 +89,6 @@ class AndroidKeystoreKeyWrapper : KeyWrapper {
 
     private companion object {
         const val PROVIDER = "AndroidKeyStore"
-        const val ALIAS = "himitsu_master_key_wrap"
+        const val DEFAULT_ALIAS = "himitsu_master_key_wrap"
     }
 }

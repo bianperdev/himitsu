@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">無法開啟你的資料</string>
+    <string name="security_storage_error_key_file_missing">保護你資料的金鑰檔案遺失。沒有它，加密資料將無法讀取。</string>
+    <string name="security_storage_error_key_file_corrupt">保護你資料的金鑰檔案已損毀。</string>
+    <string name="security_storage_error_keystore_key_lost">此裝置的安全硬體中已不再有保護你資料的金鑰。這可能發生在某些系統更新或安全性重設之後。如果你儲存了復原碼，現在可以使用它。</string>
+    <string name="security_storage_error_keystore_unavailable">此裝置的安全硬體沒有回應。這通常是暫時的。</string>
+    <string name="security_storage_error_storage">無法讀取金鑰檔案。請確認裝置有可用空間後再試一次。</string>
+    <string name="security_storage_error_migration_failed">無法將現有資料移轉到加密儲存空間。資料仍完好無損。請確認裝置有可用空間後再試一次。</string>
+    <string name="security_storage_error_nothing_deleted">沒有刪除任何內容。</string>
+    <string name="security_action_retry">重試</string>
+    <string name="security_action_use_recovery_code">使用復原碼</string>
+    <string name="security_action_start_over">重新開始</string>
+    <string name="security_recovery_dialog_title">復原碼</string>
+    <string name="security_recovery_dialog_subtitle">輸入你在設定復原時儲存的 28 位復原碼。</string>
+    <string name="security_recovery_dialog_label">復原碼</string>
+    <string name="security_recovery_dialog_confirm">解鎖</string>
+    <string name="security_recovery_error_malformed">這不是有效的復原碼。復原碼由 28 個字母和數字組成。</string>
+    <string name="security_recovery_error_wrong">此復原碼無法解鎖你的資料。</string>
+    <string name="security_recovery_error_not_configured">這些資料沒有設定復原碼。</string>
+    <string name="security_recovery_error_failed">資料已解鎖，但無法儲存新金鑰。請再試一次。</string>
+    <string name="security_start_over_title">以空白資料重新開始？</string>
+    <string name="security_start_over_message">目前的資料將被移到一旁，應用程式將以空白狀態啟動。舊檔案會保留而不會刪除，但沒有原始金鑰或復原碼就無法開啟。</string>
+    <string name="security_start_over_confirm">重新開始</string>
+</resources>

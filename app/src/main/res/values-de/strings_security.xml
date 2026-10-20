@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Deine Daten können nicht geöffnet werden</string>
+    <string name="security_storage_error_key_file_missing">Die Schlüsseldatei, die deine Daten schützt, fehlt. Ohne sie können die verschlüsselten Daten nicht gelesen werden.</string>
+    <string name="security_storage_error_key_file_corrupt">Die Schlüsseldatei, die deine Daten schützt, ist beschädigt.</string>
+    <string name="security_storage_error_keystore_key_lost">Die sichere Hardware dieses Geräts hat den Schlüssel, der deine Daten schützt, nicht mehr. Das kann nach manchen Systemupdates oder einem Sicherheits-Reset passieren. Wenn du einen Wiederherstellungscode gespeichert hast, kannst du ihn jetzt verwenden.</string>
+    <string name="security_storage_error_keystore_unavailable">Die sichere Hardware dieses Geräts hat nicht reagiert. Das ist meist nur vorübergehend.</string>
+    <string name="security_storage_error_storage">Die Schlüsseldatei konnte nicht gelesen werden. Prüfe, ob auf dem Gerät genug Speicher frei ist, und versuche es erneut.</string>
+    <string name="security_storage_error_migration_failed">Deine vorhandenen Daten konnten nicht in den verschlüsselten Speicher übertragen werden. Sie sind weiterhin unversehrt. Prüfe, ob auf dem Gerät genug Speicher frei ist, und versuche es erneut.</string>
+    <string name="security_storage_error_nothing_deleted">Es wurde nichts gelöscht.</string>
+    <string name="security_action_retry">Erneut versuchen</string>
+    <string name="security_action_use_recovery_code">Wiederherstellungscode verwenden</string>
+    <string name="security_action_start_over">Neu beginnen</string>
+    <string name="security_recovery_dialog_title">Wiederherstellungscode</string>
+    <string name="security_recovery_dialog_subtitle">Gib den 28-stelligen Code ein, den du beim Einrichten der Wiederherstellung gespeichert hast.</string>
+    <string name="security_recovery_dialog_label">Wiederherstellungscode</string>
+    <string name="security_recovery_dialog_confirm">Entsperren</string>
+    <string name="security_recovery_error_malformed">Das ist kein gültiger Wiederherstellungscode. Er besteht aus 28 Buchstaben und Ziffern.</string>
+    <string name="security_recovery_error_wrong">Dieser Code entsperrt deine Daten nicht.</string>
+    <string name="security_recovery_error_not_configured">Für diese Daten wurde kein Wiederherstellungscode eingerichtet.</string>
+    <string name="security_recovery_error_failed">Deine Daten wurden entsperrt, aber der neue Schlüssel konnte nicht gespeichert werden. Versuche es erneut.</string>
+    <string name="security_start_over_title">Mit leeren Daten neu beginnen?</string>
+    <string name="security_start_over_message">Deine aktuellen Daten werden beiseitegelegt und die App startet leer. Die alten Dateien bleiben erhalten und werden nicht gelöscht, können aber ohne den ursprünglichen Schlüssel oder einen Wiederherstellungscode nicht geöffnet werden.</string>
+    <string name="security_start_over_confirm">Neu beginnen</string>
+</resources>

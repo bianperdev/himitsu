@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Не удаётся открыть ваши данные</string>
+    <string name="security_storage_error_key_file_missing">Отсутствует файл ключа, который защищает ваши данные. Без него зашифрованные данные прочитать нельзя.</string>
+    <string name="security_storage_error_key_file_corrupt">Файл ключа, который защищает ваши данные, повреждён.</string>
+    <string name="security_storage_error_keystore_key_lost">В защищённом хранилище этого устройства больше нет ключа, который защищает ваши данные. Такое бывает после некоторых обновлений системы или сброса настроек безопасности. Если вы сохранили код восстановления, используйте его сейчас.</string>
+    <string name="security_storage_error_keystore_unavailable">Защищённое хранилище этого устройства не ответило. Обычно это временно.</string>
+    <string name="security_storage_error_storage">Не удалось прочитать файл ключа. Убедитесь, что на устройстве есть свободное место, и повторите попытку.</string>
+    <string name="security_storage_error_migration_failed">Не удалось перенести ваши данные в зашифрованное хранилище. Они по-прежнему целы. Убедитесь, что на устройстве есть свободное место, и повторите попытку.</string>
+    <string name="security_storage_error_nothing_deleted">Ничего не удалено.</string>
+    <string name="security_action_retry">Повторить</string>
+    <string name="security_action_use_recovery_code">Использовать код восстановления</string>
+    <string name="security_action_start_over">Начать заново</string>
+    <string name="security_recovery_dialog_title">Код восстановления</string>
+    <string name="security_recovery_dialog_subtitle">Введите 28-значный код, который вы сохранили при настройке восстановления.</string>
+    <string name="security_recovery_dialog_label">Код восстановления</string>
+    <string name="security_recovery_dialog_confirm">Разблокировать</string>
+    <string name="security_recovery_error_malformed">Это недействительный код восстановления. Он состоит из 28 букв и цифр.</string>
+    <string name="security_recovery_error_wrong">Этот код не разблокирует ваши данные.</string>
+    <string name="security_recovery_error_not_configured">Для этих данных код восстановления не настроен.</string>
+    <string name="security_recovery_error_failed">Данные разблокированы, но сохранить новый ключ не удалось. Повторите попытку.</string>
+    <string name="security_start_over_title">Начать заново с пустыми данными?</string>
+    <string name="security_start_over_message">Текущие данные будут отложены, и приложение запустится пустым. Старые файлы сохраняются и не удаляются, но открыть их без исходного ключа или кода восстановления нельзя.</string>
+    <string name="security_start_over_confirm">Начать заново</string>
+</resources>

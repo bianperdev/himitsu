@@ -6,11 +6,25 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import me.kafuuneko.rpclient.libs.security.AppGate
+import me.kafuuneko.rpclient.libs.security.GateState
+import me.kafuuneko.rpclient.libs.security.UnlockEntry
 import me.kafuuneko.rpclient.libs.theme.AppThemeManager
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import org.koin.core.component.KoinComponent
@@ -23,6 +37,8 @@ import org.koin.core.component.inject
  */
 abstract class CoreActivity : ComponentActivity(), KoinComponent {
     private val mAppThemeManager by inject<AppThemeManager>()
+    private val mAppGate by inject<AppGate>()
+    private val mUnlockEntry by inject<UnlockEntry>()
 
     /** 子类可关闭默认的 Edge-to-Edge。 */
     protected open fun isEnableEdgeToEdge(): Boolean = true
@@ -34,6 +50,18 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
+        observeAppGate()
+    }
+
+    /** Opens the gate screen whenever this page is visible and the gate is blocked (Himitsu). */
+    private fun observeAppGate() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mAppGate.state.collect { state ->
+                    if (state == GateState.Blocked) mUnlockEntry.open(this@CoreActivity)
+                }
+            }
+        }
     }
 
     private fun initView() {
@@ -48,7 +76,37 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
         }
     }
 
-    private fun getContent(): @Composable () -> Unit = { ViewContent() }
+    private fun getContent(): @Composable () -> Unit = { GatedContent() }
+
+    /**
+     * Page content behind the app gate (Himitsu).
+     *
+     * While the gate is not open, an opaque curtain covers the page, takes every touch and
+     * hides the page from accessibility services. The page stays composed so its state
+     * survives a lock.
+     */
+    @Composable
+    private fun GatedContent() {
+        val gateState by mAppGate.state.collectAsState()
+        val open = gateState == GateState.Open
+        Box(Modifier.fillMaxSize()) {
+            Box(if (open) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics { }) {
+                ViewContent()
+            }
+            if (!open) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) awaitPointerEvent().changes.forEach { it.consume() }
+                            }
+                        }
+                )
+            }
+        }
+    }
 
     /** 让 Edge-to-Edge 系统栏图标与强制亮色或暗色主题保持可读对比度。 */
     @Composable

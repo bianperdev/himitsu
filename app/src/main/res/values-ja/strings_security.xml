@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">データを開けません</string>
+    <string name="security_storage_error_key_file_missing">データを保護している鍵ファイルが見つかりません。鍵ファイルがないと、暗号化されたデータを読み取れません。</string>
+    <string name="security_storage_error_key_file_corrupt">データを保護している鍵ファイルが破損しています。</string>
+    <string name="security_storage_error_keystore_key_lost">この端末のセキュアハードウェアに、データを保護する鍵がなくなっています。一部のシステムアップデートやセキュリティのリセット後に起こることがあります。リカバリーコードを保存している場合は、今すぐ使用できます。</string>
+    <string name="security_storage_error_keystore_unavailable">この端末のセキュアハードウェアが応答しませんでした。通常は一時的な問題です。</string>
+    <string name="security_storage_error_storage">鍵ファイルを読み取れませんでした。端末に空き容量があることを確認して、もう一度お試しください。</string>
+    <string name="security_storage_error_migration_failed">既存のデータを暗号化ストレージに移行できませんでした。データはそのまま残っています。端末に空き容量があることを確認して、もう一度お試しください。</string>
+    <string name="security_storage_error_nothing_deleted">何も削除されていません。</string>
+    <string name="security_action_retry">再試行</string>
+    <string name="security_action_use_recovery_code">リカバリーコードを使用</string>
+    <string name="security_action_start_over">最初からやり直す</string>
+    <string name="security_recovery_dialog_title">リカバリーコード</string>
+    <string name="security_recovery_dialog_subtitle">リカバリーの設定時に保存した 28 文字のコードを入力してください。</string>
+    <string name="security_recovery_dialog_label">リカバリーコード</string>
+    <string name="security_recovery_dialog_confirm">ロック解除</string>
+    <string name="security_recovery_error_malformed">有効なリカバリーコードではありません。コードは 28 文字の英数字です。</string>
+    <string name="security_recovery_error_wrong">このコードではデータのロックを解除できません。</string>
+    <string name="security_recovery_error_not_configured">このデータにはリカバリーコードが設定されていません。</string>
+    <string name="security_recovery_error_failed">データのロックは解除されましたが、新しい鍵を保存できませんでした。もう一度お試しください。</string>
+    <string name="security_start_over_title">空のデータで最初からやり直しますか？</string>
+    <string name="security_start_over_message">現在のデータは別の場所に移され、アプリは空の状態で起動します。古いファイルは削除されずに残りますが、元の鍵またはリカバリーコードがないと開けません。</string>
+    <string name="security_start_over_confirm">最初からやり直す</string>
+</resources>

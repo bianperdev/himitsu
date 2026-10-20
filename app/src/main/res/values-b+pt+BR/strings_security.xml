@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Não é possível abrir seus dados</string>
+    <string name="security_storage_error_key_file_missing">O arquivo de chave que protege seus dados está faltando. Sem ele, os dados criptografados não podem ser lidos.</string>
+    <string name="security_storage_error_key_file_corrupt">O arquivo de chave que protege seus dados está danificado.</string>
+    <string name="security_storage_error_keystore_key_lost">O hardware seguro deste dispositivo não tem mais a chave que protege seus dados. Isso pode acontecer após algumas atualizações do sistema ou uma redefinição de segurança. Se você salvou um código de recuperação, pode usá-lo agora.</string>
+    <string name="security_storage_error_keystore_unavailable">O hardware seguro deste dispositivo não respondeu. Isso costuma ser temporário.</string>
+    <string name="security_storage_error_storage">Não foi possível ler o arquivo de chave. Verifique se o dispositivo tem espaço livre e tente novamente.</string>
+    <string name="security_storage_error_migration_failed">Não foi possível mover seus dados existentes para o armazenamento criptografado. Eles continuam intactos. Verifique se o dispositivo tem espaço livre e tente novamente.</string>
+    <string name="security_storage_error_nothing_deleted">Nada foi excluído.</string>
+    <string name="security_action_retry">Tentar novamente</string>
+    <string name="security_action_use_recovery_code">Usar código de recuperação</string>
+    <string name="security_action_start_over">Começar do zero</string>
+    <string name="security_recovery_dialog_title">Código de recuperação</string>
+    <string name="security_recovery_dialog_subtitle">Digite o código de 28 caracteres que você salvou ao configurar a recuperação.</string>
+    <string name="security_recovery_dialog_label">Código de recuperação</string>
+    <string name="security_recovery_dialog_confirm">Desbloquear</string>
+    <string name="security_recovery_error_malformed">Este não é um código de recuperação válido. Ele tem 28 letras e números.</string>
+    <string name="security_recovery_error_wrong">Este código não desbloqueia seus dados.</string>
+    <string name="security_recovery_error_not_configured">Nenhum código de recuperação foi configurado para estes dados.</string>
+    <string name="security_recovery_error_failed">Seus dados foram desbloqueados, mas não foi possível salvar a nova chave. Tente novamente.</string>
+    <string name="security_start_over_title">Começar do zero sem dados?</string>
+    <string name="security_start_over_message">Seus dados atuais serão deixados de lado e o app começará vazio. Os arquivos antigos são mantidos, não excluídos, mas não podem ser abertos sem a chave original ou um código de recuperação.</string>
+    <string name="security_start_over_confirm">Começar do zero</string>
+</resources>

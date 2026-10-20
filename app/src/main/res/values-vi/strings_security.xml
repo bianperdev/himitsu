@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Không thể mở dữ liệu của bạn</string>
+    <string name="security_storage_error_key_file_missing">Thiếu tệp khóa bảo vệ dữ liệu của bạn. Nếu không có tệp này, dữ liệu đã mã hóa sẽ không thể đọc được.</string>
+    <string name="security_storage_error_key_file_corrupt">Tệp khóa bảo vệ dữ liệu của bạn đã bị hỏng.</string>
+    <string name="security_storage_error_keystore_key_lost">Phần cứng bảo mật của thiết bị này không còn khóa bảo vệ dữ liệu của bạn. Điều này có thể xảy ra sau một số bản cập nhật hệ thống hoặc khi đặt lại bảo mật. Nếu bạn đã lưu mã khôi phục, bạn có thể dùng mã đó ngay bây giờ.</string>
+    <string name="security_storage_error_keystore_unavailable">Phần cứng bảo mật của thiết bị này không phản hồi. Thường đây chỉ là sự cố tạm thời.</string>
+    <string name="security_storage_error_storage">Không thể đọc tệp khóa. Hãy kiểm tra thiết bị còn dung lượng trống rồi thử lại.</string>
+    <string name="security_storage_error_migration_failed">Không thể chuyển dữ liệu hiện có sang bộ nhớ đã mã hóa. Dữ liệu vẫn còn nguyên vẹn. Hãy kiểm tra thiết bị còn dung lượng trống rồi thử lại.</string>
+    <string name="security_storage_error_nothing_deleted">Chưa có gì bị xóa.</string>
+    <string name="security_action_retry">Thử lại</string>
+    <string name="security_action_use_recovery_code">Dùng mã khôi phục</string>
+    <string name="security_action_start_over">Bắt đầu lại</string>
+    <string name="security_recovery_dialog_title">Mã khôi phục</string>
+    <string name="security_recovery_dialog_subtitle">Nhập mã 28 ký tự mà bạn đã lưu khi thiết lập khôi phục.</string>
+    <string name="security_recovery_dialog_label">Mã khôi phục</string>
+    <string name="security_recovery_dialog_confirm">Mở khóa</string>
+    <string name="security_recovery_error_malformed">Đây không phải là mã khôi phục hợp lệ. Mã gồm 28 chữ cái và chữ số.</string>
+    <string name="security_recovery_error_wrong">Mã này không mở khóa được dữ liệu của bạn.</string>
+    <string name="security_recovery_error_not_configured">Chưa thiết lập mã khôi phục cho dữ liệu này.</string>
+    <string name="security_recovery_error_failed">Dữ liệu của bạn đã được mở khóa nhưng không thể lưu khóa mới. Hãy thử lại.</string>
+    <string name="security_start_over_title">Bắt đầu lại với dữ liệu trống?</string>
+    <string name="security_start_over_message">Dữ liệu hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn được giữ lại, không bị xóa, nhưng không thể mở nếu không có khóa gốc hoặc mã khôi phục.</string>
+    <string name="security_start_over_confirm">Bắt đầu lại</string>
+</resources>
