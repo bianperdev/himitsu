@@ -14,7 +14,22 @@ data class GgufMetadata(
     val trainedContextTokens: Int,
     val hasChatTemplate: Boolean,
     /** `general.file_type`, the llama.cpp quantization id; -1 when missing. */
-    val fileType: Int
+    val fileType: Int,
+    /** Shape of the attention layers, for memory estimates; 0 when the header does not say. */
+    val attention: GgufAttentionShape = GgufAttentionShape()
+)
+
+/** The parts of a model's shape that decide how much memory its KV cache takes. */
+data class GgufAttentionShape(
+    val blockCount: Int = 0,
+    val headCount: Int = 0,
+    /** Key-value heads; models with grouped-query attention have fewer than [headCount]. */
+    val headCountKv: Int = 0,
+    val embeddingLength: Int = 0,
+    /** Size of one key head; 0 means embeddingLength / headCount. */
+    val keyLength: Int = 0,
+    /** Size of one value head; 0 means the same as the key head. */
+    val valueLength: Int = 0
 )
 
 /** The file is not a GGUF model this app can read. */
@@ -84,6 +99,9 @@ object GgufHeaderReader {
                 }
             }
             val architecture = strings["general.architecture"]
+            val number = { suffix: String ->
+                architecture?.let { numbers["$it.$suffix"] }?.coerceIn(0, Int.MAX_VALUE.toLong())?.toInt() ?: 0
+            }
             return GgufMetadata(
                 version = version,
                 architecture = architecture,
@@ -92,7 +110,15 @@ object GgufHeaderReader {
                     ?.let { numbers["$it.context_length"] }
                     ?.coerceIn(0, Int.MAX_VALUE.toLong())?.toInt() ?: 0,
                 hasChatTemplate = hasChatTemplate,
-                fileType = numbers["general.file_type"]?.toInt() ?: -1
+                fileType = numbers["general.file_type"]?.toInt() ?: -1,
+                attention = GgufAttentionShape(
+                    blockCount = number("block_count"),
+                    headCount = number("attention.head_count"),
+                    headCountKv = number("attention.head_count_kv"),
+                    embeddingLength = number("embedding_length"),
+                    keyLength = number("attention.key_length"),
+                    valueLength = number("attention.value_length")
+                )
             )
         } catch (_: EOFException) {
             throw InvalidGgufException("Truncated GGUF header")
