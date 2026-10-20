@@ -11,9 +11,10 @@ Approved by the maintainer on 2026-10-20. This document records the decisions of
 | API keys | Stay in `llm_providers.apiKey`, protected by the encrypted database. No schema change. |
 | Device without a screen lock | The app lock lets the user in and shows a persistent warning (removing the system screen lock already requires the credential). |
 | Plain database from earlier Himitsu builds | Migrated with `sqlcipher_export`, verified, then the plain files are deleted. |
-| Avatars and images (P-06) | Encrypted in this track. |
+| Avatars and images (P-06) | Deferred to a later branch (maintainer decision, 2026-10-20). |
 | P-15 encrypted export | Deferred, tracked in ROADMAP.md. |
 | P-16 OpenRouter routing ID | Off by default, opt-in. |
+| User-installed CAs (P-09) | Not trusted; only system CAs. |
 
 ### SQLCipher
 

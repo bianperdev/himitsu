@@ -204,10 +204,10 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 | P-03 | Resolved | `a39fd4e`, `022e835` | `allowBackup="false"`; every domain excluded from full backup, cloud backup and device transfer. |
 | P-04 | Resolved | `1bb63d2` | Header values are masked in the editor; stored inside the encrypted database. |
 | P-05 | Resolved | `309abf8` | `AppModel` strings are sealed (AES-GCM, key derived from the master key). Numbers and booleans stay plain. |
-| P-06 | **Open** | | Needs changes outside this track's files (`CharacterCardRepository`, `ChatArchiveRepository`); plan in "Follow-ups", awaiting approval. |
+| P-06 | Deferred (decision) | | Maintainer decision (2026-10-20): done later in its own branch, following the plan in "Follow-ups". Avatars and chat images stay plain until then. |
 | P-07 | Resolved | `c7b1141`, `7d27cba` | Encrypted database, credentials redacted, 7 days / 200 entries, wiped when debug mode is turned off. |
 | P-08 | Resolved | `46a3959` | `x-goog-api-key` header. |
-| P-09 | Partly | `f24e6ba` | Warning when saving a plain-HTTP remote provider. Clear text stays allowed for LAN servers. Trust in user-installed CAs is unchanged: open decision. |
+| P-09 | Resolved (decision) | `f24e6ba`, `3fa3047` | Warning when saving a plain-HTTP remote provider; clear text stays allowed for LAN servers. Only system CAs are trusted (maintainer decision, 2026-10-20). |
 | P-10 | Partly | `0d782e4` | Leftover request files are deleted at startup. The file is still plain while a request is in flight; encrypting it needs a change in `MultimodalWireCodec` (local-inference). |
 | P-11 | Resolved | `c3b12b1` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs. |
 | P-12 | Resolved | `655a726` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on Android 13+. |
@@ -219,9 +219,8 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 
 ### Follow-ups (feat/security)
 
-- **P-06 plan (needs approval):** encrypt `app_repository/` files with AES-256-GCM in 64 KiB segments under the `Files` key (no new dependency); name files by HMAC instead of the plain SHA-256 so names do not reveal known images; replace `File`-based leases with streams (`BitmapFactory.decodeStream`, `ExifInterface(InputStream)`); adapt `MessageImageRuntime`, `CharacterCardRepository.exportPng` and `ChatArchiveRepository` (narrow edits outside this track); migrate existing files in the background at startup.
+- **P-06 plan (deferred by the maintainer):** encrypt `app_repository/` files with AES-256-GCM in 64 KiB segments under the `Files` key (no new dependency); name files by HMAC instead of the plain SHA-256 so names do not reveal known images; replace `File`-based leases with streams (`BitmapFactory.decodeStream`, `ExifInterface(InputStream)`); adapt `MessageImageRuntime`, `CharacterCardRepository.exportPng` and `ChatArchiveRepository` (narrow edits outside this track); migrate existing files in the background at startup.
 - **P-10 rest:** write the image request file with an ephemeral in-memory key and decrypt while streaming (`MultimodalWireCodec`, local-inference).
-- **User-installed CAs** (`network_security_config.xml`): keep trusting them (needed for some self-hosted setups, allows interception by anyone who installs a CA) or trust only system CAs. Maintainer decision.
 - **Paranoid mode:** a PIN or passphrase key slot with Argon2id (`argon2kt`, MIT); the key file format already supports extra slots.
 - **Keystore error screen:** add an option to export the encrypted files through the system file picker, and a way to delete `.unrecoverable-*` copies left by "start over".
 - **F-Droid:** SQLCipher ships prebuilt native libraries from Maven Central; confirm the F-Droid scanner accepts them or build `sqlcipher-android` from source in the recipe (release-readiness).
