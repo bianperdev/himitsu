@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "me.kafuuneko.rpclient"
+        applicationId = "dev.bianperdev.himitsu"
         minSdk = 26
         targetSdk = 36
         versionCode = 20260301
