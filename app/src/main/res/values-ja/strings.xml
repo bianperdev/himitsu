@@ -10,7 +10,7 @@
     <string name="image_crop_shape_squircle">角丸四角</string>
     <string name="image_crop_shape_circle">円形</string>
     <string name="about">アプリについて</string>
-    <string name="about_desc">アプリのバージョン、メール、およびリポジトリ</string>
+    <string name="about_desc">アプリのバージョン、オープンソースライセンス、クレジット</string>
     <string name="unknown_version">不明なバージョン</string>
     <string name="developer_contact">開発者の連絡先</string>
     <string name="tech_stack_label">技術スタック</string>

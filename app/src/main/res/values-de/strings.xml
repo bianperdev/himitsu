@@ -10,7 +10,7 @@
     <string name="image_crop_shape_squircle">Abgerundet</string>
     <string name="image_crop_shape_circle">Kreis</string>
     <string name="about">Über</string>
-    <string name="about_desc">App-Version, E-Mail und Repository</string>
+    <string name="about_desc">App-Version, Open-Source-Lizenzen und Danksagungen</string>
     <string name="unknown_version">Unbekannte Version</string>
     <string name="developer_contact">Entwicklerkontakt</string>
     <string name="tech_stack_label">Technologiestapel</string>

@@ -9,7 +9,7 @@
     <string name="image_crop_shape_squircle">둥근 사각형</string>
     <string name="image_crop_shape_circle">원형</string>
     <string name="about">정보</string>
-    <string name="about_desc">앱 버전, 이메일 및 저장소</string>
+    <string name="about_desc">앱 버전, 오픈소스 라이선스 및 크레딧</string>
     <string name="unknown_version">알 수 없는 버전</string>
     <string name="developer_contact">개발자 연락처</string>
     <string name="tech_stack_label">기술 스택</string>
