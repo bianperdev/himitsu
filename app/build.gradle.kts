@@ -30,8 +30,12 @@ android {
         applicationId = "dev.bianperdev.himitsu"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20260301
-        versionName = "2026.3.1"
+        // Himitsu: SemVer 0.x. versionCode = 30000000 + major * 10000 + minor * 100 + patch, so it
+        // stays above every inherited RPClient code (20260301): installed builds update, and the
+        // inherited data upgrade steps keyed by versionCode still run. Literal values on purpose,
+        // so F-Droid's update checker can read them.
+        versionCode = 30000100
+        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
