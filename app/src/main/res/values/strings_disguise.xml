@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Decimal point</string>
     <string name="disguise_calc_error_divide_by_zero">Can\'t divide by 0</string>
     <string name="disguise_calc_error_too_large">Number too large</string>
+    <string name="disguise_settings_title">Disguise</string>
+    <string name="disguise_settings_desc">Make Himitsu look like an everyday app</string>
+    <string name="disguise_settings_about_title">Discretion, not security</string>
+    <string name="disguise_settings_about_text">Disguise changes the icon and name so Himitsu goes unnoticed at a glance. It is not a security feature: your chats are protected by encryption and the app lock. Himitsu still shows its name in Settings › Apps, battery and storage usage, your store history and some notifications. Anyone with technical access to the phone can see it is installed.</string>
+    <string name="disguise_settings_needs_lock_title">Turn on the app lock first</string>
+    <string name="disguise_settings_needs_lock_text">Disguise needs the app lock and a screen lock on this device, so the disguise always asks for authentication. Tap to open Security.</string>
+    <string name="disguise_settings_switch">Disguise</string>
+    <string name="disguise_settings_off">Off</string>
+    <string name="disguise_settings_lock_off_title">The app lock is off</string>
+    <string name="disguise_settings_lock_off_text">Your code still asks for authentication, but when you come back to the app you will see Himitsu instead of the disguise. Tap to open Security.</string>
+    <string name="disguise_settings_recovery_title">If you forget how to get in</string>
+    <string name="disguise_code_title">Choose a code</string>
+    <string name="disguise_code_hint">4 to 10 digits. In the calculator, type it and tap “=”.</string>
+    <string name="disguise_code_field">Code</string>
+    <string name="disguise_code_repeat_field">Repeat the code</string>
+    <string name="disguise_code_error_length">Use 4 to 10 digits.</string>
+    <string name="disguise_code_error_mismatch">The codes don\'t match.</string>
+    <string name="disguise_practice_title">Try your code</string>
+    <string name="disguise_practice_text">Type your code and tap “=”, as you will in the calculator.</string>
+    <string name="disguise_practice_done">That\'s it. Tap Continue to apply the disguise.</string>
+    <string name="disguise_practice_continue">Continue</string>
+    <string name="disguise_auth_title">Verify it\'s you</string>
+    <string name="disguise_auth_subtitle">Use your screen lock to continue</string>
 </resources>

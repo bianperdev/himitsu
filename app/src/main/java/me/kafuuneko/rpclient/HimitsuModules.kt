@@ -15,5 +15,5 @@ import org.koin.core.module.Module
 internal val himitsuModules: List<Module> = listOf(
     securityModule, // feat/security
     localInferenceModule, // feat/local-inference
-    disguiseModule, // feat/disguise
+    disguiseModule, // feat/disguise: after securityModule, it rebinds UnlockEntry
 )

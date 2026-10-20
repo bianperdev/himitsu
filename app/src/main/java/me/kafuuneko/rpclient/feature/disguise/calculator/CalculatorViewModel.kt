@@ -62,12 +62,16 @@ class CalculatorViewModel : CoreViewModelWithEvent<CalculatorUiIntent, Calculato
     }
 
     private fun render(engine: CalculatorState) {
-        CalculatorUiState.Normal(
-            engine = engine,
-            expression = mFormat.expression(engine.tokens),
-            preview = CalculatorEngine.preview(engine)?.let(mFormat::result),
-            error = engine.error,
-            decimalSeparator = mFormat.decimalSeparator
-        ).setup()
+        calculatorUiState(engine, mFormat).setup()
     }
 }
+
+/** The calculator display for [engine], formatted with [format]. Shared with the practice step of the settings. */
+fun calculatorUiState(engine: CalculatorState, format: CalculatorFormat): CalculatorUiState.Normal =
+    CalculatorUiState.Normal(
+        engine = engine,
+        expression = format.expression(engine.tokens),
+        preview = CalculatorEngine.preview(engine)?.let(format::result),
+        error = engine.error,
+        decimalSeparator = format.decimalSeparator
+    )

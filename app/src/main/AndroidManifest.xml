@@ -175,6 +175,11 @@
             android:name=".feature.disguise.DisguiseActivity"
             android:exported="false"
             android:theme="@style/Theme.Disguise" />
+        <activity
+            android:name=".feature.disguise.settings.DisguiseSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient"
+            android:windowSoftInputMode="adjustResize" />
         <activity-alias
             android:name=".launcher.HimitsuLauncher"
             android:enabled="true"

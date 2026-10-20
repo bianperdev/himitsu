@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Pemisah desimal</string>
     <string name="disguise_calc_error_divide_by_zero">Tidak bisa dibagi 0</string>
     <string name="disguise_calc_error_too_large">Angka terlalu besar</string>
+    <string name="disguise_settings_title">Penyamaran</string>
+    <string name="disguise_settings_desc">Buat Himitsu terlihat seperti aplikasi biasa</string>
+    <string name="disguise_settings_about_title">Kerahasiaan, bukan keamanan</string>
+    <string name="disguise_settings_about_text">Penyamaran mengubah ikon dan nama agar Himitsu tidak mencolok sekilas. Ini bukan fitur keamanan: chat Anda dilindungi enkripsi dan kunci aplikasi. Himitsu tetap tampil dengan namanya di Setelan › Aplikasi, penggunaan baterai dan penyimpanan, riwayat toko, dan beberapa notifikasi. Siapa pun dengan akses teknis ke ponsel bisa melihat bahwa aplikasi ini terpasang.</string>
+    <string name="disguise_settings_needs_lock_title">Aktifkan kunci aplikasi dulu</string>
+    <string name="disguise_settings_needs_lock_text">Penyamaran memerlukan kunci aplikasi dan kunci layar di perangkat, agar penyamaran selalu meminta autentikasi. Ketuk untuk membuka Keamanan.</string>
+    <string name="disguise_settings_switch">Penyamaran</string>
+    <string name="disguise_settings_off">Nonaktif</string>
+    <string name="disguise_settings_lock_off_title">Kunci aplikasi nonaktif</string>
+    <string name="disguise_settings_lock_off_text">Kode Anda tetap meminta autentikasi, tetapi saat kembali ke aplikasi Anda akan melihat Himitsu, bukan penyamaran. Ketuk untuk membuka Keamanan.</string>
+    <string name="disguise_settings_recovery_title">Jika lupa cara masuk</string>
+    <string name="disguise_code_title">Pilih kode</string>
+    <string name="disguise_code_hint">4 sampai 10 angka. Di kalkulator, ketik lalu ketuk “=”.</string>
+    <string name="disguise_code_field">Kode</string>
+    <string name="disguise_code_repeat_field">Ulangi kode</string>
+    <string name="disguise_code_error_length">Gunakan 4 sampai 10 angka.</string>
+    <string name="disguise_code_error_mismatch">Kode tidak cocok.</string>
+    <string name="disguise_practice_title">Coba kode Anda</string>
+    <string name="disguise_practice_text">Ketik kode Anda lalu ketuk “=”, seperti nanti di kalkulator.</string>
+    <string name="disguise_practice_done">Benar. Ketuk Lanjutkan untuk menerapkan penyamaran.</string>
+    <string name="disguise_practice_continue">Lanjutkan</string>
+    <string name="disguise_auth_title">Verifikasi bahwa ini Anda</string>
+    <string name="disguise_auth_subtitle">Gunakan kunci layar untuk melanjutkan</string>
 </resources>

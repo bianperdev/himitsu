@@ -10,10 +10,12 @@ sealed class DisguiseUiState {
     /**
      * @property appearance the decoy on screen
      * @property versionName shown in About, where the recovery gesture lives
+     * @property covering the decoy hides a Himitsu page because the app locked
      */
     data class Normal(
         val appearance: Appearance,
         val versionName: String,
+        val covering: Boolean,
         val menuExpanded: Boolean = false,
         val aboutVisible: Boolean = false
     ) : DisguiseUiState()

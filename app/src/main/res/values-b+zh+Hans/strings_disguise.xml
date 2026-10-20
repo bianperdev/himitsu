@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">小数点</string>
     <string name="disguise_calc_error_divide_by_zero">不能除以 0</string>
     <string name="disguise_calc_error_too_large">数字过大</string>
+    <string name="disguise_settings_title">伪装</string>
+    <string name="disguise_settings_desc">让 Himitsu 看起来像普通应用</string>
+    <string name="disguise_settings_about_title">用于低调，而非安全</string>
+    <string name="disguise_settings_about_text">伪装会更改图标和名称，让 Himitsu 不会一眼被认出。它不是安全功能：你的聊天由加密和应用锁保护。在“设置 › 应用”、电池和存储用量、商店记录以及部分通知中，Himitsu 仍会显示其名称。能以技术手段访问手机的人可以看到它已安装。</string>
+    <string name="disguise_settings_needs_lock_title">请先开启应用锁</string>
+    <string name="disguise_settings_needs_lock_text">伪装需要应用锁和设备屏幕锁，这样伪装界面始终会要求验证身份。点按打开“安全”。</string>
+    <string name="disguise_settings_switch">伪装</string>
+    <string name="disguise_settings_off">已关闭</string>
+    <string name="disguise_settings_lock_off_title">应用锁已关闭</string>
+    <string name="disguise_settings_lock_off_text">你的代码仍会要求验证身份，但回到应用时你会看到 Himitsu 而不是伪装界面。点按打开“安全”。</string>
+    <string name="disguise_settings_recovery_title">如果忘了怎么进入</string>
+    <string name="disguise_code_title">设置代码</string>
+    <string name="disguise_code_hint">4 到 10 位数字。在计算器中输入后点按“=”。</string>
+    <string name="disguise_code_field">代码</string>
+    <string name="disguise_code_repeat_field">再次输入代码</string>
+    <string name="disguise_code_error_length">请使用 4 到 10 位数字。</string>
+    <string name="disguise_code_error_mismatch">两次输入的代码不一致。</string>
+    <string name="disguise_practice_title">试试你的代码</string>
+    <string name="disguise_practice_text">像以后在计算器中那样，输入代码并点按“=”。</string>
+    <string name="disguise_practice_done">没错。点按“继续”以应用伪装。</string>
+    <string name="disguise_practice_continue">继续</string>
+    <string name="disguise_auth_title">验证你的身份</string>
+    <string name="disguise_auth_subtitle">使用屏幕锁继续</string>
 </resources>

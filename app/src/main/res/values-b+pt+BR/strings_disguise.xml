@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Separador decimal</string>
     <string name="disguise_calc_error_divide_by_zero">Não é possível dividir por 0</string>
     <string name="disguise_calc_error_too_large">Número muito grande</string>
+    <string name="disguise_settings_title">Disfarce</string>
+    <string name="disguise_settings_desc">Faça o Himitsu parecer um app comum</string>
+    <string name="disguise_settings_about_title">Discrição, não segurança</string>
+    <string name="disguise_settings_about_text">O disfarce muda o ícone e o nome para que o Himitsu passe despercebido numa olhada. Não é um recurso de segurança: suas conversas são protegidas pela criptografia e pelo bloqueio do app. O Himitsu continua aparecendo com o nome dele em Configurações › Apps, no uso de bateria e armazenamento, no histórico da loja e em algumas notificações. Quem tiver acesso técnico ao celular pode ver que ele está instalado.</string>
+    <string name="disguise_settings_needs_lock_title">Ative primeiro o bloqueio do app</string>
+    <string name="disguise_settings_needs_lock_text">O disfarce precisa do bloqueio do app e de um bloqueio de tela no aparelho, para que o disfarce sempre peça autenticação. Toque para abrir Segurança.</string>
+    <string name="disguise_settings_switch">Disfarce</string>
+    <string name="disguise_settings_off">Desativado</string>
+    <string name="disguise_settings_lock_off_title">O bloqueio do app está desativado</string>
+    <string name="disguise_settings_lock_off_text">Seu código ainda pede autenticação, mas ao voltar para o app você verá o Himitsu em vez do disfarce. Toque para abrir Segurança.</string>
+    <string name="disguise_settings_recovery_title">Se esquecer como entrar</string>
+    <string name="disguise_code_title">Escolha um código</string>
+    <string name="disguise_code_hint">De 4 a 10 dígitos. Na calculadora, digite e toque em “=”.</string>
+    <string name="disguise_code_field">Código</string>
+    <string name="disguise_code_repeat_field">Repita o código</string>
+    <string name="disguise_code_error_length">Use de 4 a 10 dígitos.</string>
+    <string name="disguise_code_error_mismatch">Os códigos não coincidem.</string>
+    <string name="disguise_practice_title">Teste seu código</string>
+    <string name="disguise_practice_text">Digite seu código e toque em “=”, como fará na calculadora.</string>
+    <string name="disguise_practice_done">Pronto. Toque em Continuar para aplicar o disfarce.</string>
+    <string name="disguise_practice_continue">Continuar</string>
+    <string name="disguise_auth_title">Confirme que é você</string>
+    <string name="disguise_auth_subtitle">Use seu bloqueio de tela para continuar</string>
 </resources>

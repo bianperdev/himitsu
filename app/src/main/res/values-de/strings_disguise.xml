@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Dezimaltrennzeichen</string>
     <string name="disguise_calc_error_divide_by_zero">Division durch 0 nicht möglich</string>
     <string name="disguise_calc_error_too_large">Zahl zu groß</string>
+    <string name="disguise_settings_title">Tarnung</string>
+    <string name="disguise_settings_desc">Lass Himitsu wie eine Alltags-App aussehen</string>
+    <string name="disguise_settings_about_title">Diskretion, keine Sicherheit</string>
+    <string name="disguise_settings_about_text">Die Tarnung ändert Symbol und Namen, damit Himitsu auf den ersten Blick nicht auffällt. Sie ist keine Sicherheitsfunktion: Deine Chats schützen die Verschlüsselung und die App-Sperre. Himitsu erscheint weiterhin mit seinem Namen unter Einstellungen › Apps, bei Akku- und Speichernutzung, im Store-Verlauf und in manchen Benachrichtigungen. Mit technischem Zugriff auf das Handy lässt sich sehen, dass die App installiert ist.</string>
+    <string name="disguise_settings_needs_lock_title">Aktiviere zuerst die App-Sperre</string>
+    <string name="disguise_settings_needs_lock_text">Die Tarnung braucht die App-Sperre und eine Displaysperre auf dem Gerät, damit die Tarnung immer eine Authentifizierung verlangt. Tippe, um Sicherheit zu öffnen.</string>
+    <string name="disguise_settings_switch">Tarnung</string>
+    <string name="disguise_settings_off">Aus</string>
+    <string name="disguise_settings_lock_off_title">Die App-Sperre ist aus</string>
+    <string name="disguise_settings_lock_off_text">Dein Code verlangt weiterhin eine Authentifizierung, aber wenn du zur App zurückkehrst, siehst du Himitsu statt der Tarnung. Tippe, um Sicherheit zu öffnen.</string>
+    <string name="disguise_settings_recovery_title">Falls du vergisst, wie du hineinkommst</string>
+    <string name="disguise_code_title">Wähle einen Code</string>
+    <string name="disguise_code_hint">4 bis 10 Ziffern. Gib ihn im Rechner ein und tippe auf „=“.</string>
+    <string name="disguise_code_field">Code</string>
+    <string name="disguise_code_repeat_field">Code wiederholen</string>
+    <string name="disguise_code_error_length">Verwende 4 bis 10 Ziffern.</string>
+    <string name="disguise_code_error_mismatch">Die Codes stimmen nicht überein.</string>
+    <string name="disguise_practice_title">Teste deinen Code</string>
+    <string name="disguise_practice_text">Gib deinen Code ein und tippe auf „=“, wie später im Rechner.</string>
+    <string name="disguise_practice_done">Genau so. Tippe auf Weiter, um die Tarnung anzuwenden.</string>
+    <string name="disguise_practice_continue">Weiter</string>
+    <string name="disguise_auth_title">Bestätige deine Identität</string>
+    <string name="disguise_auth_subtitle">Verwende deine Displaysperre, um fortzufahren</string>
 </resources>

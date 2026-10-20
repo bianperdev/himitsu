@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Separatore decimale</string>
     <string name="disguise_calc_error_divide_by_zero">Impossibile dividere per 0</string>
     <string name="disguise_calc_error_too_large">Numero troppo grande</string>
+    <string name="disguise_settings_title">Camuffamento</string>
+    <string name="disguise_settings_desc">Fai sembrare Himitsu un\'app di tutti i giorni</string>
+    <string name="disguise_settings_about_title">Discrezione, non sicurezza</string>
+    <string name="disguise_settings_about_text">Il camuffamento cambia icona e nome perché Himitsu passi inosservata a un\'occhiata. Non è una funzione di sicurezza: le tue chat sono protette dalla crittografia e dal blocco dell\'app. Himitsu continua a comparire con il suo nome in Impostazioni › App, nell\'uso di batteria e memoria, nella cronologia dello store e in alcune notifiche. Chi ha accesso tecnico al telefono può vedere che è installata.</string>
+    <string name="disguise_settings_needs_lock_title">Attiva prima il blocco dell\'app</string>
+    <string name="disguise_settings_needs_lock_text">Il camuffamento richiede il blocco dell\'app e un blocco schermo sul dispositivo, così il camuffamento chiede sempre l\'autenticazione. Tocca per aprire Sicurezza.</string>
+    <string name="disguise_settings_switch">Camuffamento</string>
+    <string name="disguise_settings_off">Disattivato</string>
+    <string name="disguise_settings_lock_off_title">Il blocco dell\'app è disattivato</string>
+    <string name="disguise_settings_lock_off_text">Il tuo codice chiede ancora l\'autenticazione, ma tornando all\'app vedrai Himitsu invece del camuffamento. Tocca per aprire Sicurezza.</string>
+    <string name="disguise_settings_recovery_title">Se dimentichi come entrare</string>
+    <string name="disguise_code_title">Scegli un codice</string>
+    <string name="disguise_code_hint">Da 4 a 10 cifre. Nella calcolatrice, digitalo e tocca “=”.</string>
+    <string name="disguise_code_field">Codice</string>
+    <string name="disguise_code_repeat_field">Ripeti il codice</string>
+    <string name="disguise_code_error_length">Usa da 4 a 10 cifre.</string>
+    <string name="disguise_code_error_mismatch">I codici non coincidono.</string>
+    <string name="disguise_practice_title">Prova il tuo codice</string>
+    <string name="disguise_practice_text">Digita il tuo codice e tocca “=”, come farai nella calcolatrice.</string>
+    <string name="disguise_practice_done">Perfetto. Tocca Continua per applicare il camuffamento.</string>
+    <string name="disguise_practice_continue">Continua</string>
+    <string name="disguise_auth_title">Verifica la tua identità</string>
+    <string name="disguise_auth_subtitle">Usa il blocco schermo per continuare</string>
 </resources>

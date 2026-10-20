@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Dấu thập phân</string>
     <string name="disguise_calc_error_divide_by_zero">Không thể chia cho 0</string>
     <string name="disguise_calc_error_too_large">Số quá lớn</string>
+    <string name="disguise_settings_title">Ngụy trang</string>
+    <string name="disguise_settings_desc">Làm Himitsu trông như một ứng dụng thường ngày</string>
+    <string name="disguise_settings_about_title">Kín đáo, không phải bảo mật</string>
+    <string name="disguise_settings_about_text">Ngụy trang đổi biểu tượng và tên để Himitsu không gây chú ý khi nhìn qua. Đây không phải tính năng bảo mật: cuộc trò chuyện của bạn được bảo vệ bằng mã hóa và khóa ứng dụng. Himitsu vẫn hiện tên trong Cài đặt › Ứng dụng, mức dùng pin và bộ nhớ, lịch sử cửa hàng và một số thông báo. Người có quyền truy cập kỹ thuật vào điện thoại có thể thấy ứng dụng đã được cài.</string>
+    <string name="disguise_settings_needs_lock_title">Hãy bật khóa ứng dụng trước</string>
+    <string name="disguise_settings_needs_lock_text">Ngụy trang cần khóa ứng dụng và khóa màn hình trên thiết bị, để màn hình ngụy trang luôn yêu cầu xác thực. Chạm để mở Bảo mật.</string>
+    <string name="disguise_settings_switch">Ngụy trang</string>
+    <string name="disguise_settings_off">Tắt</string>
+    <string name="disguise_settings_lock_off_title">Khóa ứng dụng đang tắt</string>
+    <string name="disguise_settings_lock_off_text">Mã của bạn vẫn yêu cầu xác thực, nhưng khi quay lại ứng dụng bạn sẽ thấy Himitsu thay vì màn hình ngụy trang. Chạm để mở Bảo mật.</string>
+    <string name="disguise_settings_recovery_title">Nếu quên cách vào</string>
+    <string name="disguise_code_title">Chọn mã</string>
+    <string name="disguise_code_hint">4 đến 10 chữ số. Trong máy tính, nhập mã rồi chạm “=”.</string>
+    <string name="disguise_code_field">Mã</string>
+    <string name="disguise_code_repeat_field">Nhập lại mã</string>
+    <string name="disguise_code_error_length">Hãy dùng 4 đến 10 chữ số.</string>
+    <string name="disguise_code_error_mismatch">Hai mã không khớp.</string>
+    <string name="disguise_practice_title">Thử mã của bạn</string>
+    <string name="disguise_practice_text">Nhập mã rồi chạm “=”, giống như bạn sẽ làm trong máy tính.</string>
+    <string name="disguise_practice_done">Đúng rồi. Chạm Tiếp tục để áp dụng ngụy trang.</string>
+    <string name="disguise_practice_continue">Tiếp tục</string>
+    <string name="disguise_auth_title">Xác minh đó là bạn</string>
+    <string name="disguise_auth_subtitle">Dùng khóa màn hình để tiếp tục</string>
 </resources>

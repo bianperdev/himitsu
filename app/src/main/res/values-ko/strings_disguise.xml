@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">소수점</string>
     <string name="disguise_calc_error_divide_by_zero">0으로 나눌 수 없습니다</string>
     <string name="disguise_calc_error_too_large">숫자가 너무 큽니다</string>
+    <string name="disguise_settings_title">위장</string>
+    <string name="disguise_settings_desc">Himitsu를 평범한 앱처럼 보이게 합니다</string>
+    <string name="disguise_settings_about_title">보안이 아닌 눈가림</string>
+    <string name="disguise_settings_about_text">위장은 아이콘과 이름을 바꿔 한눈에 Himitsu로 보이지 않게 합니다. 보안 기능은 아닙니다. 채팅은 암호화와 앱 잠금이 보호합니다. 설정 › 애플리케이션, 배터리 및 저장공간 사용량, 스토어 기록, 일부 알림에는 여전히 Himitsu 이름이 표시됩니다. 휴대전화에 기술적으로 접근할 수 있는 사람은 설치 여부를 알 수 있습니다.</string>
+    <string name="disguise_settings_needs_lock_title">먼저 앱 잠금을 켜세요</string>
+    <string name="disguise_settings_needs_lock_text">위장을 쓰려면 앱 잠금과 기기 화면 잠금이 필요합니다. 그래야 위장 화면이 항상 인증을 요구합니다. 눌러서 보안을 엽니다.</string>
+    <string name="disguise_settings_switch">위장</string>
+    <string name="disguise_settings_off">꺼짐</string>
+    <string name="disguise_settings_lock_off_title">앱 잠금이 꺼져 있습니다</string>
+    <string name="disguise_settings_lock_off_text">코드는 여전히 인증을 요구하지만, 앱으로 돌아오면 위장 화면 대신 Himitsu가 보입니다. 눌러서 보안을 엽니다.</string>
+    <string name="disguise_settings_recovery_title">들어가는 방법을 잊었다면</string>
+    <string name="disguise_code_title">코드 정하기</string>
+    <string name="disguise_code_hint">숫자 4~10자리. 계산기에서 입력하고 “=”를 누르세요.</string>
+    <string name="disguise_code_field">코드</string>
+    <string name="disguise_code_repeat_field">코드 다시 입력</string>
+    <string name="disguise_code_error_length">숫자 4~10자리를 사용하세요.</string>
+    <string name="disguise_code_error_mismatch">코드가 일치하지 않습니다.</string>
+    <string name="disguise_practice_title">코드 연습하기</string>
+    <string name="disguise_practice_text">계산기에서처럼 코드를 입력하고 “=”를 누르세요.</string>
+    <string name="disguise_practice_done">잘했어요. 계속을 눌러 위장을 적용하세요.</string>
+    <string name="disguise_practice_continue">계속</string>
+    <string name="disguise_auth_title">본인 확인</string>
+    <string name="disguise_auth_subtitle">화면 잠금으로 계속하세요</string>
 </resources>

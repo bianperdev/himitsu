@@ -5,6 +5,15 @@ import me.kafuuneko.rpclient.libs.core.IViewEvent
 
 /** One-time actions the decoy host must perform. */
 sealed class DisguiseViewEvent : IViewEvent {
-    /** The shortcut or the recovery gesture was used: show the system authentication. */
-    data object RequestAuthentication : DisguiseViewEvent()
+    /** Show the system authentication over the decoy. */
+    data object ShowPrompt : DisguiseViewEvent()
+
+    /** Open the app gate screen (storage failure, or a device without a screen lock). */
+    data object OpenGateScreen : DisguiseViewEvent()
+
+    /** Close this covering decoy to reveal the Himitsu page under it. */
+    data object RevealPage : DisguiseViewEvent()
+
+    /** Open Himitsu's main screen above the decoy. */
+    data object OpenHimitsu : DisguiseViewEvent()
 }

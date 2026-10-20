@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Séparateur décimal</string>
     <string name="disguise_calc_error_divide_by_zero">Impossible de diviser par 0</string>
     <string name="disguise_calc_error_too_large">Nombre trop grand</string>
+    <string name="disguise_settings_title">Camouflage</string>
+    <string name="disguise_settings_desc">Donnez à Himitsu l\'apparence d\'une app ordinaire</string>
+    <string name="disguise_settings_about_title">Discrétion, pas sécurité</string>
+    <string name="disguise_settings_about_text">Le camouflage change l\'icône et le nom pour qu\'Himitsu passe inaperçu au premier coup d\'œil. Ce n\'est pas une fonction de sécurité : vos conversations sont protégées par le chiffrement et le verrouillage de l\'app. Himitsu apparaît toujours sous son nom dans Paramètres › Applications, l\'utilisation de la batterie et du stockage, l\'historique de la boutique et certaines notifications. Toute personne ayant un accès technique au téléphone peut voir qu\'il est installé.</string>
+    <string name="disguise_settings_needs_lock_title">Activez d\'abord le verrouillage de l\'app</string>
+    <string name="disguise_settings_needs_lock_text">Le camouflage a besoin du verrouillage de l\'app et d\'un verrouillage de l\'écran sur l\'appareil, pour que le camouflage demande toujours une authentification. Touchez pour ouvrir Sécurité.</string>
+    <string name="disguise_settings_switch">Camouflage</string>
+    <string name="disguise_settings_off">Désactivé</string>
+    <string name="disguise_settings_lock_off_title">Le verrouillage de l\'app est désactivé</string>
+    <string name="disguise_settings_lock_off_text">Votre code demande toujours une authentification, mais en revenant dans l\'app vous verrez Himitsu au lieu du camouflage. Touchez pour ouvrir Sécurité.</string>
+    <string name="disguise_settings_recovery_title">Si vous oubliez comment entrer</string>
+    <string name="disguise_code_title">Choisissez un code</string>
+    <string name="disguise_code_hint">De 4 à 10 chiffres. Dans la calculatrice, tapez-le puis appuyez sur « = ».</string>
+    <string name="disguise_code_field">Code</string>
+    <string name="disguise_code_repeat_field">Répétez le code</string>
+    <string name="disguise_code_error_length">Utilisez de 4 à 10 chiffres.</string>
+    <string name="disguise_code_error_mismatch">Les codes ne correspondent pas.</string>
+    <string name="disguise_practice_title">Essayez votre code</string>
+    <string name="disguise_practice_text">Tapez votre code puis appuyez sur « = », comme dans la calculatrice.</string>
+    <string name="disguise_practice_done">C\'est bon. Touchez Continuer pour appliquer le camouflage.</string>
+    <string name="disguise_practice_continue">Continuer</string>
+    <string name="disguise_auth_title">Confirmez votre identité</string>
+    <string name="disguise_auth_subtitle">Utilisez le verrouillage de l\'écran pour continuer</string>
 </resources>

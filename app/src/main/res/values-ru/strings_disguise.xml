@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">Десятичный разделитель</string>
     <string name="disguise_calc_error_divide_by_zero">Делить на 0 нельзя</string>
     <string name="disguise_calc_error_too_large">Слишком большое число</string>
+    <string name="disguise_settings_title">Маскировка</string>
+    <string name="disguise_settings_desc">Пусть Himitsu выглядит как обычное приложение</string>
+    <string name="disguise_settings_about_title">Незаметность, а не защита</string>
+    <string name="disguise_settings_about_text">Маскировка меняет значок и название, чтобы Himitsu не бросался в глаза. Это не функция безопасности: ваши чаты защищают шифрование и блокировка приложения. Himitsu по-прежнему показывается под своим именем в Настройки › Приложения, в расходе батареи и памяти, в истории магазина и в некоторых уведомлениях. Тот, у кого есть технический доступ к телефону, может увидеть, что приложение установлено.</string>
+    <string name="disguise_settings_needs_lock_title">Сначала включите блокировку приложения</string>
+    <string name="disguise_settings_needs_lock_text">Маскировке нужны блокировка приложения и блокировка экрана на устройстве, чтобы маскировка всегда требовала подтверждения. Нажмите, чтобы открыть «Безопасность».</string>
+    <string name="disguise_settings_switch">Маскировка</string>
+    <string name="disguise_settings_off">Выключено</string>
+    <string name="disguise_settings_lock_off_title">Блокировка приложения выключена</string>
+    <string name="disguise_settings_lock_off_text">Код по-прежнему требует подтверждения, но при возврате в приложение вы увидите Himitsu вместо маскировки. Нажмите, чтобы открыть «Безопасность».</string>
+    <string name="disguise_settings_recovery_title">Если забудете, как войти</string>
+    <string name="disguise_code_title">Выберите код</string>
+    <string name="disguise_code_hint">От 4 до 10 цифр. В калькуляторе введите его и нажмите «=».</string>
+    <string name="disguise_code_field">Код</string>
+    <string name="disguise_code_repeat_field">Повторите код</string>
+    <string name="disguise_code_error_length">Используйте от 4 до 10 цифр.</string>
+    <string name="disguise_code_error_mismatch">Коды не совпадают.</string>
+    <string name="disguise_practice_title">Проверьте код</string>
+    <string name="disguise_practice_text">Введите код и нажмите «=», как будете делать в калькуляторе.</string>
+    <string name="disguise_practice_done">Готово. Нажмите «Продолжить», чтобы включить маскировку.</string>
+    <string name="disguise_practice_continue">Продолжить</string>
+    <string name="disguise_auth_title">Подтвердите, что это вы</string>
+    <string name="disguise_auth_subtitle">Используйте блокировку экрана, чтобы продолжить</string>
 </resources>

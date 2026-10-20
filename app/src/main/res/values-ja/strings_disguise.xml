@@ -33,4 +33,27 @@
     <string name="disguise_calc_decimal">小数点</string>
     <string name="disguise_calc_error_divide_by_zero">0 で割ることはできません</string>
     <string name="disguise_calc_error_too_large">数値が大きすぎます</string>
+    <string name="disguise_settings_title">カモフラージュ</string>
+    <string name="disguise_settings_desc">Himitsu を普通のアプリに見せかけます</string>
+    <string name="disguise_settings_about_title">目立たなくするための機能で、セキュリティではありません</string>
+    <string name="disguise_settings_about_text">カモフラージュはアイコンと名前を変え、ひと目では Himitsu だと分からないようにします。セキュリティ機能ではありません。チャットを守るのは暗号化とアプリのロックです。設定 › アプリ、電池やストレージの使用量、ストアの履歴、一部の通知には Himitsu の名前が表示されたままです。端末に技術的にアクセスできる人は、インストールされていることを確認できます。</string>
+    <string name="disguise_settings_needs_lock_title">先にアプリのロックをオンにしてください</string>
+    <string name="disguise_settings_needs_lock_text">カモフラージュには、アプリのロックと端末の画面ロックが必要です。これにより、常に認証が求められます。タップしてセキュリティを開きます。</string>
+    <string name="disguise_settings_switch">カモフラージュ</string>
+    <string name="disguise_settings_off">オフ</string>
+    <string name="disguise_settings_lock_off_title">アプリのロックがオフです</string>
+    <string name="disguise_settings_lock_off_text">コードを使うと引き続き認証が求められますが、アプリに戻るとカモフラージュではなく Himitsu が表示されます。タップしてセキュリティを開きます。</string>
+    <string name="disguise_settings_recovery_title">入り方を忘れたとき</string>
+    <string name="disguise_code_title">コードを決める</string>
+    <string name="disguise_code_hint">4〜10 桁の数字。電卓で入力して「=」をタップします。</string>
+    <string name="disguise_code_field">コード</string>
+    <string name="disguise_code_repeat_field">コードをもう一度入力</string>
+    <string name="disguise_code_error_length">4〜10 桁の数字を使ってください。</string>
+    <string name="disguise_code_error_mismatch">コードが一致しません。</string>
+    <string name="disguise_practice_title">コードを試す</string>
+    <string name="disguise_practice_text">電卓で使うときと同じように、コードを入力して「=」をタップしてください。</string>
+    <string name="disguise_practice_done">できました。「続行」をタップしてカモフラージュを適用します。</string>
+    <string name="disguise_practice_continue">続行</string>
+    <string name="disguise_auth_title">本人確認</string>
+    <string name="disguise_auth_subtitle">画面ロックを使って続行します</string>
 </resources>
