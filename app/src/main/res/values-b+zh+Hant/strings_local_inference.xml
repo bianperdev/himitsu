@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">小巧且支援多語言。使用較低的溫度效果最好。</string>
     <string name="local_models_catalog_qwen35_2b">最小的選項，適用於 4 到 6 GB 記憶體的手機。</string>
     <string name="local_inference_selected_model">已選模型：%1$s</string>
+    <string name="local_models_performance_header">效能</string>
+    <string name="local_models_threads">CPU 執行緒</string>
+    <string name="local_models_threads_desc">自動會使用高效能核心，並為介面保留餘裕。</string>
+    <string name="local_models_threads_auto">自動</string>
+    <string name="local_models_gpu">使用 GPU</string>
+    <string name="local_models_gpu_desc">%1$s，透過 OpenCL。實驗性功能：在較新的 Snapdragon 手機上通常更快。</string>
+    <string name="local_models_kv">精簡上下文記憶體</string>
+    <string name="local_models_kv_desc">以 8 位元儲存上下文：記憶體減半，品質略為下降。</string>
+    <string name="local_models_unload">在背景釋放模型</string>
+    <string name="local_models_unload_desc">離開應用程式後為其他應用程式釋放記憶體。重新載入需要幾秒鐘。</string>
+    <string name="local_models_unload_now">立即</string>
+    <string name="local_models_unload_minutes">%1$d 分鐘</string>
+    <string name="local_models_unload_never">永不</string>
+    <string name="local_models_performance_note">變更會在下一次回覆時生效。</string>
+    <string name="local_inference_generation_notification">正在背景處理</string>
+    <string name="local_inference_generation_channel">背景工作</string>
 </resources>

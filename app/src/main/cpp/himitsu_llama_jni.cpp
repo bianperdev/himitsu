@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstdlib>
 #include <exception>
 #include <string>
 #include <vector>
@@ -229,9 +230,13 @@ bool deliver(JNIEnv * env, jobject sink, std::string & pending, bool flush) {
 
 // ---- Native methods ------------------------------------------------------------------------
 
-void native_init(JNIEnv * env, jclass, jstring native_lib_dir) {
+void native_init(JNIEnv * env, jclass, jstring native_lib_dir, jstring kernel_cache_dir) {
     llama_log_set(silent_log, nullptr);
     ggml_log_set(silent_log, nullptr);
+    // OpenCL compiles its kernels once and caches them; the default temp path does not exist on Android
+    const char * cache = env->GetStringUTFChars(kernel_cache_dir, nullptr);
+    setenv("GGML_OPENCL_KERNEL_CACHE_DIR", cache, 1);
+    env->ReleaseStringUTFChars(kernel_cache_dir, cache);
     const char * dir = env->GetStringUTFChars(native_lib_dir, nullptr);
     // Loads the CPU backend variant that best matches this processor
     ggml_backend_load_all_from_path(dir);
@@ -239,9 +244,14 @@ void native_init(JNIEnv * env, jclass, jstring native_lib_dir) {
     llama_backend_init();
 }
 
-jlong native_load(JNIEnv * env, jclass, jstring path, jint context_tokens, jint threads, jboolean vocab_only) {
+jlong native_load(JNIEnv * env, jclass, jstring path, jint context_tokens, jint threads, jint batch_threads,
+                  jboolean vocab_only, jint gpu_layers, jboolean quantized_kv) {
+    // An empty device list keeps everything on the CPU, even when a GPU backend is loaded
+    static ggml_backend_dev_t no_offload_devices[] = {nullptr};
+    const bool use_gpu = gpu_layers > 0;
     llama_model_params model_params = llama_model_default_params();
-    model_params.n_gpu_layers = 0;
+    model_params.n_gpu_layers = use_gpu ? gpu_layers : 0;
+    model_params.devices = use_gpu ? nullptr : no_offload_devices;
     model_params.load_mode = LLAMA_LOAD_MODE_MMAP;
     model_params.vocab_only = vocab_only == JNI_TRUE;
     const char * model_path = env->GetStringUTFChars(path, nullptr);
@@ -259,8 +269,16 @@ jlong native_load(JNIEnv * env, jclass, jstring path, jint context_tokens, jint 
     context_params.n_batch = 512;
     context_params.n_ubatch = 512;
     context_params.n_threads = threads;
-    context_params.n_threads_batch = threads;
+    context_params.n_threads_batch = batch_threads;
     context_params.no_perf = true;
+    context_params.offload_kqv = use_gpu;
+    context_params.op_offload = use_gpu;
+    if (quantized_kv == JNI_TRUE) {
+        // A quantized V cache needs flash attention
+        context_params.type_k = GGML_TYPE_Q8_0;
+        context_params.type_v = GGML_TYPE_Q8_0;
+        context_params.flash_attn_type = LLAMA_FLASH_ATTN_TYPE_ENABLED;
+    }
     session->ctx = llama_init_from_model(model, context_params);
     if (session->ctx == nullptr) {
         llama_model_free(model);
@@ -415,14 +433,35 @@ jintArray native_generate(JNIEnv * env, jclass, jlong handle, jobjectArray parts
     return finish(env, reason, prompt.size(), generated);
 }
 
+// Descriptions of the GPU devices ggml can offload to, for example "QUALCOMM Adreno(TM) 840".
+jobjectArray native_gpu_devices(JNIEnv * env, jclass) {
+    std::vector<std::string> names;
+    for (size_t i = 0; i < ggml_backend_dev_count(); i++) {
+        ggml_backend_dev_t device = ggml_backend_dev_get(i);
+        const auto type = ggml_backend_dev_type(device);
+        if (type != GGML_BACKEND_DEVICE_TYPE_GPU && type != GGML_BACKEND_DEVICE_TYPE_IGPU) continue;
+        const char * description = ggml_backend_dev_description(device);
+        names.emplace_back(description != nullptr ? description : ggml_backend_dev_name(device));
+    }
+    jobjectArray out = env->NewObjectArray(static_cast<jsize>(names.size()), env->FindClass("[B"), nullptr);
+    if (out == nullptr) return nullptr;
+    for (size_t i = 0; i < names.size(); i++) {
+        jbyteArray name = to_bytes(env, names[i]);
+        env->SetObjectArrayElement(out, static_cast<jsize>(i), name);
+        env->DeleteLocalRef(name);
+    }
+    return out;
+}
+
 void native_abort(JNIEnv *, jclass, jlong handle) {
     Session * session = as_session(handle);
     if (session != nullptr) session->abort.store(true);
 }
 
 const JNINativeMethod kMethods[] = {
-    {"nativeInit", "(Ljava/lang/String;)V", reinterpret_cast<void *>(native_init)},
-    {"nativeLoad", "(Ljava/lang/String;IIZ)J", reinterpret_cast<void *>(native_load)},
+    {"nativeInit", "(Ljava/lang/String;Ljava/lang/String;)V", reinterpret_cast<void *>(native_init)},
+    {"nativeLoad", "(Ljava/lang/String;IIIZIZ)J", reinterpret_cast<void *>(native_load)},
+    {"nativeGpuDevices", "()[[B", reinterpret_cast<void *>(native_gpu_devices)},
     {"nativeFree", "(J)V", reinterpret_cast<void *>(native_free)},
     {"nativeInfo", "(J)[[B", reinterpret_cast<void *>(native_info)},
     {"nativeRender", "([B[[B[[BZZ[B[B)[Ljava/lang/Object;", reinterpret_cast<void *>(native_render)},

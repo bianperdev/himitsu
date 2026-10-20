@@ -26,6 +26,9 @@ interface LocalInferenceEngine {
     /** What this engine can do on this device. */
     fun capabilities(): LocalEngineCapabilities
 
+    /** Names of the GPUs this engine can offload to on this device; empty when there are none. */
+    suspend fun gpuDevices(): List<String> = emptyList()
+
     /**
      * Loads [model] and makes it ready for [generate]. Loading another model first releases the
      * current one.
@@ -43,6 +46,12 @@ interface LocalInferenceEngine {
 
     /** Counts the tokens of a rendered prompt exactly as [generate] would feed them. */
     suspend fun countPromptTokens(prompt: RenderedPrompt): Int = countTokens(prompt.text)
+
+    /**
+     * Asks a running generation to stop at the next token, as if its collector were cancelled, but
+     * from outside the coroutine (thermal shutdown, memory pressure). Safe from any thread.
+     */
+    fun abortGeneration() = Unit
 
     /** Streams the model's reply to [prompt]; ends with exactly one [LocalGenerationEvent.Finished]. */
     fun generate(prompt: RenderedPrompt, sampling: LocalSamplingParams): Flow<LocalGenerationEvent>
@@ -103,7 +112,9 @@ data class LocalLoadConfig(
     /** CPU threads; 0 lets the engine choose. */
     val threads: Int = 0,
     /** Preferred compute unit; engines fall back to the CPU when it is unavailable. */
-    val backend: LocalComputeBackend = LocalComputeBackend.Cpu
+    val backend: LocalComputeBackend = LocalComputeBackend.Cpu,
+    /** 8-bit KV cache instead of 16-bit, to halve its memory. */
+    val quantizedKvCache: Boolean = false
 )
 
 /** Chat roles understood by local chat templates. */

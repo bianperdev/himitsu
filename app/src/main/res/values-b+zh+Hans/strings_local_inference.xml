@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">小巧且支持多语言。使用较低的温度效果最好。</string>
     <string name="local_models_catalog_qwen35_2b">最小的选项，适用于 4 到 6 GB 内存的手机。</string>
     <string name="local_inference_selected_model">已选模型：%1$s</string>
+    <string name="local_models_performance_header">性能</string>
+    <string name="local_models_threads">CPU 线程</string>
+    <string name="local_models_threads_desc">自动会使用高性能核心，并为界面留出余量。</string>
+    <string name="local_models_threads_auto">自动</string>
+    <string name="local_models_gpu">使用 GPU</string>
+    <string name="local_models_gpu_desc">%1$s，通过 OpenCL。实验性功能：在较新的骁龙手机上通常更快。</string>
+    <string name="local_models_kv">紧凑上下文内存</string>
+    <string name="local_models_kv_desc">以 8 位存储上下文：内存减半，质量略有下降。</string>
+    <string name="local_models_unload">在后台释放模型</string>
+    <string name="local_models_unload_desc">离开应用后为其他应用释放内存。重新加载需要几秒钟。</string>
+    <string name="local_models_unload_now">立即</string>
+    <string name="local_models_unload_minutes">%1$d 分钟</string>
+    <string name="local_models_unload_never">从不</string>
+    <string name="local_models_performance_note">更改将在下一次回复时生效。</string>
+    <string name="local_inference_generation_notification">正在后台处理</string>
+    <string name="local_inference_generation_channel">后台任务</string>
 </resources>

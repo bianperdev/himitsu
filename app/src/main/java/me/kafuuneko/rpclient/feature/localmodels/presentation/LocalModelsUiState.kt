@@ -17,6 +17,8 @@ sealed class LocalModelsUiState {
         val catalog: List<LocalModelCatalogItem>,
         /** Copy progress of a GGUF import. */
         val importState: LocalModelsImportState = LocalModelsImportState.Idle,
+        /** Device-level performance settings. */
+        val performance: LocalPerformanceState = LocalPerformanceState(),
         val dialogState: LocalModelsDialogState = LocalModelsDialogState.None
     ) : LocalModelsUiState()
 
@@ -29,6 +31,18 @@ sealed class LocalModelsUiState {
         }
     }
 }
+
+/** Performance settings as the screen shows them. */
+data class LocalPerformanceState(
+    /** CPU threads; 0 means automatic. */
+    val threads: Int = 0,
+    /** Name of the GPU the engine can use, or null when there is none and the option is hidden. */
+    val gpuName: String? = null,
+    val useGpu: Boolean = false,
+    val quantizedKvCache: Boolean = false,
+    /** Seconds in the background before releasing the model; -1 keeps it loaded. */
+    val unloadDelaySeconds: Int = 120
+)
 
 /** A stored model as one card of the list. */
 data class LocalModelItem(

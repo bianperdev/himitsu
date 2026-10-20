@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">Ringkas dan multibahasa. Paling baik dengan suhu rendah.</string>
     <string name="local_models_catalog_qwen35_2b">Pilihan terkecil, untuk ponsel dengan RAM 4 hingga 6 GB.</string>
     <string name="local_inference_selected_model">Model terpilih: %1$s</string>
+    <string name="local_models_performance_header">Performa</string>
+    <string name="local_models_threads">Thread CPU</string>
+    <string name="local_models_threads_desc">Otomatis memakai inti cepat dan menyisakan ruang untuk antarmuka.</string>
+    <string name="local_models_threads_auto">Otomatis</string>
+    <string name="local_models_gpu">Gunakan GPU</string>
+    <string name="local_models_gpu_desc">%1$s, melalui OpenCL. Eksperimental: biasanya lebih cepat di ponsel Snapdragon terbaru.</string>
+    <string name="local_models_kv">Memori konteks ringkas</string>
+    <string name="local_models_kv_desc">Menyimpan konteks dalam 8 bit: setengah memori, dengan sedikit penurunan kualitas.</string>
+    <string name="local_models_unload">Lepaskan model di latar belakang</string>
+    <string name="local_models_unload_desc">Membebaskan memori untuk aplikasi lain saat Anda keluar dari aplikasi. Memuat ulang butuh beberapa detik.</string>
+    <string name="local_models_unload_now">Langsung</string>
+    <string name="local_models_unload_minutes">%1$d mnt</string>
+    <string name="local_models_unload_never">Tidak pernah</string>
+    <string name="local_models_performance_note">Perubahan berlaku untuk balasan berikutnya.</string>
+    <string name="local_inference_generation_notification">Bekerja di latar belakang</string>
+    <string name="local_inference_generation_channel">Pekerjaan latar belakang</string>
 </resources>

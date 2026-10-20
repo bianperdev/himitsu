@@ -26,4 +26,12 @@ sealed class LocalModelsUiIntent {
     data object ConfirmDelete : LocalModelsUiIntent()
 
     data object DismissDialog : LocalModelsUiIntent()
+
+    data class ChangeThreads(val threads: Int) : LocalModelsUiIntent()
+
+    data class ToggleGpu(val enabled: Boolean) : LocalModelsUiIntent()
+
+    data class ToggleQuantizedKvCache(val enabled: Boolean) : LocalModelsUiIntent()
+
+    data class ChangeUnloadDelay(val seconds: Int) : LocalModelsUiIntent()
 }

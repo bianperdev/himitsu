@@ -27,13 +27,16 @@ import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.FileOpen
 import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,6 +55,7 @@ import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsDialogS
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsImportState
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsUiIntent
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsUiState
+import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalPerformanceState
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloadFailure
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelMemoryFit
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelSource
@@ -103,6 +107,8 @@ fun LocalModelsLayout(
                 }
             }
             items(state.models, key = { it.id }) { model -> StoredModelCard(model, emit) }
+            item { RpSectionHeader(title = stringResource(R.string.local_models_performance_header)) }
+            item { PerformanceCard(state.performance, emit) }
             item { RpSectionHeader(title = stringResource(R.string.local_models_catalog_header)) }
             item {
                 Text(
@@ -307,6 +313,94 @@ private fun MemoryLine(ramBytes: Long, fit: LocalModelMemoryFit) {
         color = color
     )
 }
+
+@Composable
+private fun PerformanceCard(state: LocalPerformanceState, emit: LocalModelsUiIntent.() -> Unit) {
+    ModelCard {
+        SettingTitle(R.string.local_models_threads, R.string.local_models_threads_desc)
+        ChoiceRow(
+            options = THREAD_CHOICES,
+            selected = state.threads,
+            label = { if (it == 0) stringResource(R.string.local_models_threads_auto) else it.toString() },
+            onSelect = { LocalModelsUiIntent.ChangeThreads(it).emit() }
+        )
+        state.gpuName?.let { gpu ->
+            SwitchSetting(
+                title = stringResource(R.string.local_models_gpu),
+                description = stringResource(R.string.local_models_gpu_desc, gpu),
+                checked = state.useGpu,
+                onChange = { LocalModelsUiIntent.ToggleGpu(it).emit() }
+            )
+        }
+        SwitchSetting(
+            title = stringResource(R.string.local_models_kv),
+            description = stringResource(R.string.local_models_kv_desc),
+            checked = state.quantizedKvCache,
+            onChange = { LocalModelsUiIntent.ToggleQuantizedKvCache(it).emit() }
+        )
+        SettingTitle(R.string.local_models_unload, R.string.local_models_unload_desc)
+        ChoiceRow(
+            options = UNLOAD_CHOICES,
+            selected = state.unloadDelaySeconds,
+            label = {
+                when {
+                    it == 0 -> stringResource(R.string.local_models_unload_now)
+                    it < 0 -> stringResource(R.string.local_models_unload_never)
+                    else -> stringResource(R.string.local_models_unload_minutes, it / 60)
+                }
+            },
+            onSelect = { LocalModelsUiIntent.ChangeUnloadDelay(it).emit() }
+        )
+        Text(
+            text = stringResource(R.string.local_models_performance_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun SettingTitle(titleRes: Int, descriptionRes: Int) {
+    Text(stringResource(titleRes), style = MaterialTheme.typography.titleSmall)
+    Text(
+        text = stringResource(descriptionRes),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+private fun ChoiceRow(options: List<Int>, selected: Int, label: @Composable (Int) -> String, onSelect: (Int) -> Unit) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        options.forEach { option ->
+            FilterChip(
+                selected = option == selected,
+                onClick = { onSelect(option) },
+                label = { Text(label(option)) },
+                shape = RoundedCornerShape(10.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SwitchSetting(title: String, description: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleSmall)
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+private val THREAD_CHOICES = listOf(0, 2, 4, 6, 8)
+private val UNLOAD_CHOICES = listOf(0, 60, 120, 300, -1)
 
 @Composable
 private fun ModelCard(content: @Composable () -> Unit) {

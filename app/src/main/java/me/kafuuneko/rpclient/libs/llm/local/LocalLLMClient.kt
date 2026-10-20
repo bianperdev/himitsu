@@ -26,7 +26,8 @@ import me.kafuuneko.rpclient.libs.prompt.PromptBudgetExceededException
  */
 class LocalLLMClient(
     private val mProvider: LLMProviderConfig,
-    private val mRuntime: LocalModelRuntime
+    private val mRuntime: LocalModelRuntime,
+    private val mKeeper: LocalGenerationKeeper
 ) : LLMClient {
     override suspend fun generate(request: LLMGenerationRequest): LLMGenerationResponse {
         val content = StringBuilder()
@@ -57,8 +58,10 @@ class LocalLLMClient(
         }
         val modelId = modelId(request)
         val sampling = LocalSamplingParamsResolver.resolve(mProvider, request.options)
-        val config = LocalLoadConfig(contextTokens = mProvider.contextTokens)
+        val config = LocalInferencePrefs.loadConfig(mProvider.contextTokens)
         emit(LLMStreamEvent.Connected)
+        // Keeps the process alive if the user leaves the app mid-reply
+        mKeeper.begin()
         try {
             mRuntime.withModel(modelId, config) { engine, model ->
                 val prompt = engine.renderChat(request.messages.toLocalMessages())
@@ -86,6 +89,8 @@ class LocalLLMClient(
                 requiredTokens = error.promptTokens,
                 promptBudget = (mProvider.contextTokens - sampling.maxTokens).coerceAtLeast(0)
             )
+        } finally {
+            mKeeper.end()
         }
     }
 
@@ -108,7 +113,10 @@ internal fun List<LLMMessage>.toLocalMessages(): List<LocalChatMessage> = map { 
 }
 
 /** Creates [LocalLLMClient]s; registered in [localInferenceModule]. */
-class LocalLLMClientFactory(private val mRuntime: LocalModelRuntime) {
+class LocalLLMClientFactory(
+    private val mRuntime: LocalModelRuntime,
+    private val mKeeper: LocalGenerationKeeper
+) {
     /** Returns a client for a provider whose protocol is local. */
-    fun create(provider: LLMProviderConfig): LLMClient = LocalLLMClient(provider, mRuntime)
+    fun create(provider: LLMProviderConfig): LLMClient = LocalLLMClient(provider, mRuntime, mKeeper)
 }

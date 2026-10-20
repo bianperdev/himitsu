@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">Компактная и многоязычная. Лучше всего работает при низкой температуре.</string>
     <string name="local_models_catalog_qwen35_2b">Самый маленький вариант, для телефонов с 4–6 ГБ ОЗУ.</string>
     <string name="local_inference_selected_model">Выбранная модель: %1$s</string>
+    <string name="local_models_performance_header">Производительность</string>
+    <string name="local_models_threads">Потоки ЦП</string>
+    <string name="local_models_threads_desc">Авто использует быстрые ядра и оставляет запас для интерфейса.</string>
+    <string name="local_models_threads_auto">Авто</string>
+    <string name="local_models_gpu">Использовать GPU</string>
+    <string name="local_models_gpu_desc">%1$s через OpenCL. Экспериментально: обычно быстрее на новых телефонах со Snapdragon.</string>
+    <string name="local_models_kv">Компактная память контекста</string>
+    <string name="local_models_kv_desc">Хранит контекст в 8 битах: вдвое меньше памяти при небольшой потере качества.</string>
+    <string name="local_models_unload">Выгружать модель в фоне</string>
+    <string name="local_models_unload_desc">Освобождает память для других приложений, когда вы выходите из приложения. Повторная загрузка занимает несколько секунд.</string>
+    <string name="local_models_unload_now">Сразу</string>
+    <string name="local_models_unload_minutes">%1$d мин</string>
+    <string name="local_models_unload_never">Никогда</string>
+    <string name="local_models_performance_note">Изменения применятся к следующему ответу.</string>
+    <string name="local_inference_generation_notification">Работа в фоновом режиме</string>
+    <string name="local_inference_generation_channel">Фоновая работа</string>
 </resources>

@@ -35,11 +35,29 @@ internal object LlamaCppNative {
     /** Loads the native library; false when it is missing for this ABI. */
     fun loadLibrary(): Boolean = runCatching { System.loadLibrary("himitsu_llama") }.isSuccess
 
-    /** Silences native logs, loads the best CPU backend from [nativeLibDir] and initializes llama.cpp. */
-    @JvmStatic external fun nativeInit(nativeLibDir: String)
+    /**
+     * Silences native logs, loads the backends found in [nativeLibDir] (the best CPU variant, and
+     * OpenCL when the device has a driver) and initializes llama.cpp. [kernelCacheDir] keeps
+     * compiled GPU kernels between runs.
+     */
+    @JvmStatic external fun nativeInit(nativeLibDir: String, kernelCacheDir: String)
 
-    /** Loads a GGUF model; returns 0 on failure. */
-    @JvmStatic external fun nativeLoad(path: String, contextTokens: Int, threads: Int, vocabOnly: Boolean): Long
+    /**
+     * Loads a GGUF model; returns 0 on failure. [threads] decode the reply, [batchThreads] evaluate
+     * the prompt. [gpuLayers] 0 keeps everything on the CPU; [quantizedKv] stores the KV cache in 8 bits.
+     */
+    @JvmStatic external fun nativeLoad(
+        path: String,
+        contextTokens: Int,
+        threads: Int,
+        batchThreads: Int,
+        vocabOnly: Boolean,
+        gpuLayers: Int,
+        quantizedKv: Boolean
+    ): Long
+
+    /** Descriptions of the GPUs ggml can offload to. */
+    @JvmStatic external fun nativeGpuDevices(): Array<ByteArray>
 
     @JvmStatic external fun nativeFree(handle: Long)
 

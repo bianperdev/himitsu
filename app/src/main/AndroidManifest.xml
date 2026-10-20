@@ -146,6 +146,10 @@
             android:name=".libs.llm.local.model.LocalModelDownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".libs.llm.local.LocalGenerationService"
+            android:exported="false"
+            android:foregroundServiceType="shortService" />
         <!-- end feat/local-inference -->
 
         <!-- BEGIN disguise activity-aliases: reserved for the feat/disguise track (see ROADMAP.md).

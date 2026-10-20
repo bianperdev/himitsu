@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">Nhỏ gọn và đa ngôn ngữ. Hoạt động tốt nhất với nhiệt độ thấp.</string>
     <string name="local_models_catalog_qwen35_2b">Lựa chọn nhỏ nhất, dành cho điện thoại có 4 đến 6 GB RAM.</string>
     <string name="local_inference_selected_model">Mô hình đã chọn: %1$s</string>
+    <string name="local_models_performance_header">Hiệu năng</string>
+    <string name="local_models_threads">Luồng CPU</string>
+    <string name="local_models_threads_desc">Tự động dùng các lõi nhanh và chừa tài nguyên cho giao diện.</string>
+    <string name="local_models_threads_auto">Tự động</string>
+    <string name="local_models_gpu">Dùng GPU</string>
+    <string name="local_models_gpu_desc">%1$s, qua OpenCL. Thử nghiệm: thường nhanh hơn trên điện thoại Snapdragon mới.</string>
+    <string name="local_models_kv">Bộ nhớ ngữ cảnh gọn</string>
+    <string name="local_models_kv_desc">Lưu ngữ cảnh ở 8 bit: tốn một nửa bộ nhớ, chất lượng giảm nhẹ.</string>
+    <string name="local_models_unload">Giải phóng mô hình khi chạy nền</string>
+    <string name="local_models_unload_desc">Giải phóng bộ nhớ cho ứng dụng khác khi bạn rời ứng dụng. Tải lại mất vài giây.</string>
+    <string name="local_models_unload_now">Ngay lập tức</string>
+    <string name="local_models_unload_minutes">%1$d phút</string>
+    <string name="local_models_unload_never">Không bao giờ</string>
+    <string name="local_models_performance_note">Thay đổi áp dụng từ câu trả lời tiếp theo.</string>
+    <string name="local_inference_generation_notification">Đang xử lý trong nền</string>
+    <string name="local_inference_generation_channel">Tác vụ nền</string>
 </resources>

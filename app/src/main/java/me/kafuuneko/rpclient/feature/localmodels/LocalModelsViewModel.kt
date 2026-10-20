@@ -16,9 +16,13 @@ import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsImportS
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsUiIntent
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsUiState
 import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalModelsViewEvent
+import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalPerformanceState
 import me.kafuuneko.rpclient.libs.core.AppViewEvent
 import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineKind
+import me.kafuuneko.rpclient.libs.llm.local.LocalEngineRegistry
+import me.kafuuneko.rpclient.libs.llm.local.LocalInferencePrefs
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelCatalog
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDetails
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloadService
@@ -54,6 +58,7 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
     private val mDownloader by inject<LocalModelDownloader>()
     private val mTracker by inject<LocalModelDownloadTracker>()
     private val mLLMRepository by inject<LLMRepository>()
+    private val mEngines by inject<LocalEngineRegistry>()
 
     private var mImportJob: Job? = null
     private var mKnownDownloads: Set<String> = emptySet()
@@ -62,8 +67,11 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
     @UiIntentObserver(LocalModelsUiIntent.Init::class)
     private suspend fun onInit() {
         if (!isStateOf<LocalModelsUiState.None>()) return
-        LocalModelsUiState.Normal(models = emptyList(), catalog = emptyList()).setup()
+        LocalModelsUiState.Normal(models = emptyList(), catalog = emptyList(), performance = readPerformance(null)).setup()
         refresh()
+        // Initializing the engine to list GPUs loads native code, so it happens after the first frame
+        val gpuName = mEngines.find(LocalEngineKind.LlamaCpp)?.gpuDevices()?.firstOrNull()
+        getOrNull<LocalModelsUiState.Normal>()?.let { it.copy(performance = readPerformance(gpuName)).setup() }
         viewModelScope.launch {
             mTracker.states.collect { states ->
                 // A download that leaves the tracker finished or was cancelled: the list may have changed
@@ -180,6 +188,37 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
         val uiState = getOrNull<LocalModelsUiState.Normal>() ?: return
         uiState.copy(dialogState = LocalModelsDialogState.None).setup()
     }
+
+    /** Settings take effect at the next generation, which reloads the model with them. */
+    @UiIntentObserver(LocalModelsUiIntent.ChangeThreads::class)
+    private fun onChangeThreads(intent: LocalModelsUiIntent.ChangeThreads) =
+        updatePerformance { LocalInferencePrefs.threads = intent.threads }
+
+    @UiIntentObserver(LocalModelsUiIntent.ToggleGpu::class)
+    private fun onToggleGpu(intent: LocalModelsUiIntent.ToggleGpu) =
+        updatePerformance { LocalInferencePrefs.useGpu = intent.enabled }
+
+    @UiIntentObserver(LocalModelsUiIntent.ToggleQuantizedKvCache::class)
+    private fun onToggleQuantizedKvCache(intent: LocalModelsUiIntent.ToggleQuantizedKvCache) =
+        updatePerformance { LocalInferencePrefs.quantizedKvCache = intent.enabled }
+
+    @UiIntentObserver(LocalModelsUiIntent.ChangeUnloadDelay::class)
+    private fun onChangeUnloadDelay(intent: LocalModelsUiIntent.ChangeUnloadDelay) =
+        updatePerformance { LocalInferencePrefs.unloadDelaySeconds = intent.seconds }
+
+    private fun updatePerformance(change: () -> Unit) {
+        val uiState = getOrNull<LocalModelsUiState.Normal>() ?: return
+        change()
+        uiState.copy(performance = readPerformance(uiState.performance.gpuName)).setup()
+    }
+
+    private fun readPerformance(gpuName: String?) = LocalPerformanceState(
+        threads = LocalInferencePrefs.threads,
+        gpuName = gpuName,
+        useGpu = LocalInferencePrefs.useGpu,
+        quantizedKvCache = LocalInferencePrefs.quantizedKvCache,
+        unloadDelaySeconds = LocalInferencePrefs.unloadDelaySeconds
+    )
 
     override fun onCleared() {
         mImportJob?.cancel()

@@ -33,6 +33,7 @@ import me.kafuuneko.rpclient.libs.llm.local.LocalSamplingParams
 import me.kafuuneko.rpclient.libs.llm.local.PromptSegment
 import me.kafuuneko.rpclient.libs.llm.local.RenderedPrompt
 import me.kafuuneko.rpclient.libs.llm.local.StopSequenceFilter
+import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -46,12 +47,19 @@ import java.util.concurrent.atomic.AtomicBoolean
  *   token or prompt batch.
  * - The KV cache keeps the previous prompt, so a follow-up message only evaluates the new tokens.
  */
-class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
+class LlamaCppEngine(
+    private val mNativeLibDir: String,
+    private val mKernelCacheDir: String
+) : LocalInferenceEngine {
     private val mDispatcher = Executors.newSingleThreadExecutor { runnable ->
         Thread(runnable, THREAD_NAME).apply { isDaemon = true }
     }.asCoroutineDispatcher()
     private val mState = MutableStateFlow<LocalEngineState>(LocalEngineState.Idle)
     private var mInitialized = false
+
+    // Known after the native library is initialized; null before
+    @Volatile
+    private var mGpuDevices: List<String>? = null
 
     // Written only on the engine thread; read from other threads to abort
     @Volatile
@@ -64,7 +72,11 @@ class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
     override val state: StateFlow<LocalEngineState> = mState.asStateFlow()
 
     override fun capabilities(): LocalEngineCapabilities = LocalEngineCapabilities(
-        backends = setOf(LocalComputeBackend.Cpu),
+        backends = if (mGpuDevices.isNullOrEmpty()) {
+            setOf(LocalComputeBackend.Cpu)
+        } else {
+            setOf(LocalComputeBackend.Cpu, LocalComputeBackend.Gpu)
+        },
         hasExactTokenizer = true,
         usesModelChatTemplate = true
     )
@@ -74,7 +86,12 @@ class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
         releaseCurrent()
         val path = model.filePath ?: throw LocalModelLoadException()
         mState.value = LocalEngineState.Loading(model.id)
-        val handle = LlamaCppNative.nativeLoad(path, config.contextTokens, threadsFor(config), false)
+        // "All layers": llama.cpp caps the count at the model's real layer count
+        val gpuLayers = if (config.backend == LocalComputeBackend.Gpu && !mGpuDevices.isNullOrEmpty()) ALL_LAYERS else 0
+        val (threads, batchThreads) = threadsFor(config)
+        val handle = LlamaCppNative.nativeLoad(
+            path, config.contextTokens, threads, batchThreads, false, gpuLayers, config.quantizedKvCache
+        )
         if (handle == 0L) {
             mState.value = LocalEngineState.Idle
             throw LocalModelLoadException()
@@ -184,10 +201,21 @@ class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
         worker.join()
     }.buffer(Channel.UNLIMITED)
 
+    override suspend fun gpuDevices(): List<String> = withContext(mDispatcher) {
+        runCatching { ensureInitialized() }.getOrNull() ?: return@withContext emptyList()
+        mGpuDevices.orEmpty()
+    }
+
+    override fun abortGeneration() {
+        val handle = mHandle
+        if (handle != 0L) LlamaCppNative.nativeAbort(handle)
+    }
+
     private fun ensureInitialized() {
         if (mInitialized) return
         if (!LlamaCppNative.loadLibrary()) throw LocalEngineUnavailableException()
-        LlamaCppNative.nativeInit(mNativeLibDir)
+        LlamaCppNative.nativeInit(mNativeLibDir, mKernelCacheDir)
+        mGpuDevices = LlamaCppNative.nativeGpuDevices().map { String(it) }
         mInitialized = true
     }
 
@@ -208,10 +236,28 @@ class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
         )
     }
 
-    private fun threadsFor(config: LocalLoadConfig): Int {
-        if (config.threads > 0) return config.threads
-        // Leave cores for the UI; more threads than performance cores slows decoding down
-        return (Runtime.getRuntime().availableProcessors() - 2).coerceIn(MIN_THREADS, MAX_DEFAULT_THREADS)
+    /**
+     * Threads for decoding and for prompt evaluation.
+     *
+     * Measured on a Galaxy S26 Ultra: decoding is bound by memory bandwidth, so 4 threads were as fast
+     * as 6 and 8 were 40 % slower; prompt evaluation kept gaining up to 6. Automatic mode uses fast
+     * cores only and leaves two cores for the UI.
+     */
+    private fun threadsFor(config: LocalLoadConfig): Pair<Int, Int> {
+        if (config.threads > 0) return config.threads to config.threads
+        val cores = Runtime.getRuntime().availableProcessors()
+        val batch = minOf(fastCoreCount(cores), cores - 2).coerceIn(MIN_THREADS, MAX_DEFAULT_THREADS)
+        return batch.coerceAtMost(MAX_DECODE_THREADS) to batch
+    }
+
+    /** Cores whose top frequency is at least 70 % of the fastest one; efficiency cores slow llama.cpp down. */
+    private fun fastCoreCount(cores: Int): Int {
+        val frequencies = (0 until cores).mapNotNull { core ->
+            runCatching { File("/sys/devices/system/cpu/cpu$core/cpufreq/cpuinfo_max_freq").readText().trim().toLong() }
+                .getOrNull()
+        }
+        val fastest = frequencies.maxOrNull() ?: return cores
+        return frequencies.count { it * FAST_CORE_DIVISOR >= fastest * FAST_CORE_PERCENT }
     }
 
     private data class ModelInfo(
@@ -225,7 +271,11 @@ class LlamaCppEngine(private val mNativeLibDir: String) : LocalInferenceEngine {
         const val DEFAULT_TEMPERATURE = 0.8f
         const val RANDOM_SEED = -1L
         const val MIN_THREADS = 2
-        const val MAX_DEFAULT_THREADS = 4
+        const val MAX_DEFAULT_THREADS = 6
+        const val MAX_DECODE_THREADS = 4
+        const val FAST_CORE_PERCENT = 70
+        const val FAST_CORE_DIVISOR = 100
+        const val ALL_LAYERS = 999
         const val FALLBACK_TEMPLATE_NAME = "chatml"
 
         // Used when a GGUF has no chat template; ChatML is the most widely trained format

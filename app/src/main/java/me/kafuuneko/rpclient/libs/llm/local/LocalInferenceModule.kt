@@ -12,6 +12,7 @@ import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloader
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelFiles
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelImporter
 import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelLibrary
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -37,7 +38,11 @@ val localInferenceModule = module {
     singleOf(::LocalModelDownloadTracker)
     singleOf(::LocalModelLibrary)
     singleOf(::LocalModelRepository)
+    singleOf(::LocalModelMemoryGuard)
     singleOf(::LocalModelRuntime)
+    // Created with the app, so it sees every screen start and stop
+    single(createdAtStart = true) { LocalModelLifecycle(androidApplication(), get()) }
+    singleOf(::LocalGenerationKeeper)
     singleOf(::LocalLLMClientFactory)
     singleOf(::LocalModelCatalogClient)
     singleOf(::LocalPromptPreviewer)
@@ -49,6 +54,9 @@ private fun availableEngines(context: Context): List<LocalInferenceEngine> {
     val hasLlamaCppAbi = Build.SUPPORTED_ABIS.any { it == "arm64-v8a" || it == "x86_64" }
     return buildList {
         if (isDebuggable) add(FakeLocalInferenceEngine())
-        if (hasLlamaCppAbi) add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir))
+        if (hasLlamaCppAbi) {
+            val kernelCache = File(context.cacheDir, "opencl-kernels").apply { mkdirs() }
+            add(LlamaCppEngine(context.applicationInfo.nativeLibraryDir, kernelCache.path))
+        }
     }
 }

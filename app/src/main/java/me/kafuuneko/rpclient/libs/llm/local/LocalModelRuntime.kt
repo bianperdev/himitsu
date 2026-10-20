@@ -78,9 +78,13 @@ class LocalModelUnavailableException : LocalInferenceException("The selected loc
  */
 class LocalModelRuntime(
     private val mEngines: LocalEngineRegistry,
-    private val mModels: LocalModelRepository
+    private val mModels: LocalModelRepository,
+    private val mMemoryGuard: LocalModelMemoryGuard
 ) {
     private val mMutex = Mutex()
+
+    // Written under the mutex; read without it only to abort a generation
+    @Volatile
     private var mLoaded: LoadedModel? = null
 
     /**
@@ -106,10 +110,16 @@ class LocalModelRuntime(
             // Release the previous model before loading, so two never share memory
             loaded?.engine?.unload()
             mLoaded = null
+            mMemoryGuard.check(model, effective)
             engine.load(model, effective)
             mLoaded = LoadedModel(engine, model, effective)
         }
         block(engine, model)
+    }
+
+    /** Stops a running generation at the next token, keeping what was written. Safe from any thread. */
+    fun abortGeneration() {
+        mLoaded?.engine?.abortGeneration()
     }
 
     /** Unloads the current model, waiting for a running generation to finish first. */

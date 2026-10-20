@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">コンパクトで多言語対応。低めの温度で最もよく動作します。</string>
     <string name="local_models_catalog_qwen35_2b">最も小さい選択肢。RAM 4〜6 GB のスマートフォン向け。</string>
     <string name="local_inference_selected_model">選択中のモデル：%1$s</string>
+    <string name="local_models_performance_header">パフォーマンス</string>
+    <string name="local_models_threads">CPU スレッド</string>
+    <string name="local_models_threads_desc">自動では高速コアを使い、UI のための余裕を残します。</string>
+    <string name="local_models_threads_auto">自動</string>
+    <string name="local_models_gpu">GPU を使用</string>
+    <string name="local_models_gpu_desc">%1$s（OpenCL 経由）。試験的機能：最近の Snapdragon 端末では通常より高速です。</string>
+    <string name="local_models_kv">コンパクトなコンテキストメモリ</string>
+    <string name="local_models_kv_desc">コンテキストを 8 ビットで保存します。メモリは半分になり、品質はわずかに下がります。</string>
+    <string name="local_models_unload">バックグラウンドでモデルを解放</string>
+    <string name="local_models_unload_desc">アプリを離れると他のアプリのためにメモリを解放します。再読み込みには数秒かかります。</string>
+    <string name="local_models_unload_now">すぐに</string>
+    <string name="local_models_unload_minutes">%1$d 分</string>
+    <string name="local_models_unload_never">しない</string>
+    <string name="local_models_performance_note">変更は次の応答から反映されます。</string>
+    <string name="local_inference_generation_notification">バックグラウンドで処理中</string>
+    <string name="local_inference_generation_channel">バックグラウンド処理</string>
 </resources>

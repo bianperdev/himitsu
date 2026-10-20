@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">Compacto y multilingüe. Funciona mejor con una temperatura baja.</string>
     <string name="local_models_catalog_qwen35_2b">La opción más pequeña, para teléfonos con 4 a 6 GB de RAM.</string>
     <string name="local_inference_selected_model">Modelo elegido: %1$s</string>
+    <string name="local_models_performance_header">Rendimiento</string>
+    <string name="local_models_threads">Hilos de CPU</string>
+    <string name="local_models_threads_desc">Automático usa los núcleos rápidos y deja margen para la interfaz.</string>
+    <string name="local_models_threads_auto">Automático</string>
+    <string name="local_models_gpu">Usar la GPU</string>
+    <string name="local_models_gpu_desc">%1$s, mediante OpenCL. Experimental: suele ser más rápido en móviles Snapdragon recientes.</string>
+    <string name="local_models_kv">Memoria de contexto compacta</string>
+    <string name="local_models_kv_desc">Guarda el contexto en 8 bits: la mitad de memoria, con una pequeña pérdida de calidad.</string>
+    <string name="local_models_unload">Liberar el modelo en segundo plano</string>
+    <string name="local_models_unload_desc">Libera memoria para otras apps cuando sales de la app. Volver a cargarlo tarda unos segundos.</string>
+    <string name="local_models_unload_now">Al momento</string>
+    <string name="local_models_unload_minutes">%1$d min</string>
+    <string name="local_models_unload_never">Nunca</string>
+    <string name="local_models_performance_note">Los cambios se aplican a la siguiente respuesta.</string>
+    <string name="local_inference_generation_notification">Trabajando en segundo plano</string>
+    <string name="local_inference_generation_channel">Trabajo en segundo plano</string>
 </resources>

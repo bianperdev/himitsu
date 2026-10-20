@@ -20,7 +20,7 @@ class LocalPromptPreviewer(private val mRuntime: LocalModelRuntime) {
     fun preview(provider: LLMProvider, model: String?, messages: List<LLMMessage>): RenderedPromptInspection? {
         if (Looper.myLooper() == Looper.getMainLooper()) return null
         val modelId = model?.takeIf { it.isNotBlank() } ?: provider.model
-        val config = LocalLoadConfig(contextTokens = provider.contextTokens)
+        val config = LocalInferencePrefs.loadConfig(provider.contextTokens)
         return runCatching {
             runBlocking {
                 mRuntime.withModel(modelId, config) { engine, _ ->

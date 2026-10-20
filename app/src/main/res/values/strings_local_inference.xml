@@ -57,4 +57,20 @@
     <string name="local_models_catalog_ministral3_3b">Compact and multilingual. Works best with a low temperature.</string>
     <string name="local_models_catalog_qwen35_2b">The smallest option, for phones with 4 to 6 GB of RAM.</string>
     <string name="local_inference_selected_model">Selected model: %1$s</string>
+    <string name="local_models_performance_header">Performance</string>
+    <string name="local_models_threads">CPU threads</string>
+    <string name="local_models_threads_desc">Auto uses the fast cores and leaves room for the interface.</string>
+    <string name="local_models_threads_auto">Auto</string>
+    <string name="local_models_gpu">Use the GPU</string>
+    <string name="local_models_gpu_desc">%1$s, through OpenCL. Experimental: usually faster on recent Snapdragon phones.</string>
+    <string name="local_models_kv">Compact context memory</string>
+    <string name="local_models_kv_desc">Stores the context in 8 bits: half the memory, with a small loss of quality.</string>
+    <string name="local_models_unload">Release the model in the background</string>
+    <string name="local_models_unload_desc">Frees memory for other apps after you leave the app. Loading it again takes a few seconds.</string>
+    <string name="local_models_unload_now">Right away</string>
+    <string name="local_models_unload_minutes">%1$d min</string>
+    <string name="local_models_unload_never">Never</string>
+    <string name="local_models_performance_note">Changes apply to the next reply.</string>
+    <string name="local_inference_generation_notification">Working in the background</string>
+    <string name="local_inference_generation_channel">Background work</string>
 </resources>
