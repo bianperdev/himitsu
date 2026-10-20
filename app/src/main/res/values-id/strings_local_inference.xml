@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Ruang kosong tidak cukup untuk model ini.</string>
     <string name="local_models_download_failed_integrity">File tidak cocok dengan checksum yang dipublikasikan dan telah dihapus.</string>
     <string name="local_models_download_failed_storage">File tidak dapat disimpan.</string>
+    <string name="local_models_download_failed_time_limit">Android menjeda unduhan karena waktu latar belakang hariannya habis. Anda dapat melanjutkannya.</string>
     <string name="local_models_download_confirm_title">Unduh %1$s?</string>
     <string name="local_models_download_confirm_message">Ini mengunduh %1$s dari Hugging Face melalui internet. Hugging Face akan melihat alamat IP Anda dan model yang Anda unduh. Tidak ada akun, token, atau data obrolan yang dikirim. Gunakan Wi-Fi jika paket data Anda terbatas.</string>
     <string name="local_models_download_busy">Unduhan lain sedang berjalan</string>

@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">可用空间不足，无法存放此模型。</string>
     <string name="local_models_download_failed_integrity">文件与公布的校验和不一致，已删除。</string>
     <string name="local_models_download_failed_storage">无法保存文件。</string>
+    <string name="local_models_download_failed_time_limit">Android 已用完每日后台时间，下载已暂停。你可以继续下载。</string>
     <string name="local_models_download_confirm_title">下载 %1$s？</string>
     <string name="local_models_download_confirm_message">将通过互联网从 Hugging Face 下载 %1$s。Hugging Face 会看到你的 IP 地址和你下载的模型。不会发送任何账号、令牌或聊天数据。如果流量有限，请使用 Wi-Fi。</string>
     <string name="local_models_download_busy">已有其他下载正在进行</string>

@@ -40,6 +40,10 @@ class LocalModelDownloadService : Service(), KoinComponent {
     private var mCurrentKey: String? = null
     private var mShownPercent = -1
 
+    /** Set when Android ends the foreground time, so the stop is reported instead of hidden. */
+    @Volatile
+    private var mTimedOut = false
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -51,6 +55,16 @@ class LocalModelDownloadService : Service(), KoinComponent {
         }
         // A killed download is resumed by the user, not restarted by the system
         return START_NOT_STICKY
+    }
+
+    /**
+     * Android 15+ gives `dataSync` services about 6 hours a day and kills the app if the service
+     * outlives it. The download stops at once and keeps its partial file, so the user can resume.
+     */
+    override fun onTimeout(startId: Int, fgsType: Int) {
+        mTimedOut = true
+        mJob?.cancel()
+        stopForegroundAndSelf()
     }
 
     override fun onDestroy() {
@@ -66,6 +80,7 @@ class LocalModelDownloadService : Service(), KoinComponent {
         }
         mCurrentKey = entry.key
         mShownPercent = -1
+        mTimedOut = false
         startInForeground(notification(percent = null))
         mTracker.set(entry.key, LocalModelDownloadState.Running(mDownloader.partialBytes(entry), entry.sizeBytes))
         mJob = mScope.launch {
@@ -77,7 +92,8 @@ class LocalModelDownloadService : Service(), KoinComponent {
                 )
                 mTracker.set(entry.key, null)
             } catch (error: CancellationException) {
-                mTracker.set(entry.key, null)
+                val stopped = if (mTimedOut) LocalModelDownloadState.Failed(LocalModelDownloadFailure.TimeLimit) else null
+                mTracker.set(entry.key, stopped)
                 throw error
             } catch (error: LocalModelDownloadException) {
                 mTracker.set(entry.key, LocalModelDownloadState.Failed(error.failure))

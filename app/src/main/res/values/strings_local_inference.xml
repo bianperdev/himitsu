@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Not enough free space for this model.</string>
     <string name="local_models_download_failed_integrity">The file did not match its published checksum and was deleted.</string>
     <string name="local_models_download_failed_storage">The file could not be saved.</string>
+    <string name="local_models_download_failed_time_limit">Android paused the download after its daily background time. You can resume it.</string>
     <string name="local_models_download_confirm_title">Download %1$s?</string>
     <string name="local_models_download_confirm_message">This downloads %1$s from Hugging Face over the internet. Hugging Face will see your IP address and which model you download. No account, token or chat data is sent. Use Wi-Fi if your data plan is limited.</string>
     <string name="local_models_download_busy">Another download is already running</string>

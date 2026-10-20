@@ -460,4 +460,5 @@ private fun LocalModelDownloadFailure.messageRes(): Int = when (this) {
     LocalModelDownloadFailure.NoSpace -> R.string.local_models_download_failed_no_space
     LocalModelDownloadFailure.Integrity -> R.string.local_models_download_failed_integrity
     LocalModelDownloadFailure.Storage -> R.string.local_models_download_failed_storage
+    LocalModelDownloadFailure.TimeLimit -> R.string.local_models_download_failed_time_limit
 }

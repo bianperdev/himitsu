@@ -42,7 +42,10 @@ enum class LocalModelDownloadFailure {
     Integrity,
 
     /** The file could not be written. */
-    Storage
+    Storage,
+
+    /** Android ended the daily time allowed for background transfers; the download can resume. */
+    TimeLimit
 }
 
 class LocalModelDownloadException(val failure: LocalModelDownloadFailure) :

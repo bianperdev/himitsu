@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Nicht genug freier Speicher für dieses Modell.</string>
     <string name="local_models_download_failed_integrity">Die Datei stimmte nicht mit ihrer veröffentlichten Prüfsumme überein und wurde gelöscht.</string>
     <string name="local_models_download_failed_storage">Die Datei konnte nicht gespeichert werden.</string>
+    <string name="local_models_download_failed_time_limit">Android hat den Download pausiert, weil die tägliche Hintergrundzeit aufgebraucht ist. Du kannst ihn fortsetzen.</string>
     <string name="local_models_download_confirm_title">%1$s herunterladen?</string>
     <string name="local_models_download_confirm_message">Damit werden %1$s von Hugging Face über das Internet heruntergeladen. Hugging Face sieht deine IP-Adresse und welches Modell du lädst. Es werden kein Konto, kein Token und keine Chatdaten gesendet. Nutze WLAN, wenn dein Datenvolumen begrenzt ist.</string>
     <string name="local_models_download_busy">Ein anderer Download läuft bereits</string>

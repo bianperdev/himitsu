@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">Недостаточно свободного места для этой модели.</string>
     <string name="local_models_download_failed_integrity">Файл не совпал с опубликованной контрольной суммой и был удалён.</string>
     <string name="local_models_download_failed_storage">Не удалось сохранить файл.</string>
+    <string name="local_models_download_failed_time_limit">Android приостановил загрузку: закончилось дневное время работы в фоне. Её можно возобновить.</string>
     <string name="local_models_download_confirm_title">Скачать %1$s?</string>
     <string name="local_models_download_confirm_message">Будет скачано %1$s с Hugging Face через интернет. Hugging Face увидит ваш IP-адрес и какую модель вы скачиваете. Аккаунт, токены и данные чатов не передаются. Используйте Wi-Fi, если ваш тариф ограничен.</string>
     <string name="local_models_download_busy">Уже идёт другая загрузка</string>

@@ -45,6 +45,7 @@
     <string name="local_models_download_failed_no_space">このモデルを保存する空き容量が足りません。</string>
     <string name="local_models_download_failed_integrity">ファイルが公開されているチェックサムと一致しなかったため削除しました。</string>
     <string name="local_models_download_failed_storage">ファイルを保存できませんでした。</string>
+    <string name="local_models_download_failed_time_limit">バックグラウンドで使える1日の時間を超えたため、Android がダウンロードを一時停止しました。再開できます。</string>
     <string name="local_models_download_confirm_title">%1$s をダウンロードしますか？</string>
     <string name="local_models_download_confirm_message">インターネット経由で Hugging Face から %1$s をダウンロードします。Hugging Face にはあなたの IP アドレスとダウンロードするモデルがわかります。アカウント、トークン、チャットのデータは送信されません。データ通信量に制限がある場合は Wi-Fi を使用してください。</string>
     <string name="local_models_download_busy">別のダウンロードが進行中です</string>
