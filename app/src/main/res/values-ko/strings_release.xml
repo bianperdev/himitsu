@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="about_licenses_action">보기</string>
+    <string name="about_credit_rpclient">RPClient 기반</string>
+    <string name="about_credit_rpclient_desc">Kafuu Neko 제작, MIT 라이선스이며 Himitsu 고지에 포함되어 있습니다</string>
+    <string name="licenses_title">오픈소스 라이선스</string>
+    <string name="licenses_desc">Himitsu는 GNU GPL 버전 3 이상에 따른 자유 소프트웨어입니다. 고지에 나열된 구성 요소를 포함하며, 각 구성 요소는 자체 라이선스를 따릅니다.</string>
+    <string name="licenses_notice">Himitsu 및 구성 요소 고지</string>
+    <string name="licenses_gpl">GNU 일반 공중 사용 허가서 v3</string>
+</resources>

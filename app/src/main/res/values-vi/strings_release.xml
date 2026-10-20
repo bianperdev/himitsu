@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="about_licenses_action">Xem</string>
+    <string name="about_credit_rpclient">Dựa trên RPClient</string>
+    <string name="about_credit_rpclient_desc">Của Kafuu Neko, theo Giấy phép MIT, được giữ trong thông báo của Himitsu</string>
+    <string name="licenses_title">Giấy phép nguồn mở</string>
+    <string name="licenses_desc">Himitsu là phần mềm tự do theo GNU GPL phiên bản 3 trở lên. Ứng dụng bao gồm các thành phần trong thông báo, mỗi thành phần theo giấy phép riêng.</string>
+    <string name="licenses_notice">Thông báo của Himitsu và các thành phần</string>
+    <string name="licenses_gpl">Giấy phép Công cộng GNU v3</string>
+</resources>
