@@ -29,9 +29,15 @@ const val DEFAULT_DEEPSEEK_REQUEST_BODY_PATCH_JSON =
 const val DEFAULT_GROK_REQUEST_BODY_PATCH_JSON =
     "{\"reasoning_effort\":\"low\"}"
 
-/** 内置 OpenRouter 模板同时启用会话粘性并展示统一推理参数。 */
+/**
+ * 内置 OpenRouter 模板展示统一推理参数。
+ *
+ * Himitsu (P-16): the template no longer sends a stable per-conversation routing ID by default.
+ * Users who want session stickiness can add `"session_id": "$rpclient.routing_session_id"` to
+ * the advanced request JSON themselves.
+ */
 const val DEFAULT_OPENROUTER_REQUEST_BODY_PATCH_JSON =
-    "{\"session_id\":\"\$rpclient.routing_session_id\",\"reasoning\":{\"effort\":\"low\"}}"
+    "{\"reasoning\":{\"effort\":\"low\"}}"
 
 /**
  * 在线模型供应商类型，用于 UI 展示和统计归类。
