@@ -18,6 +18,7 @@ import me.kafuuneko.rpclient.libs.security.key.MasterKeyFileStore
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
 import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.SetAsideUnlock
+import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
 import net.zetetic.database.sqlcipher.SQLiteDatabase
 
 /** Result of preparing to restore a set-aside copy. */
@@ -60,7 +61,8 @@ class SetAsideRestorer(
      */
     suspend fun prepare(suffix: String, code: RecoveryCode?): RestorePreparation = withContext(Dispatchers.IO) {
         val set = mFiles.setAside().firstOrNull { it.suffix == suffix }
-        if (set == null || !canRestore(set)) return@withContext RestorePreparation.Failed
+        // One restore at a time: a second one would reuse the re-sealed key file of the first
+        if (set == null || !canRestore(set) || RestoreJournal.isPending(mContext)) return@withContext RestorePreparation.Failed
         val restoredKey = File(mContext.noBackupFilesDir, MASTER_KEY_FILE_NAME + RESTORED_SUFFIX)
         val source = MasterKeyFileStore(File(mContext.noBackupFilesDir, MASTER_KEY_FILE_NAME + suffix))
         val masterKey = when (val result = mVault.unlockSetAside(source, MasterKeyFileStore(restoredKey), code)) {
@@ -124,6 +126,9 @@ object RestoreJournal {
     private const val REPLACED = "replaced"
     private const val PHASE = "phase"
 
+    /** Whether a restore is recorded and not finished. Until it is, no key may be loaded or created. */
+    fun isPending(context: Context): Boolean = File(context.noBackupFilesDir, FILE_NAME).exists()
+
     /** Records a restore of [source]; the data in use will be set aside as [replaced]. */
     fun schedule(context: Context, source: String, replaced: String): Boolean =
         runCatching { write(context, source, replaced, phase = 1) }.isSuccess
@@ -136,7 +141,11 @@ object RestoreJournal {
      */
     fun completePending(context: Context): Boolean {
         val journal = File(context.noBackupFilesDir, FILE_NAME)
-        if (!journal.isFile) return true
+        if (!journal.isFile) {
+            // A re-sealed copy of a key whose restore was never recorded; its original stays aside
+            File(context.noBackupFilesDir, MASTER_KEY_FILE_NAME + SetAsideRestorer.RESTORED_SUFFIX).delete()
+            return true
+        }
         return try {
             val values = Properties().apply { journal.inputStream().use { load(it) } }
             val source = values.getProperty(SOURCE) ?: return false
@@ -166,7 +175,9 @@ object RestoreJournal {
             val file = context.getDatabasePath(database.fileName)
             listOf(file, File(file.path + ".plaintext")).forEach { live ->
                 val (from, to) = pair(live)
-                if (from.exists()) {
+                // Companions move first, so leftovers of an interrupted move sit next to the
+                // database still at its source and are moved with it now
+                if (DatabaseFiles.anyExists(from)) {
                     if (to.exists()) throw IOException("Destination taken")
                     DatabaseFiles.move(from, to)
                 }
@@ -179,11 +190,22 @@ object RestoreJournal {
         // A directory without files (left by the app or by "start over") holds nothing to keep
         if (from.exists() && to.exists() && to.walk().none { it.isFile }) to.deleteRecursively()
         move(from, to)
-        // Only the preference files the copy has are swapped; the others (the lock switches) stay
+        // Every live file with sealed values goes aside, since the copy's key cannot read them,
+        // as do the files the copy replaces; plain ones such as the lock switches stay. Android's
+        // `.bak` backup of a preference file always moves with it, or it would be restored over
+        // the new file.
         val preferences = File(context.applicationInfo.dataDir, "shared_prefs")
-        preferences.listFiles().orEmpty().filter { it.name.endsWith(".xml$source") }.forEach { copy ->
-            val live = File(preferences, copy.name.removeSuffix(source))
-            if (toAside) move(live, File(live.path + aside)) else move(copy, live)
+        if (toAside) {
+            preferences.listFiles().orEmpty()
+                .filter { it.name.endsWith(".xml") && (SealedPreferencesProvider.hasSealedValues(it) || File(it.path + source).exists()) }
+                .forEach { live ->
+                    move(File(live.path + ".bak"), File(live.path + ".bak" + aside))
+                    move(live, File(live.path + aside))
+                }
+        } else {
+            preferences.listFiles().orEmpty()
+                .filter { it.name.endsWith(".xml$source") || it.name.endsWith(".xml.bak$source") }
+                .forEach { copy -> move(copy, File(preferences, copy.name.removeSuffix(source))) }
         }
     }
 

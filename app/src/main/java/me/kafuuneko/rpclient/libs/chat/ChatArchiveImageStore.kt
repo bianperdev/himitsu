@@ -33,8 +33,8 @@ class ChatArchiveImageStore(private val mContext: Context) {
         mRoot.mkdirs()
         discardStale()
         return UUID.randomUUID().toString().also {
-            check(File(mRoot, it).mkdirs()) { "Cannot create archive image directory" }
             mActiveOwners.add(it)
+            check(File(mRoot, it).mkdirs()) { "Cannot create archive image directory" }
         }
     }
 

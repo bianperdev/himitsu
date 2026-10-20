@@ -42,7 +42,7 @@ class ConfirmCredentialActivity : FragmentActivity(), KoinComponent {
             finish()
             return
         }
-        mLockManager.authenticate(
+        mLockManager.confirm(
             prompt = prompt,
             title = getString(R.string.security_confirm_prompt_title),
             subtitle = getString(R.string.security_confirm_prompt_subtitle)

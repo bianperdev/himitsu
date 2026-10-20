@@ -20,6 +20,7 @@ sealed class SecuritySettingsUiIntent {
     data object DismissDialog : SecuritySettingsUiIntent()
     data class ShowSetAsideActions(val suffix: String) : SecuritySettingsUiIntent()
     data object ExportSetAside : SecuritySettingsUiIntent()
+    data object ConfirmExportSetAside : SecuritySettingsUiIntent()
 
     /** The destination chosen in the system file picker, or null when the user canceled it. */
     data class ExportSetAsideTo(val destination: Uri?) : SecuritySettingsUiIntent()

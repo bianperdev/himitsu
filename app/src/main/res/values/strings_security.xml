@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">This device\'s secure hardware can no longer open this copy. Enter the recovery code it had.</string>
     <string name="security_restore_failed">This copy could not be restored. Nothing was changed.</string>
     <string name="security_restore_not_configured">This copy has no recovery code and this device can no longer open it, so it cannot be restored.</string>
+    <string name="security_storage_error_restore_incomplete">A restore of set-aside data did not finish. Try again to restart the app and finish it.</string>
 </resources>

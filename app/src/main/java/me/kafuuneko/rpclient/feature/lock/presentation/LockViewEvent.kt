@@ -12,6 +12,12 @@ sealed class LockViewEvent : IViewEvent {
     /** Let the user choose where to save an export, suggesting [fileName]. */
     data class PickExportDestination(val fileName: String) : LockViewEvent()
 
+    /** Ask the user to confirm with biometrics or the device credential. */
+    data object RequestConfirmation : LockViewEvent()
+
+    /** Restart the app, so a recorded restore finishes before anything opens the files. */
+    data object RestartApp : LockViewEvent()
+
     /** Show a short message. */
     data class ShowMessage(@StringRes val message: Int) : LockViewEvent()
 }

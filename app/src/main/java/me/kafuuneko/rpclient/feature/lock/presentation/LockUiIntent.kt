@@ -26,6 +26,9 @@ sealed class LockUiIntent {
     data object ShowExportDialog : LockUiIntent()
     data object ConfirmExport : LockUiIntent()
 
+    /** Result of the confirmation asked before an export or setting data aside. */
+    data class ConfirmationFinished(val confirmed: Boolean) : LockUiIntent()
+
     /** The destination chosen in the system file picker, or null when the user canceled it. */
     data class ExportTo(val destination: Uri?) : LockUiIntent()
     data object DismissDialog : LockUiIntent()

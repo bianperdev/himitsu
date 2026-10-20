@@ -42,6 +42,7 @@ import me.kafuuneko.rpclient.libs.security.key.VaultLoadResult
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_DIR_NAME
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_STAGING_DIR_NAME
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
+import me.kafuuneko.rpclient.libs.security.storage.RestoreJournal
 import net.zetetic.database.Logger
 import net.zetetic.database.NoopTarget
 
@@ -60,7 +61,10 @@ enum class StorageFailure {
      * A plain database from an earlier build is damaged, or exists twice, so it can never be
      * encrypted. It can only be exported or set aside, still in plain form.
      */
-    PlainDatabaseUnusable;
+    PlainDatabaseUnusable,
+
+    /** A restore of set-aside data did not finish; restarting the app continues it. */
+    RestoreIncomplete;
 
     companion object {
         /**
@@ -255,8 +259,8 @@ class SecureStorageManager(
                     if (database == EncryptedDatabase.Primary) setAsideStoredFiles(suffix)
                     DatabaseFiles.delete(File(file.path + ".encrypting"))
                     val plainCopy = File(file.path + ".plaintext")
-                    if (plainCopy.exists()) DatabaseFiles.move(plainCopy, File(plainCopy.path + suffix))
-                    if (DatabaseFiles.kindOf(file) != DatabaseFileKind.Missing) DatabaseFiles.move(file, File(file.path + suffix))
+                    if (DatabaseFiles.anyExists(plainCopy)) DatabaseFiles.move(plainCopy, File(plainCopy.path + suffix))
+                    if (DatabaseFiles.anyExists(file)) DatabaseFiles.move(file, File(file.path + suffix))
                 } catch (_: IOException) {
                     fail(StorageFailure.StorageError)
                     return@withLock
@@ -358,6 +362,10 @@ class SecureStorageManager(
             return
         }
         mState.value = SecureStorageState.Starting
+        if (RestoreJournal.isPending(mContext)) {
+            fail(StorageFailure.RestoreIncomplete)
+            return
+        }
         when (val result = loadMasterKeyBlocking(retryFailure = true)) {
             is VaultLoadResult.Loaded -> continueWith(result.masterKey)
             is VaultLoadResult.Failed -> fail(StorageFailure.from(result.failure))
@@ -373,6 +381,8 @@ class SecureStorageManager(
     private fun loadMasterKeyBlocking(retryFailure: Boolean): VaultLoadResult = synchronized(mKeyLock) {
         mLoadedKey?.let { return VaultLoadResult.Loaded(it, created = false) }
         if (!retryFailure) mLastFailure?.let { return VaultLoadResult.Failed(it) }
+        // Halfway through a restore the key file may be missing on purpose: never create one
+        if (RestoreJournal.isPending(mContext)) return VaultLoadResult.Failed(VaultFailure.StorageError)
         val result = mVault.loadOrCreate(hasEncryptedData = hasEncryptedData())
         when (result) {
             is VaultLoadResult.Loaded -> {

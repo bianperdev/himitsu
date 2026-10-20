@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">此裝置的安全硬體已無法開啟此副本。請輸入它原有的復原碼。</string>
     <string name="security_restore_failed">無法還原此副本。未進行任何變更。</string>
     <string name="security_restore_not_configured">此副本沒有復原碼，此裝置也已無法開啟它，因此無法還原。</string>
+    <string name="security_storage_error_restore_incomplete">移到一旁的資料的還原尚未完成。請再試一次以重新啟動應用程式並完成還原。</string>
 </resources>

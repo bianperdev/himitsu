@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">O hardware seguro deste dispositivo não consegue mais abrir esta cópia. Digite o código de recuperação que ela tinha.</string>
     <string name="security_restore_failed">Não foi possível restaurar esta cópia. Nada foi alterado.</string>
     <string name="security_restore_not_configured">Esta cópia não tem código de recuperação e este dispositivo não consegue mais abri-la, então ela não pode ser restaurada.</string>
+    <string name="security_storage_error_restore_incomplete">Uma restauração de dados deixados de lado não terminou. Tente novamente para reiniciar o app e concluí-la.</string>
 </resources>

@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">Phần cứng bảo mật của thiết bị không còn mở được bản sao này. Hãy nhập mã khôi phục mà nó có.</string>
     <string name="security_restore_failed">Không thể khôi phục bản sao này. Không có gì thay đổi.</string>
     <string name="security_restore_not_configured">Bản sao này không có mã khôi phục và thiết bị không còn mở được nó, nên không thể khôi phục.</string>
+    <string name="security_storage_error_restore_incomplete">Việc khôi phục dữ liệu để riêng chưa hoàn tất. Hãy thử lại để khởi động lại ứng dụng và hoàn tất.</string>
 </resources>

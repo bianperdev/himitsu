@@ -54,6 +54,9 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
     private val mProtectedFiles by inject<ProtectedFiles>()
     private val mContext by inject<Context>()
 
+    /** Action waiting for the user's confirmation; lost with the process, which then does nothing. */
+    private var mPendingAction: LockUiIntent? = null
+
     /** Whether the storage failed while this screen was shown (privacy review M3). */
     private var mStorageFailed = false
 
@@ -124,10 +127,18 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         }
     }
 
-    /** Retries opening the storage after a failure that may be temporary. */
+    /**
+     * Retries opening the storage after a failure that may be temporary. An unfinished restore
+     * continues only at the start of a process, before any preference is read, so the app
+     * restarts instead.
+     */
     @UiIntentObserver(LockUiIntent.Retry::class)
     private fun onRetry() {
-        getOrNull<LockUiState.Normal>() ?: return
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        if ((uiState.contentState as? LockContentState.StorageError)?.failure == StorageFailure.RestoreIncomplete) {
+            LockViewEvent.RestartApp.tryEmit()
+            return
+        }
         mStorage.retry()
     }
 
@@ -204,7 +215,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         val uiState = getOrNull<LockUiState.Normal>() ?: return
         if (uiState.dialogState != LockDialogState.ConfirmSetAside) return
         uiState.copy(dialogState = LockDialogState.None).setup()
-        mStorage.setAsideUnusableDatabase()
+        requestConfirmation(LockUiIntent.ConfirmSetAside)
     }
 
     /** Explains what an export holds before the file picker opens. */
@@ -221,8 +232,38 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         val uiState = getOrNull<LockUiState.Normal>() ?: return
         if (uiState.dialogState != LockDialogState.ConfirmExport) return
         uiState.copy(dialogState = LockDialogState.None).setup()
-        val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
-        LockViewEvent.PickExportDestination("himitsu-encrypted-$date.zip").tryEmit()
+        requestConfirmation(LockUiIntent.ConfirmExport)
+    }
+
+    /**
+     * Runs the action that waited for the confirmation, only when the user confirmed. The
+     * storage error screen comes before the app lock, so without this anyone holding an
+     * unlocked phone could export or set aside the data.
+     */
+    @UiIntentObserver(LockUiIntent.ConfirmationFinished::class)
+    private fun onConfirmationFinished(intent: LockUiIntent.ConfirmationFinished) {
+        val action = mPendingAction ?: return
+        mPendingAction = null
+        if (!intent.confirmed) {
+            LockViewEvent.ShowMessage(R.string.security_confirm_canceled).tryEmit()
+            return
+        }
+        getOrNull<LockUiState.Normal>()?.contentState as? LockContentState.StorageError ?: return
+        when (action) {
+            LockUiIntent.ConfirmSetAside -> mStorage.setAsideUnusableDatabase()
+            LockUiIntent.ConfirmExport -> {
+                // A neutral name: the file manager must not reveal the app
+                val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                LockViewEvent.PickExportDestination("data-$date.zip").tryEmit()
+            }
+            else -> Unit
+        }
+    }
+
+    /** A new request replaces one whose confirmation never came back. */
+    private fun requestConfirmation(action: LockUiIntent) {
+        mPendingAction = action
+        LockViewEvent.RequestConfirmation.tryEmit()
     }
 
     /**

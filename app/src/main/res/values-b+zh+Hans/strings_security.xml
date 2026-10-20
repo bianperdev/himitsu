@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">此设备的安全硬件已无法打开此副本。请输入它原有的恢复码。</string>
     <string name="security_restore_failed">无法恢复此副本。未作任何更改。</string>
     <string name="security_restore_not_configured">此副本没有恢复码，此设备也已无法打开它，因此无法恢复。</string>
+    <string name="security_storage_error_restore_incomplete">移到一旁的数据的恢复未完成。请重试以重新启动应用并完成恢复。</string>
 </resources>

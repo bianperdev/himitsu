@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">Perangkat keras aman di perangkat ini tidak dapat lagi membuka salinan ini. Masukkan kode pemulihan yang dimilikinya.</string>
     <string name="security_restore_failed">Salinan ini tidak dapat dipulihkan. Tidak ada yang diubah.</string>
     <string name="security_restore_not_configured">Salinan ini tidak memiliki kode pemulihan dan perangkat ini tidak dapat lagi membukanya, jadi tidak dapat dipulihkan.</string>
+    <string name="security_storage_error_restore_incomplete">Pemulihan data yang disisihkan belum selesai. Coba lagi untuk memulai ulang aplikasi dan menyelesaikannya.</string>
 </resources>

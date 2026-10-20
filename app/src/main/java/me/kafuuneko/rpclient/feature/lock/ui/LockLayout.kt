@@ -290,6 +290,7 @@ private fun StorageFailure.messageRes(): Int = when (this) {
     StorageFailure.StorageError -> R.string.security_storage_error_storage
     StorageFailure.MigrationFailed -> R.string.security_storage_error_migration_failed
     StorageFailure.PlainDatabaseUnusable -> R.string.security_storage_error_plain_unusable
+    StorageFailure.RestoreIncomplete -> R.string.security_storage_error_restore_incomplete
 }
 
 private fun RecoveryCodeError.messageRes(): Int = when (this) {

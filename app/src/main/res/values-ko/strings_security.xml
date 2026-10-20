@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">이 기기의 보안 하드웨어로는 더 이상 이 사본을 열 수 없습니다. 이 사본의 복구 코드를 입력하세요.</string>
     <string name="security_restore_failed">이 사본을 복원하지 못했습니다. 변경된 내용이 없습니다.</string>
     <string name="security_restore_not_configured">이 사본에는 복구 코드가 없고 이 기기로도 더 이상 열 수 없어 복원할 수 없습니다.</string>
+    <string name="security_storage_error_restore_incomplete">따로 보관한 데이터의 복원이 완료되지 않았습니다. 다시 시도하면 앱이 다시 시작되어 복원을 마칩니다.</string>
 </resources>

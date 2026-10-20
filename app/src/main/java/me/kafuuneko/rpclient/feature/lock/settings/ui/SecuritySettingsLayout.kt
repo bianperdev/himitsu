@@ -298,6 +298,14 @@ private fun DialogSwitch(
             onConfirm = { SecuritySettingsUiIntent.ConfirmRestoreSetAside.emit() }
         )
         is SecuritySettingsDialogState.RestoreCodeInput -> RestoreCodeDialog(dialogState, emit)
+        is SecuritySettingsDialogState.ConfirmExportSetAside -> AppConfirmDialog(
+            onDismissRequest = dismiss,
+            title = stringResource(R.string.security_export_title),
+            message = stringResource(R.string.security_export_message),
+            badgeIcon = Icons.Rounded.SaveAlt,
+            confirmText = stringResource(R.string.security_export_confirm),
+            onConfirm = { SecuritySettingsUiIntent.ConfirmExportSetAside.emit() }
+        )
         is SecuritySettingsDialogState.ConfirmDeleteSetAside -> AppConfirmDialog(
             onDismissRequest = dismiss,
             title = stringResource(R.string.security_set_aside_delete_title),
@@ -356,7 +364,10 @@ private fun SetAsideActionsDialog(
             AppActionItem(
                 icon = Icons.Rounded.SaveAlt,
                 title = stringResource(R.string.security_action_export),
-                onClick = { SecuritySettingsUiIntent.ExportSetAside.emit() }
+                onClick = {
+                    chosen = true
+                    SecuritySettingsUiIntent.ExportSetAside.emit()
+                }
             ),
             AppActionItem(
                 icon = Icons.Rounded.Delete,

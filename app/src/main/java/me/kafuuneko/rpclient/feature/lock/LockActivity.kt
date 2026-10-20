@@ -49,6 +49,9 @@ class LockActivity : FragmentActivity(), KoinComponent {
     private val mExportLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
         mViewModel.emit(LockUiIntent.ExportTo(uri))
     }
+    private val mConfirmLauncher = registerForActivityResult(ConfirmCredentialContract()) { confirmed ->
+        mViewModel.emit(LockUiIntent.ConfirmationFinished(confirmed))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +101,15 @@ class LockActivity : FragmentActivity(), KoinComponent {
                                 )
                             }
                             is LockViewEvent.PickExportDestination -> mExportLauncher.launch(event.fileName)
+                            LockViewEvent.RequestConfirmation -> mConfirmLauncher.launch(Unit)
+                            LockViewEvent.RestartApp -> {
+                                startActivity(
+                                    Intent(this@LockActivity, MainActivity::class.java)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                )
+                                finishAffinity()
+                                Runtime.getRuntime().exit(0)
+                            }
                             is LockViewEvent.ShowMessage ->
                                 Toast.makeText(this@LockActivity, event.message, Toast.LENGTH_SHORT).show()
                         }

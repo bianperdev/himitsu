@@ -50,6 +50,7 @@ sealed class SecuritySettingsDialogState {
     data class SetAsideActions(val item: SetAsideItem) : SecuritySettingsDialogState()
 
     data class ConfirmRestoreSetAside(val item: SetAsideItem) : SecuritySettingsDialogState()
+    data class ConfirmExportSetAside(val item: SetAsideItem) : SecuritySettingsDialogState()
 
     /** The copy's own key is gone; its recovery code is asked. The code is never kept here. */
     data class RestoreCodeInput(

@@ -120,12 +120,10 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
             ContextCompat.getMainExecutor(activity),
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    mAuthenticating = false
                     onOutcome(AuthOutcome.Succeeded)
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    mAuthenticating = false
                     onOutcome(AuthOutcome.Canceled)
                 }
             }
@@ -134,14 +132,25 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
     /** Shows [prompt] with the strongest authenticators the platform allows together with the device credential. */
     fun authenticate(prompt: BiometricPrompt, title: String, subtitle: String) {
         mAuthenticating = true
-        val info = BiometricPrompt.PromptInfo.Builder()
+        prompt.authenticate(promptInfo(title, subtitle))
+    }
+
+    /**
+     * Shows a prompt made by [createConfirmPrompt]. Unlike [authenticate] it does not mark the
+     * app as authenticating: the app is unlocked, so leaving it for the credential screen
+     * counts as leaving, and the lock timeout still applies when the user comes back.
+     */
+    fun confirm(prompt: BiometricPrompt, title: String, subtitle: String) {
+        prompt.authenticate(promptInfo(title, subtitle))
+    }
+
+    private fun promptInfo(title: String, subtitle: String): BiometricPrompt.PromptInfo =
+        BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
             .setSubtitle(subtitle)
             .setAllowedAuthenticators(allowedAuthenticators())
             .setConfirmationRequired(false)
             .build()
-        prompt.authenticate(info)
-    }
 
     /**
      * Unlocks without authentication, only when the device has no secure lock screen and so

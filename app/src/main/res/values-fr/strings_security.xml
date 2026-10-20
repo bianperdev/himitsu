@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">Le matériel sécurisé de cet appareil ne peut plus ouvrir cette copie. Saisissez le code de récupération qu\'elle avait.</string>
     <string name="security_restore_failed">Cette copie n\'a pas pu être restaurée. Rien n\'a été modifié.</string>
     <string name="security_restore_not_configured">Cette copie n\'a pas de code de récupération et cet appareil ne peut plus l\'ouvrir : elle ne peut donc pas être restaurée.</string>
+    <string name="security_storage_error_restore_incomplete">Une restauration de données mises de côté n\'est pas terminée. Réessayez pour redémarrer l\'application et la terminer.</string>
 </resources>

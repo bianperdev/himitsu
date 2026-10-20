@@ -50,10 +50,12 @@ object SealedPreferencesProvider : PreferencesProvider {
      * Whether any preference file holds sealed values. Reads the files directly, because the
      * preference objects may not exist yet this early in startup.
      */
-    fun hasSealedFiles(context: Context): Boolean = sharedPrefsDir(context).listFiles().orEmpty().any { file ->
+    fun hasSealedFiles(context: Context): Boolean = sharedPrefsDir(context).listFiles().orEmpty().any(::hasSealedValues)
+
+    /** Whether [file] is a preference file that holds sealed values. */
+    fun hasSealedValues(file: File): Boolean =
         file.isFile && file.name.endsWith(".xml") && runCatching { file.readText().contains(">" + PreferenceCipher.PREFIX) }
             .getOrDefault(false)
-    }
 
     /**
      * Copies every file with sealed values to `<name>.xml<suffix>` and empties it, after the

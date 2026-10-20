@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">Die sichere Hardware dieses Geräts kann diese Kopie nicht mehr öffnen. Gib den Wiederherstellungscode ein, den sie hatte.</string>
     <string name="security_restore_failed">Diese Kopie konnte nicht wiederhergestellt werden. Es wurde nichts geändert.</string>
     <string name="security_restore_not_configured">Diese Kopie hat keinen Wiederherstellungscode, und dieses Gerät kann sie nicht mehr öffnen. Sie lässt sich daher nicht wiederherstellen.</string>
+    <string name="security_storage_error_restore_incomplete">Eine Wiederherstellung beiseitegelegter Daten wurde nicht abgeschlossen. Versuche es erneut, um die App neu zu starten und sie abzuschließen.</string>
 </resources>

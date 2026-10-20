@@ -100,4 +100,5 @@
     <string name="security_restore_code_subtitle">Защищённое оборудование устройства больше не может открыть эту копию. Введите её код восстановления.</string>
     <string name="security_restore_failed">Не удалось восстановить эту копию. Ничего не изменено.</string>
     <string name="security_restore_not_configured">У этой копии нет кода восстановления, а устройство больше не может её открыть, поэтому восстановить её нельзя.</string>
+    <string name="security_storage_error_restore_incomplete">Восстановление отложенных данных не завершилось. Повторите попытку, чтобы перезапустить приложение и завершить его.</string>
 </resources>

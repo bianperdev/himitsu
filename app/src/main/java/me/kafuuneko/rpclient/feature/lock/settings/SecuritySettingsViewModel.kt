@@ -85,14 +85,27 @@ class SecuritySettingsViewModel :
         uiState.copy(dialogState = SecuritySettingsDialogState.SetAsideActions(item)).setup()
     }
 
+    /** Explains what an export holds before asking for the confirmation. */
     @UiIntentObserver(SecuritySettingsUiIntent.ExportSetAside::class)
     private fun onExportSetAside() {
         val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
         val dialog = uiState.dialogState as? SecuritySettingsDialogState.SetAsideActions ?: return
-        mExportSuffix = dialog.item.suffix
+        uiState.copy(dialogState = SecuritySettingsDialogState.ConfirmExportSetAside(dialog.item)).setup()
+    }
+
+    @UiIntentObserver(SecuritySettingsUiIntent.ConfirmExportSetAside::class)
+    private fun onConfirmExportSetAside() {
+        val uiState = getOrNull<SecuritySettingsUiState.Normal>() ?: return
+        val dialog = uiState.dialogState as? SecuritySettingsDialogState.ConfirmExportSetAside ?: return
         uiState.copy(dialogState = SecuritySettingsDialogState.None).setup()
+        requestConfirmation(ProtectedAction.ExportSetAside(dialog.item.suffix))
+    }
+
+    private fun pickExportDestination(suffix: String) {
+        mExportSuffix = suffix
+        // A neutral name: the file manager must not reveal the app
         val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
-        SecuritySettingsViewEvent.PickExportDestination("himitsu-set-aside-$date.zip").tryEmit()
+        SecuritySettingsViewEvent.PickExportDestination("data-$date.zip").tryEmit()
     }
 
     /** Saves the set exactly as it is on disk into the chosen document; it only reads it. */
@@ -333,11 +346,12 @@ class SecuritySettingsViewModel :
             ProtectedAction.RemoveRecoveryCode -> removeRecoveryCode()
             is ProtectedAction.DeleteSetAside -> deleteSetAside(action.suffix)
             is ProtectedAction.RestoreSetAside -> restoreSetAside(action.item)
+            is ProtectedAction.ExportSetAside -> pickExportDestination(action.suffix)
         }
     }
 
+    /** A new request replaces one whose confirmation never came back. */
     private fun requestConfirmation(action: ProtectedAction) {
-        if (mPendingAction != null) return
         mPendingAction = action
         SecuritySettingsViewEvent.RequestConfirmation.tryEmit()
     }
@@ -393,5 +407,6 @@ class SecuritySettingsViewModel :
         data object RemoveRecoveryCode : ProtectedAction
         data class DeleteSetAside(val suffix: String) : ProtectedAction
         data class RestoreSetAside(val item: SetAsideItem) : ProtectedAction
+        data class ExportSetAside(val suffix: String) : ProtectedAction
     }
 }
