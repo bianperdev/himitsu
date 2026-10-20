@@ -61,9 +61,9 @@ fun MarkdownMessageText(
     modifier: Modifier = Modifier
 ) {
     val blocks = remember(content) { MarkdownParser.parseBlocks(content) }
-    val textColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-    val linkColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
-    val strongColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+    val textColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+    val linkColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary
+    val strongColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
     val subtleColor = textColor.copy(alpha = if (isUser) 0.78f else 0.65f)
     val narrationColor = textColor.copy(alpha = if (isUser) 0.85f else 0.75f)
     val blockColor = if (isUser) {
@@ -72,7 +72,7 @@ fun MarkdownMessageText(
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
     }
     val selectionColor = if (isUser) {
-        MaterialTheme.colorScheme.onPrimary
+        MaterialTheme.colorScheme.onPrimaryContainer
     } else {
         MaterialTheme.colorScheme.primary
     }

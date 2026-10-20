@@ -139,7 +139,9 @@ import me.kafuuneko.rpclient.ui.message.MessageImageEditButton
 import me.kafuuneko.rpclient.ui.message.MessageImageGallery
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.theme.DefaultCharacterAccentColor
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.theme.NarratorAvatarColor
+import me.kafuuneko.rpclient.ui.theme.himitsuColors
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.MarkdownMessageText
 import me.kafuuneko.rpclient.ui.widgets.NoProviderBanner
@@ -150,6 +152,7 @@ import me.kafuuneko.rpclient.ui.widgets.RpMetaPill
 import me.kafuuneko.rpclient.ui.widgets.RpScrollableOutlinedTextField
 import me.kafuuneko.rpclient.ui.widgets.RpSectionHeader
 import me.kafuuneko.rpclient.ui.widgets.RpTagRow
+import me.kafuuneko.rpclient.ui.widgets.RpTypingIndicator
 import me.kafuuneko.rpclient.ui.widgets.draggableLazyListScrollIndicator
 import me.kafuuneko.rpclient.utils.toggle
 
@@ -799,12 +802,12 @@ private fun MessageBubble(
                     MessageRole.Narrator -> RoundedCornerShape(14.dp)
                 },
                 color = when (message.role) {
-                    MessageRole.User -> MaterialTheme.colorScheme.primary
+                    MessageRole.User -> MaterialTheme.colorScheme.primaryContainer
                     MessageRole.Assistant -> MaterialTheme.colorScheme.surface
                     MessageRole.Narrator -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.50f)
                 },
                 border = when (message.role) {
-                    MessageRole.User -> BorderStroke(0.5.dp, Color.White.copy(alpha = 0.15f))
+                    MessageRole.User -> BorderStroke(1.dp, MaterialTheme.himitsuColors.monitorGlow)
                     MessageRole.Assistant -> BorderStroke(
                         0.5.dp,
                         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.22f)
@@ -833,13 +836,13 @@ private fun MessageBubble(
                             text = message.speaker,
                             modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                            color = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                            color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = message.time,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = if (isUser) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f)
+                            style = MaterialTheme.typography.labelSmall.copy(fontFamily = HimitsuMonoFamily),
+                            color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f)
                             else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
                         )
                         if (canAddImages) {
@@ -855,7 +858,7 @@ private fun MessageBubble(
                     if (editing) imageState.errorResId?.let { errorResId ->
                         Text(
                             text = stringResource(errorResId),
-                            color = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.error,
+                            color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -952,11 +955,7 @@ private fun StreamingStatus(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(14.dp),
-            strokeWidth = 2.dp,
-            color = MaterialTheme.colorScheme.primary
-        )
+        RpTypingIndicator()
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
@@ -984,13 +983,13 @@ private fun MessageEditContent(
             maxLines = 8,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                cursorColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                focusedContainerColor = if (isUser) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.06f) else Color.Transparent,
-                unfocusedContainerColor = if (isUser) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.04f) else Color.Transparent,
-                focusedBorderColor = if (isUser) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f) else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (isUser) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.42f) else MaterialTheme.colorScheme.outline
+                focusedTextColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+                cursorColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
+                focusedContainerColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.06f) else Color.Transparent,
+                unfocusedContainerColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.04f) else Color.Transparent,
+                focusedBorderColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f) else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.42f) else MaterialTheme.colorScheme.outline
             )
         )
         Row(
@@ -1004,7 +1003,7 @@ private fun MessageEditContent(
             ) {
                 Text(
                     stringResource(R.string.cancel),
-                    color = if (isUser) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f) else MaterialTheme.colorScheme.primary,
+                    color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f) else MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Normal
                 )
             }
@@ -1017,7 +1016,7 @@ private fun MessageEditContent(
                 Text(
                     stringResource(if (imageState.submitting) R.string.image_loading else R.string.save),
                     fontWeight = FontWeight.Bold,
-                    color = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+                    color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary
                 )
             }
         }

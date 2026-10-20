@@ -137,7 +137,9 @@ import me.kafuuneko.rpclient.ui.message.DraftAttachmentTray
 import me.kafuuneko.rpclient.ui.message.MessageImageEditButton
 import me.kafuuneko.rpclient.ui.message.MessageImageGallery
 import me.kafuuneko.rpclient.ui.dialog.MessageImageViewerDialog
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.theme.getMacaronColor
+import me.kafuuneko.rpclient.ui.theme.himitsuColors
 import me.kafuuneko.rpclient.ui.theme.readableAccent
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.MarkdownMessageText
@@ -146,6 +148,7 @@ import me.kafuuneko.rpclient.ui.widgets.RpAvatar
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
 import me.kafuuneko.rpclient.ui.widgets.RpScrollableOutlinedTextField
 import me.kafuuneko.rpclient.ui.widgets.RpSectionHeader
+import me.kafuuneko.rpclient.ui.widgets.RpTypingIndicator
 import me.kafuuneko.rpclient.ui.widgets.draggableLazyListScrollIndicator
 import me.kafuuneko.rpclient.ui.widgets.groupchat.GroupChatLorebookSelector
 
@@ -1386,7 +1389,7 @@ private fun MessageBubble(
                 Spacer(modifier = Modifier.width(7.dp))
                 Text(
                     text = message.time,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelSmall.copy(fontFamily = HimitsuMonoFamily),
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f)
                 )
                 if (canAddImages) {
@@ -1417,12 +1420,12 @@ private fun MessageBubble(
                     )
                 },
                 color = when {
-                    isUser -> MaterialTheme.colorScheme.primary
+                    isUser -> MaterialTheme.colorScheme.primaryContainer
                     isSystem -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
                     else -> MaterialTheme.colorScheme.surface
                 },
                 border = when {
-                    isUser -> BorderStroke(0.5.dp, Color.White.copy(alpha = 0.15f))
+                    isUser -> BorderStroke(1.dp, MaterialTheme.himitsuColors.monitorGlow)
                     isSystem -> BorderStroke(
                         0.5.dp,
                         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
@@ -1446,7 +1449,7 @@ private fun MessageBubble(
                     if (editing) imageState.errorResId?.let { errorResId ->
                         Text(
                             text = stringResource(errorResId),
-                            color = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.error,
+                            color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -1547,11 +1550,7 @@ private fun GroupStreamingStatus(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(14.dp),
-            strokeWidth = 2.dp,
-            color = indicatorColor
-        )
+        RpTypingIndicator(color = indicatorColor)
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
@@ -1651,27 +1650,27 @@ private fun GroupMessageEditContent(
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = if (isUser) {
-                    MaterialTheme.colorScheme.onPrimary
+                    MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
                 unfocusedTextColor = if (isUser) {
-                    MaterialTheme.colorScheme.onPrimary
+                    MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
                 cursorColor = if (isUser) {
-                    MaterialTheme.colorScheme.onPrimary
+                    MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
                     MaterialTheme.colorScheme.primary
                 },
                 focusedBorderColor = if (isUser) {
-                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f)
+                    MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f)
                 } else {
                     MaterialTheme.colorScheme.primary
                 },
                 unfocusedBorderColor = if (isUser) {
-                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.42f)
+                    MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.42f)
                 } else {
                     MaterialTheme.colorScheme.outline
                 }
@@ -1689,7 +1688,7 @@ private fun GroupMessageEditContent(
                 Text(
                     text = stringResource(R.string.cancel),
                     color = if (isUser) {
-                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
+                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
                     } else {
                         MaterialTheme.colorScheme.primary
                     }
@@ -1705,7 +1704,7 @@ private fun GroupMessageEditContent(
                     text = stringResource(if (imageState.submitting) R.string.image_loading else R.string.save),
                     fontWeight = FontWeight.Bold,
                     color = if (isUser) {
-                        MaterialTheme.colorScheme.onPrimary
+                        MaterialTheme.colorScheme.onPrimaryContainer
                     } else {
                         MaterialTheme.colorScheme.primary
                     }
@@ -1723,7 +1722,7 @@ private fun GroupMessageActions(
     emitIntent: (GroupChatUiIntent) -> Unit
 ) {
     val iconColor = if (isUser) {
-        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
+        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
     } else {
         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
     }

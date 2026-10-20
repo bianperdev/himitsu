@@ -8,7 +8,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 
 /** 应用 Material 3 配色与字体；动态配色仅在调用方显式启用且系统支持时生效。 */
 @Composable
@@ -32,7 +34,14 @@ fun AppTheme(
         monitorGlow = colorScheme.primary.copy(alpha = if (darkTheme) 0.38f else 0.30f)
     )
 
-    CompositionLocalProvider(LocalHimitsuColors provides himitsuColors) {
+    val context = LocalContext.current
+    val inspection = LocalInspectionMode.current
+    val reducedMotion = remember(context, inspection) { !inspection && context.isReducedMotionEnabled() }
+
+    CompositionLocalProvider(
+        LocalHimitsuColors provides himitsuColors,
+        LocalReducedMotion provides reducedMotion
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,
