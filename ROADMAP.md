@@ -12,7 +12,7 @@ Paths below are relative to `app/src/main/java/me/kafuuneko/rpclient/` (written 
 | 1 | `feat/security` | Yes | Encrypted storage, protected API keys, app lock, privacy hardening | Done, merged 2026-10-20 (`acc6de1`) |
 | 1 | `feat/aesthetic` | Yes | The "shut-in otaku" theme, typography, icon system | Done, merged 2026-10-20 (`ab1caef`) |
 | 1 | `feat/local-inference` | Yes | Local engine abstraction, llama.cpp (GenieX moved to `feat/geniex`) | Done, merged 2026-10-20 (`529cdf5`) |
-| 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | Next |
+| 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | In progress, design approved 2026-10-20 |
 | 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata | Not started |
 
 Side work that runs in parallel with `feat/disguise`: `feat/geniex` (blocked on the QAIRT EULA), the local-inference follow-ups and the security leftovers. `feat/security-followups` (deferred security work) is merged (`85b362c`). See [Pending after stage 1](#pending-after-stage-1).
@@ -438,7 +438,7 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 
 ## Track: `feat/disguise` (after security and aesthetic are merged)
 
-**Status:** next. Its prerequisites are merged. The worktree `himitsu-disguise` already exists on `feat/disguise`, but at the groundwork commit `8bb28ed`; fast-forward it to `main` before starting.
+**Status:** in progress. Design approved by the maintainer on 2026-10-20 (see "Design decisions" below); the branch starts from `main` at `b28ac2e`.
 
 **Starts** from `main` once `feat/security` (app lock and unlock extension point) and `feat/aesthetic` (icon system) are merged. It does not run in parallel with them. It does run in parallel with `feat/security-followups`, `feat/geniex` and the local-inference follow-ups, so it must keep to the files below.
 
@@ -454,7 +454,8 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 
 **Narrow edits allowed (say so in the pull request):**
 - `…/libs/llm/local/model/LocalModelDownloadService.kt` and `…/libs/llm/local/LocalGenerationService.kt`: only the notification builder, to fix the header label leak.
-- `…/libs/core/CoreActivity.kt`: only a task description (recents label and icon) that follows the active disguise, if the alias label is not enough. `feat/security-followups` also edits this file; keep the change to one block.
+- `…/libs/core/CoreActivity.kt`: only a task description (recents label and icon) that follows the active disguise, if the alias label is not enough, and the optional quick exit key handler (D6). `feat/security-followups` also edits this file; keep the change to one block.
+- `…/libs/llm/local/LocalGenerationService.kt` and its caller: skip the foreground service while disguise is active (D4, approved 2026-10-20).
 
 **Does not touch:** `…/feature/lock/**` and `…/libs/security/**` (owned by `feat/security-followups` while it runs; the decoys use the `UnlockEntry` contract as it is, and a contract gap is raised with the maintainer), `res/values*/strings.xml`, `…/libs/AppModel.kt`, the files owned by the local-inference follow-ups.
 
@@ -465,17 +466,32 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 - Known leaks to handle or document: the system authentication prompt shows the application label; the download and background-generation notifications show the app label in their header (their text, icon and channel names are already neutral).
 - `LockActivity` keeps the Himitsu palette even with dynamic color on (pending decision above); check how that looks behind a decoy.
 
-**Testing:** the track needs its own emulator; ask the maintainer which one (emulator-5554 belongs to `feat/security-followups`; the spare AVD `Himitsu_LocalInference` has no owner).
+**Testing:** the track uses the AVD `Himitsu_LocalInference` (serial emulator-5562), assigned by the maintainer on 2026-10-20. emulator-5554 belongs to `feat/security-followups`.
+
+### Design decisions (feat/disguise, approved 2026-10-20)
+
+The full design (in Spanish) is a Claude Doc kept by the maintainer. Summary:
+
+- **Aliases.** One `<activity-alias>` per appearance (`.launcher.HimitsuLauncher`, `CalculatorLauncher`, `CompassLauncher`, `ConverterLauncher`), exactly one enabled. The new alias is enabled before the old one is disabled (one call on API 33+), and a reconciler at startup restores "exactly one, matching the preference". Alias names never change after the first release.
+- **D1, lock integration.** `disguiseModule` rebinds `UnlockEntry` to `DisguiseUnlockEntry`: unchanged with disguise off, opens the decoy over the task with disguise on. The decoy authenticates through the public `AppLockManager.createPrompt`/`authenticate`; unlocking still happens only in its success callback. Storage failures and devices without a screen lock go to `LockActivityEntry` after the secret. No edits to `…/libs/security/**` or `…/feature/lock/**`.
+- **D2, compass secret.** A configurable sequence of 4 to 8 taps on the N, E, S, W letters.
+- **D3, recovery.** Same fixed gesture in every decoy: overflow menu, About, long-press the version for 5 seconds. It leads to authentication. The user must practise the secret once before disguise is applied.
+- **D4, notifications.** With disguise active, local generation runs without a foreground service, and each model download shows a warning first (the notification header shows the application label, which cannot be changed).
+- **D5, KDF.** Platform PBKDF2-HMAC-SHA256, 16-byte salt, 600,000 iterations (lowered to 310,000 only if verification takes over 1 s on a low-end emulator), stored outside Kotpref in its own plain preferences file so the decoy works even when the Keystore fails. No new dependency.
+- **D6, quick exit.** A button on the main screen while disguise is active, and an optional double press of volume down (off by default).
+- **D7, channels.** Disguise ships in `fdroid`, `github` and `play`, disclosed in every store listing.
+- **D8, milestones.** A minimal settings screen arrives with the lock integration so every later milestone can be tested on a phone end to end.
 
 **Tasks, in order:**
-1. Design document, approved by the maintainer: activity-alias switching and launcher quirks; functional decoys; secret shortcuts that always lead to authentication; recovery; leaks (recents, notifications, shortcuts, share targets); honest limits; store policies per flavor.
-2. Activity aliases and the appearance switch, with warnings to the user.
-3. Calculator with secret code and recovery.
-4. Integration with the app lock.
-5. Leak fixes.
-6. Compass and unit converter.
-7. Disguise settings screen.
-8. Tests: calculator logic, code verification, alias switching, and proof that no path skips authentication.
+1. [x] Design document, approved by the maintainer: activity-alias switching and launcher quirks; functional decoys; secret shortcuts that always lead to authentication; recovery; leaks (recents, notifications, shortcuts, share targets); honest limits; store policies per flavor.
+2. [ ] Activity aliases and the appearance switch, with warnings to the user.
+3. [ ] Calculator with secret code and recovery.
+4. [ ] Integration with the app lock, plus a minimal settings screen (enable, code, practice).
+5. [ ] Leak fixes.
+6. [ ] Compass and unit converter.
+7. [ ] Full disguise settings screen.
+8. [ ] Quick exit.
+9. [ ] Tests: calculator logic, code verification, alias switching, and proof that no path skips authentication.
 
 **Done when:** disguise is off by default; no entry point skips authentication; the secret code is stored only as a salted KDF hash and never logged; wrong entries behave like normal decoy input; decoys need no new permissions and make no network calls; toggling never loses data or locks the user out; the limits are explained honestly in the UI; the privacy-reviewer agent marks the branch fit to merge.
 
