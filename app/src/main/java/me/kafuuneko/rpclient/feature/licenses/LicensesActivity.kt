@@ -36,7 +36,9 @@ class LicensesActivity : CoreActivity() {
     private fun readDocuments(): List<LicenseDocument> {
         val names = assets.list(DIRECTORY).orEmpty().sortedWith(compareBy({ ORDER.indexOf(it).let { i -> if (i < 0) ORDER.size else i } }, { it }))
         return names.map { name ->
-            LicenseDocument(name = name, text = assets.open("$DIRECTORY/$name").bufferedReader().use { it.readText() })
+            // Checkouts on Windows may carry CRLF line ends; show plain line breaks
+            val text = assets.open("$DIRECTORY/$name").bufferedReader().use { it.readText() }.replace("\r\n", "\n")
+            LicenseDocument(name = name, text = text)
         }
     }
 
