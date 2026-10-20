@@ -291,6 +291,8 @@ Done in `feat/security-followups` (2026-10-20): P-06; reauthentication before tu
   - A restore restarts the app with `Runtime.exit`, which can cut a pending `SharedPreferences.apply()`; the journal finishes the swap on the next start either way, and some OEMs may not relaunch the app by themselves.
   - Sealing a plain file renames and then deletes without syncing the directory in between; a plain file whose content does not match its name stays plain and is retried at every start.
   - On a device without a screen lock, the confirmation passes at once, also before "Delete permanently" (the ticked box remains), like the gate.
+  - On API 26-29 the device credential opens its own screen, so confirming a settings change with the PIN counts as leaving the app: with the "Immediately" timeout the app locks again and asks to unlock once more.
+  - `LockActivity` recognizes a prompt on screen by the fragment tag `androidx.biometric.BiometricFragment`, internal to `androidx.biometric` 1.1.0; check it when updating that library.
   - `PreparedFile` and `FileEntity` are inherited data classes whose `toString` prints the image hash; nothing logs them.
   - If a restore can never finish (a destination that stays taken), the error screen offers only a restart and an export; an "abandon the restore" action that undoes phase 1 would be the way out.
 - **F-Droid:** SQLCipher ships prebuilt native libraries from Maven Central; confirm the F-Droid scanner accepts them or build `sqlcipher-android` from source in the recipe (release-readiness).

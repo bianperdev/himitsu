@@ -62,6 +62,13 @@ object SealedPreferencesProvider : PreferencesProvider {
      * user chose to start over. Nothing is deleted: the copies keep the old sealed values.
      */
     fun setAside(context: Context, suffix: String) {
+        // Android's backup of a preference file is not a preference instance: copy it aside and remove it
+        sharedPrefsDir(context).listFiles().orEmpty()
+            .filter { it.name.endsWith(".xml.bak") && hasSealedValues(it) }
+            .forEach { backup ->
+                backup.copyTo(File(backup.path + suffix), overwrite = true)
+                backup.delete()
+            }
         sharedPrefsDir(context).listFiles().orEmpty()
             .filter { it.isFile && it.name.endsWith(".xml") && it.readText().contains(">" + PreferenceCipher.PREFIX) }
             .forEach { file ->

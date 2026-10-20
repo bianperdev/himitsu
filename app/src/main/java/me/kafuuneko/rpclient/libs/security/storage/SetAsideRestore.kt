@@ -202,7 +202,8 @@ object RestoreJournal {
                 .map { File(preferences, it.name.removeSuffix(".bak")) }
                 .distinct()
                 .filter { live ->
-                    File(live.path + source).exists() || SealedPreferencesProvider.hasSealedValues(live) ||
+                    File(live.path + source).exists() || File(live.path + ".bak" + source).exists() ||
+                        SealedPreferencesProvider.hasSealedValues(live) ||
                         SealedPreferencesProvider.hasSealedValues(File(live.path + ".bak"))
                 }
                 .forEach { live ->

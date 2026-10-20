@@ -83,10 +83,14 @@ class LockActivity : FragmentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
         WindowProtection.apply(this)
-        // A prompt counted as showing must have its fragment; otherwise its callback was lost
-        supportFragmentManager.executePendingTransactions()
-        if (mLockManager.isAuthenticating && supportFragmentManager.findFragmentByTag(BIOMETRIC_FRAGMENT_TAG) == null) {
-            mLockManager.clearStaleAuthentication()
+        // A prompt counted as showing must have its fragment; otherwise its callback was lost.
+        // Checked one frame later, so a success callback that arrives after onResume comes first.
+        window.decorView.post {
+            if (isFinishing || !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return@post
+            supportFragmentManager.executePendingTransactions()
+            if (mLockManager.isAuthenticating && supportFragmentManager.findFragmentByTag(BIOMETRIC_FRAGMENT_TAG) == null) {
+                mLockManager.clearStaleAuthentication()
+            }
         }
         mViewModel.emit(LockUiIntent.Resume)
     }
