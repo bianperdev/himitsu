@@ -171,8 +171,12 @@ private fun LockedContent(state: LockContentState.Locked, emit: LockUiIntent.() 
 
 @Composable
 private fun StorageErrorContent(state: LockContentState.StorageError, emit: LockUiIntent.() -> Unit) {
-    // The request log holds no chats, so its own message says chats are not affected
-    val messageRes = if (state.isRequestLog && state.canSetAside) R.string.security_storage_error_request_log_unusable else state.failure.messageRes()
+    // The request log and the model registry hold no chats, so their messages say chats are not affected
+    val messageRes = when {
+        state.isRequestLog && state.canSetAside -> R.string.security_storage_error_request_log_unusable
+        state.isModelRegistry && state.canSetAside -> R.string.security_storage_error_model_registry_unusable
+        else -> state.failure.messageRes()
+    }
     val message = stringResource(messageRes) + "\n\n" +
         stringResource(R.string.security_storage_error_nothing_deleted)
     LockScreenFrame(
@@ -249,6 +253,7 @@ private fun LockDialogs(state: LockDialogState, error: LockContentState.StorageE
             message = stringResource(
                 when {
                     error?.isRequestLog == true -> R.string.security_set_aside_message_request_log
+                    error?.isModelRegistry == true -> R.string.security_set_aside_message_model_registry
                     error?.failure == StorageFailure.DatabaseDamaged -> R.string.security_set_aside_message_damaged
                     else -> R.string.security_set_aside_message
                 }

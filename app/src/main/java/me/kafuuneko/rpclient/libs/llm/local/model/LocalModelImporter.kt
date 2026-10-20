@@ -40,12 +40,13 @@ class LocalModelFiles(context: Context) {
         directory.listFiles { file -> file.name.endsWith(PARTIAL_SUFFIX) }?.forEach { it.delete() }
     }
 
-    private companion object {
+    companion object {
+        /** Inside `noBackupFilesDir`; "start over" sets it aside with the model registry. */
         const val DIRECTORY_NAME = "models"
-        const val EXTENSION = ".gguf"
-        const val PARTIAL_SUFFIX = ".part"
-        const val DOWNLOAD_SUFFIX = ".download"
-        const val DOWNLOAD_NAME_BYTES = 16
+        private const val EXTENSION = ".gguf"
+        private const val PARTIAL_SUFFIX = ".part"
+        private const val DOWNLOAD_SUFFIX = ".download"
+        private const val DOWNLOAD_NAME_BYTES = 16
     }
 }
 

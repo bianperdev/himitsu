@@ -107,4 +107,6 @@
     <string name="security_storage_error_startup_database">Your data could not be read while the app was starting. Try again, and if it keeps failing, save a copy of the files.</string>
     <string name="security_storage_error_request_log_unusable">The request logs of debug mode are damaged and cannot be opened. Your chats are not affected. You can save a copy of the files, or set the logs aside and continue.</string>
     <string name="security_set_aside_message_request_log">The request logs will be moved aside and debug mode will start with empty logs. Your chats are not affected. Nothing is deleted: the set-aside copy stays in the app\'s private storage until you delete it in Privacy and security.</string>
+    <string name="security_storage_error_model_registry_unusable">The list of on-device models is damaged and cannot be opened. Your chats are not affected. You can save a copy of the files, or set the list and its model files aside and continue.</string>
+    <string name="security_set_aside_message_model_registry">The list of on-device models and their files will be moved aside, and you can download or import models again. Your chats are not affected. Nothing is deleted: the set-aside copy stays in the app\'s private storage until you delete it in Privacy and security.</string>
 </resources>

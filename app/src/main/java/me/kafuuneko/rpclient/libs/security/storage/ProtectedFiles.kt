@@ -112,7 +112,8 @@ class ProtectedFiles(private val mContext: Context) {
         set.entries.forEach { entry ->
             when (entry.parentFile) {
                 mDatabaseDir -> add(ExportEntry("databases/${entry.name}", entry))
-                mKeyDir -> add(ExportEntry("no_backup/${entry.name}", entry))
+                // The on-device models set aside by "start over" are a directory there
+                mKeyDir -> if (entry.isDirectory) addTree(entry, "no_backup/${entry.name}") else add(ExportEntry("no_backup/${entry.name}", entry))
                 mPreferencesDir -> add(ExportEntry("shared_prefs/${entry.name}", entry))
                 else -> addTree(entry, entry.name)
             }
