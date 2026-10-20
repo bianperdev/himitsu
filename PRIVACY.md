@@ -57,7 +57,7 @@ If you enable the optional disguise, the secret code (or compass tap sequence) i
 
 ### Logs
 
-Himitsu never writes chat content, prompts, responses, characters or API keys to Android's system log (Logcat). Release builds strip the logging calls entirely.
+Himitsu never writes chat content, prompts, responses, characters or API keys to Android's system log (Logcat). Release builds strip the logging calls entirely, and the native logs of the database library (SQLite error messages and SQLCipher's own log) are turned off at startup.
 
 ## What leaves your device
 
@@ -89,7 +89,7 @@ The model screen lists a few suggested models. The list is built into the app, s
 
 ## Exports and files you choose
 
-Exports are always started by you and saved through the Android file picker to a location you choose: chats (including SillyTavern `.jsonl`), stories (`.rpstory` archives), characters, lorebooks, Regex scripts and saved images. **Exported files are not encrypted**, and their names can reveal what they contain. Copies of set-aside data exported from the security settings stay encrypted, byte for byte.
+Exports are always started by you and saved through the Android file picker to a location you choose: chats (including SillyTavern `.jsonl`), stories (`.rpstory` archives), characters, lorebooks, Regex scripts and saved images. **Exported files are not encrypted**, and their names can reveal what they contain. Copies of set-aside data exported from the security settings stay encrypted, byte for byte; set-aside model files are left out of those exports.
 
 When you copy text from a chat, Himitsu marks the clipboard entry as sensitive, so Android hides it from clipboard previews.
 
@@ -122,7 +122,7 @@ Disguise is a discretion feature, not a security feature. Even while Himitsu loo
 
 - **Uninstall Himitsu**, or use Android's "Clear storage" for it, to delete everything it stored. Files you exported stay where you saved them.
 - Delete individual chats, characters, lorebooks, models and providers inside the app.
-- If your data can no longer be unlocked (for example the Keystore key was lost and you have no recovery code), the error screen offers **"Start over"**. It never deletes anything: your old data is moved aside, still encrypted. The same happens when a damaged database is set aside. Set-aside copies are listed in the security settings, where you can export, restore or permanently delete them (deleting asks you to confirm and to authenticate).
+- If your data can no longer be unlocked (for example the Keystore key was lost and you have no recovery code), the error screen offers **"Start over"**. It never deletes anything: your old data is moved aside, still encrypted, together with the on-device model files, which were never encrypted. The same happens when a damaged database is set aside. Set-aside copies are listed in the security settings, where you can export, restore or permanently delete them (deleting asks you to confirm and to authenticate).
 
 ## Children
 
