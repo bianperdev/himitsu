@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">继续</string>
     <string name="disguise_auth_title">验证你的身份</string>
     <string name="disguise_auth_subtitle">使用屏幕锁继续</string>
+    <string name="disguise_download_notice">伪装已开启：下载期间，通知会显示应用的真实名称 Himitsu。</string>
+    <string name="disguise_settings_recents_title">最近使用的应用可能会显示预览</string>
+    <string name="disguise_settings_recents_text">在此 Android 版本上，最近使用的应用界面可能会显示 Himitsu 的内容。在“%1$s”中开启“隐藏内容”即可使其保持空白。</string>
 </resources>

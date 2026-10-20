@@ -29,6 +29,7 @@ import me.kafuuneko.rpclient.feature.lock.LockActivityEntry
 import me.kafuuneko.rpclient.feature.main.MainActivity
 import me.kafuuneko.rpclient.libs.core.IViewEvent
 import me.kafuuneko.rpclient.libs.core.ViewEventWrapper
+import me.kafuuneko.rpclient.libs.disguise.DisguiseTaskDescription
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -51,6 +52,7 @@ class DisguiseActivity : FragmentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        DisguiseTaskDescription.apply(this)
         val covering = intent.getBooleanExtra(EXTRA_COVERING, false)
         if (covering) {
             onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

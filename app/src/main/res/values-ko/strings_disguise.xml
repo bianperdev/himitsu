@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">계속</string>
     <string name="disguise_auth_title">본인 확인</string>
     <string name="disguise_auth_subtitle">화면 잠금으로 계속하세요</string>
+    <string name="disguise_download_notice">위장이 켜져 있습니다. 파일을 내려받는 동안 알림에 앱의 실제 이름인 Himitsu가 표시됩니다.</string>
+    <string name="disguise_settings_recents_title">최근 앱에 미리보기가 보일 수 있습니다</string>
+    <string name="disguise_settings_recents_text">이 Android 버전에서는 최근 앱 화면에 Himitsu가 표시하던 내용이 보일 수 있습니다. 보안에서 “%1$s”를 켜면 빈 화면으로 표시됩니다.</string>
 </resources>

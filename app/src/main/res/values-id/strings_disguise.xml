@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Lanjutkan</string>
     <string name="disguise_auth_title">Verifikasi bahwa ini Anda</string>
     <string name="disguise_auth_subtitle">Gunakan kunci layar untuk melanjutkan</string>
+    <string name="disguise_download_notice">Penyamaran aktif: selama file diunduh, notifikasinya menampilkan nama asli aplikasi, Himitsu.</string>
+    <string name="disguise_settings_recents_title">Aplikasi terbaru bisa menampilkan pratinjau</string>
+    <string name="disguise_settings_recents_text">Di versi Android ini, layar aplikasi terbaru bisa menampilkan isi Himitsu. Aktifkan “%1$s” di Keamanan agar tetap kosong.</string>
 </resources>

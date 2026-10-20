@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Continuer</string>
     <string name="disguise_auth_title">Confirmez votre identité</string>
     <string name="disguise_auth_subtitle">Utilisez le verrouillage de l\'écran pour continuer</string>
+    <string name="disguise_download_notice">Le camouflage est actif : pendant le téléchargement, la notification affiche le vrai nom de l\'app, Himitsu.</string>
+    <string name="disguise_settings_recents_title">Les apps récentes peuvent afficher un aperçu</string>
+    <string name="disguise_settings_recents_text">Sur cette version d\'Android, l\'écran des apps récentes peut montrer ce qu\'affichait Himitsu. Activez «%1$s» dans Sécurité pour qu\'il reste vide.</string>
 </resources>

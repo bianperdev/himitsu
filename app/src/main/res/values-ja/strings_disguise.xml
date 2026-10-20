@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">続行</string>
     <string name="disguise_auth_title">本人確認</string>
     <string name="disguise_auth_subtitle">画面ロックを使って続行します</string>
+    <string name="disguise_download_notice">カモフラージュが有効です。ダウンロード中の通知にはアプリの本当の名前「Himitsu」が表示されます。</string>
+    <string name="disguise_settings_recents_title">最近使ったアプリにプレビューが表示されることがあります</string>
+    <string name="disguise_settings_recents_text">この Android バージョンでは、最近使ったアプリの画面に Himitsu の表示内容が出ることがあります。セキュリティで「%1$s」をオンにすると空白になります。</string>
 </resources>

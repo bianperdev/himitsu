@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Tiếp tục</string>
     <string name="disguise_auth_title">Xác minh đó là bạn</string>
     <string name="disguise_auth_subtitle">Dùng khóa màn hình để tiếp tục</string>
+    <string name="disguise_download_notice">Ngụy trang đang bật: trong khi tải tệp, thông báo sẽ hiện tên thật của ứng dụng, Himitsu.</string>
+    <string name="disguise_settings_recents_title">Ứng dụng gần đây có thể hiện bản xem trước</string>
+    <string name="disguise_settings_recents_text">Trên phiên bản Android này, màn hình ứng dụng gần đây có thể hiện nội dung Himitsu đang hiển thị. Bật “%1$s” trong Bảo mật để màn hình đó trống.</string>
 </resources>

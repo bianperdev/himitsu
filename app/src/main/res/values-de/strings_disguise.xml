@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Weiter</string>
     <string name="disguise_auth_title">Bestätige deine Identität</string>
     <string name="disguise_auth_subtitle">Verwende deine Displaysperre, um fortzufahren</string>
+    <string name="disguise_download_notice">Die Tarnung ist aktiv: Während der Download läuft, zeigt die Benachrichtigung den echten Namen der App, Himitsu.</string>
+    <string name="disguise_settings_recents_title">Die Übersicht zeigt evtl. eine Vorschau</string>
+    <string name="disguise_settings_recents_text">Auf dieser Android-Version kann die Übersicht der letzten Apps zeigen, was Himitsu angezeigt hat. Aktiviere „%1$s“ unter Sicherheit, damit sie leer bleibt.</string>
 </resources>

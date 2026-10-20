@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Продолжить</string>
     <string name="disguise_auth_title">Подтвердите, что это вы</string>
     <string name="disguise_auth_subtitle">Используйте блокировку экрана, чтобы продолжить</string>
+    <string name="disguise_download_notice">Маскировка включена: пока файл скачивается, в уведомлении видно настоящее название приложения — Himitsu.</string>
+    <string name="disguise_settings_recents_title">Недавние приложения могут показать превью</string>
+    <string name="disguise_settings_recents_text">В этой версии Android экран недавних приложений может показать то, что было на экране Himitsu. Включите «%1$s» в разделе «Безопасность», чтобы там было пусто.</string>
 </resources>

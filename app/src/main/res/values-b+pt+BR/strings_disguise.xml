@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Continuar</string>
     <string name="disguise_auth_title">Confirme que é você</string>
     <string name="disguise_auth_subtitle">Use seu bloqueio de tela para continuar</string>
+    <string name="disguise_download_notice">O disfarce está ativo: enquanto o arquivo é baixado, a notificação mostra o nome real do app, Himitsu.</string>
+    <string name="disguise_settings_recents_title">Os apps recentes podem mostrar uma prévia</string>
+    <string name="disguise_settings_recents_text">Nesta versão do Android, a tela de apps recentes pode mostrar o que o Himitsu exibia. Ative “%1$s” em Segurança para que ela fique em branco.</string>
 </resources>

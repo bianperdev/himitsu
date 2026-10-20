@@ -56,4 +56,7 @@
     <string name="disguise_practice_continue">Continue</string>
     <string name="disguise_auth_title">Verify it\'s you</string>
     <string name="disguise_auth_subtitle">Use your screen lock to continue</string>
+    <string name="disguise_download_notice">Disguise is on: while the file downloads, its notification shows the app\'s real name, Himitsu.</string>
+    <string name="disguise_settings_recents_title">Recent apps can show a preview</string>
+    <string name="disguise_settings_recents_text">On this Android version, the recent apps screen can show what Himitsu was displaying. Turn on “%1$s” in Security to keep it blank.</string>
 </resources>

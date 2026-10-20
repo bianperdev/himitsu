@@ -12,11 +12,14 @@ sealed class DisguiseSettingsUiState {
      * @property appearance what the launcher shows now; a decoy means disguise is on
      * @property appLockEnabled disguise needs the app lock to keep content behind authentication
      * @property deviceSecure the app lock needs a device screen lock
+     * @property recentsPreviewVisible before Android 13 only "hide content" keeps Himitsu out of
+     *   the recent apps preview
      */
     data class Normal(
         val appearance: Appearance,
         val appLockEnabled: Boolean,
         val deviceSecure: Boolean,
+        val recentsPreviewVisible: Boolean = false,
         val step: DisguiseSetupStep = DisguiseSetupStep.None,
         val isWorking: Boolean = false
     ) : DisguiseSettingsUiState() {

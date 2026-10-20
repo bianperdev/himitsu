@@ -24,6 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
+import me.kafuuneko.rpclient.libs.disguise.DisguiseTaskDescription
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
 import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
@@ -70,6 +71,8 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
         WindowProtection.apply(this)
+        // feat/disguise: recents show the decoy's label and icon while disguise is on
+        DisguiseTaskDescription.apply(this)
         // Only a blocked gate keeps the curtain; Starting is covered by the gate state itself
         mForcedCurtain.value = mAppGate.evaluateNow() == GateState.Blocked
     }

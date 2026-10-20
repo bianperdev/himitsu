@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.feature.disguise.settings
 
+import android.os.Build
 import java.util.Locale
 import me.kafuuneko.rpclient.feature.disguise.calculator.CALCULATOR_CODE_LENGTHS
 import me.kafuuneko.rpclient.feature.disguise.calculator.calculatorUiState
@@ -51,7 +52,8 @@ class DisguiseSettingsViewModel :
         DisguiseSettingsUiState.Normal(
             appearance = mAppearanceSwitcher.current,
             appLockEnabled = SecurityPrefs.appLockEnabled,
-            deviceSecure = mLockManager.isDeviceSecure()
+            deviceSecure = mLockManager.isDeviceSecure(),
+            recentsPreviewVisible = isRecentsPreviewVisible()
         ).setup()
     }
 
@@ -59,7 +61,11 @@ class DisguiseSettingsViewModel :
     @UiIntentObserver(DisguiseSettingsUiIntent.Resume::class)
     private fun onResume() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
-        uiState.copy(appLockEnabled = SecurityPrefs.appLockEnabled, deviceSecure = mLockManager.isDeviceSecure()).setup()
+        uiState.copy(
+            appLockEnabled = SecurityPrefs.appLockEnabled,
+            deviceSecure = mLockManager.isDeviceSecure(),
+            recentsPreviewVisible = isRecentsPreviewVisible()
+        ).setup()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.Back::class)
@@ -155,7 +161,8 @@ class DisguiseSettingsViewModel :
         DisguiseSettingsUiState.Normal(
             appearance = mAppearanceSwitcher.current,
             appLockEnabled = uiState.appLockEnabled,
-            deviceSecure = uiState.deviceSecure
+            deviceSecure = uiState.deviceSecure,
+            recentsPreviewVisible = uiState.recentsPreviewVisible
         ).setup()
         DisguiseSettingsViewEvent.CloseApp.tryEmit()
     }
@@ -171,6 +178,10 @@ class DisguiseSettingsViewModel :
         super.onCleared()
         wipePendingCode()
     }
+
+    /** Android 13 and later hide the preview with the app lock alone; earlier versions need `FLAG_SECURE`. */
+    private fun isRecentsPreviewVisible(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU && !SecurityPrefs.secureScreenEnabled
 
     private fun wipePendingCode() {
         mPendingCode?.fill('\u0000')

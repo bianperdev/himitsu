@@ -100,7 +100,8 @@ sealed class LocalModelsDialogState {
     data object None : LocalModelsDialogState()
 
     /** Explains what a download reveals to Hugging Face before anything is sent. */
-    data class ConfirmDownload(val key: String, val name: String, val sizeBytes: Long) : LocalModelsDialogState()
+    /** @property disguised disguise is on, so the dialog warns that the notification names the app (feat/disguise) */
+    data class ConfirmDownload(val key: String, val name: String, val sizeBytes: Long, val disguised: Boolean = false) : LocalModelsDialogState()
 
     /** Deleting a model; [providerCount] configurations point to it. */
     data class ConfirmDelete(val id: String, val name: String, val providerCount: Int) : LocalModelsDialogState()

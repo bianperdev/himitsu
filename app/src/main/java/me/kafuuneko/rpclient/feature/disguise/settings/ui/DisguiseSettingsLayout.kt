@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.rounded.HelpOutline
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.TheaterComedy
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -134,6 +135,15 @@ private fun DisguiseGroup(uiState: DisguiseSettingsUiState.Normal, emit: Disguis
                     icon = Icons.Rounded.Warning,
                     iconColor = MaterialTheme.colorScheme.error,
                     iconContainerColor = MaterialTheme.colorScheme.errorContainer,
+                    onClick = { DisguiseSettingsUiIntent.OpenSecuritySettings.emit() }
+                )
+            }
+            if (uiState.recentsPreviewVisible) {
+                RpSettingsDivider()
+                RpSettingsTile(
+                    title = stringResource(R.string.disguise_settings_recents_title),
+                    subtitle = stringResource(R.string.disguise_settings_recents_text, stringResource(R.string.security_settings_secure_screen)),
+                    icon = Icons.Rounded.VisibilityOff,
                     onClick = { DisguiseSettingsUiIntent.OpenSecuritySettings.emit() }
                 )
             }

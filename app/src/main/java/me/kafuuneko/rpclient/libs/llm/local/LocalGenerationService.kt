@@ -13,6 +13,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.libs.disguise.isDisguiseActive
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -87,11 +88,14 @@ class LocalGenerationService : Service() {
 /**
  * Starts [LocalGenerationService] when the first local generation begins and stops it when the
  * last one ends. Failing to start (for example when the app is already in the background) is not
- * an error: the reply just loses that protection.
+ * an error: the reply just loses that protection. While disguise is on nothing is started, so
+ * no notification names the app; a reply then goes on only while the app is visible.
  */
 class LocalGenerationKeeper(private val mContext: Context) {
     fun begin() {
         if (sActive.getAndIncrement() != 0 || Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
+        // feat/disguise: the notification header and the task manager would show the app name
+        if (isDisguiseActive()) return
         runCatching { mContext.startForegroundService(Intent(mContext, LocalGenerationService::class.java)) }
     }
 
