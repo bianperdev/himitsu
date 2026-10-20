@@ -83,6 +83,7 @@ class RPClientApp : Application() {
         // Himitsu: startup work needs the encrypted databases, so it runs off the main thread
         // once the master key is loaded; screens wait behind the app gate until it finishes.
         koinApplication.koin.get<SecureStorageManager>().start {
+            koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles()
             contentResolver.releaseObsoletePersistedUriPermissions()
             koinApplication.koin.get<AppUpgradeManager>().upgrade()
             koinApplication.koin.get<FileRepository>().cleanupAbandonedFiles()

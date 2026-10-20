@@ -42,16 +42,25 @@ class MessageImageRuntime(
     private val mSettings: () -> ImageSendSettings = { ImageSendSettings.decode(AppModel.imageSendSettings) }
 ) {
     /**
-     * 请求 JSON 只在网络调用期间保留；旧进程中断留下的文件延迟回收。
+     * 请求 JSON 只在网络调用期间保留。
+     *
+     * Himitsu (P-10): files left by an interrupted process are removed at startup by
+     * [discardStaleRequestFiles], instead of surviving up to a day.
      *
      * @return 本次请求独占的临时 JSON 文件，调用方使用后删除。
      */
-    fun createRequestFile(): File {
-        val directory = File(mContext.cacheDir, "image-requests").apply { mkdirs() }
-        directory.listFiles().orEmpty().filter { System.currentTimeMillis() - it.lastModified() > 86_400_000L }
-            .forEach { it.delete() }
-        return File.createTempFile("request-", ".json", directory)
+    fun createRequestFile(): File =
+        File.createTempFile("request-", ".json", requestDirectory().apply { mkdirs() })
+
+    /**
+     * Deletes every request file. Called once at startup, before any request can start: a
+     * request file never outlives the process that wrote it, so all of them are stale.
+     */
+    fun discardStaleRequestFiles() {
+        requestDirectory().listFiles().orEmpty().forEach { it.delete() }
     }
+
+    private fun requestDirectory(): File = File(mContext.cacheDir, "image-requests")
 
     /**
      * 复制选择器 URI 并验证实际图像；压缩延迟至发送或编辑保存时执行。
