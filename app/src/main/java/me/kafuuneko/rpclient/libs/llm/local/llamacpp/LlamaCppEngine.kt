@@ -370,7 +370,7 @@ class LlamaCppEngine(
     /**
      * Threads for decoding and for prompt evaluation.
      *
-     * Measured on a Galaxy S26 Ultra: decoding is bound by memory bandwidth, so 4 threads were as fast
+     * Measured on a recent Snapdragon phone: decoding is bound by memory bandwidth, so 4 threads were as fast
      * as 6 and 8 were 40 % slower; prompt evaluation kept gaining up to 6. Automatic mode uses fast
      * cores only and leaves two cores for the UI.
      */
