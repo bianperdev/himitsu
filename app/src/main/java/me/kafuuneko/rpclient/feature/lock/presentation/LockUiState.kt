@@ -35,6 +35,8 @@ sealed class LockContentState {
      * @property canStartOver whether retrying cannot help, so setting the data aside is offered
      * @property canSetAside whether a database can never be used (a plain one that cannot be
      *   encrypted, or a damaged encrypted one), so setting it aside and continuing is offered
+     * @property isRequestLog whether the database that cannot be used only holds the debug
+     *   request log, so chats are not affected
      * @property isExporting whether a copy of the files is being saved
      */
     data class StorageError(
@@ -44,6 +46,7 @@ sealed class LockContentState {
         val canStartOver: Boolean,
         val preferRecoveryCode: Boolean = false,
         val canSetAside: Boolean = false,
+        val isRequestLog: Boolean = false,
         val isExporting: Boolean = false
     ) : LockContentState()
 

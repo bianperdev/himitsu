@@ -104,4 +104,7 @@
     <string name="security_storage_error_database_damaged">Dữ liệu được mã hóa của bạn bị hỏng và không thể mở. Bạn có thể lưu một bản sao của các tệp, hoặc để riêng dữ liệu bị hỏng và tiếp tục với dữ liệu trống.</string>
     <string name="security_set_aside_message_damaged">Dữ liệu bị hỏng và hình ảnh của nó sẽ được để riêng, và ứng dụng sẽ tiếp tục với dữ liệu trống. Không có gì bị xóa: bản sao để riêng vẫn được mã hóa trong bộ nhớ riêng của ứng dụng cho đến khi bạn xóa nó trong Quyền riêng tư và bảo mật.</string>
     <string name="security_set_aside_kind_damaged">Dữ liệu bị hỏng (đã mã hóa)</string>
+    <string name="security_storage_error_startup_database">Không thể đọc dữ liệu của bạn khi ứng dụng khởi động. Hãy thử lại, và nếu vẫn lỗi, hãy lưu một bản sao của các tệp.</string>
+    <string name="security_storage_error_request_log_unusable">Nhật ký yêu cầu của chế độ gỡ lỗi bị hỏng và không thể mở. Các cuộc trò chuyện của bạn không bị ảnh hưởng. Bạn có thể lưu một bản sao của các tệp, hoặc để riêng nhật ký và tiếp tục.</string>
+    <string name="security_set_aside_message_request_log">Nhật ký yêu cầu sẽ được để riêng và chế độ gỡ lỗi sẽ bắt đầu với nhật ký trống. Các cuộc trò chuyện của bạn không bị ảnh hưởng. Không có gì bị xóa: bản sao để riêng vẫn nằm trong bộ nhớ riêng của ứng dụng cho đến khi bạn xóa nó trong Quyền riêng tư và bảo mật.</string>
 </resources>

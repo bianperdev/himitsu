@@ -27,6 +27,7 @@ import me.kafuuneko.rpclient.libs.security.GateState
 import me.kafuuneko.rpclient.libs.security.SecureStorageManager
 import me.kafuuneko.rpclient.libs.security.SecureStorageState
 import me.kafuuneko.rpclient.libs.security.StorageFailure
+import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.RecoveryResult
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
@@ -315,10 +316,13 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
                 // Some devices report a lost key for errors that pass, so retrying is always offered
                 canRetry = true,
                 preferRecoveryCode = storage.failure == StorageFailure.KeystoreKeyLost,
-                canUseRecoveryCode = storage.recoveryAvailable && storage.failure != StorageFailure.RestoreIncomplete,
+                // The code only replaces a lost key: after the key loaded it cannot help
+                canUseRecoveryCode = storage.recoveryAvailable && storage.failure != StorageFailure.RestoreIncomplete &&
+                    storage.failure !in StorageFailure.AFTER_KEY_LOADED,
                 canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED,
                 canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable ||
                     storage.failure == StorageFailure.DatabaseDamaged,
+                isRequestLog = storage.database == EncryptedDatabase.RequestLog,
                 isExporting = (previous as? LockContentState.StorageError)?.isExporting == true
             )
             SecureStorageState.Ready -> if (locked) {

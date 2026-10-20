@@ -127,7 +127,30 @@ class DamagedDatabaseAndroidTest {
         manager.start(startupTasks = { throw SQLiteException("placeholder failure") })
         val failed = withTimeout(TIMEOUT) { manager.state.first { it is SecureStorageState.Failed } }
 
-        assertEquals(StorageFailure.StorageError, (failed as SecureStorageState.Failed).failure)
+        assertEquals(StorageFailure.StartupDatabaseError, (failed as SecureStorageState.Failed).failure)
+    }
+
+    @Test
+    fun aDamagedRequestLogNamesItsDatabaseAndKeepsTheChats() = runBlocking {
+        createKeyFile()
+        val requestLog = context.getDatabasePath(EncryptedDatabase.RequestLog.fileName)
+        requestLog.writeBytes(ByteArray(8192).also(random::nextBytes))
+        val manager = newManager()
+
+        manager.start(startupTasks = {})
+        val failed = withTimeout(TIMEOUT) { manager.state.first { it is SecureStorageState.Failed } } as SecureStorageState.Failed
+
+        // The error screen can tell the user that only the debug request log is affected
+        assertEquals(StorageFailure.DatabaseDamaged, failed.failure)
+        assertEquals(EncryptedDatabase.RequestLog, failed.database)
+
+        manager.setAsideUnusableDatabase()
+        withTimeout(TIMEOUT) { manager.state.first { it == SecureStorageState.Ready } }
+
+        // Only the request log went aside: the images indexed by the main database stayed
+        assertTrue(File(root, "databases").listFiles().orEmpty().any { it.name.startsWith("request_logs.sqlite.damaged-") })
+        assertEquals("sealed image", File(root, "app_repository/sealed/$sealedName").readText())
+        assertTrue(root.listFiles().orEmpty().none { it.name.startsWith("app_repository.damaged-") })
     }
 
     /** Creates the key file and returns the primary database key; the caller wipes it. */

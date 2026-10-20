@@ -49,9 +49,13 @@ class SetAsideRestorer(
     private val mVault: MasterKeyVault,
     private val mFiles: ProtectedFiles
 ) {
-    /** Whether [set] can be restored: it is encrypted, kept its key file and holds the main database. */
+    /**
+     * Whether [set] can be restored: it is a whole encrypted data set (from "start over" or a
+     * previous restore), kept its key file and holds the main database. Plain or damaged copies
+     * never are.
+     */
     fun canRestore(set: SetAside): Boolean =
-        set.kind != SetAsideKind.Unusable && set.hasKeyFile && primaryDatabaseOf(set.suffix).isFile
+        set.kind in RESTORABLE_KINDS && set.hasKeyFile && primaryDatabaseOf(set.suffix).isFile
 
     /**
      * Opens the copy's key, checks that it opens the copy's main database, stores the key sealed
@@ -110,6 +114,9 @@ class SetAsideRestorer(
     companion object {
         /** The copy's key file sealed under a new Keystore key, waiting for the swap. */
         internal const val RESTORED_SUFFIX = ".restored"
+
+        /** Kinds of copies that hold a whole encrypted data set with its own key file. */
+        private val RESTORABLE_KINDS = setOf(SetAsideKind.Unrecoverable, SetAsideKind.Replaced)
     }
 }
 

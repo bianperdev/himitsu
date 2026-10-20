@@ -74,6 +74,12 @@ enum class StorageFailure {
      */
     DatabaseDamaged,
 
+    /**
+     * Every database opened, but a query of the startup work failed. Nothing was changed; the
+     * error may pass on a retry, and the files can be exported.
+     */
+    StartupDatabaseError,
+
     /** A restore of set-aside data did not finish; restarting the app continues it. */
     RestoreIncomplete;
 
@@ -84,6 +90,10 @@ enum class StorageFailure {
          * nothing.
          */
         val START_OVER_ALLOWED: Set<StorageFailure> = setOf(KeystoreKeyLost, KeyFileMissing, KeyFileCorrupt)
+
+        /** Failures that happen after the master key loaded, so a recovery code cannot help. */
+        val AFTER_KEY_LOADED: Set<StorageFailure> =
+            setOf(MigrationFailed, PlainDatabaseUnusable, DatabaseDamaged, StartupDatabaseError)
 
         internal fun from(failure: VaultFailure): StorageFailure = when (failure) {
             VaultFailure.KeyFileMissing -> KeyFileMissing
@@ -103,8 +113,17 @@ sealed class SecureStorageState {
     /** Databases can be used. */
     data object Ready : SecureStorageState()
 
-    /** The user must choose how to proceed. [recoveryAvailable] tells whether a code can help. */
-    data class Failed(val failure: StorageFailure, val recoveryAvailable: Boolean) : SecureStorageState()
+    /**
+     * The user must choose how to proceed.
+     *
+     * @property recoveryAvailable whether a recovery code is configured
+     * @property database the database that cannot be used, for the failures about one database
+     */
+    data class Failed(
+        val failure: StorageFailure,
+        val recoveryAvailable: Boolean,
+        val database: EncryptedDatabase? = null
+    ) : SecureStorageState()
 }
 
 /**
@@ -297,8 +316,11 @@ class SecureStorageManager(
                 try {
                     if (database == EncryptedDatabase.Primary) setAsideStoredFiles(suffix)
                     DatabaseFiles.delete(File(file.path + ".encrypting"))
+                    // A plain copy left by an interrupted migration is listed as plain, never
+                    // under the damaged encrypted file's marker
                     val plainCopy = File(file.path + ".plaintext")
-                    if (DatabaseFiles.anyExists(plainCopy)) DatabaseFiles.move(plainCopy, File(plainCopy.path + suffix))
+                    val plainSuffix = if (kind == SetAsideKind.Damaged) ProtectedFiles.newSuffix(SetAsideKind.Unusable) else suffix
+                    if (DatabaseFiles.anyExists(plainCopy)) DatabaseFiles.move(plainCopy, File(plainCopy.path + plainSuffix))
                     if (DatabaseFiles.anyExists(file)) DatabaseFiles.move(file, File(file.path + suffix))
                 } catch (_: IOException) {
                     fail(StorageFailure.StorageError)
@@ -454,12 +476,12 @@ class SecureStorageManager(
                 // screen while Room has no key yet, so those queries wait instead
                 if (EncryptedDatabaseCheck.check(file, passphrase) == DatabaseCheck.Damaged) {
                     mUnusableDatabase = database
-                    fail(StorageFailure.DatabaseDamaged)
+                    fail(StorageFailure.DatabaseDamaged, database)
                     return
                 }
             } catch (e: DatabaseMigrationException) {
                 mUnusableDatabase = database.takeIf { e.permanent }
-                fail(if (e.permanent) StorageFailure.PlainDatabaseUnusable else StorageFailure.MigrationFailed)
+                fail(if (e.permanent) StorageFailure.PlainDatabaseUnusable else StorageFailure.MigrationFailed, database)
                 return
             } finally {
                 passphrase.fill(0)
@@ -470,16 +492,16 @@ class SecureStorageManager(
         try {
             mStartupTasks()
         } catch (_: SQLiteException) {
-            // Last barrier: a database error the check missed shows the error screen with
-            // "try again" instead of crashing the app at every start
-            fail(StorageFailure.StorageError)
+            // Last barrier: a database error the check missed (damage deeper than its first
+            // pages) shows the error screen with "try again" instead of crashing at every start
+            fail(StorageFailure.StartupDatabaseError)
             return
         }
         mState.value = SecureStorageState.Ready
     }
 
-    private fun fail(failure: StorageFailure) {
-        mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode())
+    private fun fail(failure: StorageFailure, database: EncryptedDatabase? = null) {
+        mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode(), database = database)
     }
 
     /**

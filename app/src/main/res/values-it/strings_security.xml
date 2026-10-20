@@ -104,4 +104,7 @@
     <string name="security_storage_error_database_damaged">I tuoi dati cifrati sono danneggiati e non possono essere aperti. Puoi salvare una copia dei file oppure mettere da parte i dati danneggiati e continuare con dati vuoti.</string>
     <string name="security_set_aside_message_damaged">I dati danneggiati e le loro immagini verranno messi da parte e l\'app continuerà con dati vuoti. Non viene eliminato nulla: la copia messa da parte resta cifrata nell\'archivio privato dell\'app finché non la elimini in Privacy e sicurezza.</string>
     <string name="security_set_aside_kind_damaged">Dati danneggiati (cifrati)</string>
+    <string name="security_storage_error_startup_database">Non è stato possibile leggere i tuoi dati all\'avvio dell\'app. Riprova e, se continua a non funzionare, salva una copia dei file.</string>
+    <string name="security_storage_error_request_log_unusable">I log delle richieste della modalità debug sono danneggiati e non possono essere aperti. Le tue chat non sono coinvolte. Puoi salvare una copia dei file oppure mettere da parte i log e continuare.</string>
+    <string name="security_set_aside_message_request_log">I log delle richieste verranno messi da parte e la modalità debug ripartirà con log vuoti. Le tue chat non sono coinvolte. Non viene eliminato nulla: la copia messa da parte resta nell\'archivio privato dell\'app finché non la elimini in Privacy e sicurezza.</string>
 </resources>
