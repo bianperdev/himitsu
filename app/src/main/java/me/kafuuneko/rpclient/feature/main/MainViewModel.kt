@@ -935,6 +935,13 @@ class MainViewModel : CoreViewModelWithEvent<MainUiIntent, MainUiState>(
         AppViewEvent.StartActivity(AboutActivity::class.java).tryEmit()
     }
 
+    /** Himitsu: opens the settings screen of a work track. */
+    @UiIntentObserver(MainUiIntent.OpenHimitsuSettings::class)
+    private fun onOpenHimitsuSettings(intent: MainUiIntent.OpenHimitsuSettings) {
+        if (!isStateOf<MainUiState.Normal>()) return
+        AppViewEvent.StartActivity(intent.entry.activity).tryEmit()
+    }
+
     /** 修改用户默认显示名称并持久化。 */
     @UiIntentObserver(MainUiIntent.ChangeUserName::class)
     private fun onChangeUserName(intent: MainUiIntent.ChangeUserName) {

@@ -1492,6 +1492,7 @@ private fun SettingsPage(
         item { ChatDataManagementPanel(state.chatDataManagementState, emit) }
         item { TokenUsageEntryCard { emit(MainUiIntent.OpenTokenUsage) } }
         item { DebugPanel(state.debugState, emit) }
+        himitsuSettingsEntryItems(emit)
         item { AboutEntryCard { emit(MainUiIntent.OpenAbout) } }
     }
 }

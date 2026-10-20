@@ -1,6 +1,7 @@
 package me.kafuuneko.rpclient.feature.main.presentation
 
 import android.net.Uri
+import me.kafuuneko.rpclient.feature.main.model.HimitsuSettingsEntry
 import me.kafuuneko.rpclient.feature.main.model.ImageSendField
 import me.kafuuneko.rpclient.feature.main.model.MainGenerationParameter
 import me.kafuuneko.rpclient.feature.main.model.MainHomeContentTab
@@ -156,6 +157,9 @@ sealed class MainUiIntent {
     data object OpenTokenUsage : MainUiIntent()
 
     data object OpenAbout : MainUiIntent()
+
+    // Himitsu: opens a settings screen contributed by a work track.
+    data class OpenHimitsuSettings(val entry: HimitsuSettingsEntry) : MainUiIntent()
 
     data class EnterMultiSelect(val item: MainHomeItemSelection) : MainUiIntent()
 
