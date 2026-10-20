@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">Penyamaran</string>
     <string name="disguise_settings_desc">Buat Himitsu terlihat seperti aplikasi biasa</string>
     <string name="disguise_settings_about_title">Kerahasiaan, bukan keamanan</string>
-    <string name="disguise_settings_about_text">Penyamaran mengubah ikon dan nama agar Himitsu tidak mencolok sekilas. Ini bukan fitur keamanan: chat Anda dilindungi enkripsi dan kunci aplikasi. Himitsu tetap tampil dengan namanya di Setelan › Aplikasi, penggunaan baterai dan penyimpanan, riwayat toko, dan beberapa notifikasi. Siapa pun dengan akses teknis ke ponsel bisa melihat bahwa aplikasi ini terpasang.</string>
+    <string name="disguise_settings_about_text">Penyamaran mengubah ikon dan nama agar Himitsu tidak mencolok sekilas. Ini bukan fitur keamanan: chat Anda dilindungi enkripsi dan kunci aplikasi. Himitsu tetap tampil dengan namanya di Setelan › Aplikasi, penggunaan baterai dan penyimpanan, riwayat toko, dan beberapa notifikasi. Siapa pun dengan akses teknis ke ponsel bisa melihat bahwa aplikasi ini terpasang. Selama penyamaran aktif, Himitsu langsung terkunci begitu Anda meninggalkannya, apa pun batas waktu kunci yang Anda pilih.</string>
     <string name="disguise_settings_needs_lock_title">Aktifkan kunci aplikasi dulu</string>
     <string name="disguise_settings_needs_lock_text">Penyamaran memerlukan kunci aplikasi dan kunci layar di perangkat, agar penyamaran selalu meminta autentikasi. Ketuk untuk membuka Keamanan.</string>
     <string name="disguise_settings_switch">Penyamaran</string>

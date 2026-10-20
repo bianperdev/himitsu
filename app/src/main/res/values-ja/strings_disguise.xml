@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">カモフラージュ</string>
     <string name="disguise_settings_desc">Himitsu を普通のアプリに見せかけます</string>
     <string name="disguise_settings_about_title">目立たなくするための機能で、セキュリティではありません</string>
-    <string name="disguise_settings_about_text">カモフラージュはアイコンと名前を変え、ひと目では Himitsu だと分からないようにします。セキュリティ機能ではありません。チャットを守るのは暗号化とアプリのロックです。設定 › アプリ、電池やストレージの使用量、ストアの履歴、一部の通知には Himitsu の名前が表示されたままです。端末に技術的にアクセスできる人は、インストールされていることを確認できます。</string>
+    <string name="disguise_settings_about_text">カモフラージュはアイコンと名前を変え、ひと目では Himitsu だと分からないようにします。セキュリティ機能ではありません。チャットを守るのは暗号化とアプリのロックです。設定 › アプリ、電池やストレージの使用量、ストアの履歴、一部の通知には Himitsu の名前が表示されたままです。端末に技術的にアクセスできる人は、インストールされていることを確認できます。カモフラージュが有効な間は、選んだロックまでの時間に関係なく、Himitsu を離れるとすぐにロックされます。</string>
     <string name="disguise_settings_needs_lock_title">先にアプリのロックをオンにしてください</string>
     <string name="disguise_settings_needs_lock_text">カモフラージュには、アプリのロックと端末の画面ロックが必要です。これにより、常に認証が求められます。タップしてセキュリティを開きます。</string>
     <string name="disguise_settings_switch">カモフラージュ</string>

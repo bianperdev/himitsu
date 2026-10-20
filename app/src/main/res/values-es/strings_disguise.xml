@@ -36,7 +36,7 @@
     <string name="disguise_settings_title">Camuflaje</string>
     <string name="disguise_settings_desc">Haz que Himitsu parezca una app cotidiana</string>
     <string name="disguise_settings_about_title">Discreción, no seguridad</string>
-    <string name="disguise_settings_about_text">El camuflaje cambia el icono y el nombre para que Himitsu pase desapercibido a simple vista. No es una medida de seguridad: tus chats los protegen el cifrado y el bloqueo. Himitsu sigue apareciendo con su nombre en Ajustes › Aplicaciones, en el uso de batería y almacenamiento, en el historial de la tienda y en algunas notificaciones. Con acceso técnico al móvil se puede ver que está instalada.</string>
+    <string name="disguise_settings_about_text">El camuflaje cambia el icono y el nombre para que Himitsu pase desapercibido a simple vista. No es una medida de seguridad: tus chats los protegen el cifrado y el bloqueo. Himitsu sigue apareciendo con su nombre en Ajustes › Aplicaciones, en el uso de batería y almacenamiento, en el historial de la tienda y en algunas notificaciones. Con acceso técnico al móvil se puede ver que está instalada. Mientras el camuflaje está activo, Himitsu se bloquea en cuanto sales, sea cual sea el plazo de bloqueo que elegiste.</string>
     <string name="disguise_settings_needs_lock_title">Activa primero el bloqueo de la app</string>
     <string name="disguise_settings_needs_lock_text">El camuflaje necesita el bloqueo de la app y un bloqueo de pantalla en el móvil, para que el disfraz siempre pida autenticación. Toca para abrir Seguridad.</string>
     <string name="disguise_settings_switch">Camuflaje</string>

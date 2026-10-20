@@ -10,6 +10,7 @@ import me.kafuuneko.rpclient.libs.security.key.AndroidKeystoreKeyWrapper
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyFileStore
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
+import me.kafuuneko.rpclient.libs.security.lock.LockPolicy
 import me.kafuuneko.rpclient.libs.security.storage.MASTER_KEY_FILE_NAME
 import me.kafuuneko.rpclient.libs.security.storage.ProtectedFiles
 import me.kafuuneko.rpclient.libs.security.storage.SetAsideRestorer
@@ -27,7 +28,8 @@ internal val securityModule = module {
     }
     single { SecureStorageManager(androidContext(), get(), PlaintextDatabaseMigrator()) }
     single<FileCipherSource> { get<SecureStorageManager>() }
-    single { AppLockManager(androidContext()) }
+    single { LockPolicy.Default }
+    single { AppLockManager(androidContext(), get()) }
     single { AppGate(get(), get()) }
     single<UnlockEntry> { LockActivityEntry }
     single { RequestLogGuard(get()) }
