@@ -35,7 +35,8 @@ fun AppTheme(
     CompositionLocalProvider(LocalHimitsuColors provides himitsuColors) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography
+            typography = Typography,
+            shapes = HimitsuShapes
         ) {
             Surface(
                 color = MaterialTheme.colorScheme.background,

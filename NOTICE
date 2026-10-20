@@ -50,6 +50,15 @@ Resources:
   - Launcher icon background vector, Apache License 2.0,
     The Android Open Source Project
 
+Fonts, SIL Open Font License 1.1 (https://openfontlicense.org), bundled
+in app/src/main/res/font/ from google/fonts commit 47d54ca1ebb1. Full
+license texts are in LICENSES/:
+  - Inter - The Inter Project Authors (LICENSES/OFL-1.1-Inter.txt)
+  - Unbounded - The Unbounded Project Authors
+    (LICENSES/OFL-1.1-Unbounded.txt)
+  - JetBrains Mono - The JetBrains Mono Project Authors
+    (LICENSES/OFL-1.1-JetBrainsMono.txt)
+
 Build and test tools (not shipped in the application): Android Gradle
 Plugin, Kotlin compiler plugins, KSP and the Gradle wrapper (Apache
 License 2.0); JUnit 4 (Eclipse Public License 1.0); Hamcrest (BSD

@@ -197,6 +197,9 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 6. Icon (adaptive, with a monochrome version for Android 13+) and splash screen.
 7. Compose previews of the main screens in both themes.
 
+**Possible follow-ups (not started):**
+- Subset the bundled fonts to Latin, Vietnamese and Cyrillic with fonttools (and drop Inter's `opsz` axis) to cut about 1.5 MB from the APK. This adds a build step, so it needs a decision first.
+
 **Contract this track must document here before it is merged:**
 - **Icon system:** where launcher icons live and how alternative icons are added, so `feat/disguise` can add generic calculator, compass and converter icons.
 
@@ -306,6 +309,12 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 
 Bundled resources: the launcher icon background vector is from the AOSP template (Apache-2.0). The provenance of `app/src/main/res/drawable/app_logo.png` is unverified; the aesthetic track replaces it.
+
+| Bundled font | Version | License | Network calls of its own |
+|---|---|---|---|
+| Inter (variable, regular and italic) | google/fonts `47d54ca1ebb1` | OFL-1.1 | No |
+| Unbounded (variable) | google/fonts `47d54ca1ebb1` | OFL-1.1 | No |
+| JetBrains Mono (variable) | google/fonts `47d54ca1ebb1` | OFL-1.1 | No |
 
 ### Build and test only (not shipped)
 
