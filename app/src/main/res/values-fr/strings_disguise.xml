@@ -93,4 +93,16 @@
     <string name="disguise_sequence_next">Suivant</string>
     <string name="disguise_sequence_error_length">Utilisez 4 à 8 touches.</string>
     <string name="disguise_sequence_error_mismatch">Les séquences ne correspondent pas. Recommencez.</string>
+    <string name="disguise_settings_change_title">Changer de camouflage ou de raccourci</string>
+    <string name="disguise_settings_change_text">Choisissez un autre camouflage ou un nouveau raccourci. L\'actuel fonctionne jusqu\'à ce que vous appliquiez le nouveau.</string>
+    <string name="disguise_settings_limits_title">Ce que le camouflage ne cache pas</string>
+    <string name="disguise_limits_settings">Les paramètres d\'Android affichent Himitsu avec son nom et son icône : Applications, notifications, utilisation de la batterie, des données et du stockage.</string>
+    <string name="disguise_limits_system">La demande d\'empreinte ou de code, l\'en-tête de certaines notifications et les lecteurs d\'écran dans les apps récentes indiquent Himitsu.</string>
+    <string name="disguise_limits_package">Le nom du paquet (dev.bianperdev.himitsu) est visible par les autres apps, les gestionnaires de fichiers et adb.</string>
+    <string name="disguise_limits_store">La bibliothèque et l\'historique des mises à jour de votre boutique d\'apps affichent Himitsu.</string>
+    <string name="disguise_limits_technical">Toute personne ayant un accès technique au téléphone (adb, outils forensiques) peut voir qu\'il est installé.</string>
+    <string name="disguise_limits_public">Les camouflages et le geste de récupération sont publics dans le code source d\'Himitsu.</string>
+    <string name="disguise_limits_exports">Les fichiers que vous exportez gardent des noms qui peuvent révéler leur contenu.</string>
+    <string name="disguise_busy_title">Patientez un instant</string>
+    <string name="disguise_busy_text">Un téléchargement de modèle ou une réponse est en cours. Changer l\'icône peut fermer l\'app et l\'interrompre. Réessayez quand ce sera terminé.</string>
 </resources>

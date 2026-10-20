@@ -93,4 +93,16 @@
     <string name="disguise_sequence_next">다음</string>
     <string name="disguise_sequence_error_length">4~8번 누르세요.</string>
     <string name="disguise_sequence_error_mismatch">순서가 일치하지 않습니다. 다시 시작하세요.</string>
+    <string name="disguise_settings_change_title">위장 또는 바로가기 변경</string>
+    <string name="disguise_settings_change_text">다른 위장이나 새 바로가기를 고르세요. 새 것을 적용할 때까지 지금 것이 계속 작동합니다.</string>
+    <string name="disguise_settings_limits_title">위장으로 숨길 수 없는 것</string>
+    <string name="disguise_limits_settings">Android 설정(애플리케이션, 알림, 배터리·데이터·저장공간 사용량)에는 Himitsu의 이름과 아이콘이 표시됩니다.</string>
+    <string name="disguise_limits_system">지문 또는 PIN 확인 창, 일부 알림의 머리글, 최근 앱의 화면 읽기 프로그램은 Himitsu라고 표시합니다.</string>
+    <string name="disguise_limits_package">패키지 이름(dev.bianperdev.himitsu)은 다른 앱, 파일 관리자, adb에서 볼 수 있습니다.</string>
+    <string name="disguise_limits_store">앱 스토어의 보관함과 업데이트 기록에 Himitsu가 표시됩니다.</string>
+    <string name="disguise_limits_technical">휴대전화에 기술적으로 접근할 수 있는 사람(adb, 포렌식 도구)은 설치 여부를 알 수 있습니다.</string>
+    <string name="disguise_limits_public">위장과 복구 제스처는 Himitsu 소스 코드에 공개되어 있습니다.</string>
+    <string name="disguise_limits_exports">내보낸 파일은 내용을 짐작할 수 있는 이름을 그대로 가집니다.</string>
+    <string name="disguise_busy_title">잠시 기다려 주세요</string>
+    <string name="disguise_busy_text">모델 다운로드나 답변이 진행 중입니다. 아이콘을 바꾸면 앱이 닫혀 중단될 수 있습니다. 끝난 뒤 다시 시도하세요.</string>
 </resources>

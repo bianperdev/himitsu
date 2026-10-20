@@ -69,6 +69,12 @@ sealed class DisguiseSetupStep {
     data class CompassSequence(val taps: Int = 0, val repeating: Boolean = false, val error: DisguiseCodeError? = null) :
         DisguiseSetupStep()
 
+    /** The list of what disguise cannot hide. */
+    data object Limits : DisguiseSetupStep()
+
+    /** A download or a local reply is running; switching the icon could close the app and stop it. */
+    data object Busy : DisguiseSetupStep()
+
     /** The last warning before the launcher icon changes. */
     data class ConfirmChange(val target: Appearance) : DisguiseSetupStep()
 }

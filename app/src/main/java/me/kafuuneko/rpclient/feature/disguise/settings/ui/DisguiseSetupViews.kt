@@ -68,6 +68,34 @@ internal fun ChooseDecoyDialog(selected: Appearance, emit: DisguiseSettingsUiInt
     }
 }
 
+/** What disguise cannot hide, so nobody relies on a protection that does not exist. */
+@Composable
+internal fun LimitsDialog(emit: DisguiseSettingsUiIntent.() -> Unit) {
+    AppDialogScaffold(
+        onDismissRequest = { DisguiseSettingsUiIntent.Cancel.emit() },
+        title = stringResource(R.string.disguise_settings_limits_title),
+        dismissText = null,
+        confirmText = stringResource(R.string.disguise_about_close),
+        scrollableContent = true,
+        onConfirm = { DisguiseSettingsUiIntent.Cancel.emit() }
+    ) {
+        listOf(
+            R.string.disguise_limits_settings,
+            R.string.disguise_limits_system,
+            R.string.disguise_limits_package,
+            R.string.disguise_limits_store,
+            R.string.disguise_limits_technical,
+            R.string.disguise_limits_public,
+            R.string.disguise_limits_exports
+        ).forEach { res ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("•", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(res), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.fillMaxWidth())
+            }
+        }
+    }
+}
+
 /** A working calculator where the user types the new code once before it is applied. */
 @Composable
 internal fun PracticeCalculatorView(step: DisguiseSetupStep.PracticeCalculator, emit: DisguiseSettingsUiIntent.() -> Unit) {

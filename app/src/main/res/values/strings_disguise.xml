@@ -93,4 +93,16 @@
     <string name="disguise_sequence_next">Next</string>
     <string name="disguise_sequence_error_length">Use 4 to 8 taps.</string>
     <string name="disguise_sequence_error_mismatch">The sequences don\'t match. Start again.</string>
+    <string name="disguise_settings_change_title">Change disguise or shortcut</string>
+    <string name="disguise_settings_change_text">Pick another disguise or set a new shortcut. The current one keeps working until you apply the new one.</string>
+    <string name="disguise_settings_limits_title">What disguise cannot hide</string>
+    <string name="disguise_limits_settings">Android settings show Himitsu with its name and icon: Apps, notifications, battery, data and storage usage.</string>
+    <string name="disguise_limits_system">The fingerprint or PIN prompt, the header of some notifications and screen readers in recent apps say Himitsu.</string>
+    <string name="disguise_limits_package">The package name (dev.bianperdev.himitsu) is visible to other apps, file managers and adb.</string>
+    <string name="disguise_limits_store">Your app store\'s library and update history list Himitsu.</string>
+    <string name="disguise_limits_technical">Anyone with technical access to the phone (adb, forensic tools) can see it is installed.</string>
+    <string name="disguise_limits_public">The disguises and the recovery gesture are public in Himitsu\'s source code.</string>
+    <string name="disguise_limits_exports">Files you export keep names that can reveal what they contain.</string>
+    <string name="disguise_busy_title">Wait a moment</string>
+    <string name="disguise_busy_text">A model download or a reply is running. Changing the icon may close the app and stop it. Try again when it finishes.</string>
 </resources>

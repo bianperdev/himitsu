@@ -93,4 +93,16 @@
     <string name="disguise_sequence_next">Weiter</string>
     <string name="disguise_sequence_error_length">Verwende 4 bis 8 Tipps.</string>
     <string name="disguise_sequence_error_mismatch">Die Folgen stimmen nicht überein. Beginne von vorn.</string>
+    <string name="disguise_settings_change_title">Tarnung oder Kürzel ändern</string>
+    <string name="disguise_settings_change_text">Wähle eine andere Tarnung oder ein neues Kürzel. Das aktuelle funktioniert, bis du das neue anwendest.</string>
+    <string name="disguise_settings_limits_title">Was die Tarnung nicht verbirgt</string>
+    <string name="disguise_limits_settings">Die Android-Einstellungen zeigen Himitsu mit Namen und Symbol: Apps, Benachrichtigungen, Akku-, Daten- und Speichernutzung.</string>
+    <string name="disguise_limits_system">Die Fingerabdruck- oder PIN-Abfrage, der Kopf mancher Benachrichtigungen und Screenreader in der App-Übersicht nennen Himitsu.</string>
+    <string name="disguise_limits_package">Der Paketname (dev.bianperdev.himitsu) ist für andere Apps, Dateimanager und adb sichtbar.</string>
+    <string name="disguise_limits_store">Die Bibliothek und der Update-Verlauf deines App-Stores zeigen Himitsu.</string>
+    <string name="disguise_limits_technical">Wer technischen Zugriff auf das Handy hat (adb, Forensik-Tools), kann sehen, dass die App installiert ist.</string>
+    <string name="disguise_limits_public">Die Tarnungen und die Wiederherstellungsgeste sind im Quellcode von Himitsu öffentlich.</string>
+    <string name="disguise_limits_exports">Exportierte Dateien behalten Namen, die ihren Inhalt verraten können.</string>
+    <string name="disguise_busy_title">Einen Moment</string>
+    <string name="disguise_busy_text">Ein Modell-Download oder eine Antwort läuft. Das Ändern des Symbols kann die App schließen und sie abbrechen. Versuche es erneut, wenn sie fertig ist.</string>
 </resources>

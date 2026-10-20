@@ -93,4 +93,16 @@
     <string name="disguise_sequence_next">下一步</string>
     <string name="disguise_sequence_error_length">请点按 4 到 8 次。</string>
     <string name="disguise_sequence_error_mismatch">两次顺序不一致。请重新开始。</string>
+    <string name="disguise_settings_change_title">更改伪装或快捷方式</string>
+    <string name="disguise_settings_change_text">选择其他伪装或新的快捷方式。在应用新的之前，当前的仍然有效。</string>
+    <string name="disguise_settings_limits_title">伪装无法隐藏的内容</string>
+    <string name="disguise_limits_settings">Android 设置会显示 Himitsu 的名称和图标：应用、通知、电池、流量和存储用量。</string>
+    <string name="disguise_limits_system">指纹或 PIN 验证框、部分通知的标题栏，以及最近使用的应用中的屏幕阅读器会显示或读出 Himitsu。</string>
+    <string name="disguise_limits_package">其他应用、文件管理器和 adb 可以看到包名（dev.bianperdev.himitsu）。</string>
+    <string name="disguise_limits_store">应用商店的库和更新记录会列出 Himitsu。</string>
+    <string name="disguise_limits_technical">能以技术手段访问手机的人（adb、取证工具）可以看到它已安装。</string>
+    <string name="disguise_limits_public">伪装方式和恢复手势在 Himitsu 的源代码中是公开的。</string>
+    <string name="disguise_limits_exports">你导出的文件会保留可能暴露其内容的文件名。</string>
+    <string name="disguise_busy_title">请稍候</string>
+    <string name="disguise_busy_text">正在下载模型或生成回复。更改图标可能会关闭应用并将其中断。请在完成后再试。</string>
 </resources>

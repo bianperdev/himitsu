@@ -16,6 +16,11 @@ sealed class DisguiseSettingsUiIntent {
     /** The disguise switch was turned on. */
     data object StartEnable : DisguiseSettingsUiIntent()
 
+    /** Pick another decoy or a new shortcut while disguise stays on. */
+    data object StartChange : DisguiseSettingsUiIntent()
+
+    data object ShowLimits : DisguiseSettingsUiIntent()
+
     /** The disguise switch was turned off. */
     data object StartDisable : DisguiseSettingsUiIntent()
 

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.HelpOutline
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.TheaterComedy
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.Warning
@@ -106,6 +107,13 @@ private fun NormalView(uiState: DisguiseSettingsUiState.Normal, emit: DisguiseSe
                 }
             }
             DisguiseGroup(uiState, emit)
+            RpSettingsGroup {
+                RpSettingsTile(
+                    title = stringResource(R.string.disguise_settings_limits_title),
+                    icon = Icons.Rounded.VisibilityOff,
+                    onClick = { DisguiseSettingsUiIntent.ShowLimits.emit() }
+                )
+            }
         }
     }
 }
@@ -123,6 +131,14 @@ private fun DisguiseGroup(uiState: DisguiseSettingsUiState.Normal, emit: Disguis
             onCheckedChange = { on -> (if (on) DisguiseSettingsUiIntent.StartEnable else DisguiseSettingsUiIntent.StartDisable).emit() }
         )
         if (enabled) {
+            RpSettingsDivider()
+            RpSettingsTile(
+                title = stringResource(R.string.disguise_settings_change_title),
+                subtitle = stringResource(R.string.disguise_settings_change_text),
+                icon = Icons.Rounded.SwapHoriz,
+                enabled = uiState.canEnable && !uiState.isWorking,
+                onClick = { DisguiseSettingsUiIntent.StartChange.emit() }
+            )
             if (!uiState.appLockEnabled) {
                 RpSettingsDivider()
                 RpSettingsTile(
@@ -157,6 +173,15 @@ private fun DisguiseGroup(uiState: DisguiseSettingsUiState.Normal, emit: Disguis
 private fun StepDialog(uiState: DisguiseSettingsUiState.Normal, emit: DisguiseSettingsUiIntent.() -> Unit) {
     when (val step = uiState.step) {
         is DisguiseSetupStep.ChooseDecoy -> ChooseDecoyDialog(step.selected, emit)
+        DisguiseSetupStep.Limits -> LimitsDialog(emit)
+        DisguiseSetupStep.Busy -> AppDialogScaffold(
+            onDismissRequest = { DisguiseSettingsUiIntent.Cancel.emit() },
+            title = stringResource(R.string.disguise_busy_title),
+            subtitle = stringResource(R.string.disguise_busy_text),
+            dismissText = null,
+            confirmText = stringResource(R.string.disguise_about_close),
+            onConfirm = { DisguiseSettingsUiIntent.Cancel.emit() }
+        )
         is DisguiseSetupStep.EnterCode -> CodeDialog(step.error, emit)
         is DisguiseSetupStep.ConfirmChange -> AppearanceChangeDialog(
             target = step.target,

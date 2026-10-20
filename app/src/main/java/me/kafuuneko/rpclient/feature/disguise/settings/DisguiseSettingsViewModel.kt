@@ -26,6 +26,8 @@ import me.kafuuneko.rpclient.libs.disguise.compass.CompassMath
 import me.kafuuneko.rpclient.libs.disguise.converter.ConverterEngine
 import me.kafuuneko.rpclient.libs.disguise.converter.ConverterState
 import me.kafuuneko.rpclient.libs.disguise.secret.DisguiseSecretStore
+import me.kafuuneko.rpclient.libs.llm.local.LocalGenerationKeeper
+import me.kafuuneko.rpclient.libs.llm.local.model.LocalModelDownloadTracker
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import me.kafuuneko.rpclient.libs.security.lock.SecurityPrefs
 import org.koin.core.component.KoinComponent
@@ -51,6 +53,7 @@ class DisguiseSettingsViewModel :
     private val mAppearanceSwitcher by inject<AppearanceSwitcher>()
     private val mSecretStore by inject<DisguiseSecretStore>()
     private val mLockManager by inject<AppLockManager>()
+    private val mDownloadTracker by inject<LocalModelDownloadTracker>()
     private val mFormat = CalculatorFormat(Locale.getDefault())
 
     /** The numeric code typed twice, for the calculator and the converter. */
@@ -104,14 +107,31 @@ class DisguiseSettingsViewModel :
     private fun onStartEnable() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
         if (!uiState.canEnable || uiState.appearance.isDecoy || uiState.isWorking) return
-        uiState.copy(step = DisguiseSetupStep.ChooseDecoy()).setup()
+        uiState.copy(step = if (isBackgroundWorkRunning()) DisguiseSetupStep.Busy else DisguiseSetupStep.ChooseDecoy()).setup()
+    }
+
+    /** Sets up another decoy or a new shortcut; the current one keeps working until the new one is applied. */
+    @UiIntentObserver(DisguiseSettingsUiIntent.StartChange::class)
+    private fun onStartChange() {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        if (!uiState.canEnable || !uiState.appearance.isDecoy || uiState.isWorking) return
+        val step = if (isBackgroundWorkRunning()) DisguiseSetupStep.Busy else DisguiseSetupStep.ChooseDecoy(uiState.appearance)
+        uiState.copy(step = step).setup()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.StartDisable::class)
     private fun onStartDisable() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
         if (!uiState.appearance.isDecoy || uiState.isWorking) return
-        uiState.copy(step = DisguiseSetupStep.ConfirmChange(Appearance.Himitsu)).setup()
+        val step = if (isBackgroundWorkRunning()) DisguiseSetupStep.Busy else DisguiseSetupStep.ConfirmChange(Appearance.Himitsu)
+        uiState.copy(step = step).setup()
+    }
+
+    @UiIntentObserver(DisguiseSettingsUiIntent.ShowLimits::class)
+    private fun onShowLimits() {
+        val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        if (uiState.step != DisguiseSetupStep.None) return
+        uiState.copy(step = DisguiseSetupStep.Limits).setup()
     }
 
     @UiIntentObserver(DisguiseSettingsUiIntent.SelectDecoy::class)
@@ -266,6 +286,10 @@ class DisguiseSettingsViewModel :
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
         val step = uiState.step as? DisguiseSetupStep.ConfirmChange ?: return
         if (uiState.isWorking) return
+        if (isBackgroundWorkRunning()) {
+            uiState.copy(step = DisguiseSetupStep.Busy).setup()
+            return
+        }
         uiState.copy(isWorking = true).setup()
         if (step.target.isDecoy) {
             val secret = mPendingSecret ?: return onCancel()
@@ -292,6 +316,12 @@ class DisguiseSettingsViewModel :
         super.onCleared()
         wipePending()
     }
+
+    /**
+     * Switching the launcher alias may restart the process on some devices, which would stop a
+     * model download or a local reply.
+     */
+    private fun isBackgroundWorkRunning(): Boolean = mDownloadTracker.isBusy || LocalGenerationKeeper.isGenerating
 
     /** Android 13 and later hide the preview with the app lock alone; earlier versions need `FLAG_SECURE`. */
     private fun isRecentsPreviewVisible(): Boolean =
