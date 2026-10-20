@@ -62,7 +62,7 @@ class LockActivity : FragmentActivity(), KoinComponent {
             val themeMode by mAppThemeManager.themeModeFlow.collectAsState()
             val uiState by mViewModel.uiStateFlow.collectAsState()
             LaunchedEffect(uiState) {
-                if (uiState is LockUiState.Finished) leave()
+                (uiState as? LockUiState.Finished)?.let { leave(it.restartApp) }
             }
             AppTheme(darkTheme = themeMode.resolveDarkTheme(isSystemInDarkTheme())) {
                 LockLayout(uiState = uiState, emit = { mViewModel.emit(this) })
@@ -96,9 +96,19 @@ class LockActivity : FragmentActivity(), KoinComponent {
         }
     }
 
-    /** Returns to the page underneath, or to the main page when the gate was opened directly. */
-    private fun leave() {
-        if (isTaskRoot) startActivity(Intent(this, MainActivity::class.java))
+    /**
+     * Returns to the page underneath, or to the main page when the gate was opened directly.
+     *
+     * @param restartApp clears the task first, so no screen keeps values read without the key
+     */
+    private fun leave(restartApp: Boolean) {
+        when {
+            restartApp -> startActivity(
+                Intent(this, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
+            isTaskRoot -> startActivity(Intent(this, MainActivity::class.java))
+        }
         finish()
     }
 }

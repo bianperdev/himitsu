@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
+import me.kafuuneko.rpclient.libs.security.lock.SecurityPrefs
 import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
 import me.kafuuneko.rpclient.libs.theme.AppThemeManager
 import me.kafuuneko.rpclient.ui.theme.AppTheme
@@ -40,6 +42,13 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     private val mAppThemeManager by inject<AppThemeManager>()
     private val mAppGate by inject<AppGate>()
     private val mUnlockEntry by inject<UnlockEntry>()
+
+    /**
+     * Curtain raised when the page leaves the screen with the app lock on, and lowered in
+     * [onResume] only after a synchronous gate check (Himitsu). The gate flow is asynchronous,
+     * so without it a re-locked page could draw a frame before the curtain.
+     */
+    private val mForcedCurtain = mutableStateOf(false)
 
     /** 子类可关闭默认的 Edge-to-Edge。 */
     protected open fun isEnableEdgeToEdge(): Boolean = true
@@ -58,6 +67,13 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
         WindowProtection.apply(this)
+        mForcedCurtain.value = mAppGate.evaluateNow() != GateState.Open
+    }
+
+    /** Covers the page before it can be seen again if the app may lock meanwhile (Himitsu). */
+    override fun onStop() {
+        super.onStop()
+        if (SecurityPrefs.appLockEnabled) mForcedCurtain.value = true
     }
 
     /** Opens the gate screen whenever this page is visible and the gate is blocked (Himitsu). */
@@ -95,7 +111,7 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
     @Composable
     private fun GatedContent() {
         val gateState by mAppGate.state.collectAsState()
-        val open = gateState == GateState.Open
+        val open = gateState == GateState.Open && !mForcedCurtain.value
         Box(Modifier.fillMaxSize()) {
             Box(if (open) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics { }) {
                 ViewContent()

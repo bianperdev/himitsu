@@ -40,6 +40,9 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
     private val mLockManager by inject<AppLockManager>()
     private val mAppGate by inject<AppGate>()
 
+    /** Whether the storage failed while this screen was shown (privacy review M3). */
+    private var mStorageFailed = false
+
     /**
      * [AppLockManager.backgroundCount] when the user dismissed the prompt, or null. While it
      * matches, returning to this screen does not reopen the prompt; only the button does.
@@ -57,7 +60,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         viewModelScope.launch {
             mAppGate.state.first { it == GateState.Open }
             val current = uiStateFlow.value
-            if (current !is LockUiState.Finished) LockUiState.Finished(current).setup()
+            if (current !is LockUiState.Finished) LockUiState.Finished(current, restartApp = mStorageFailed).setup()
         }
     }
 
@@ -190,6 +193,7 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
     private fun onGateInputs(storage: SecureStorageState, locked: Boolean) {
         val uiState = getOrNull<LockUiState.Normal>() ?: return
         val previous = uiState.contentState
+        if (storage is SecureStorageState.Failed) mStorageFailed = true
         val content = when (storage) {
             SecureStorageState.Starting -> LockContentState.Loading
             is SecureStorageState.Failed -> LockContentState.StorageError(

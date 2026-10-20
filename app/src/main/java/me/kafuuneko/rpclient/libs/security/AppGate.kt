@@ -41,12 +41,18 @@ fun interface UnlockEntry {
  * [GateState.Open]. The state combines the encrypted storage state and the app lock: storage
  * problems come first, then the lock.
  */
-class AppGate(storage: SecureStorageManager, lock: AppLockManager) {
+class AppGate(private val mStorage: SecureStorageManager, private val mLock: AppLockManager) {
     private val mScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /** Current gate state. */
-    val state: StateFlow<GateState> = combine(storage.state, lock.isLocked) { storageState, locked -> toGateState(storageState, locked) }
-        .stateIn(mScope, SharingStarted.Eagerly, toGateState(storage.state.value, lock.isLocked.value))
+    val state: StateFlow<GateState> = combine(mStorage.state, mLock.isLocked) { storageState, locked -> toGateState(storageState, locked) }
+        .stateIn(mScope, SharingStarted.Eagerly, toGateState(mStorage.state.value, mLock.isLocked.value))
+
+    /**
+     * The gate state computed right now from its sources, without waiting for [state] to
+     * propagate. Pages use it when they return to the screen.
+     */
+    fun evaluateNow(): GateState = toGateState(mStorage.state.value, mLock.isLocked.value)
 
     private fun toGateState(storage: SecureStorageState, locked: Boolean): GateState = when (storage) {
         SecureStorageState.Starting -> GateState.Starting

@@ -12,8 +12,13 @@ sealed class LockUiState {
         val dialogState: LockDialogState = LockDialogState.None
     ) : LockUiState()
 
-    /** The gate is open; the Activity leaves while still drawing [previous]. */
-    data class Finished(val previous: LockUiState) : LockUiState()
+    /**
+     * The gate is open; the Activity leaves while still drawing [previous].
+     *
+     * @property restartApp true when the storage failed before opening: screens created behind
+     *   the gate may hold default values read while the key was missing, so the task restarts
+     */
+    data class Finished(val previous: LockUiState, val restartApp: Boolean = false) : LockUiState()
 }
 
 /** Main content of the gate screen. */
