@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
 import me.kafuuneko.rpclient.ui.widgets.draggableScrollIndicator
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 
@@ -85,6 +86,8 @@ fun AppDialogScaffold(
     scrollableContent: Boolean = false,
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
+    // Himitsu: no dialog window above the gate curtain while the app is locked
+    if (!LocalAppGateOpen.current) return
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = properties

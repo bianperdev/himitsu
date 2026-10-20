@@ -159,18 +159,98 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - Narrow edits allowed in files owned by local-inference: the Gemini key header (P-08) in `GeminiLLMClient.kt` and `GeminiModelCatalogClient.kt`, and the masking of custom headers in `LLMProviderEditViewModel.kt` (P-04). Coordinate in the pull request.
 
 **Tasks, in order:**
-1. Design document (options, trade-offs and a recommendation for each), approved by the maintainer: SQLCipher library and Room integration (verify the current version and license), database key management (Keystore-wrapped random key, optional PIN-derived "paranoid mode"), API key storage, app lock with `androidx.biometric`, hardening.
-2. Master key generation and storage, with unit tests for the parts that do not depend on the Keystore.
-3. Encrypted Room databases (P-02, and the request log database for P-07). Note: the new `applicationId` means there is no RPClient data to migrate; only earlier Himitsu debug builds may have a plain database.
-4. API key and custom header protection (P-01, P-04, P-13). API keys live in Room, not in Kotpref; the migration moves them out of the plain database.
-5. App lock: biometrics with device credential fallback, re-lock after a configurable time in background (immediately, 1 min, 5 min), lock screen.
-6. Hardening: backup rules (P-03), Kotpref and file encryption (P-05, P-06), debug log retention and redaction (P-07), cache file (P-10), clipboard (P-11), optional `FLAG_SECURE` (P-12), logging (P-14), clear-text warning (P-09), Gemini header (P-08), main-thread startup (O-01). Present P-15 and P-16 as decisions.
-7. Final review: go through the findings table and mark what is resolved.
+1. [x] Design document (options, trade-offs and a recommendation for each), approved by the maintainer: SQLCipher library and Room integration (verify the current version and license), database key management (Keystore-wrapped random key, optional PIN-derived "paranoid mode"), API key storage, app lock with `androidx.biometric`, hardening.
+2. [x] Master key generation and storage, with unit tests for the parts that do not depend on the Keystore.
+3. [x] Encrypted Room databases (P-02, and the request log database for P-07). Note: the new `applicationId` means there is no RPClient data to migrate; only earlier Himitsu debug builds may have a plain database.
+4. [x] API key and custom header protection (P-01, P-04, P-13). API keys live in Room, not in Kotpref; the migration moves them out of the plain database.
+5. [x] App lock: biometrics with device credential fallback, re-lock after a configurable time in background (immediately, 1 min, 5 min), lock screen.
+6. [x] Hardening: backup rules (P-03), Kotpref and file encryption (P-05, P-06), debug log retention and redaction (P-07), cache file (P-10), clipboard (P-11), optional `FLAG_SECURE` (P-12), logging (P-14), clear-text warning (P-09), Gemini header (P-08), main-thread startup (O-01). Present P-15 and P-16 as decisions. File encryption (P-06) and the in-flight part of P-10 were deferred by the maintainer to `feat/security-followups`.
+7. [x] Final review: go through the findings table and mark what is resolved.
 
 **Contracts this track must document here before it is merged:**
 - How the database is opened (key retrieval, error handling) and what other tracks must call.
 - **Unlock extension point:** an interchangeable "unlocker" entry so that `feat/disguise` can start authentication from a decoy. The lock never has a bypass: every entry point leads to authentication.
 - The lock screen composable API, so `feat/aesthetic` can style it with theme tokens.
+
+### Contracts (feat/security)
+
+Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design.md).
+
+**Opening the databases.** `AppDatabase` and `RequestLogDatabase` are SQLCipher databases. Other tracks keep using `get<AppDatabase>()` from Koin exactly as before; nothing else is required.
+
+- The builders in `RPClientApp.kt` pass `SecureStorageManager.openHelperFactory(EncryptedDatabase.…)`. Do not build another `Room.databaseBuilder` for these files, and never open them with `android.database.sqlite`: the file is unreadable without the key.
+- The key is derived from the master key per database (`KeyPurpose`). The first query waits on a background thread until the key is loaded; Room never queries on the main thread, so do not enable `allowMainThreadQueries`.
+- If the key cannot be loaded, queries keep waiting and the app gate shows the error screen with retry, recovery code and start over. Nothing is deleted automatically, and no screen crashes.
+- A new database file must be added to `EncryptedDatabase` with its own `KeyPurpose` so it is encrypted, migrated from plain form and moved aside on "start over".
+- "Start over" (`SecureStorageManager.startOver`) moves the key file, the `FileRepository` directory (`app_repository/`), the databases and the sealed preferences aside, in that order, with one `.unrecoverable-<time>` suffix. A track that stores user files in a new directory must add it there too, or startup cleanup code may treat them as abandoned once the database is empty.
+- Schema versions and auto-migrations work as before; this track did not change the schema.
+- Startup work that needs the database (upgrades, file cleanup) runs in the block passed to `SecureStorageManager.start` in `RPClientApp.onCreate`, off the main thread. Screens stay behind the gate curtain until it finishes.
+
+**Unlock extension point.** `UnlockEntry` (`…/libs/security/AppGate.kt`), resolved from Koin, opens the gate screen. A decoy calls `get<UnlockEntry>().open(context)` from its secret entry. It only shows the gate screen; authentication happens there, so there is no bypass. `AppGate.state` tells whether content may be shown.
+
+- Unlocking happens only in the `BiometricPrompt` success callback inside `AppLockManager`; there is no public unlock method. The one exception is a device without any screen lock, where the gate screen shows a warning and lets the user continue (removing the system lock already required the credential).
+- The app lock settings (`SecurityPrefs`: on/off, timeout) are not secrets; they live in Kotpref.
+- Note for `feat/disguise`: the system authentication prompt shows the application label (seen as "Himitsu (Dev)" on Android 17). Check what it shows when an activity-alias is the launcher entry, and document it as a known limit if it cannot be hidden.
+
+**Lock screen styling.** `LockScreenFrame(icon, title, message, modifier, actions)` in `…/feature/lock/ui/LockLayout.kt` draws every gate state and reads only `MaterialTheme` tokens, so `feat/aesthetic` can restyle it through the theme.
+
+**Rules for code in other tracks.**
+
+- **Screens.** Every Activity that can show user data extends `CoreActivity` (or `CoreActivityWithEvent`): that is what puts it behind the gate curtain. An Activity that must work while the app is locked (the `feat/disguise` decoys, the gate screen itself) must not extend it and must never show user data; its secret entry calls `UnlockEntry`.
+- **Dialogs and popups.** The curtain only covers the Activity window. A dialog that shows private content skips its window while `LocalAppGateOpen.current` is false, as `AppDialogScaffold` does; reuse `AppDialogScaffold` where possible.
+- **Startup.** Startup work that reads the database or sealed preferences goes in the block passed to `SecureStorageManager.start` in `RPClientApp.onCreate`. Work that must run before the key is loaded (for example deleting stale cache files) goes in `beforeKey` and must not touch the database.
+- **Preferences.** `AppModel` uses `SealedPreferencesProvider`: its strings are sealed, numbers and booleans stay plain. A track's own Kotpref object that holds personal text uses the same provider and calls `SealedPreferencesProvider.sealPlainValues(it)` in the startup block. Settings the first frame needs (theme) must stay plain: either non-string values, a Kotpref object without the provider, or an entry in the provider's plain list. Reading a sealed string may perform a Keystore operation, so never read one in the first frame.
+- **Secrets.** API keys, tokens and passwords go in the encrypted database, never in Kotpref. Inputs for secrets use `AppInputDialog(password = true)`, which sets a password keyboard without autocorrect.
+- **Clipboard.** Copy user content with `SensitiveClip.plainText(label, text)` so it is marked `IS_SENSITIVE`.
+- **Request log.** Entries are written only through `LLMRequestLogRepository`, which redacts credentials (`RequestLogRedactor`) and applies retention. A local engine that logs requests uses the same repository.
+- **Files.** Avatars and chat images under `app_repository/` are still plain (P-06, deferred). New features must not write other user content to plain files; temporary files that must exist go in `cacheDir`, are deleted after use and at startup (`beforeKey`).
+- **Backups and network.** Every data domain is excluded from backup and device transfer, so new files need no rule. Only system CAs are trusted; clear text stays allowed for LAN servers.
+- **Logging.** Never log user content or secrets. R8 strips `android.util.Log` and `printStackTrace` from release builds, but debug builds keep them.
+
+### Findings status (feat/security)
+
+Final review of the [privacy audit findings](#privacy-audit-findings) on this branch.
+
+| ID | Status | Commits | Notes |
+|---|---|---|---|
+| P-01 | Resolved | `c7b1141`, `1bb63d2` | API keys stay in `llm_providers.apiKey`, now inside the SQLCipher database; plain databases from earlier builds are migrated and the plain copy deleted after verification. No key was ever in Kotpref. |
+| P-02 | Resolved | `c7b1141` | `primary.sqlite` is SQLCipher with a per-database key derived from the Keystore-wrapped master key. |
+| P-03 | Resolved | `a39fd4e`, `022e835` | `allowBackup="false"`; every domain excluded from full backup, cloud backup and device transfer. |
+| P-04 | Resolved | `1bb63d2` | Header values are masked in the editor; stored inside the encrypted database. |
+| P-05 | Resolved | `309abf8` | `AppModel` strings are sealed (AES-GCM, key derived from the master key). Numbers and booleans stay plain. |
+| P-06 | Deferred (decision) | | Maintainer decision (2026-10-20): done later in its own branch, following the plan in "Follow-ups". Avatars and chat images stay plain until then. |
+| P-07 | Resolved | `c7b1141`, `7d27cba` | Encrypted database, credentials redacted, 7 days / 200 entries, wiped when debug mode is turned off. |
+| P-08 | Resolved | `46a3959` | `x-goog-api-key` header. |
+| P-09 | Resolved (decision) | `f24e6ba`, `3fa3047` | Warning when saving a plain-HTTP remote provider; clear text stays allowed for LAN servers. Only system CAs are trusted (maintainer decision, 2026-10-20). |
+| P-10 | Partly, rest deferred (decision) | `0d782e4` | Leftover request files are deleted at startup. Encrypting the file while a request is in flight needs a change in `MultimodalWireCodec` (local-inference); deferred by the maintainer on 2026-10-20 (see "P-10 rest" in Follow-ups). |
+| P-11 | Resolved | `c3b12b1` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs. |
+| P-12 | Resolved | `655a726` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on Android 13+. |
+| P-13 | Resolved | `1bb63d2` | Password keyboard without autocorrect. |
+| P-14 | Resolved | `2425e39` | `printStackTrace` removed; R8 strips `Log`, `printStackTrace` and SQLCipher logging in release (verified on the dex). |
+| P-15 | Deferred (decision) | | Optional encrypted export, after P-06. |
+| P-16 | Resolved (decision) | `d31820e` | The OpenRouter routing ID is no longer in the default template; opt-in through the request JSON. |
+| O-01 | Resolved | `c7b1141`, `77ffea0` | Startup work runs off the main thread behind the gate. The theme stays plain so the first frame never waits; the first read of a sealed `AppModel` string may still perform one Keystore operation on the main thread (P-05). |
+
+### Follow-ups (feat/security)
+
+- **P-06 plan (deferred by the maintainer):** encrypt `app_repository/` files with AES-256-GCM in 64 KiB segments under the `Files` key (no new dependency); name files by HMAC instead of the plain SHA-256 so names do not reveal known images; replace `File`-based leases with streams (`BitmapFactory.decodeStream`, `ExifInterface(InputStream)`); adapt `MessageImageRuntime`, `CharacterCardRepository.exportPng` and `ChatArchiveRepository` (narrow edits outside this track); migrate existing files in the background at startup.
+- **P-10 rest:** write the image request file with an ephemeral in-memory key and decrypt while streaming (`MultimodalWireCodec`, local-inference).
+- **Paranoid mode:** a PIN or passphrase key slot with Argon2id (`argon2kt`, MIT); the key file format already supports extra slots.
+- **Keystore error screen:** add an option to export the encrypted files through the system file picker, and a way to delete `.unrecoverable-*` copies left by "start over".
+- **F-Droid:** SQLCipher ships prebuilt native libraries from Maven Central; confirm the F-Droid scanner accepts them or build `sqlcipher-android` from source in the recipe (release-readiness).
+- **Privacy review (2026-10-20), not fixed in this track:**
+  - Ship the SQLCipher BSD-3 notice inside the app (licenses screen or packaged `NOTICE`) before any release (release-readiness).
+  - Text copied through the system selection toolbar (`MarkdownMessage`, `PromptInspectorDialog`) is not marked `IS_SENSITIVE`; needs a clipboard manager that flags it.
+  - Turning the lock off and creating, replacing or removing the recovery code need no fresh authentication; consider a prompt for these actions.
+  - `AppDatabaseAutoMigrationSpec` (2 to 3) still injects `session_id` into OpenRouter providers migrated from RPClient databases, and the provider editor's example JSON shows it.
+  - Chat, persona and character inputs do not set the IME "no personalized learning" flag.
+  - Recents previews: on Android 12 and earlier only `FLAG_SECURE` hides them; the app lock alone does not.
+- **Second privacy review (2026-10-20), documented limits:**
+  - Dropdown menus and small popups are not hidden while locked; only the dialogs that show private content are (`AppDialogScaffold`, `PromptInspectorDialog`, `MessageImageViewerDialog`). The gate screen covers them right after.
+  - Permanent failures that are not about the key (a damaged plain database, "two plain copies") only offer Retry; the way out is clearing the app data in system settings. Only earlier debug builds can reach them.
+  - With only system CAs trusted, self-hosted HTTPS servers with a self-signed certificate no longer work; plain HTTP on the LAN still does, with the warning.
+  - `.unrecoverable-*` copies left by "start over" cannot be restored from the app; restoring them with a recovery code would need a new action.
+- **Build:** a combined `assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest` once failed in KSP with Room errors on `MutableDao<T>`; rerunning passed. Probably KSP incremental state; watch for it.
 
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
 
@@ -300,6 +380,8 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | OkHttp (with Okio) | 4.12.0 | Apache-2.0 | Only the requests the app makes |
 | Gson | 2.11.0 | Apache-2.0 | No |
 | JTokkit | 1.1.0 | MIT | No |
+| AndroidX biometric, lifecycle-process (feat/security; lifecycle-process was already a transitive dependency) | 1.1.0, 2.10.0 | Apache-2.0 | No |
+| SQLCipher for Android (`net.zetetic:sqlcipher-android`, bundles LibTomCrypt, public domain), pulls in AndroidX sqlite 2.7.0 (feat/security) | 4.19.1 | BSD-3-Clause (notice reproduced in `NOTICE`) | No |
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 

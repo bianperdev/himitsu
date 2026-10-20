@@ -35,3 +35,30 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# feat/security (P-14): strip every Logcat write and stack trace print from release builds,
+# including those inside libraries, so no prompt, response or key can reach Logcat.
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
+    public static int wtf(...);
+    public static int println(...);
+    public static boolean isLoggable(java.lang.String, int);
+}
+-assumenosideeffects class java.lang.Throwable {
+    public void printStackTrace();
+}
+
+# SQLCipher logs through its own Logger; Himitsu installs NoopTarget at startup, and these
+# rules drop the calls in release builds as a second barrier.
+-assumenosideeffects class net.zetetic.database.Logger {
+    public static void v(...);
+    public static void d(...);
+    public static void i(...);
+    public static void w(...);
+    public static void e(...);
+    public static void wtf(...);
+}

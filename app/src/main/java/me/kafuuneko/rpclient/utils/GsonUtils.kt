@@ -11,8 +11,8 @@ fun Gson.toStringList(json: String?): List<String> {
     return try {
         val array = this.fromJson(json, Array<String>::class.java)
         array?.toList() ?: emptyList()
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (_: Exception) {
+        // Himitsu (P-14): never print the exception, its message may quote the stored JSON
         emptyList()
     }
 }

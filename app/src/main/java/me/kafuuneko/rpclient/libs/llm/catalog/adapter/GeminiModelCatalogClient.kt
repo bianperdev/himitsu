@@ -26,14 +26,13 @@ class GeminiModelCatalogClient(
                 .newBuilder()
                 .addQueryParameter("pageSize", "1000")
                 .apply {
-                    if (mProvider.apiKey.isNotBlank()) {
-                        addQueryParameter("key", mProvider.apiKey)
-                    }
                     pageToken?.let { addQueryParameter("pageToken", it) }
                 }
                 .build()
             val request = Request.Builder()
                 .url(url)
+                // Himitsu (P-08): the key goes in a header, never in the URL
+                .apply { if (mProvider.apiKey.isNotBlank()) header("x-goog-api-key", mProvider.apiKey) }
                 .applyProviderHeaders(mProvider)
                 .build()
             val page = parseGeminiModelCatalogPage(mOkHttpClient.await(request))

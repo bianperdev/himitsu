@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">無法開啟你的資料</string>
+    <string name="security_storage_error_key_file_missing">保護你資料的金鑰檔案遺失。沒有它，加密資料將無法讀取。</string>
+    <string name="security_storage_error_key_file_corrupt">保護你資料的金鑰檔案已損毀。</string>
+    <string name="security_storage_error_keystore_key_lost">此裝置的安全硬體中已不再有保護你資料的金鑰。這可能發生在某些系統更新或安全性重設之後。如果你儲存了復原碼，現在可以使用它。</string>
+    <string name="security_storage_error_keystore_unavailable">此裝置的安全硬體沒有回應。這通常是暫時的。</string>
+    <string name="security_storage_error_storage">無法讀取金鑰檔案。請確認裝置有可用空間後再試一次。</string>
+    <string name="security_storage_error_migration_failed">無法將現有資料移轉到加密儲存空間。資料仍完好無損。請確認裝置有可用空間後再試一次。</string>
+    <string name="security_storage_error_nothing_deleted">沒有刪除任何內容。</string>
+    <string name="security_action_retry">重試</string>
+    <string name="security_action_use_recovery_code">使用復原碼</string>
+    <string name="security_action_start_over">重新開始</string>
+    <string name="security_recovery_dialog_title">復原碼</string>
+    <string name="security_recovery_dialog_subtitle">輸入你在設定復原時儲存的 28 位復原碼。</string>
+    <string name="security_recovery_dialog_label">復原碼</string>
+    <string name="security_recovery_dialog_confirm">解鎖</string>
+    <string name="security_recovery_error_malformed">這不是有效的復原碼。復原碼由 28 個字母和數字組成。</string>
+    <string name="security_recovery_error_wrong">此復原碼無法解鎖你的資料。</string>
+    <string name="security_recovery_error_not_configured">這些資料沒有設定復原碼。</string>
+    <string name="security_recovery_error_failed">資料已解鎖，但無法儲存新金鑰。請再試一次。</string>
+    <string name="security_start_over_title">以空白資料重新開始？</string>
+    <string name="security_start_over_message">目前的加密資料將被移到一旁，應用程式將以空白狀態啟動。舊檔案會保留在此裝置上且不會被刪除，但此版本的應用程式無法再次開啟它們。</string>
+    <string name="security_start_over_confirm">重新開始</string>
+    <string name="security_lock_title">已鎖定</string>
+    <string name="security_lock_unlock">解鎖</string>
+    <string name="security_lock_prompt_title">解鎖</string>
+    <string name="security_lock_prompt_subtitle">請驗證身分以繼續</string>
+    <string name="security_lock_no_device_lock_title">此裝置未設定螢幕鎖定</string>
+    <string name="security_lock_no_device_lock_message">應用程式鎖需要裝置設定 PIN 碼、圖案、密碼或生物辨識。沒有這些，任何拿到手機的人都能開啟應用程式。請在系統設定中設定螢幕鎖定以恢復保護。</string>
+    <string name="security_lock_continue_unprotected">在無保護的情況下繼續</string>
+    <string name="security_settings_title">隱私權與安全性</string>
+    <string name="security_settings_desc">應用程式鎖、復原碼和加密儲存空間</string>
+    <string name="security_settings_section_lock">應用程式鎖</string>
+    <string name="security_settings_app_lock">鎖定應用程式</string>
+    <string name="security_settings_app_lock_desc">開啟應用程式時要求驗證指紋、臉孔或螢幕鎖定</string>
+    <string name="security_settings_app_lock_unavailable">請先為此裝置設定螢幕鎖定，才能使用應用程式鎖</string>
+    <string name="security_settings_lock_needs_device_lock">請先為此裝置設定螢幕鎖定。</string>
+    <string name="security_settings_lock_timeout">離開應用程式後鎖定</string>
+    <string name="security_timeout_immediately">立即</string>
+    <string name="security_timeout_one_minute">1 分鐘後</string>
+    <string name="security_timeout_five_minutes">5 分鐘後</string>
+    <string name="security_settings_section_recovery">復原碼</string>
+    <string name="security_settings_recovery_create">建立復原碼</string>
+    <string name="security_settings_recovery_replace">取代復原碼</string>
+    <string name="security_settings_recovery_remove">移除復原碼</string>
+    <string name="security_settings_recovery_status_set">已設定復原碼</string>
+    <string name="security_settings_recovery_status_none">尚未設定復原碼</string>
+    <string name="security_settings_recovery_desc">如果此裝置的安全硬體遺失了保護你資料的金鑰，復原碼是重新開啟資料的唯一方法。</string>
+    <string name="security_settings_about_title">受保護的內容</string>
+    <string name="security_settings_about_text">聊天、角色、服務供應商和 API 金鑰都以加密形式儲存在此裝置上；圖片和頭像暫未加密。應用程式鎖會在每次開啟應用程式時增加一次驗證。兩者都不會隱藏應用程式已安裝這件事。</string>
+    <string name="security_recovery_replace_title">取代復原碼？</string>
+    <string name="security_recovery_replace_message">目前的復原碼將失效，並會顯示新的復原碼。</string>
+    <string name="security_recovery_remove_title">移除復原碼？</string>
+    <string name="security_recovery_remove_message">沒有復原碼時，如果此裝置的安全硬體遺失金鑰，你的資料將無法復原。</string>
+    <string name="security_recovery_remove_confirm">移除</string>
+    <string name="security_recovery_show_title">你的復原碼</string>
+    <string name="security_recovery_show_message">請把它寫下來，保存在遠離這支手機的安全地方。它只會顯示一次。任何擁有此復原碼和應用程式檔案副本的人都可能讀取你的資料。</string>
+    <string name="security_recovery_show_confirm">我已記下</string>
+    <string name="security_recovery_update_failed">無法更新復原碼。請再試一次。</string>
+    <string name="security_settings_section_screen">螢幕</string>
+    <string name="security_settings_secure_screen">在螢幕截圖和最近使用中隱藏內容</string>
+    <string name="security_settings_secure_screen_desc">封鎖螢幕截圖和螢幕錄影，並在最近使用的應用程式中顯示空白預覽。開啟應用程式鎖後，Android 13 以上版本已會隱藏預覽。</string>
+    <string name="security_cleartext_saved_warning">已儲存。此服務供應商使用未加密的 HTTP：同一網路中的任何人都能讀取你的聊天和 API 金鑰。</string>
+</resources>

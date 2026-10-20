@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">データを開けません</string>
+    <string name="security_storage_error_key_file_missing">データを保護している鍵ファイルが見つかりません。鍵ファイルがないと、暗号化されたデータを読み取れません。</string>
+    <string name="security_storage_error_key_file_corrupt">データを保護している鍵ファイルが破損しています。</string>
+    <string name="security_storage_error_keystore_key_lost">この端末のセキュアハードウェアに、データを保護する鍵がなくなっています。一部のシステムアップデートやセキュリティのリセット後に起こることがあります。リカバリーコードを保存している場合は、今すぐ使用できます。</string>
+    <string name="security_storage_error_keystore_unavailable">この端末のセキュアハードウェアが応答しませんでした。通常は一時的な問題です。</string>
+    <string name="security_storage_error_storage">鍵ファイルを読み取れませんでした。端末に空き容量があることを確認して、もう一度お試しください。</string>
+    <string name="security_storage_error_migration_failed">既存のデータを暗号化ストレージに移行できませんでした。データはそのまま残っています。端末に空き容量があることを確認して、もう一度お試しください。</string>
+    <string name="security_storage_error_nothing_deleted">何も削除されていません。</string>
+    <string name="security_action_retry">再試行</string>
+    <string name="security_action_use_recovery_code">リカバリーコードを使用</string>
+    <string name="security_action_start_over">最初からやり直す</string>
+    <string name="security_recovery_dialog_title">リカバリーコード</string>
+    <string name="security_recovery_dialog_subtitle">リカバリーの設定時に保存した 28 文字のコードを入力してください。</string>
+    <string name="security_recovery_dialog_label">リカバリーコード</string>
+    <string name="security_recovery_dialog_confirm">ロック解除</string>
+    <string name="security_recovery_error_malformed">有効なリカバリーコードではありません。コードは 28 文字の英数字です。</string>
+    <string name="security_recovery_error_wrong">このコードではデータのロックを解除できません。</string>
+    <string name="security_recovery_error_not_configured">このデータにはリカバリーコードが設定されていません。</string>
+    <string name="security_recovery_error_failed">データのロックは解除されましたが、新しい鍵を保存できませんでした。もう一度お試しください。</string>
+    <string name="security_start_over_title">空のデータで最初からやり直しますか？</string>
+    <string name="security_start_over_message">現在の暗号化データは別の場所に移され、アプリは空の状態で起動します。古いファイルはこの端末に残り削除されませんが、このバージョンのアプリでは再び開くことはできません。</string>
+    <string name="security_start_over_confirm">最初からやり直す</string>
+    <string name="security_lock_title">ロック中</string>
+    <string name="security_lock_unlock">ロック解除</string>
+    <string name="security_lock_prompt_title">ロック解除</string>
+    <string name="security_lock_prompt_subtitle">続行するには本人確認を行ってください</string>
+    <string name="security_lock_no_device_lock_title">この端末には画面ロックが設定されていません</string>
+    <string name="security_lock_no_device_lock_message">アプリのロックには、端末の PIN、パターン、パスワード、または生体認証が必要です。これがないと、端末を手にした人なら誰でもアプリを開けます。保護を有効にするには、システム設定で画面ロックを設定してください。</string>
+    <string name="security_lock_continue_unprotected">保護なしで続行</string>
+    <string name="security_settings_title">プライバシーとセキュリティ</string>
+    <string name="security_settings_desc">アプリのロック、リカバリーコード、暗号化ストレージ</string>
+    <string name="security_settings_section_lock">アプリのロック</string>
+    <string name="security_settings_app_lock">アプリをロックする</string>
+    <string name="security_settings_app_lock_desc">アプリを開くときに指紋、顔、または画面ロックを求めます</string>
+    <string name="security_settings_app_lock_unavailable">アプリのロックを使うには、この端末で画面ロックを設定してください</string>
+    <string name="security_settings_lock_needs_device_lock">先にこの端末で画面ロックを設定してください。</string>
+    <string name="security_settings_lock_timeout">アプリを離れた後にロック</string>
+    <string name="security_timeout_immediately">すぐに</string>
+    <string name="security_timeout_one_minute">1 分後</string>
+    <string name="security_timeout_five_minutes">5 分後</string>
+    <string name="security_settings_section_recovery">リカバリーコード</string>
+    <string name="security_settings_recovery_create">リカバリーコードを作成</string>
+    <string name="security_settings_recovery_replace">リカバリーコードを置き換え</string>
+    <string name="security_settings_recovery_remove">リカバリーコードを削除</string>
+    <string name="security_settings_recovery_status_set">リカバリーコードは設定済みです</string>
+    <string name="security_settings_recovery_status_none">リカバリーコードはまだありません</string>
+    <string name="security_settings_recovery_desc">この端末のセキュアハードウェアがデータを保護する鍵を失った場合、データを再び開く唯一の方法がリカバリーコードです。</string>
+    <string name="security_settings_about_title">保護される内容</string>
+    <string name="security_settings_about_text">チャット、キャラクター、プロバイダー、API キーはこの端末に暗号化して保存されます。画像とアバターはまだ暗号化されていません。アプリのロックは、アプリを開くたびに確認を追加します。どちらもアプリがインストールされていること自体は隠しません。</string>
+    <string name="security_recovery_replace_title">リカバリーコードを置き換えますか？</string>
+    <string name="security_recovery_replace_message">現在のコードは使えなくなり、新しいコードが表示されます。</string>
+    <string name="security_recovery_remove_title">リカバリーコードを削除しますか？</string>
+    <string name="security_recovery_remove_message">リカバリーコードがないと、この端末のセキュアハードウェアが鍵を失った場合にデータを復元できません。</string>
+    <string name="security_recovery_remove_confirm">削除</string>
+    <string name="security_recovery_show_title">あなたのリカバリーコード</string>
+    <string name="security_recovery_show_message">書き留めて、この端末とは別の安全な場所に保管してください。表示されるのは一度だけです。このコードとアプリのファイルのコピーがあれば、誰でもデータを読み取れる可能性があります。</string>
+    <string name="security_recovery_show_confirm">書き留めました</string>
+    <string name="security_recovery_update_failed">リカバリーコードを更新できませんでした。もう一度お試しください。</string>
+    <string name="security_settings_section_screen">画面</string>
+    <string name="security_settings_secure_screen">スクリーンショットと履歴で内容を隠す</string>
+    <string name="security_settings_secure_screen_desc">スクリーンショットと画面録画をブロックし、最近使ったアプリには空白のプレビューを表示します。アプリのロックがオンの場合、Android 13 以降ではプレビューがすでに非表示になります。</string>
+    <string name="security_cleartext_saved_warning">保存しました。このプロバイダーは暗号化されていない HTTP を使用しています。同じネットワーク上の誰でもチャットと API キーを読み取れます。</string>
+</resources>

@@ -172,7 +172,6 @@ class GeminiLLMClient(
         val url = "${mProvider.normalizedBaseUrl()}/v1beta/models/$model:$action"
             .toHttpUrl()
             .newBuilder()
-            .apply { if (mProvider.apiKey.isNotBlank()) addQueryParameter("key", mProvider.apiKey) }
             .apply { if (stream) addQueryParameter("alt", "sse") }
             .build()
         val prepared = codec.prepare(finalPayload, request, mImageRuntime)
@@ -181,6 +180,9 @@ class GeminiLLMClient(
                 .url(url)
                 .post(prepared.body)
                 .header("Content-Type", "application/json")
+                // Himitsu (P-08): the key goes in a header, never in the URL, so it cannot end
+                // up in proxy logs, crash reports or request URLs shown to the user
+                .apply { if (mProvider.apiKey.isNotBlank()) header("x-goog-api-key", mProvider.apiKey) }
                 .applyProviderHeaders(mProvider)
                 .build()
         }

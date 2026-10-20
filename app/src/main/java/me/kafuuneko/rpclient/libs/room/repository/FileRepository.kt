@@ -35,6 +35,12 @@ import me.kafuuneko.rpclient.libs.room.model.PreparedFile
 import me.kafuuneko.rpclient.libs.utils.withBlockingIoCancellation
 import me.kafuuneko.rpclient.model.SquareCropSelection
 
+/** Directory name passed to [Context.getDir]; "start over" sets this directory aside too (Himitsu). */
+internal const val FILE_REPOSITORY_DIR_NAME = "repository"
+
+/** Draft subdirectory inside [FILE_REPOSITORY_DIR_NAME]. */
+internal const val FILE_REPOSITORY_STAGING_DIR_NAME = "staging"
+
 /**
  * 文件存储库，提供文件的保存、获取和删除功能。
  *
@@ -51,7 +57,7 @@ class FileRepository(
      * 私有存储目录，用于存放所有通过该 Repository 保存的文件。
      */
     private val mRepositoryDir: File by lazy {
-        mContext.getDir("repository", Context.MODE_PRIVATE)
+        mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE)
     }
 
     /**
@@ -110,7 +116,7 @@ class FileRepository(
         }
     }
 
-    private val mStagingDir: File by lazy { File(mRepositoryDir, "staging").apply { mkdirs() } }
+    private val mStagingDir: File by lazy { File(mRepositoryDir, FILE_REPOSITORY_STAGING_DIR_NAME).apply { mkdirs() } }
     private val mState by lazy { mStorageStates.getOrPut(mRepositoryDir.absolutePath) { StorageState() } }
     private val mActiveDrafts get() = mState.activeDrafts
     private val mLeases get() = mState.leases

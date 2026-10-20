@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Data Anda tidak dapat dibuka</string>
+    <string name="security_storage_error_key_file_missing">File kunci yang melindungi data Anda tidak ditemukan. Tanpa file ini, data terenkripsi tidak dapat dibaca.</string>
+    <string name="security_storage_error_key_file_corrupt">File kunci yang melindungi data Anda rusak.</string>
+    <string name="security_storage_error_keystore_key_lost">Perangkat keras aman di perangkat ini tidak lagi memiliki kunci yang melindungi data Anda. Ini dapat terjadi setelah beberapa pembaruan sistem atau reset keamanan. Jika Anda menyimpan kode pemulihan, Anda dapat menggunakannya sekarang.</string>
+    <string name="security_storage_error_keystore_unavailable">Perangkat keras aman di perangkat ini tidak merespons. Biasanya ini hanya sementara.</string>
+    <string name="security_storage_error_storage">File kunci tidak dapat dibaca. Pastikan perangkat memiliki ruang kosong, lalu coba lagi.</string>
+    <string name="security_storage_error_migration_failed">Data Anda yang ada tidak dapat dipindahkan ke penyimpanan terenkripsi. Data tersebut masih utuh. Pastikan perangkat memiliki ruang kosong, lalu coba lagi.</string>
+    <string name="security_storage_error_nothing_deleted">Tidak ada yang dihapus.</string>
+    <string name="security_action_retry">Coba lagi</string>
+    <string name="security_action_use_recovery_code">Gunakan kode pemulihan</string>
+    <string name="security_action_start_over">Mulai dari awal</string>
+    <string name="security_recovery_dialog_title">Kode pemulihan</string>
+    <string name="security_recovery_dialog_subtitle">Masukkan kode 28 karakter yang Anda simpan saat menyiapkan pemulihan.</string>
+    <string name="security_recovery_dialog_label">Kode pemulihan</string>
+    <string name="security_recovery_dialog_confirm">Buka kunci</string>
+    <string name="security_recovery_error_malformed">Itu bukan kode pemulihan yang valid. Kode terdiri dari 28 huruf dan angka.</string>
+    <string name="security_recovery_error_wrong">Kode ini tidak membuka kunci data Anda.</string>
+    <string name="security_recovery_error_not_configured">Tidak ada kode pemulihan yang disiapkan untuk data ini.</string>
+    <string name="security_recovery_error_failed">Data Anda berhasil dibuka, tetapi kunci baru tidak dapat disimpan. Coba lagi.</string>
+    <string name="security_start_over_title">Mulai dari awal dengan data kosong?</string>
+    <string name="security_start_over_message">Data terenkripsi Anda saat ini akan disisihkan dan aplikasi akan dimulai dalam keadaan kosong. File lama tetap ada di perangkat ini dan tidak dihapus, tetapi versi aplikasi ini tidak dapat membukanya lagi.</string>
+    <string name="security_start_over_confirm">Mulai dari awal</string>
+    <string name="security_lock_title">Terkunci</string>
+    <string name="security_lock_unlock">Buka kunci</string>
+    <string name="security_lock_prompt_title">Buka kunci</string>
+    <string name="security_lock_prompt_subtitle">Konfirmasi bahwa ini Anda untuk melanjutkan</string>
+    <string name="security_lock_no_device_lock_title">Perangkat ini tidak memiliki kunci layar</string>
+    <string name="security_lock_no_device_lock_message">Kunci aplikasi memerlukan PIN, pola, sandi, atau biometrik di perangkat. Tanpa itu, siapa pun yang memegang ponsel dapat membuka aplikasi. Atur kunci layar di setelan sistem untuk memulihkan perlindungan.</string>
+    <string name="security_lock_continue_unprotected">Lanjutkan tanpa perlindungan</string>
+    <string name="security_settings_title">Privasi dan keamanan</string>
+    <string name="security_settings_desc">Kunci aplikasi, kode pemulihan, dan penyimpanan terenkripsi</string>
+    <string name="security_settings_section_lock">Kunci aplikasi</string>
+    <string name="security_settings_app_lock">Kunci aplikasi</string>
+    <string name="security_settings_app_lock_desc">Minta sidik jari, wajah, atau kunci layar saat membuka aplikasi</string>
+    <string name="security_settings_app_lock_unavailable">Atur kunci layar di perangkat ini untuk menggunakan kunci aplikasi</string>
+    <string name="security_settings_lock_needs_device_lock">Atur kunci layar di perangkat ini terlebih dahulu.</string>
+    <string name="security_settings_lock_timeout">Kunci setelah keluar dari aplikasi</string>
+    <string name="security_timeout_immediately">Segera</string>
+    <string name="security_timeout_one_minute">Setelah 1 menit</string>
+    <string name="security_timeout_five_minutes">Setelah 5 menit</string>
+    <string name="security_settings_section_recovery">Kode pemulihan</string>
+    <string name="security_settings_recovery_create">Buat kode pemulihan</string>
+    <string name="security_settings_recovery_replace">Ganti kode pemulihan</string>
+    <string name="security_settings_recovery_remove">Hapus kode pemulihan</string>
+    <string name="security_settings_recovery_status_set">Kode pemulihan sudah disiapkan</string>
+    <string name="security_settings_recovery_status_none">Belum ada kode pemulihan</string>
+    <string name="security_settings_recovery_desc">Jika perangkat keras aman di perangkat ini kehilangan kunci yang melindungi data Anda, kode pemulihan adalah satu-satunya cara untuk membukanya lagi.</string>
+    <string name="security_settings_about_title">Apa yang dilindungi</string>
+    <string name="security_settings_about_text">Obrolan, karakter, penyedia, dan kunci API disimpan terenkripsi di perangkat ini; gambar dan avatar belum dienkripsi. Kunci aplikasi menambahkan pemeriksaan setiap kali aplikasi dibuka. Keduanya tidak menyembunyikan bahwa aplikasi terpasang.</string>
+    <string name="security_recovery_replace_title">Ganti kode pemulihan?</string>
+    <string name="security_recovery_replace_message">Kode saat ini tidak akan berfungsi lagi dan kode baru akan ditampilkan.</string>
+    <string name="security_recovery_remove_title">Hapus kode pemulihan?</string>
+    <string name="security_recovery_remove_message">Tanpa kode pemulihan, data Anda tidak dapat dipulihkan jika perangkat keras aman di perangkat ini kehilangan kuncinya.</string>
+    <string name="security_recovery_remove_confirm">Hapus</string>
+    <string name="security_recovery_show_title">Kode pemulihan Anda</string>
+    <string name="security_recovery_show_message">Tulis dan simpan di tempat yang aman, jauh dari ponsel ini. Kode hanya ditampilkan sekali. Siapa pun yang memiliki kode ini dan salinan file aplikasi dapat membaca data Anda.</string>
+    <string name="security_recovery_show_confirm">Sudah saya catat</string>
+    <string name="security_recovery_update_failed">Kode pemulihan tidak dapat diperbarui. Coba lagi.</string>
+    <string name="security_settings_section_screen">Layar</string>
+    <string name="security_settings_secure_screen">Sembunyikan konten dari tangkapan layar dan aplikasi terbaru</string>
+    <string name="security_settings_secure_screen_desc">Memblokir tangkapan layar dan perekaman layar, serta menampilkan pratinjau kosong di aplikasi terbaru. Dengan kunci aplikasi aktif, Android 13 dan yang lebih baru sudah menyembunyikan pratinjau.</string>
+    <string name="security_cleartext_saved_warning">Tersimpan. Penyedia ini menggunakan HTTP tanpa enkripsi: siapa pun di jaringan yang sama dapat membaca obrolan dan kunci API Anda.</string>
+</resources>

@@ -142,4 +142,9 @@ dependencies {
     // model-aware local tokenization
     implementation(libs.jtokkit)
 
+    // feat/security
+    implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.lifecycle.process)
+
 }

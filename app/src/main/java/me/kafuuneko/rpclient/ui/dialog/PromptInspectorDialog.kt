@@ -53,6 +53,7 @@ import me.kafuuneko.rpclient.libs.prompt.model.PromptOmittedItem
 import me.kafuuneko.rpclient.libs.prompt.model.PromptSource
 import me.kafuuneko.rpclient.libs.prompt.model.PromptSourceKind
 import me.kafuuneko.rpclient.libs.prompt.model.PromptTokenizerStrategy
+import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
 
 /** 展示最终 Prompt、来源、预算裁剪和 Regex 执行记录的现代化调试对话框。 */
@@ -63,6 +64,8 @@ fun PromptInspectorDialog(
     onCopyRequest: (String) -> Unit,
     onPreviewImages: ((List<String>, Int) -> Unit)? = null
 ) {
+    // Himitsu: no dialog window above the gate curtain while the app is locked
+    if (!LocalAppGateOpen.current) return
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false)

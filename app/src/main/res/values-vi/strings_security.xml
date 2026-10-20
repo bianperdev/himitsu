@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Không thể mở dữ liệu của bạn</string>
+    <string name="security_storage_error_key_file_missing">Thiếu tệp khóa bảo vệ dữ liệu của bạn. Nếu không có tệp này, dữ liệu đã mã hóa sẽ không thể đọc được.</string>
+    <string name="security_storage_error_key_file_corrupt">Tệp khóa bảo vệ dữ liệu của bạn đã bị hỏng.</string>
+    <string name="security_storage_error_keystore_key_lost">Phần cứng bảo mật của thiết bị này không còn khóa bảo vệ dữ liệu của bạn. Điều này có thể xảy ra sau một số bản cập nhật hệ thống hoặc khi đặt lại bảo mật. Nếu bạn đã lưu mã khôi phục, bạn có thể dùng mã đó ngay bây giờ.</string>
+    <string name="security_storage_error_keystore_unavailable">Phần cứng bảo mật của thiết bị này không phản hồi. Thường đây chỉ là sự cố tạm thời.</string>
+    <string name="security_storage_error_storage">Không thể đọc tệp khóa. Hãy kiểm tra thiết bị còn dung lượng trống rồi thử lại.</string>
+    <string name="security_storage_error_migration_failed">Không thể chuyển dữ liệu hiện có sang bộ nhớ đã mã hóa. Dữ liệu vẫn còn nguyên vẹn. Hãy kiểm tra thiết bị còn dung lượng trống rồi thử lại.</string>
+    <string name="security_storage_error_nothing_deleted">Chưa có gì bị xóa.</string>
+    <string name="security_action_retry">Thử lại</string>
+    <string name="security_action_use_recovery_code">Dùng mã khôi phục</string>
+    <string name="security_action_start_over">Bắt đầu lại</string>
+    <string name="security_recovery_dialog_title">Mã khôi phục</string>
+    <string name="security_recovery_dialog_subtitle">Nhập mã 28 ký tự mà bạn đã lưu khi thiết lập khôi phục.</string>
+    <string name="security_recovery_dialog_label">Mã khôi phục</string>
+    <string name="security_recovery_dialog_confirm">Mở khóa</string>
+    <string name="security_recovery_error_malformed">Đây không phải là mã khôi phục hợp lệ. Mã gồm 28 chữ cái và chữ số.</string>
+    <string name="security_recovery_error_wrong">Mã này không mở khóa được dữ liệu của bạn.</string>
+    <string name="security_recovery_error_not_configured">Chưa thiết lập mã khôi phục cho dữ liệu này.</string>
+    <string name="security_recovery_error_failed">Dữ liệu của bạn đã được mở khóa nhưng không thể lưu khóa mới. Hãy thử lại.</string>
+    <string name="security_start_over_title">Bắt đầu lại với dữ liệu trống?</string>
+    <string name="security_start_over_message">Dữ liệu đã mã hóa hiện tại sẽ được để riêng và ứng dụng sẽ khởi động ở trạng thái trống. Các tệp cũ vẫn ở trên thiết bị này và không bị xóa, nhưng phiên bản ứng dụng này không thể mở lại chúng.</string>
+    <string name="security_start_over_confirm">Bắt đầu lại</string>
+    <string name="security_lock_title">Đã khóa</string>
+    <string name="security_lock_unlock">Mở khóa</string>
+    <string name="security_lock_prompt_title">Mở khóa</string>
+    <string name="security_lock_prompt_subtitle">Xác nhận đó là bạn để tiếp tục</string>
+    <string name="security_lock_no_device_lock_title">Thiết bị này chưa có khóa màn hình</string>
+    <string name="security_lock_no_device_lock_message">Khóa ứng dụng cần mã PIN, hình mở khóa, mật khẩu hoặc sinh trắc học trên thiết bị. Nếu không có, bất kỳ ai cầm điện thoại đều có thể mở ứng dụng. Hãy đặt khóa màn hình trong cài đặt hệ thống để khôi phục bảo vệ.</string>
+    <string name="security_lock_continue_unprotected">Tiếp tục mà không có bảo vệ</string>
+    <string name="security_settings_title">Quyền riêng tư và bảo mật</string>
+    <string name="security_settings_desc">Khóa ứng dụng, mã khôi phục và bộ nhớ được mã hóa</string>
+    <string name="security_settings_section_lock">Khóa ứng dụng</string>
+    <string name="security_settings_app_lock">Khóa ứng dụng</string>
+    <string name="security_settings_app_lock_desc">Yêu cầu vân tay, khuôn mặt hoặc khóa màn hình khi mở ứng dụng</string>
+    <string name="security_settings_app_lock_unavailable">Hãy đặt khóa màn hình trên thiết bị này để dùng khóa ứng dụng</string>
+    <string name="security_settings_lock_needs_device_lock">Hãy đặt khóa màn hình trên thiết bị này trước.</string>
+    <string name="security_settings_lock_timeout">Khóa sau khi rời ứng dụng</string>
+    <string name="security_timeout_immediately">Ngay lập tức</string>
+    <string name="security_timeout_one_minute">Sau 1 phút</string>
+    <string name="security_timeout_five_minutes">Sau 5 phút</string>
+    <string name="security_settings_section_recovery">Mã khôi phục</string>
+    <string name="security_settings_recovery_create">Tạo mã khôi phục</string>
+    <string name="security_settings_recovery_replace">Thay mã khôi phục</string>
+    <string name="security_settings_recovery_remove">Xóa mã khôi phục</string>
+    <string name="security_settings_recovery_status_set">Đã thiết lập mã khôi phục</string>
+    <string name="security_settings_recovery_status_none">Chưa có mã khôi phục</string>
+    <string name="security_settings_recovery_desc">Nếu phần cứng bảo mật của thiết bị này làm mất khóa bảo vệ dữ liệu của bạn, mã khôi phục là cách duy nhất để mở lại dữ liệu.</string>
+    <string name="security_settings_about_title">Những gì được bảo vệ</string>
+    <string name="security_settings_about_text">Cuộc trò chuyện, nhân vật, nhà cung cấp và khóa API được lưu trữ ở dạng mã hóa trên thiết bị này; hình ảnh và ảnh đại diện chưa được mã hóa. Khóa ứng dụng thêm một bước xác minh mỗi khi mở ứng dụng. Cả hai đều không ẩn việc ứng dụng đã được cài đặt.</string>
+    <string name="security_recovery_replace_title">Thay mã khôi phục?</string>
+    <string name="security_recovery_replace_message">Mã hiện tại sẽ ngừng hoạt động và một mã mới sẽ được hiển thị.</string>
+    <string name="security_recovery_remove_title">Xóa mã khôi phục?</string>
+    <string name="security_recovery_remove_message">Nếu không có mã khôi phục, dữ liệu của bạn sẽ không thể khôi phục khi phần cứng bảo mật của thiết bị này làm mất khóa.</string>
+    <string name="security_recovery_remove_confirm">Xóa</string>
+    <string name="security_recovery_show_title">Mã khôi phục của bạn</string>
+    <string name="security_recovery_show_message">Hãy ghi lại và cất ở nơi an toàn, tách biệt với điện thoại này. Mã chỉ hiển thị một lần. Bất kỳ ai có mã này và bản sao các tệp của ứng dụng đều có thể đọc dữ liệu của bạn.</string>
+    <string name="security_recovery_show_confirm">Tôi đã ghi lại</string>
+    <string name="security_recovery_update_failed">Không thể cập nhật mã khôi phục. Hãy thử lại.</string>
+    <string name="security_settings_section_screen">Màn hình</string>
+    <string name="security_settings_secure_screen">Ẩn nội dung khỏi ảnh chụp màn hình và mục gần đây</string>
+    <string name="security_settings_secure_screen_desc">Chặn chụp và quay màn hình, đồng thời hiển thị bản xem trước trống trong mục ứng dụng gần đây. Khi bật khóa ứng dụng, Android 13 trở lên đã ẩn bản xem trước.</string>
+    <string name="security_cleartext_saved_warning">Đã lưu. Nhà cung cấp này dùng HTTP không mã hóa: bất kỳ ai trên cùng mạng đều có thể đọc cuộc trò chuyện và khóa API của bạn.</string>
+</resources>

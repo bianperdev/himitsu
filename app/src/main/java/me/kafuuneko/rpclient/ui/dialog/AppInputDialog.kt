@@ -116,8 +116,11 @@ fun AppInputDialog(
                     singleLine = true,
                     enabled = enabled,
                     shape = RoundedCornerShape(16.dp),
+                    // Himitsu (P-13): a password keyboard without autocorrect, so the keyboard
+                    // neither suggests nor learns secrets such as API keys.
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = keyboardType,
+                        keyboardType = if (keyboardType == KeyboardType.Text) KeyboardType.Password else keyboardType,
+                        autoCorrectEnabled = false,
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(

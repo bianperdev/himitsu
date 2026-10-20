@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">Your data can\'t be opened</string>
+    <string name="security_storage_error_key_file_missing">The key file that protects your data is missing. Without it the encrypted data cannot be read.</string>
+    <string name="security_storage_error_key_file_corrupt">The key file that protects your data is damaged.</string>
+    <string name="security_storage_error_keystore_key_lost">The secure hardware of this device no longer has the key that protects your data. This can happen after some system updates or a security reset. If you saved a recovery code, you can use it now.</string>
+    <string name="security_storage_error_keystore_unavailable">The secure hardware of this device did not respond. This is usually temporary.</string>
+    <string name="security_storage_error_storage">The key file could not be read. Check that the device has free space and try again.</string>
+    <string name="security_storage_error_migration_failed">Your existing data could not be moved to encrypted storage. It is still intact. Check that the device has free space and try again.</string>
+    <string name="security_storage_error_nothing_deleted">Nothing has been deleted.</string>
+    <string name="security_action_retry">Try again</string>
+    <string name="security_action_use_recovery_code">Use recovery code</string>
+    <string name="security_action_start_over">Start over</string>
+    <string name="security_recovery_dialog_title">Recovery code</string>
+    <string name="security_recovery_dialog_subtitle">Enter the 28-character code you saved when you set up recovery.</string>
+    <string name="security_recovery_dialog_label">Recovery code</string>
+    <string name="security_recovery_dialog_confirm">Unlock</string>
+    <string name="security_recovery_error_malformed">That is not a valid recovery code. It has 28 letters and digits.</string>
+    <string name="security_recovery_error_wrong">This code does not unlock your data.</string>
+    <string name="security_recovery_error_not_configured">No recovery code was set up for this data.</string>
+    <string name="security_recovery_error_failed">Your data was unlocked but the new key could not be saved. Try again.</string>
+    <string name="security_start_over_title">Start over with empty data?</string>
+    <string name="security_start_over_message">Your current encrypted data will be set aside and the app will start empty. The old files stay on this device and are not deleted, but this version of the app cannot open them again.</string>
+    <string name="security_start_over_confirm">Start over</string>
+    <string name="security_lock_title">Locked</string>
+    <string name="security_lock_unlock">Unlock</string>
+    <string name="security_lock_prompt_title">Unlock</string>
+    <string name="security_lock_prompt_subtitle">Confirm it\'s you to continue</string>
+    <string name="security_lock_no_device_lock_title">This device has no screen lock</string>
+    <string name="security_lock_no_device_lock_message">The app lock needs a PIN, pattern, password or biometrics on the device. Without one, anyone holding the phone can open the app. Set a screen lock in the system settings to restore the protection.</string>
+    <string name="security_lock_continue_unprotected">Continue without protection</string>
+    <string name="security_settings_title">Privacy and security</string>
+    <string name="security_settings_desc">App lock, recovery code and encrypted storage</string>
+    <string name="security_settings_section_lock">App lock</string>
+    <string name="security_settings_app_lock">Lock the app</string>
+    <string name="security_settings_app_lock_desc">Ask for your fingerprint, face or screen lock when opening the app</string>
+    <string name="security_settings_app_lock_unavailable">Set a screen lock on this device to use the app lock</string>
+    <string name="security_settings_lock_needs_device_lock">Set a screen lock on this device first.</string>
+    <string name="security_settings_lock_timeout">Lock after leaving the app</string>
+    <string name="security_timeout_immediately">Immediately</string>
+    <string name="security_timeout_one_minute">After 1 minute</string>
+    <string name="security_timeout_five_minutes">After 5 minutes</string>
+    <string name="security_settings_section_recovery">Recovery code</string>
+    <string name="security_settings_recovery_create">Create recovery code</string>
+    <string name="security_settings_recovery_replace">Replace recovery code</string>
+    <string name="security_settings_recovery_remove">Remove recovery code</string>
+    <string name="security_settings_recovery_status_set">A recovery code is set up</string>
+    <string name="security_settings_recovery_status_none">No recovery code yet</string>
+    <string name="security_settings_recovery_desc">If the secure hardware of this device ever loses the key that protects your data, the recovery code is the only way to open it again.</string>
+    <string name="security_settings_about_title">What is protected</string>
+    <string name="security_settings_about_text">Chats, characters, providers and API keys are stored encrypted on this device; images and avatars are not encrypted yet. The app lock adds a check every time the app is opened. Neither hides that the app is installed.</string>
+    <string name="security_recovery_replace_title">Replace the recovery code?</string>
+    <string name="security_recovery_replace_message">The current code will stop working and a new one will be shown.</string>
+    <string name="security_recovery_remove_title">Remove the recovery code?</string>
+    <string name="security_recovery_remove_message">Without a recovery code, your data cannot be recovered if the secure hardware of this device loses its key.</string>
+    <string name="security_recovery_remove_confirm">Remove</string>
+    <string name="security_recovery_show_title">Your recovery code</string>
+    <string name="security_recovery_show_message">Write it down and keep it somewhere safe, away from this phone. It is shown only once. Anyone with this code and a copy of the app\'s files could read your data.</string>
+    <string name="security_recovery_show_confirm">I wrote it down</string>
+    <string name="security_recovery_update_failed">The recovery code could not be updated. Try again.</string>
+    <string name="security_settings_section_screen">Screen</string>
+    <string name="security_settings_secure_screen">Hide content from screenshots and recents</string>
+    <string name="security_settings_secure_screen_desc">Blocks screenshots and screen recording, and shows a blank preview in recent apps. With the app lock on, Android 13 and later already hide the preview.</string>
+    <string name="security_cleartext_saved_warning">Saved. This provider uses unencrypted HTTP: anyone on the same network can read your chats and API key.</string>
+</resources>

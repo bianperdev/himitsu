@@ -1,6 +1,5 @@
 package me.kafuuneko.rpclient.feature.chat
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -22,6 +21,7 @@ import me.kafuuneko.rpclient.libs.media.CreateImageDocumentContract
 import me.kafuuneko.rpclient.libs.media.MessageImageAction
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.SensitiveClip
 
 /** 单角色聊天页面宿主，绑定会话 ID、状态流和一次性事件。 */
 class ChatActivity : CoreActivityWithEvent() {
@@ -102,7 +102,7 @@ class ChatActivity : CoreActivityWithEvent() {
 
     private fun copyText(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.message), text))
+        clipboard.setPrimaryClip(SensitiveClip.plainText(getString(R.string.message), text))
         Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
     }
 

@@ -1,6 +1,5 @@
 package me.kafuuneko.rpclient.feature.promptpreset
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
@@ -17,6 +16,7 @@ import me.kafuuneko.rpclient.feature.promptpreset.presentation.PromptPresetViewE
 import me.kafuuneko.rpclient.feature.promptpreset.ui.PromptPresetLayout
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.SensitiveClip
 
 /** Prompt 预设管理页面宿主。 */
 class PromptPresetActivity : CoreActivityWithEvent() {
@@ -48,7 +48,7 @@ class PromptPresetActivity : CoreActivityWithEvent() {
             is PromptPresetViewEvent.CopyText -> {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(
-                    ClipData.newPlainText(getString(R.string.prompt_preset_title), viewEvent.text)
+                    SensitiveClip.plainText(getString(R.string.prompt_preset_title), viewEvent.text)
                 )
                 Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
             }

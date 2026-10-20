@@ -6,14 +6,18 @@ import me.kafuuneko.rpclient.libs.defaults.normalizedUserName
 import me.kafuuneko.rpclient.libs.prompt.PromptPreferences
 import me.kafuuneko.rpclient.libs.prompt.model.ExampleDialogueBehavior
 import me.kafuuneko.rpclient.libs.prompt.model.SummaryInjectionPosition
+import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
 import me.kafuuneko.rpclient.libs.theme.AppThemeMode
 
 /**
  * 应用级持久偏好模型。
  *
  * 这里只存放跨会话的全局设置和 Prompt 模板；角色、聊天及世界书等领域数据由 Room 管理。
+ *
+ * Himitsu (P-05): strings, such as the persona and the prompts, are stored sealed through
+ * [SealedPreferencesProvider].
  */
-object AppModel : KotprefModel(), PromptPreferences {
+object AppModel : KotprefModel(preferencesProvider = SealedPreferencesProvider), PromptPreferences {
     // 应用联系邮箱。
     const val EMAIL = "kafuuneko@gmail.com"
 

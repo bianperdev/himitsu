@@ -7,23 +7,27 @@ import org.w3c.dom.Element
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
+/**
+ * Himitsu (P-03): nothing may leave the device through Android backups, so every rule set must
+ * exclude every domain and include nothing.
+ */
 class RequestLogBackupRulesTest {
     @Test
-    fun backupRules_excludeLogDatabaseAndSidecarsButNotPrimaryDatabase() {
+    fun backupRules_excludeEveryDomain() {
         val root = parseXml("backup_rules.xml")
-        val excludes = root.getElementsByTagName("exclude").asElements()
 
-        assertEquals(ExpectedPaths, excludes.databasePaths())
+        assertEquals(AllDomains, root.getElementsByTagName("exclude").asElements().excludedDomains())
+        assertTrue(root.getElementsByTagName("include").length == 0)
     }
 
     @Test
-    fun dataExtractionRules_excludeLogsFromCloudBackupAndDeviceTransfer() {
+    fun dataExtractionRules_excludeEveryDomainFromCloudBackupAndDeviceTransfer() {
         val root = parseXml("data_extraction_rules.xml")
         val cloud = root.getElementsByTagName("cloud-backup").item(0) as Element
         val transfer = root.getElementsByTagName("device-transfer").item(0) as Element
 
-        assertEquals(ExpectedPaths, cloud.getElementsByTagName("exclude").asElements().databasePaths())
-        assertEquals(ExpectedPaths, transfer.getElementsByTagName("exclude").asElements().databasePaths())
+        assertEquals(AllDomains, cloud.getElementsByTagName("exclude").asElements().excludedDomains())
+        assertEquals(AllDomains, transfer.getElementsByTagName("exclude").asElements().excludedDomains())
         assertTrue(root.getElementsByTagName("include").length == 0)
     }
 
@@ -42,18 +46,12 @@ class RequestLogBackupRulesTest {
         return (0 until length).map { item(it) as Element }
     }
 
-    private fun List<Element>.databasePaths(): Set<String> {
-        val temporary = filter { it.getAttribute("domain") == "root" }
-        assertEquals(setOf("app_repository/staging/"), temporary.map { it.getAttribute("path") }.toSet())
-        return filter { it.getAttribute("domain") == "database" }.mapTo(mutableSetOf()) { it.getAttribute("path") }
+    /** Domains excluded as a whole (path "."). */
+    private fun List<Element>.excludedDomains(): Set<String> {
+        return filter { it.getAttribute("path") == "." }.mapTo(mutableSetOf()) { it.getAttribute("domain") }
     }
 
     private companion object {
-        val ExpectedPaths = setOf(
-            "request_logs.sqlite",
-            "request_logs.sqlite-journal",
-            "request_logs.sqlite-shm",
-            "request_logs.sqlite-wal"
-        )
+        val AllDomains = setOf("root", "file", "database", "sharedpref", "external")
     }
 }

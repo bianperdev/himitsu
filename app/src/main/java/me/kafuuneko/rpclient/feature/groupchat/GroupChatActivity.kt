@@ -1,6 +1,5 @@
 package me.kafuuneko.rpclient.feature.groupchat
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
@@ -21,6 +20,7 @@ import me.kafuuneko.rpclient.libs.media.CreateImageDocumentContract
 import me.kafuuneko.rpclient.libs.media.MessageImageAction
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.SensitiveClip
 
 /** 群聊页面宿主，绑定群聊会话 ID 与 MVI 事件流。 */
 class GroupChatActivity : CoreActivityWithEvent() {
@@ -78,7 +78,7 @@ class GroupChatActivity : CoreActivityWithEvent() {
 
     private fun copyText(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.message), text))
+        clipboard.setPrimaryClip(SensitiveClip.plainText(getString(R.string.message), text))
         Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
     }
 

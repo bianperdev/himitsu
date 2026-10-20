@@ -5,8 +5,6 @@ import androidx.room.Room
 import com.chibatching.kotpref.Kotpref
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.character.CharacterCardRepository
 import me.kafuuneko.rpclient.libs.chat.ChatArchiveCodec
@@ -52,6 +50,10 @@ import me.kafuuneko.rpclient.libs.room.repository.LLMTokenUsageRepository
 import me.kafuuneko.rpclient.libs.room.repository.LorebookRepository
 import me.kafuuneko.rpclient.libs.room.repository.MessageImageRepository
 import me.kafuuneko.rpclient.libs.room.repository.StoryRepository
+import me.kafuuneko.rpclient.libs.security.RequestLogGuard
+import me.kafuuneko.rpclient.libs.security.SecureStorageManager
+import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
+import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
 import me.kafuuneko.rpclient.libs.story.StoryArchiveCodec
 import me.kafuuneko.rpclient.libs.story.StoryArchiveRepository
 import me.kafuuneko.rpclient.libs.story.StoryCharacterActivator
@@ -79,10 +81,19 @@ class RPClientApp : Application() {
             androidContext(this@RPClientApp)
             modules(listOf(appModules) + himitsuModules)
         }
-        runBlocking(Dispatchers.IO) {
+        // Himitsu (P-05): AppModel strings are sealed with a key derived from the master key
+        val secureStorage = koinApplication.koin.get<SecureStorageManager>()
+        SealedPreferencesProvider.keySource = secureStorage::preferencesKey
+        // Himitsu: startup work needs the encrypted databases, so it runs off the main thread
+        // once the master key is loaded; screens wait behind the app gate until it finishes.
+        secureStorage.start(
+            beforeKey = { koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles() }
+        ) {
+            SealedPreferencesProvider.sealPlainValues(AppModel)
             contentResolver.releaseObsoletePersistedUriPermissions()
             koinApplication.koin.get<AppUpgradeManager>().upgrade()
             koinApplication.koin.get<FileRepository>().cleanupAbandonedFiles()
+            koinApplication.koin.get<RequestLogGuard>().start()
         }
     }
 }
@@ -167,13 +178,15 @@ internal val appModules = module {
     }
 
     single {
-        Room.databaseBuilder(get(), AppDatabase::class.java, "primary.sqlite")
+        Room.databaseBuilder(get(), AppDatabase::class.java, EncryptedDatabase.Primary.fileName)
+            .openHelperFactory(get<SecureStorageManager>().openHelperFactory(EncryptedDatabase.Primary))
             .fallbackToDestructiveMigrationOnDowngrade(true)
             .build()
     }
 
     single {
-        Room.databaseBuilder(get(), RequestLogDatabase::class.java, "request_logs.sqlite")
+        Room.databaseBuilder(get(), RequestLogDatabase::class.java, EncryptedDatabase.RequestLog.fileName)
+            .openHelperFactory(get<SecureStorageManager>().openHelperFactory(EncryptedDatabase.RequestLog))
             .build()
     }
 

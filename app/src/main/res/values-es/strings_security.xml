@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/security track. -->
+<resources>
+    <string name="security_storage_error_title">No se pueden abrir tus datos</string>
+    <string name="security_storage_error_key_file_missing">Falta el archivo de clave que protege tus datos. Sin él no se pueden leer los datos cifrados.</string>
+    <string name="security_storage_error_key_file_corrupt">El archivo de clave que protege tus datos está dañado.</string>
+    <string name="security_storage_error_keystore_key_lost">El hardware seguro de este dispositivo ya no tiene la clave que protege tus datos. Puede ocurrir tras algunas actualizaciones del sistema o un restablecimiento de seguridad. Si guardaste un código de recuperación, puedes usarlo ahora.</string>
+    <string name="security_storage_error_keystore_unavailable">El hardware seguro de este dispositivo no respondió. Suele ser algo temporal.</string>
+    <string name="security_storage_error_storage">No se pudo leer el archivo de clave. Comprueba que el dispositivo tiene espacio libre e inténtalo de nuevo.</string>
+    <string name="security_storage_error_migration_failed">No se pudieron mover tus datos al almacenamiento cifrado. Siguen intactos. Comprueba que el dispositivo tiene espacio libre e inténtalo de nuevo.</string>
+    <string name="security_storage_error_nothing_deleted">No se ha borrado nada.</string>
+    <string name="security_action_retry">Reintentar</string>
+    <string name="security_action_use_recovery_code">Usar código de recuperación</string>
+    <string name="security_action_start_over">Empezar de cero</string>
+    <string name="security_recovery_dialog_title">Código de recuperación</string>
+    <string name="security_recovery_dialog_subtitle">Introduce el código de 28 caracteres que guardaste al configurar la recuperación.</string>
+    <string name="security_recovery_dialog_label">Código de recuperación</string>
+    <string name="security_recovery_dialog_confirm">Desbloquear</string>
+    <string name="security_recovery_error_malformed">No es un código de recuperación válido. Tiene 28 letras y números.</string>
+    <string name="security_recovery_error_wrong">Este código no desbloquea tus datos.</string>
+    <string name="security_recovery_error_not_configured">No se configuró ningún código de recuperación para estos datos.</string>
+    <string name="security_recovery_error_failed">Tus datos se desbloquearon, pero no se pudo guardar la nueva clave. Inténtalo de nuevo.</string>
+    <string name="security_start_over_title">¿Empezar de cero sin datos?</string>
+    <string name="security_start_over_message">Tus datos cifrados actuales se apartarán y la app empezará vacía. Los archivos antiguos se quedan en este dispositivo y no se borran, pero esta versión de la app no puede volver a abrirlos.</string>
+    <string name="security_start_over_confirm">Empezar de cero</string>
+    <string name="security_lock_title">Bloqueado</string>
+    <string name="security_lock_unlock">Desbloquear</string>
+    <string name="security_lock_prompt_title">Desbloquear</string>
+    <string name="security_lock_prompt_subtitle">Confirma que eres tú para continuar</string>
+    <string name="security_lock_no_device_lock_title">Este dispositivo no tiene bloqueo de pantalla</string>
+    <string name="security_lock_no_device_lock_message">El bloqueo de la app necesita un PIN, patrón, contraseña o biometría en el dispositivo. Sin ellos, cualquiera que tenga el móvil puede abrir la app. Configura un bloqueo de pantalla en los ajustes del sistema para recuperar la protección.</string>
+    <string name="security_lock_continue_unprotected">Continuar sin protección</string>
+    <string name="security_settings_title">Privacidad y seguridad</string>
+    <string name="security_settings_desc">Bloqueo de la app, código de recuperación y almacenamiento cifrado</string>
+    <string name="security_settings_section_lock">Bloqueo de la app</string>
+    <string name="security_settings_app_lock">Bloquear la app</string>
+    <string name="security_settings_app_lock_desc">Pedir tu huella, tu cara o el bloqueo de pantalla al abrir la app</string>
+    <string name="security_settings_app_lock_unavailable">Configura un bloqueo de pantalla en este dispositivo para usar el bloqueo de la app</string>
+    <string name="security_settings_lock_needs_device_lock">Primero configura un bloqueo de pantalla en este dispositivo.</string>
+    <string name="security_settings_lock_timeout">Bloquear al salir de la app</string>
+    <string name="security_timeout_immediately">Inmediatamente</string>
+    <string name="security_timeout_one_minute">Tras 1 minuto</string>
+    <string name="security_timeout_five_minutes">Tras 5 minutos</string>
+    <string name="security_settings_section_recovery">Código de recuperación</string>
+    <string name="security_settings_recovery_create">Crear código de recuperación</string>
+    <string name="security_settings_recovery_replace">Sustituir código de recuperación</string>
+    <string name="security_settings_recovery_remove">Quitar código de recuperación</string>
+    <string name="security_settings_recovery_status_set">Hay un código de recuperación configurado</string>
+    <string name="security_settings_recovery_status_none">Aún no hay código de recuperación</string>
+    <string name="security_settings_recovery_desc">Si el hardware seguro de este dispositivo pierde algún día la clave que protege tus datos, el código de recuperación es la única forma de volver a abrirlos.</string>
+    <string name="security_settings_about_title">Qué está protegido</string>
+    <string name="security_settings_about_text">Los chats, personajes, proveedores y API keys se guardan cifrados en este dispositivo; las imágenes y los avatares aún no se cifran. El bloqueo de la app añade una comprobación cada vez que se abre. Ninguno de los dos oculta que la app está instalada.</string>
+    <string name="security_recovery_replace_title">¿Sustituir el código de recuperación?</string>
+    <string name="security_recovery_replace_message">El código actual dejará de funcionar y se mostrará uno nuevo.</string>
+    <string name="security_recovery_remove_title">¿Quitar el código de recuperación?</string>
+    <string name="security_recovery_remove_message">Sin código de recuperación, tus datos no se podrán recuperar si el hardware seguro de este dispositivo pierde su clave.</string>
+    <string name="security_recovery_remove_confirm">Quitar</string>
+    <string name="security_recovery_show_title">Tu código de recuperación</string>
+    <string name="security_recovery_show_message">Apúntalo y guárdalo en un lugar seguro, lejos de este móvil. Solo se muestra una vez. Cualquiera con este código y una copia de los archivos de la app podría leer tus datos.</string>
+    <string name="security_recovery_show_confirm">Ya lo he apuntado</string>
+    <string name="security_recovery_update_failed">No se pudo actualizar el código de recuperación. Inténtalo de nuevo.</string>
+    <string name="security_settings_section_screen">Pantalla</string>
+    <string name="security_settings_secure_screen">Ocultar el contenido en capturas y recientes</string>
+    <string name="security_settings_secure_screen_desc">Bloquea las capturas y la grabación de pantalla, y muestra una vista previa en blanco en recientes. Con el bloqueo de la app activo, Android 13 o superior ya oculta la vista previa.</string>
+    <string name="security_cleartext_saved_warning">Guardado. Este proveedor usa HTTP sin cifrar: cualquiera en la misma red puede leer tus chats y tu API key.</string>
+</resources>
