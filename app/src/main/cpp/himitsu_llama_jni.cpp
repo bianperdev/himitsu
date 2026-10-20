@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <exception>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "ggml-backend.h"
@@ -239,8 +240,7 @@ bool deliver(JNIEnv * env, jobject sink, std::string & pending, bool flush) {
 void load_best_cpu_backend(const std::string & dir) {
     const std::string prefix = "libggml-cpu-";
     const std::string suffix = ".so";
-    int best_score = 0;
-    std::string best_path;
+    std::vector<std::pair<int, std::string>> candidates;
     if (DIR * entries = opendir(dir.c_str())) {
         while (const dirent * entry = readdir(entries)) {
             const std::string name = entry->d_name;
@@ -253,15 +253,17 @@ void load_best_cpu_backend(const std::string & dir) {
             auto score = reinterpret_cast<int (*)()>(dlsym(handle, "ggml_backend_score"));
             const int value = score != nullptr ? score() : 0;
             dlclose(handle);
-            if (value > best_score) {
-                best_score = value;
-                best_path = path;
-            }
+            if (value > 0) candidates.emplace_back(value, path);
         }
         closedir(entries);
     }
+    // Best score first; a variant that fails to register falls back to the next one
+    std::sort(candidates.begin(), candidates.end(), [](const auto & a, const auto & b) { return a.first > b.first; });
+    for (const auto & candidate : candidates) {
+        if (ggml_backend_load(candidate.second.c_str()) != nullptr) return;
+    }
     // Builds without CPU variants ship a single library
-    ggml_backend_load((best_path.empty() ? dir + "/libggml-cpu.so" : best_path).c_str());
+    ggml_backend_load((dir + "/libggml-cpu.so").c_str());
 }
 
 // ---- Native methods ------------------------------------------------------------------------
