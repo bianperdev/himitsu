@@ -20,6 +20,7 @@ import me.kafuuneko.rpclient.feature.localmodels.presentation.LocalPerformanceSt
 import me.kafuuneko.rpclient.libs.core.AppViewEvent
 import me.kafuuneko.rpclient.libs.core.CoreViewModelWithEvent
 import me.kafuuneko.rpclient.libs.core.UiIntentObserver
+import me.kafuuneko.rpclient.libs.disguise.isDisguiseActive
 import me.kafuuneko.rpclient.libs.llm.local.LocalEngineKind
 import me.kafuuneko.rpclient.libs.llm.local.LocalEngineRegistry
 import me.kafuuneko.rpclient.libs.llm.local.LocalInferencePrefs
@@ -143,7 +144,7 @@ class LocalModelsViewModel : CoreViewModelWithEvent<LocalModelsUiIntent, LocalMo
             return
         }
         uiState.copy(
-            dialogState = LocalModelsDialogState.ConfirmDownload(entry.key, entry.displayName, entry.sizeBytes)
+            dialogState = LocalModelsDialogState.ConfirmDownload(entry.key, entry.displayName, entry.sizeBytes, disguised = isDisguiseActive())
         ).setup()
     }
 

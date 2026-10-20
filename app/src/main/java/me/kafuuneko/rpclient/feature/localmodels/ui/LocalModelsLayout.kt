@@ -425,7 +425,14 @@ private fun Dialogs(dialogState: LocalModelsDialogState, emit: LocalModelsUiInte
         is LocalModelsDialogState.ConfirmDownload -> AppConfirmDialog(
             onDismissRequest = { LocalModelsUiIntent.DismissDialog.emit() },
             title = stringResource(R.string.local_models_download_confirm_title, dialogState.name),
-            message = stringResource(R.string.local_models_download_confirm_message, fileSize(dialogState.sizeBytes)),
+            message = buildString {
+                append(stringResource(R.string.local_models_download_confirm_message, fileSize(dialogState.sizeBytes)))
+                // feat/disguise: the download notification header shows the application label
+                if (dialogState.disguised) {
+                    append("\n\n")
+                    append(stringResource(R.string.disguise_download_notice))
+                }
+            },
             confirmText = stringResource(R.string.local_models_download),
             onConfirm = { LocalModelsUiIntent.ConfirmDownload.emit() }
         )

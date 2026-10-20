@@ -121,18 +121,13 @@
             android:exported="false"
             android:theme="@style/Theme.RPClient"
             android:windowSoftInputMode="adjustResize" />
+        <!-- feat/disguise: the launcher entry is the HimitsuLauncher alias in the disguise block -->
         <activity
             android:name=".feature.main.MainActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.RPClient"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- BEGIN feat/security -->
         <activity
@@ -172,6 +167,75 @@
 
         <!-- BEGIN disguise activity-aliases: reserved for the feat/disguise track (see ROADMAP.md).
              Other tracks must not add components between these markers. -->
+        <!--
+          One alias per appearance; AppearanceSwitcher keeps exactly one enabled. Alias names are
+          stored by launchers in home screen icons: never rename them after a release.
+        -->
+        <activity
+            android:name=".feature.disguise.DisguiseActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Disguise" />
+        <activity
+            android:name=".feature.disguise.settings.DisguiseSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient"
+            android:windowSoftInputMode="adjustResize" />
+        <activity-alias
+            android:name=".launcher.HimitsuLauncher"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:targetActivity=".feature.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.CalculatorLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_calculator"
+            android:label="@string/disguise_calculator_name"
+            android:roundIcon="@mipmap/ic_launcher_calculator"
+            android:targetActivity=".feature.disguise.DisguiseActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.CompassLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_compass"
+            android:label="@string/disguise_compass_name"
+            android:roundIcon="@mipmap/ic_launcher_compass"
+            android:targetActivity=".feature.disguise.DisguiseActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.ConverterLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_converter"
+            android:label="@string/disguise_converter_name"
+            android:roundIcon="@mipmap/ic_launcher_converter"
+            android:targetActivity=".feature.disguise.DisguiseActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
         <!-- END disguise activity-aliases -->
     </application>
 

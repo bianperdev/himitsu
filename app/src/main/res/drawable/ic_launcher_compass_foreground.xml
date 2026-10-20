@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Compass decoy icon foreground: a generic dial with a needle. Original artwork for Himitsu. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M54,32 a22,22 0 1 1 0,44 a22,22 0 1 1 0,-44 z"
+        android:strokeColor="#FFF5F7F8"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M54,34 v4 M54,70 v4 M34,54 h4 M70,54 h4"
+        android:strokeColor="#FFF5F7F8"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M54,37 L59.5,54 L48.5,54 z"
+        android:fillColor="#FFE57373" />
+    <path
+        android:pathData="M48.5,54 L59.5,54 L54,71 z"
+        android:fillColor="#FFF5F7F8" />
+    <path
+        android:pathData="M54,51.5 a2.5,2.5 0 1 1 0,5 a2.5,2.5 0 1 1 0,-5 z"
+        android:fillColor="#FF1E3A5F" />
+</vector>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <!-- Neutral window colors of the decoys, so their splash and first frame look like a generic system app. -->
+    <color name="disguise_window_light">#FFF8F9FA</color>
+    <color name="disguise_window_dark">#FF1B1C1E</color>
+</resources>
