@@ -53,6 +53,7 @@ import me.kafuuneko.rpclient.libs.room.repository.StoryRepository
 import me.kafuuneko.rpclient.libs.security.RequestLogGuard
 import me.kafuuneko.rpclient.libs.security.SecureStorageManager
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
+import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
 import me.kafuuneko.rpclient.libs.story.StoryArchiveCodec
 import me.kafuuneko.rpclient.libs.story.StoryArchiveRepository
 import me.kafuuneko.rpclient.libs.story.StoryCharacterActivator
@@ -80,9 +81,13 @@ class RPClientApp : Application() {
             androidContext(this@RPClientApp)
             modules(listOf(appModules) + himitsuModules)
         }
+        // Himitsu (P-05): AppModel strings are sealed with a key derived from the master key
+        val secureStorage = koinApplication.koin.get<SecureStorageManager>()
+        SealedPreferencesProvider.keySource = secureStorage::preferencesKey
         // Himitsu: startup work needs the encrypted databases, so it runs off the main thread
         // once the master key is loaded; screens wait behind the app gate until it finishes.
-        koinApplication.koin.get<SecureStorageManager>().start {
+        secureStorage.start {
+            SealedPreferencesProvider.sealPlainValues(AppModel)
             koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles()
             contentResolver.releaseObsoletePersistedUriPermissions()
             koinApplication.koin.get<AppUpgradeManager>().upgrade()

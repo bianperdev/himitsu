@@ -28,12 +28,14 @@ import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.database.SqlCipherKey
+import me.kafuuneko.rpclient.libs.security.key.KeyPurpose
 import me.kafuuneko.rpclient.libs.security.key.MasterKey
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
 import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.RecoveryResult
 import me.kafuuneko.rpclient.libs.security.key.VaultFailure
 import me.kafuuneko.rpclient.libs.security.key.VaultLoadResult
+import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
 import net.zetetic.database.Logger
 import net.zetetic.database.NoopTarget
 
@@ -92,8 +94,19 @@ class SecureStorageManager(
     private val mMutex = Mutex()
     private val mState = MutableStateFlow<SecureStorageState>(SecureStorageState.Starting)
 
-    /** Key loaded from the vault; kept across retries so a failed migration does not reload it. */
+    /**
+     * Key loaded from the vault; kept across retries so a failed migration does not reload it.
+     * Written only under [mKeyLock].
+     */
+    @Volatile
     private var mLoadedKey: MasterKey? = null
+
+    /** Guards loading the key, which preferences may trigger from the main thread (P-05). */
+    private val mKeyLock = Any()
+
+    /** Last load failure; preference reads do not retry the Keystore until the user does. */
+    @Volatile
+    private var mLastFailure: VaultFailure? = null
 
     /** Key released to Room once every database is encrypted. Never reset within a process. */
     private val mReleasedKey = MutableStateFlow<MasterKey?>(null)
@@ -119,7 +132,10 @@ class SecureStorageManager(
     }
 
     /** Retries after a failure that may be temporary. */
-    fun retry() = launchSequence()
+    fun retry() {
+        mLastFailure = null
+        launchSequence()
+    }
 
     /**
      * Unlocks with a recovery code after the Keystore key was lost.
@@ -151,8 +167,12 @@ class SecureStorageManager(
                         if (file.exists()) DatabaseFiles.move(file, File(file.path + suffix))
                     }
                     mVault.moveKeyFileAside(suffix)
-                    mLoadedKey?.destroy()
-                    mLoadedKey = null
+                    SealedPreferencesProvider.setAside(mContext, suffix)
+                    synchronized(mKeyLock) {
+                        mLoadedKey?.destroy()
+                        mLoadedKey = null
+                        mLastFailure = null
+                    }
                 } catch (_: IOException) {
                     fail(StorageFailure.StorageError)
                     return@withLock
@@ -194,6 +214,18 @@ class SecureStorageManager(
         mMutex.withLock { runCatching { mVault.removeRecoveryCode() }.isSuccess }
     }
 
+    /**
+     * Returns the key that seals preference strings, loading the master key on first use
+     * (P-05). Preferences may be read on the main thread before the startup sequence has
+     * loaded the key; the load is shared with that sequence and happens at most once.
+     *
+     * @return a new array the caller wipes, or null when the key cannot be loaded
+     */
+    fun preferencesKey(): ByteArray? {
+        val masterKey = mLoadedKey ?: (loadMasterKeyBlocking(retryFailure = false) as? VaultLoadResult.Loaded)?.masterKey
+        return masterKey?.derive(KeyPurpose.Preferences)
+    }
+
     override fun awaitPassphrase(database: EncryptedDatabase): ByteArray {
         val masterKey = mReleasedKey.value ?: runBlocking { mReleasedKey.first { it != null } }!!
         val key = masterKey.derive(database.purpose)
@@ -215,16 +247,39 @@ class SecureStorageManager(
             return
         }
         mState.value = SecureStorageState.Starting
-        when (val result = mVault.loadOrCreate(hasEncryptedData = hasEncryptedData())) {
+        when (val result = loadMasterKeyBlocking(retryFailure = true)) {
             is VaultLoadResult.Loaded -> continueWith(result.masterKey)
             is VaultLoadResult.Failed -> fail(StorageFailure.from(result.failure))
         }
     }
 
+    /**
+     * Loads or creates the master key at most once per process, from any thread.
+     *
+     * @param retryFailure whether to try the vault again after a recorded failure; only the
+     *   startup sequence does, so a broken Keystore is not hit on every preference read
+     */
+    private fun loadMasterKeyBlocking(retryFailure: Boolean): VaultLoadResult = synchronized(mKeyLock) {
+        mLoadedKey?.let { return VaultLoadResult.Loaded(it, created = false) }
+        if (!retryFailure) mLastFailure?.let { return VaultLoadResult.Failed(it) }
+        val result = mVault.loadOrCreate(hasEncryptedData = hasEncryptedData())
+        when (result) {
+            is VaultLoadResult.Loaded -> {
+                mLoadedKey = result.masterKey
+                mLastFailure = null
+            }
+            is VaultLoadResult.Failed -> mLastFailure = result.failure
+        }
+        result
+    }
+
     /** Migrates plain databases, releases the keys and runs startup tasks. Called under [mMutex]. */
     private suspend fun continueWith(masterKey: MasterKey) {
         if (mState.value == SecureStorageState.Ready) return
-        mLoadedKey = masterKey
+        synchronized(mKeyLock) {
+            mLoadedKey = masterKey
+            mLastFailure = null
+        }
         mState.value = SecureStorageState.Starting
         // Encrypt databases left in plain form by earlier builds before Room can open them
         try {
@@ -252,8 +307,8 @@ class SecureStorageManager(
         mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode())
     }
 
-    /** Whether any database is already encrypted, so a missing key file must not be replaced. */
+    /** Whether any database or preference is already encrypted, so a missing key file must not be replaced. */
     private fun hasEncryptedData(): Boolean = EncryptedDatabase.entries.any { database ->
         DatabaseFiles.kindOf(mContext.getDatabasePath(database.fileName)) == DatabaseFileKind.Encrypted
-    }
+    } || SealedPreferencesProvider.hasSealedFiles(mContext)
 }
