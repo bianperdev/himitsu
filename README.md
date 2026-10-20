@@ -27,11 +27,13 @@ Requirements:
 - JDK 21 or later (the JDK bundled with Android Studio works).
 - Android SDK with platform 36. Android Studio creates `local.properties` with the SDK path when you open the project; for command-line builds, set `ANDROID_HOME` or create that file yourself.
 
+Himitsu has one build flavor per distribution channel: `fdroid`, `github` and `play`. To build the F-Droid flavor:
+
 ```sh
-./gradlew assembleDebug
+./gradlew assembleFdroidDebug
 ```
 
-The APK is written to `app/build/outputs/apk/debug/`. Debug builds use the application ID `dev.bianperdev.himitsu.dev`, so they install alongside RPClient and any future release build.
+The APK is written to `app/build/outputs/apk/fdroid/debug/`. Use `assembleGithubDebug` or `assemblePlayDebug` for the other channels, or `assembleDebug` for all of them. Debug builds use the application ID `dev.bianperdev.himitsu.dev`, so they install alongside RPClient and any future release build.
 
 Contributors using AI coding assistants should read [CLAUDE.md](CLAUDE.md) and [doc/coding-guidelines.md](doc/coding-guidelines.md) first.
 

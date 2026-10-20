@@ -82,14 +82,42 @@ Rules:
 
 A short set of commits on `main`, made before the track branches are created, so that the tracks only touch shared files in an additive way.
 
-- [ ] Add the `channel` flavor dimension with `fdroid`, `github` and `play`, plus empty `app/src/donations/` and `app/src/play/` source sets. Update the README build command (`./gradlew assembleFdroidDebug`, etc.).
-- [ ] Add `dependenciesInfo { includeInApk = false; includeInBundle = false }` (O-04).
-- [ ] Koin hook: change `modules(appModules)` in `…/RPClientApp.kt` so tracks add one entry each, without editing `appModules`.
-- [ ] Settings hook: a list of settings sections in `…/feature/main/ui/MainLayout.kt` (`SettingsPage`) where each track adds one composable entry backed by its own state holder, instead of editing `MainViewModel`.
+- [x] Add the `channel` flavor dimension with `fdroid`, `github` and `play`, plus the `app/src/donations/` and `app/src/play/` source sets. Update the README build command.
+- [x] Add `dependenciesInfo { includeInApk = false; includeInBundle = false }` (O-04).
+- [x] Koin hook (see below).
+- [x] Settings hook (see below).
 - [x] Reserve the disguise activity-alias block in `app/src/main/AndroidManifest.xml`.
-- [ ] Verify: `./gradlew assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest`.
+- [x] Raise the Gradle heap to 4 GB: building several variants in one invocation ran KSP out of memory with 2 GB.
+- [x] Verify: `./gradlew assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest`.
 
 Done when the three flavors build, the app runs unchanged, and the hooks exist.
+
+### How to use the hooks
+
+**Koin.** Declare the track's module in its own file and append it to `himitsuModules` in `…/HimitsuModules.kt`:
+
+```kotlin
+internal val himitsuModules: List<Module> = listOf(
+    securityModule, // feat/security
+)
+```
+
+**Settings.** Give the track its own settings Activity and ViewModel, register the Activity in the track's manifest block, and append an entry to `himitsuSettingsEntries` in `…/feature/main/model/HimitsuSettingsEntry.kt`. Entries appear on the settings page, after the debug panel and before "About":
+
+```kotlin
+internal val himitsuSettingsEntries: List<HimitsuSettingsEntry> = listOf(
+    HimitsuSettingsEntry(
+        titleRes = R.string.security_settings_title,
+        subtitleRes = R.string.security_settings_desc,
+        icon = Icons.Rounded.Lock,
+        activity = SecuritySettingsActivity::class.java
+    ), // feat/security
+)
+```
+
+Exception: the aesthetic track owns `AppearancePanel` in `…/feature/main/ui/MainLayout.kt` and may extend it (for example with the dynamic color switch), together with `MainAppearanceSettingsState` and its handlers in `MainViewModel`.
+
+Each track adds one line or one entry per hook, so merges only need to keep both lines.
 
 ---
 
@@ -110,7 +138,7 @@ Done when the three flavors build, the app runs unchanged, and the hooks exist.
 
 ### Shared files (additive only, for every track)
 
-`…/RPClientApp.kt` (module list), `app/src/main/AndroidManifest.xml`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, `…/feature/main/ui/MainLayout.kt` (settings hook), `NOTICE`, `ROADMAP.md`.
+`…/HimitsuModules.kt`, `…/feature/main/model/HimitsuSettingsEntry.kt`, `app/src/main/AndroidManifest.xml`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, `NOTICE`, `ROADMAP.md`.
 
 ---
 
