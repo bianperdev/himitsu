@@ -6,14 +6,60 @@ Paths below are relative to `app/src/main/java/me/kafuuneko/rpclient/` (written 
 
 ## Overview
 
-| Order | Branch | Runs in parallel | Goal |
-|---|---|---|---|
-| 0 | `main` (groundwork) | No, before the tracks | Flavors and extension hooks that every track needs |
-| 1 | `feat/security` | Yes | Encrypted storage, protected API keys, app lock, privacy hardening |
-| 1 | `feat/aesthetic` | Yes | The "shut-in otaku" theme, typography, icon system |
-| 1 | `feat/local-inference` | Yes | Local engine abstraction, llama.cpp, GenieX |
-| 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys |
-| 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata |
+| Order | Branch | Runs in parallel | Goal | Status |
+|---|---|---|---|---|
+| 0 | `main` (groundwork) | No, before the tracks | Flavors and extension hooks that every track needs | Done |
+| 1 | `feat/security` | Yes | Encrypted storage, protected API keys, app lock, privacy hardening | Done, merged 2026-10-20 (`acc6de1`) |
+| 1 | `feat/aesthetic` | Yes | The "shut-in otaku" theme, typography, icon system | Done, merged 2026-10-20 (`ab1caef`) |
+| 1 | `feat/local-inference` | Yes | Local engine abstraction, llama.cpp (GenieX moved to `feat/geniex`) | Done, merged 2026-10-20 (`529cdf5`) |
+| 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | Next |
+| 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata | Not started |
+
+Side branches that run in parallel with `feat/disguise`: `feat/security-followups` (deferred security work), `feat/geniex` (blocked on the QAIRT EULA) and the local-inference follow-ups. See [Pending after stage 1](#pending-after-stage-1).
+
+---
+
+## Stage 1 closed (2026-10-20)
+
+`feat/security`, `feat/aesthetic` and `feat/local-inference` are merged into `main`, and their branches and worktrees are deleted. Checks run on `main` at `d16392f` before closing:
+
+- `assembleFdroidDebug assembleGithubDebug assemblePlayDebug` and `assembleFdroidRelease assembleGithubRelease assemblePlayRelease` (R8) build.
+- Unit tests: 343 per flavor (`test{Fdroid,Github,Play}DebugUnitTest`), no failures.
+- Instrumented tests: they did not compile because `MultimodalImageIntegrationTest` lacked the `Local` branch; fixed while closing the stage. `connectedFdroidDebugAndroidTest`: 104 tests, no failures (spare AVD `Himitsu_LocalInference`, Android 17).
+- privacy-reviewer on `c3ed325..main`: fit to close the stage, with follow-ups. No new Critical, High or Medium findings; the new Low ones are listed below.
+- Integration tests on the maintainer's phone combining the three tracks (local model chat with the lock, encrypted storage and the theme; multitasking during a generation; reboot; theme switching with a chat open).
+
+### Pending after stage 1
+
+Grouped by the branch that will do them. Details stay in each track's section.
+
+**`feat/security-followups`** (worktree `himitsu-security-followups`, in progress):
+- P-06 (encrypt avatars and chat images) and the rest of P-10 (in-flight image request file).
+- The 7 findings of the pre-merge privacy review and the items of the first and second privacy reviews (see the security track's Follow-ups).
+- `GatedDropdownMenu`, now that `feat/aesthetic` is merged.
+- New (stage 1 review): `openrouter_session_affinity_note` in every locale still says Himitsu sends a session ID in Auto mode; since P-16 it is only sent when `session_id` is in the request JSON (or the provider was migrated from RPClient).
+
+**Local inference follow-ups** (new branch from `main`, not started):
+- Due before the first public release: encrypt `local_models.sqlite` through `EncryptedDatabase`, and make "start over" set the registry and `noBackupFilesDir/models/` aside. Remove the stale TODO in `…/libs/llm/local/model/LocalModelDatabase.kt` at the same time.
+- Decision: 32-bit devices (`abiFilters`).
+- `LocalModelDownloadService.onTimeout`, OpenCL loaded only with the GPU on, and the low findings of the final review.
+- Jinja templates: a recursion or step limit needs an upstream patch.
+
+**`feat/geniex`** (worktree `himitsu-geniex`, blocked): the maintainer must read the QAIRT EULA and pick a licensing option; then rebase onto `main` and isolate GenieX's native libraries from Himitsu's `libggml-*.so`.
+
+**`feat/disguise`**: the notification header label, the system authentication prompt label, and the leaks listed in its section.
+
+**`chore/release-readiness`** (added to the Release phase below):
+- SQLCipher BSD-3 notice in the app; SQLCipher prebuilt libraries and the F-Droid scanner; llama.cpp, JSON for Modern C++, libc++ and OpenCL-Headers in the licenses screen.
+- Declare the `dataSync` foreground service type in the Play Console (or use a user-initiated data transfer job).
+- New (stage 1 review): in the `play` build, the About links to the GitHub repository become an indirect donation link as soon as `FUNDING.yml` or donation text exists there. Remove them from `play` or point them to a page without funding links.
+- New (stage 1 review): `.idea/deploymentTargetSelector.xml` records the serial number of the device last used to run the app. Never commit it; untrack it and `deviceManager.xml` as part of O-03.
+- New (stage 1 review): before the history audit, replace the specific test device mentions (this file, `…/libs/llm/local/llamacpp/LlamaCppEngine.kt`) with a generic description, if the maintainer prefers.
+
+**Decisions for the maintainer:**
+- New (stage 1 review): `LockActivity` does not follow the dynamic color preference, so with dynamic color on the lock screen keeps the Himitsu palette. Keep it (and document it in the lock styling contract) or pass the preference.
+- Converting `values-es/strings.xml` from "usted" to "tú" in one dedicated commit (planned after every track is merged).
+- Font subsetting (about 1.5 MB less APK, adds a build step).
 
 ---
 
@@ -144,6 +190,8 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 
 ## Track: `feat/security`
 
+**Status:** completed. Merged into `main` on 2026-10-20 (`acc6de1`); branch and worktree deleted. Open work moved to `feat/security-followups`.
+
 **Goal:** no sensitive data stored in plain text on the device, and the app can be locked.
 
 **Owns:**
@@ -264,6 +312,8 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 
 ## Track: `feat/aesthetic`
 
+**Status:** completed. Merged into `main` on 2026-10-20 (`ab1caef`), followed by the post-merge token commits `5416226` and `d16392f`; branch and worktree deleted.
+
 **Goal:** Himitsu's own visual identity, the "shut-in otaku" look (see CLAUDE.md), on Material 3.
 
 **Owns:**
@@ -277,15 +327,15 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 - Narrow edits: the `ToggleDynamicColor` entry in `…/feature/main/presentation/MainUiIntent.kt`, and one line in `initView` of `…/libs/core/CoreActivity.kt` (owned by security) that passes the dynamic color preference to `AppTheme`. Keep both when merging.
 
 **Tasks, in order:**
-1. Proposal, approved by the maintainer: complete dark Material 3 `ColorScheme` with a contrast table (WCAG AA), secondary light theme, OFL fonts bundled in the APK with a fallback for CJK and the other app languages, identity details, the icon system and two or three icon concepts.
-2. Color tokens and both color schemes. Dynamic color as a setting, off by default.
-3. Typography and shapes.
-4. Replace hard-coded colors with theme tokens (except the files listed above).
-5. Identity details and empty states.
-6. Icon (adaptive, with a monochrome version for Android 13+) and splash screen.
-7. Compose previews of the main screens in both themes.
+1. [x] Proposal, approved by the maintainer: complete dark Material 3 `ColorScheme` with a contrast table (WCAG AA), secondary light theme, OFL fonts bundled in the APK with a fallback for CJK and the other app languages, identity details, the icon system and two or three icon concepts.
+2. [x] Color tokens and both color schemes. Dynamic color as a setting, off by default.
+3. [x] Typography and shapes.
+4. [x] Replace hard-coded colors with theme tokens (except the files listed above).
+5. [x] Identity details and empty states.
+6. [x] Icon (adaptive, with a monochrome version for Android 13+) and splash screen.
+7. [x] Compose previews of the main screens in both themes.
 
-**Follow-ups after the owning tracks merge (done after merging into `main`):** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (success green and provider colors now use Himitsu accents), `…/feature/requestlog/**`, `…/feature/localmodels/**`, `…/feature/lock/**` (lock screen and security settings) and `…/utils/PromptMacroHighlighting.kt`.
+**Follow-ups after the owning tracks merge (done after merging into `main`, `5416226` and `d16392f`):** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (success green and provider colors now use Himitsu accents), `…/feature/requestlog/**`, `…/feature/localmodels/**`, `…/feature/lock/**` (lock screen and security settings) and `…/utils/PromptMacroHighlighting.kt`.
 
 **Spanish register (decided by the maintainer):** Himitsu addresses the user with informal "tú" in Spanish. `strings_aesthetic.xml` already does; the inherited `values-es/strings.xml` still uses formal "usted" ("Cree", "Elija"). Converting it touches a file no track owns, so do it in one dedicated commit after every track is merged.
 
@@ -307,6 +357,8 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 **Done when:** text contrast meets WCAG AA in both themes; no fonts or images are downloaded at runtime; every font and asset is original or has a verified free license recorded in `NOTICE`; animations respect the system "remove animations" setting; screen structure and behavior are unchanged; every flavor builds.
 
 ## Track: `feat/local-inference`
+
+**Status:** completed. Merged into `main` on 2026-10-20 (`529cdf5`); branch and worktree deleted. GenieX (task 5) continues in `feat/geniex`; the follow-ups below go to a new branch from `main`.
 
 **Goal:** offline role-play with models running on the device, through the existing prompt pipeline (presets, macros, lorebooks, Regex, Prompt Inspector).
 
@@ -339,7 +391,7 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 2. [x] `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
 3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
-5. Moved to a later branch (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
+5. Moved to `feat/geniex` (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
 6. [x] Performance settings (threads, context size, GPU or NPU) with sensible defaults.
 
 **Follow-ups from the privacy review (2026-10-20):**
@@ -364,13 +416,34 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 
 ## Track: `feat/disguise` (after security and aesthetic are merged)
 
-**Starts** from `main` once `feat/security` (app lock and unlock extension point) and `feat/aesthetic` (icon system) are merged. It does not run in parallel with them.
+**Status:** next. Its prerequisites are merged. The worktree `himitsu-disguise` already exists on `feat/disguise`, but at the groundwork commit `8bb28ed`; fast-forward it to `main` before starting.
+
+**Starts** from `main` once `feat/security` (app lock and unlock extension point) and `feat/aesthetic` (icon system) are merged. It does not run in parallel with them. It does run in parallel with `feat/security-followups`, `feat/geniex` and the local-inference follow-ups, so it must keep to the files below.
 
 **Goal:** an optional disguise so Himitsu looks like an everyday app at a casual glance: a calculator, a compass and a unit converter. This is discretion, not security (see CLAUDE.md, "Disguise mode").
 
 **Owns:**
-- The reserved block between `BEGIN/END disguise activity-aliases` in `app/src/main/AndroidManifest.xml`, and moving the `LAUNCHER` intent filter from `MainActivity` to an alias
-- New: `…/feature/disguise/**`, `…/libs/disguise/**`, `res/values*/strings_disguise.xml`, decoy icons under the icon system defined by the aesthetic track
+- The reserved block between `BEGIN/END disguise activity-aliases` in `app/src/main/AndroidManifest.xml`, and moving the `LAUNCHER` intent filter from `MainActivity` to an alias (plus the decoy activities, inside the same block)
+- New: `…/feature/disguise/**`, `…/libs/disguise/**`, `res/values*/strings_disguise.xml` (English and Spanish with "tú", other locales per `doc/coding-guidelines.md`)
+- New decoy icons under the icon system defined by the aesthetic track: `app/src/main/res/drawable/ic_launcher_<id>_{background,foreground,monochrome}.xml` and `app/src/main/res/mipmap-anydpi-v26/ic_launcher_<id>.xml` for `<id>` in `calculator`, `compass`, `converter`
+- New tests: `app/src/test/java/me/kafuuneko/rpclient/{feature,libs}/disguise/**` and the same paths under `app/src/androidTest/`
+
+**Shared files (additive only):** one `disguiseModule` entry in `…/HimitsuModules.kt`; one settings entry in `…/feature/main/model/HimitsuSettingsEntry.kt`; `app/build.gradle.kts` and `gradle/libs.versions.toml` only if the maintainer approves a dependency (the secret code KDF can use the platform's PBKDF2 with no dependency; Argon2id through `argon2kt` (MIT) is also proposed for the security paranoid mode, so agree on one choice with `feat/security-followups`); `NOTICE` and this section.
+
+**Narrow edits allowed (say so in the pull request):**
+- `…/libs/llm/local/model/LocalModelDownloadService.kt` and `…/libs/llm/local/LocalGenerationService.kt`: only the notification builder, to fix the header label leak.
+- `…/libs/core/CoreActivity.kt`: only a task description (recents label and icon) that follows the active disguise, if the alias label is not enough. `feat/security-followups` also edits this file; keep the change to one block.
+
+**Does not touch:** `…/feature/lock/**` and `…/libs/security/**` (owned by `feat/security-followups` while it runs; the decoys use the `UnlockEntry` contract as it is, and a contract gap is raised with the maintainer), `res/values*/strings.xml`, `…/libs/AppModel.kt`, the files owned by the local-inference follow-ups.
+
+**Inputs from the merged tracks:**
+- Secret entry: `get<UnlockEntry>().open(context)`; decoy activities must not extend `CoreActivity` and must never show user data (security contract).
+- Reusable visuals without text or branding: `Modifier.lockRoomLight()` and `RpLockMark(icon)` in `…/ui/widgets/RpLockVisuals.kt`.
+- The splash screen shows the icon of the entry that was tapped, so an alias never shows the Himitsu logo while starting.
+- Known leaks to handle or document: the system authentication prompt shows the application label; the download and background-generation notifications show the app label in their header (their text, icon and channel names are already neutral).
+- `LockActivity` keeps the Himitsu palette even with dynamic color on (pending decision above); check how that looks behind a decoy.
+
+**Testing:** the track needs its own emulator; ask the maintainer which one (emulator-5554 belongs to `feat/security-followups`; the spare AVD `Himitsu_LocalInference` has no owner).
 
 **Tasks, in order:**
 1. Design document, approved by the maintainer: activity-alias switching and launcher quirks; functional decoys; secret shortcuts that always lead to authentication; recovery; leaks (recents, notifications, shortcuts, share targets); honest limits; store policies per flavor.
@@ -416,7 +489,10 @@ Starts when every track, including disguise, is merged.
 - [ ] About screen: move the Google Play link and the "rate the app" card into the `play` flavor.
 - [ ] Reproducible builds: evaluate what is needed.
 - [ ] Adult content: report what Google Play and F-Droid require (content rating, warnings) so the maintainer can decide.
-- [ ] O-02, O-03, O-05.
+- [ ] O-02, O-03, O-05. For O-03, untrack the per-device `.idea` files first (`deploymentTargetSelector.xml` records a device serial).
+- [ ] The `play` build must not link the GitHub repository once it shows a funding button or donation text (indirect donation link).
+- [ ] Licenses screen and packaged notices: SQLCipher (BSD-3), llama.cpp, JSON for Modern C++, libc++, OpenCL-Headers.
+- [ ] Play Console: declare the `dataSync` foreground service type, or move model downloads to a user-initiated data transfer job.
 
 ---
 
