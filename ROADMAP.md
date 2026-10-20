@@ -12,10 +12,10 @@ Paths below are relative to `app/src/main/java/me/kafuuneko/rpclient/` (written 
 | 1 | `feat/security` | Yes | Encrypted storage, protected API keys, app lock, privacy hardening | Done, merged 2026-10-20 (`acc6de1`) |
 | 1 | `feat/aesthetic` | Yes | The "shut-in otaku" theme, typography, icon system | Done, merged 2026-10-20 (`ab1caef`) |
 | 1 | `feat/local-inference` | Yes | Local engine abstraction, llama.cpp (GenieX moved to `feat/geniex`) | Done, merged 2026-10-20 (`529cdf5`) |
-| 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | In progress, design approved 2026-10-20 |
-| 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata | Not started |
+| 2 | `feat/disguise` | No, after security and aesthetic are merged | Calculator, compass and unit converter decoys | Done, merged 2026-10-20 (`3e337b1`) |
+| 3 | `chore/release-readiness` | No, after every track is merged | Documentation, donations, release builds, store metadata | Not started; every track is merged |
 
-Side work that runs in parallel with `feat/disguise`: `feat/geniex` (planned for version 0.20; blocked on the QAIRT EULA), the local-inference follow-ups and the security leftovers. `feat/security-followups` (deferred security work) is merged (`85b362c`). See [Pending after stage 1](#pending-after-stage-1).
+Side work still open: `feat/geniex` (planned for version 0.20; blocked on the QAIRT EULA), the local-inference follow-ups, the security leftovers and the disguise follow-ups. `feat/security-followups` (deferred security work) is merged (`85b362c`). See [Pending after stage 1](#pending-after-stage-1).
 
 ---
 
@@ -40,11 +40,23 @@ Merged into `main` as `85b362c`; branch (local and remote) and worktree deleted.
 - Manual checks on the emulator: sealed avatars and chat images (`HMF1` in `app_repository/sealed/`), SQLCipher databases, keyboard flag, sensitive clipboard, lock and reauthentication, hidden recents preview, storage error screen and set-aside data, and a local Qwen3.5 2B download and reply.
 - privacy-reviewer on `8bb28ed..85b362c`: fit, no Critical or High findings; the new Low ones are listed below.
 
+### `feat/disguise` merged (2026-10-20)
+
+Merged into `main` as `3e337b1` (it includes `875215c`, the fixes of its pre-merge privacy review). Checks run on `main` at `3e337b1`:
+
+- `assemble{Fdroid,Github,Play}Debug` and `assemble{Fdroid,Github,Play}Release` (R8, unsigned) build.
+- Unit tests: 391 per flavor (356 + 35 for disguise), no failures. `connectedFdroidDebugAndroidTest`: 134/134 on `Medium_Phone_API_37.0`. The 4 tests of `DisguiseNoBypassAndroidTest` are skipped on an emulator without a screen lock; run them with a PIN set (`adb shell locksettings set-pin`).
+- No new permission, dependency, license or schema; the only new exported components are the four launcher aliases, and `MainActivity` is no longer exported (start it through `.launcher.HimitsuLauncher`). The `play` APK still has no donation strings or URLs.
+- Manual checks on the emulator: disguise off by default and unavailable without the app lock and a screen lock; practice before applying; working calculator; a wrong code behaves as normal input; the right code shows the system prompt, and canceling it leaves the decoy; recovery gesture; recents show the decoy with a blank preview; local generation without a foreground service; download warning; quick exit; turning disguise off asks for the credential and clears the hash; the app never writes the code to Logcat.
+- privacy-reviewer on `512f724..3e337b1`: fit, one new Medium and several Low findings, listed below.
+
 ### Pending after stage 1
 
 Grouped by the branch that will do them. Details stay in each track's section.
 
 **Security leftovers** (were assigned to `feat/security-followups`, which merged without them; the maintainer assigns a branch):
+- New, High (disguise verification, 2026-10-20; the bug predates disguise): an encrypted database whose key loads but whose file is damaged makes the app crash at every start. `SecureStorageManager.continueWith` (`…/libs/security/SecureStorageManager.kt`) runs `mStartupTasks()` without catching errors, so the first query throws `SQLiteNotADatabaseException` on an IO coroutine before the error screen can appear; the user can neither export nor set the data aside. Reproduce: replace `databases/primary.sqlite` with random bytes and start the app. Fix: catch SQLite failures there and report them through `fail(...)` with a new "damaged database" failure that offers export and set aside. The earlier checks only covered a damaged plain database, which is detected before opening.
+- New, Low (disguise verification): "Start over" on the error screen does not ask for the credential (`…/feature/lock/LockViewModel.kt`), while "set aside" and "export" do. With disguise, the public recovery gesture leads to that screen on a storage failure. Data is set aside, never deleted.
 - The rest of P-10 (in-flight image request file), see the security track's Follow-ups.
 - `GatedDropdownMenu`.
 - `openrouter_session_affinity_note` in every locale still says Himitsu sends a session ID in Auto mode; since P-16 it is only sent when `session_id` is in the request JSON (or the provider was migrated from RPClient).
@@ -59,7 +71,18 @@ Grouped by the branch that will do them. Details stay in each track's section.
 
 **`feat/geniex`** (worktree `himitsu-geniex`, blocked; planned for version 0.20 of the app, maintainer decision 2026-10-20, so earlier releases ship without GenieX): the maintainer must read the QAIRT EULA and pick a licensing option; then rebase onto `main` and isolate GenieX's native libraries from Himitsu's `libggml-*.so`.
 
-**`feat/disguise`**: the notification header label, the system authentication prompt label, and the leaks listed in its section.
+**Disguise follow-ups** (new branch from `main`, not started; from the disguise verification, 2026-10-20):
+- Medium, due before the first public release: with a lock timeout of 1 or 5 minutes, the decoy's launcher icon and recents card reopen the Himitsu page left on top (a chat included) without the code or a credential, until the timeout ends (reproduced on the emulator). The disguise ignores the timeout (`…/libs/security/lock/AppLockManager.kt`, `…/libs/core/CoreActivity.kt`). Options: always cover the task when it leaves the foreground while disguise is on; require the "Immediately" timeout to enable disguise; or at least explain it in "What disguise cannot hide" and in the limits below.
+- Low: on a device without a screen lock, the code opens content without any credential while the gate is open (`…/libs/disguise/DisguiseUnlockRouter.kt`, `gateOpen -> OpenContent`). Send it to the gate screen instead, or warn in the disguise settings when the screen lock is removed.
+- Low: the recovery gesture opens the gate screen without a prompt on a storage failure (`DisguiseUnlockRouter`, `storageFailed` is checked first); ask for the credential first when the device is secure.
+- Low: passing through `LockActivity` returns to the decoy, so the code and the prompt are asked twice; after a restore, the app restarts through `MainActivity` and the splash shows the application icon. Document it or reopen through the decoy alias (needs a change in `…/feature/lock/**`).
+- Low: the limits text hard-codes `dev.bianperdev.himitsu` in the 13 locales (`strings_disguise.xml`); debug builds are `dev.bianperdev.himitsu.dev`. Use a placeholder filled with `context.packageName`.
+- Low: any 4- to 10-digit number followed by "=" counts as a failed attempt, so someone using the calculator normally can block the owner's code for up to an hour (`…/libs/disguise/secret/AttemptLimiter.kt`). Tell the user in the disguise settings that the recovery gesture still works.
+- Low: `CompassUiIntent.TapPoint` is a data class whose `toString` prints the tapped point; redact it like `DisguiseSettingsUiIntent.TapSequence`.
+- Low, to check on a device: with the "Immediately" timeout, returning to a locked task may draw the Himitsu curtain and the decoy's opening animation; consider `FLAG_ACTIVITY_NO_ANIMATION` in `DisguiseUnlockEntry`.
+- Lint errors (they would fail a lint step in CI): three `RestrictedApi` on the `dispatchKeyEvent` override in `…/libs/core/CoreActivity.kt` (a false positive of androidx; suppress it with a comment) and `ContextCastToActivity` in `…/feature/disguise/ui/QuickExitButton.kt` (use `LocalActivity.current`).
+- Docs: the KDoc of `UnlockEntry` in `…/libs/security/AppGate.kt` still says a decoy only opens the gate screen; since D1 the decoy authenticates itself.
+- The notification header and system prompt labels are documented limits (see the disguise section); nothing left to do there.
 
 **`chore/release-readiness`** (added to the Release phase below):
 - SQLCipher BSD-3 notice in the app; SQLCipher prebuilt libraries and the F-Droid scanner; llama.cpp, JSON for Modern C++, libc++ and OpenCL-Headers in the licenses screen.
@@ -423,7 +446,7 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 - From the final privacy review (medium): `LocalModelDownloadService` does not override `onTimeout`, so on Android 15+ a `dataSync` download running past 6 hours in a day makes the system kill the app; `ggml_backend_load_all_from_path` loads the vendor OpenCL driver as soon as the models screen opens, even with the GPU off, which could crash devices with a broken driver. Load the OpenCL backend only when the GPU is enabled.
 - From the final privacy review (low): a cancellation that arrives before the native call resets the abort flag still evaluates the whole prompt; `LocalModelMemory` adds untrusted `Int` header values without overflow checks; the Prompt Inspector preview renders the template and counts tokens for every local request even when the Inspector is closed; `throw_state` can throw with a JNI exception already pending, and a half-failed `nativeInit` is retried and reported as an unknown error; two fields of `LocalModelDownloadService` are written from two threads without `@Volatile`.
 - For chore/release-readiness: declare the `dataSync` foreground service type in the Play Console (or move downloads to a user-initiated data transfer job), and list llama.cpp, JSON for Modern C++, libc++ and OpenCL-Headers in the in-app licenses screen.
-- For feat/disguise: the model download and background-generation notifications show the app's label in their header (their icons and channel names are already neutral); the label must follow the disguise.
+- For feat/disguise, resolved by its decision D4: local generation starts no foreground service while disguise is on, and a model download warns first; the download notification header still shows the application label, a documented limit.
 - Chat templates from GGUF files are untrusted code. They render on their own thread with a 128 KB size limit and a 15 s time limit, but llama.cpp's Jinja runtime has no recursion or step limit, so a malicious template can still crash the app (never leak data). A real limit needs an upstream patch. A template that times out stays refused until the app restarts, even if a heavily throttled phone was the cause.
 
 **Contracts and extension points for other tracks:**
@@ -439,7 +462,7 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 
 ## Track: `feat/disguise` (after security and aesthetic are merged)
 
-**Status:** all milestones done (2026-10-20), rebased on `main` at `0606ec2`; waiting for the privacy review and the merge. Design approved by the maintainer on 2026-10-20 (see "Design decisions" below).
+**Status:** completed. Merged into `main` on 2026-10-20 (`3e337b1`). Open work is under "Disguise follow-ups" in [Pending after stage 1](#pending-after-stage-1). Design approved by the maintainer on 2026-10-20 (see "Design decisions" below).
 
 **Starts** from `main` once `feat/security` (app lock and unlock extension point) and `feat/aesthetic` (icon system) are merged. It does not run in parallel with them. It runs in parallel with `feat/geniex` and the local-inference follow-ups, so it must keep to the files below (`feat/security-followups` ran in parallel too and is merged, `85b362c`).
 
@@ -467,18 +490,18 @@ Done in `feat/security-followups` (merged 2026-10-20, `85b362c`): P-06; reauthen
 - Known leaks to handle or document: the system authentication prompt shows the application label; the download and background-generation notifications show the app label in their header (their text, icon and channel names are already neutral).
 - `LockActivity` keeps the Himitsu palette even with dynamic color on (pending decision above); check how that looks behind a decoy.
 
-**Testing:** the track uses the AVD `Himitsu_LocalInference` (serial emulator-5562), assigned by the maintainer on 2026-10-20. emulator-5554 has no owner since `feat/security-followups` merged.
+**Testing:** the track used the AVD `Himitsu_LocalInference` (serial emulator-5562); since the merge neither emulator has an owner. Disguise instrumented tests run only on emulators, and `DisguiseNoBypassAndroidTest` needs a screen lock (PIN) on it.
 
 ### Design decisions (feat/disguise, approved 2026-10-20)
 
 The full design (in Spanish) is a Claude Doc kept by the maintainer. Summary:
 
 - **Aliases.** One `<activity-alias>` per appearance (`.launcher.HimitsuLauncher`, `CalculatorLauncher`, `CompassLauncher`, `ConverterLauncher`), exactly one enabled. The new alias is enabled before the old one is disabled (one call on API 33+), and a reconciler at startup restores "exactly one, matching the preference". Alias names never change after the first release.
-- **D1, lock integration.** `disguiseModule` rebinds `UnlockEntry` to `DisguiseUnlockEntry`: unchanged with disguise off, opens the decoy over the task with disguise on. The decoy authenticates through the public `AppLockManager.createPrompt`/`authenticate`; unlocking still happens only in its success callback. Storage failures and devices without a screen lock go to `LockActivityEntry` after the secret. No edits to `…/libs/security/**` or `…/feature/lock/**`.
+- **D1, lock integration.** `disguiseModule` rebinds `UnlockEntry` to `DisguiseUnlockEntry`: unchanged with disguise off, opens the decoy over the task with disguise on. The decoy authenticates through the public `AppLockManager.createPrompt`/`authenticate`; unlocking still happens only in its success callback. As built (`DisguiseUnlockRouter.onShortcut`): a storage failure goes to `LockActivityEntry`; a secure device always shows the system prompt; a device without a screen lock opens content if the gate is open, and goes to `LockActivityEntry` otherwise (see "Disguise follow-ups"). No edits to `…/libs/security/**` or `…/feature/lock/**`.
 - **D2, compass secret.** A configurable sequence of 4 to 8 taps on the N, E, S, W letters.
 - **D3, recovery.** Same fixed gesture in every decoy: overflow menu, About, long-press the version for 5 seconds. It leads to authentication. The user must practise the secret once before disguise is applied.
 - **D4, notifications.** With disguise active, local generation runs without a foreground service, and each model download shows a warning first (the notification header shows the application label, which cannot be changed).
-- **D5, KDF.** Platform PBKDF2-HMAC-SHA256, 16-byte salt, 600,000 iterations (lowered to 310,000 only if verification takes over 1 s on a low-end emulator), stored outside Kotpref in its own plain preferences file so the decoy works even when the Keystore fails. No new dependency.
+- **D5, KDF.** Platform PBKDF2-HMAC-SHA256, 16-byte salt, 600,000 iterations planned, lowered to 310,000 if verification took over 1 s on a low-end emulator. As built: 310,000 (600,000 took 2.1 s; `…/libs/disguise/secret/SecretRecord.kt`), stored outside Kotpref in its own plain preferences file so the decoy works even when the Keystore fails. No new dependency.
 - **D6, quick exit.** A button on the main screen while disguise is active, and an optional double press of volume down (off by default).
 - **D7, channels.** Disguise ships in `fdroid`, `github` and `play`, disclosed in every store listing.
 - **D8, milestones.** A minimal settings screen arrives with the lock integration so every later milestone can be tested on a phone end to end.
@@ -526,7 +549,9 @@ Before every merge: rebase onto `main`, build every flavor, run the unit tests, 
 
 ## Phase: Release (`chore/release-readiness`)
 
-Starts when every track, including disguise, is merged.
+Starts when every track, including disguise, is merged (true since 2026-10-20, `3e337b1`). The maintainer decides which follow-ups in [Pending after stage 1](#pending-after-stage-1) must land first.
+
+- [ ] Store listings in every channel explain the disguise and its limits (decision D7), and the Google Play deceptive behavior and impersonation policies are checked before submitting.
 
 - [ ] Audit the full git history for secrets and personal data. This is the requirement for making the repository public.
 - [ ] Check the "Himitsu" name for conflicts with other apps, projects or trademarks.
