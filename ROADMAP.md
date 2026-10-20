@@ -233,7 +233,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
 5. Moved to a later branch (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
-6. Performance settings (threads, context size, GPU or NPU) with sensible defaults.
+6. [x] Performance settings (threads, context size, GPU or NPU) with sensible defaults.
 
 **Done when:** a downloaded or imported GGUF can be used offline with the same presets, lorebooks, Regex and Prompt Inspector as remote providers; no network call is added except the explicit model download; nothing heavy runs on the main thread; generation can be cancelled and the model is released; the `fdroid` build contains only source-built llama.cpp and no GenieX; unsupported devices never crash; every new license is in `NOTICE` and in the table below; every flavor builds.
 
