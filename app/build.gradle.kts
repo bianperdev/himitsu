@@ -81,6 +81,12 @@ android {
         create("github") { dimension = "channel" }
         create("play") { dimension = "channel" }
     }
+    // Do not embed the dependency metadata block, which is encrypted with a
+    // Google key and rejected by F-Droid's scanner.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
     // Donation code and resources ship only in the fdroid and github channels.
     listOf("fdroid", "github").forEach { flavor ->
         sourceSets[flavor].java.directories.add("src/donations/java")
