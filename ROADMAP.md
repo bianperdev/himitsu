@@ -208,7 +208,7 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 | P-07 | Resolved | `c7b1141`, `7d27cba` | Encrypted database, credentials redacted, 7 days / 200 entries, wiped when debug mode is turned off. |
 | P-08 | Resolved | `46a3959` | `x-goog-api-key` header. |
 | P-09 | Resolved (decision) | `f24e6ba`, `3fa3047` | Warning when saving a plain-HTTP remote provider; clear text stays allowed for LAN servers. Only system CAs are trusted (maintainer decision, 2026-10-20). |
-| P-10 | Partly | `0d782e4` | Leftover request files are deleted at startup. The file is still plain while a request is in flight; encrypting it needs a change in `MultimodalWireCodec` (local-inference). |
+| P-10 | Partly, rest deferred (decision) | `0d782e4` | Leftover request files are deleted at startup. Encrypting the file while a request is in flight needs a change in `MultimodalWireCodec` (local-inference); deferred by the maintainer on 2026-10-20 (see "P-10 rest" in Follow-ups). |
 | P-11 | Resolved | `c3b12b1` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs. |
 | P-12 | Resolved | `655a726` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on Android 13+. |
 | P-13 | Resolved | `1bb63d2` | Password keyboard without autocorrect. |
