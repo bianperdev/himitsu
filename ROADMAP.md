@@ -250,6 +250,14 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
   - Permanent failures that are not about the key (a damaged plain database, "two plain copies") only offer Retry; the way out is clearing the app data in system settings. Only earlier debug builds can reach them.
   - With only system CAs trusted, self-hosted HTTPS servers with a self-signed certificate no longer work; plain HTTP on the LAN still does, with the warning.
   - `.unrecoverable-*` copies left by "start over" cannot be restored from the app; restoring them with a recovery code would need a new action.
+- **Pre-merge privacy review (2026-10-20), open, waiting for the maintainer's decision:**
+  - Medium: with `KeystoreKeyLost` the error screen offers no Retry (`LockViewModel`, `canRetry`), although `UnrecoverableKeyException` and `AEADBadTagException` can be temporary on some devices; the user may start over with data that was still readable.
+  - Medium: start over sets `app_repository/` aside even when a plain database survives and is re-encrypted with the new key (only reachable from earlier debug builds); that database then loses its images. Set the files aside only when the primary database was moved aside.
+  - Low: `OpenedValue.Plain` and `OpenedValue.Value` in `SealedSharedPreferences` are data classes, so their `toString` would print decrypted text; override it with `[REDACTED]`.
+  - Low: `AppLockManager.mAuthenticating` can stay true if the `BiometricPrompt` callback is lost (API 26-29), so "Unlock" does nothing until the process dies; reset it when `LockActivity` resumes without a prompt.
+  - Low: the licenses table lists Kotlin stdlib 2.0.21, but SQLCipher pulls in 2.2.10 (same license).
+  - Low: retrying a start over that failed halfway sets aside one more empty `app_repository` directory.
+  - Low: no automated test covers start over keeping stored files (verified manually on the emulator).
 - **Build:** a combined `assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest` once failed in KSP with Room errors on `MutableDao<T>`; rerunning passed. Probably KSP incremental state; watch for it.
 
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
