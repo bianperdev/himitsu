@@ -197,6 +197,10 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 6. Icon (adaptive, with a monochrome version for Android 13+) and splash screen.
 7. Compose previews of the main screens in both themes.
 
+**Follow-ups after the owning tracks merge:** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (10 color literals, monospace fields) and `…/feature/requestlog/**` (monospace), and `…/utils/PromptMacroHighlighting.kt` (monospace).
+
+**Kept on purpose:** the neutral "darkroom" greys of `…/feature/imagecrop/**` and the black/white overlays drawn on top of photos (`…/ui/message/**`, `MessageImageViewerDialog`), so images are judged without a color cast.
+
 **Possible follow-ups (not started):**
 - Subset the bundled fonts to Latin, Vietnamese and Cyrillic with fonttools (and drop Inter's `opsz` axis) to cut about 1.5 MB from the APK. This adds a build step, so it needs a decision first.
 

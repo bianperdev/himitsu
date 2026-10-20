@@ -53,6 +53,7 @@ import me.kafuuneko.rpclient.libs.prompt.model.PromptOmittedItem
 import me.kafuuneko.rpclient.libs.prompt.model.PromptSource
 import me.kafuuneko.rpclient.libs.prompt.model.PromptSourceKind
 import me.kafuuneko.rpclient.libs.prompt.model.PromptTokenizerStrategy
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.RpLazyColumn
 
 /** 展示最终 Prompt、来源、预算裁剪和 Regex 执行记录的现代化调试对话框。 */
@@ -158,7 +159,7 @@ fun PromptInspectorDialog(
                                         ),
                                     modifier = Modifier.padding(14.dp),
                                     style = MaterialTheme.typography.bodySmall,
-                                    fontFamily = FontFamily.Monospace
+                                    fontFamily = HimitsuMonoFamily
                                 )
                             }
                         }
@@ -464,7 +465,7 @@ private fun InspectionItemCard(
                 Text(
                     text = item.content,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = HimitsuMonoFamily
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )

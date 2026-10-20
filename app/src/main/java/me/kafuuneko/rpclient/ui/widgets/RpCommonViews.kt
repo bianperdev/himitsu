@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.ui.theme.readableAccent
 
 /** 页面主标题，带辅助说明，统一页面顶部视觉规范。 */
 @Composable
@@ -123,7 +124,7 @@ fun RpAvatar(
         ) {
             Text(
                 text = text,
-                color = color,
+                color = color.readableAccent(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )

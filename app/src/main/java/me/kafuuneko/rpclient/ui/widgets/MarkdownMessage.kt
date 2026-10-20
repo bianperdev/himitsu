@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.utils.MarkdownBlock
 import me.kafuuneko.rpclient.utils.MarkdownInline
 import me.kafuuneko.rpclient.utils.MarkdownParser
@@ -214,7 +215,7 @@ private fun MarkdownCodeBlock(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 text = content.ifBlank { " " },
                 style = MaterialTheme.typography.bodySmall.copy(
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = HimitsuMonoFamily,
                     lineHeight = 18.sp
                 ),
                 color = color
@@ -308,7 +309,7 @@ private fun AnnotatedString.Builder.appendMarkdownInline(
             is MarkdownInline.Text -> append(part.content)
             is MarkdownInline.Code -> withStyle(
                 SpanStyle(
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = HimitsuMonoFamily,
                     background = textColor.copy(alpha = 0.10f)
                 )
             ) {

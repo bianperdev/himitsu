@@ -46,6 +46,7 @@ import me.kafuuneko.rpclient.feature.jsonviewer.presentation.JsonViewerErrorReas
 import me.kafuuneko.rpclient.feature.jsonviewer.presentation.JsonViewerUiIntent
 import me.kafuuneko.rpclient.feature.jsonviewer.presentation.JsonViewerUiState
 import me.kafuuneko.rpclient.ui.theme.AppTheme
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.RpInfoCard
 import me.kafuuneko.rpclient.ui.widgets.RpPageTitle
@@ -306,7 +307,7 @@ private fun JsonEntryRow(
                 Text(
                     text = if (entry.hasChildren) entry.type.childCountText(entry.childCount) else entry.preview,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        fontFamily = if (entry.hasChildren) null else FontFamily.Monospace
+                        fontFamily = if (entry.hasChildren) null else HimitsuMonoFamily
                     ),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
                 )
@@ -314,7 +315,7 @@ private fun JsonEntryRow(
                     Text(
                         text = entry.preview,
                         style = MaterialTheme.typography.bodySmall.copy(
-                            fontFamily = if (entry.hasChildren) null else FontFamily.Monospace
+                            fontFamily = if (entry.hasChildren) null else HimitsuMonoFamily
                         ),
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f),
                         maxLines = 2,
@@ -344,7 +345,7 @@ private fun JsonRawPreview(rawPreview: String) {
                 RoundedCornerShape(12.dp)
             )
             .padding(12.dp),
-        style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+        style = MaterialTheme.typography.bodySmall.copy(fontFamily = HimitsuMonoFamily),
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.78f)
     )
 }

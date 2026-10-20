@@ -245,8 +245,11 @@ private fun UsageTrendCard(
     emit: TokenUsageUiIntent.() -> Unit
 ) {
     // 趋势点未变时复用图表数据；全零区间不显示峰值说明。
-    val chartPoints = remember(points) {
-        points.map { it.toChartDataPoint() }
+    // Segment colors follow the theme, so they are read here and passed into the remembered mapping.
+    val inputColor = TokenUsageInputColor
+    val outputColor = TokenUsageOutputColor
+    val chartPoints = remember(points, inputColor, outputColor) {
+        points.map { it.toChartDataPoint(inputColor, outputColor) }
     }
     val peakPoint = points.maxByOrNull { it.totalTokens }
     val peakText = if (peakPoint != null && peakPoint.totalTokens > 0L) {
@@ -964,14 +967,14 @@ private fun Long.formatted(): String {
     return "$formattedNumber$unit"
 }
 
-private fun TokenUsageTrendPoint.toChartDataPoint(): RpChartDataPoint {
+private fun TokenUsageTrendPoint.toChartDataPoint(inputColor: Color, outputColor: Color): RpChartDataPoint {
     return RpChartDataPoint(
         key = key,
         label = label,
         value = totalTokens.toFloat(),
         segments = listOf(
-            RpChartSegment(outputTokens.toFloat(), TokenUsageOutputColor),
-            RpChartSegment(inputTokens.toFloat(), TokenUsageInputColor)
+            RpChartSegment(outputTokens.toFloat(), outputColor),
+            RpChartSegment(inputTokens.toFloat(), inputColor)
         ),
         isCurrent = isCurrent
     )

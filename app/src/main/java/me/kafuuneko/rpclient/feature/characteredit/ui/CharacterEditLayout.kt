@@ -89,6 +89,7 @@ import me.kafuuneko.rpclient.ui.dialog.AppPromptEditorDialog
 import me.kafuuneko.rpclient.ui.dialog.DialogBadgeTone
 import me.kafuuneko.rpclient.ui.theme.AppTheme
 import me.kafuuneko.rpclient.ui.theme.CharacterAccentColors
+import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.DEFAULT_PROMPT_MACROS
 import me.kafuuneko.rpclient.ui.widgets.DIALOGUE_EXAMPLE_MACROS
@@ -757,7 +758,7 @@ private fun RawExtensionsPanel(
             } else {
                 Text(
                     text = value.ifBlank { "{}" }.compactPreview(),
-                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = HimitsuMonoFamily),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f),
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis

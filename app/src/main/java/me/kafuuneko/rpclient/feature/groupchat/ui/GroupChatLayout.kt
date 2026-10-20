@@ -138,6 +138,7 @@ import me.kafuuneko.rpclient.ui.message.MessageImageEditButton
 import me.kafuuneko.rpclient.ui.message.MessageImageGallery
 import me.kafuuneko.rpclient.ui.dialog.MessageImageViewerDialog
 import me.kafuuneko.rpclient.ui.theme.getMacaronColor
+import me.kafuuneko.rpclient.ui.theme.readableAccent
 import me.kafuuneko.rpclient.ui.widgets.AppTopBar
 import me.kafuuneko.rpclient.ui.widgets.MarkdownMessageText
 import me.kafuuneko.rpclient.ui.widgets.NoProviderBanner
@@ -1379,7 +1380,7 @@ private fun MessageBubble(
                     } else if (isSystem) {
                         MaterialTheme.colorScheme.secondary
                     } else {
-                        accent
+                        accent.readableAccent()
                     }
                 )
                 Spacer(modifier = Modifier.width(7.dp))
