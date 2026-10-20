@@ -114,9 +114,11 @@ object GgufHeaderReader {
             val alignment = numbers["general.alignment"] ?: DEFAULT_ALIGNMENT
             if (alignment <= 0 || alignment and (alignment - 1) != 0L) throw InvalidGgufException("Invalid alignment")
             val dataOffsets = (0 until tensorCount).map { readTensorInfo(data, alignment) }
-            if (fileSize != UNKNOWN_SIZE) {
+            // As in ggml, the data section is only aligned when there are tensors
+            if (fileSize != UNKNOWN_SIZE && tensorCount > 0) {
                 val dataStart = (counter.position + alignment - 1) / alignment * alignment
-                if (dataStart > fileSize || dataOffsets.any { it >= fileSize - dataStart }) {
+                // An empty tensor may sit exactly at the end of the file
+                if (dataStart > fileSize || dataOffsets.any { it > fileSize - dataStart }) {
                     throw InvalidGgufException("Tensor data outside the file")
                 }
             }
@@ -155,7 +157,8 @@ object GgufHeaderReader {
     private fun readTensorInfo(data: LittleEndianReader, alignment: Long): Long {
         data.string(MAX_TENSOR_NAME_BYTES)
         val dims = data.int()
-        if (dims !in 1..MAX_TENSOR_DIMS) throw InvalidGgufException("Invalid tensor dimensions")
+        // Zero dimensions is a scalar, which ggml accepts
+        if (dims !in 0..MAX_TENSOR_DIMS) throw InvalidGgufException("Invalid tensor dimensions")
         var elements = 1L
         repeat(dims) {
             val size = data.long()

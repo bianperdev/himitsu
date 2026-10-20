@@ -85,16 +85,15 @@ class GgufHeaderReaderTest {
         val bytes = gguf {
             tensor("token_embd.weight", listOf(4096L, 32000L), type = 12, offset = 0)
             tensor("output_norm.weight", listOf(4096L), type = 0, offset = 64)
+            tensor("scale", emptyList(), type = 0, offset = 128)
         }
 
         GgufHeaderReader.read(bytes.inputStream(), fileSize = bytes.size + 1024L)
     }
 
     @Test
-    fun rejectsTensorsWithoutDimensionsOrWithTooMany() {
-        listOf(emptyList(), listOf(1L, 1L, 1L, 1L, 1L)).forEach { dims ->
-            assertInvalid(gguf { tensor("blk.0.attn_q.weight", dims) })
-        }
+    fun rejectsTensorsWithMoreDimensionsThanGgmlAllows() {
+        assertInvalid(gguf { tensor("blk.0.attn_q.weight", listOf(1L, 1L, 1L, 1L, 1L)) })
     }
 
     @Test
