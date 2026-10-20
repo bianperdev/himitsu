@@ -7,7 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.security.SecureRandom
 import kotlinx.coroutines.runBlocking
 import me.kafuuneko.rpclient.libs.disguise.Appearance
+import me.kafuuneko.rpclient.libs.disguise.assumeEmulator
+import me.kafuuneko.rpclient.libs.disguise.isEmulator
 import org.junit.After
+import org.junit.Before
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -21,8 +24,12 @@ class DisguiseSecretStoreAndroidTest {
     private var now = 1_000_000L
     private val store = DisguiseSecretStore(context, SecureRandom()) { now }
 
+    @Before
+    fun onlyOnEmulator() = assumeEmulator()
+
     @After
     fun clear() {
+        if (!isEmulator()) return
         store.clear()
     }
 

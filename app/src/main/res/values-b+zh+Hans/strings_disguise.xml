@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">立即显示伪装</string>
     <string name="disguise_settings_volume_title">用音量减键快速退出</string>
     <string name="disguise_settings_volume_text">在 Himitsu 中快速按两次音量减键，立即显示伪装。</string>
+    <string name="disguise_limits_restart">如果 Android 在后台关闭了 Himitsu，重新打开时可能会在伪装出现前短暂看到它的颜色或图标，系统的简短提示也可能显示它的图标。</string>
 </resources>

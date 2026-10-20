@@ -13,7 +13,15 @@ import org.koin.dsl.module
 internal val disguiseModule = module {
     // Created with Koin at process start, before any screen, so an interrupted switch is
     // repaired whichever launcher entry the user taps next. It needs no database or key.
-    single(createdAtStart = true) { AppearanceSwitcher(androidContext()).apply { reconcile() } }
+    // A failure is retried at the next start instead of crashing every launch.
+    single(createdAtStart = true) {
+        AppearanceSwitcher(androidContext()).apply {
+            runCatching { reconcile() }
+            // Turning disguise off deletes the shortcut after the icon switch; finish it if the
+            // process died in between
+            if (!current.isDecoy) get<DisguiseSecretStore>().let { if (it.hasData()) it.clear() }
+        }
+    }
     single { DisguiseSecretStore(androidContext()) }
     single { CompassSensor(androidContext()) }
     // Replaces the securityModule binding (Koin keeps the last definition), so a page hidden by

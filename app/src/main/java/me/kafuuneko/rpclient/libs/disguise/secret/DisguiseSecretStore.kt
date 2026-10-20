@@ -85,12 +85,18 @@ class DisguiseSecretStore(
         mPrefs.edit(commit = true) { clear() }
     }
 
+    /** Whether anything is stored, valid or not. */
+    fun hasData(): Boolean = mPrefs.all.isNotEmpty()
+
+    /** The stored record, or null when there is none or it is damaged; the recovery gesture still works then. */
     private fun readRecord(): SecretRecord? {
         if (mPrefs.getInt(KEY_VERSION, 0) != FORMAT_VERSION) return null
         val appearanceId = mPrefs.getString(KEY_APPEARANCE, null) ?: return null
-        val salt = mPrefs.getString(KEY_SALT, null) ?: return null
-        val hash = mPrefs.getString(KEY_HASH, null) ?: return null
-        return SecretRecord(appearanceId, mPrefs.getInt(KEY_ITERATIONS, 0), DECODER.decode(salt), DECODER.decode(hash))
+        val iterations = mPrefs.getInt(KEY_ITERATIONS, 0).takeIf { it > 0 } ?: return null
+        val salt = mPrefs.getString(KEY_SALT, null)?.let { runCatching { DECODER.decode(it) }.getOrNull() } ?: return null
+        val hash = mPrefs.getString(KEY_HASH, null)?.let { runCatching { DECODER.decode(it) }.getOrNull() } ?: return null
+        if (salt.isEmpty() || hash.isEmpty()) return null
+        return SecretRecord(appearanceId, iterations, salt, hash)
     }
 
     private companion object {

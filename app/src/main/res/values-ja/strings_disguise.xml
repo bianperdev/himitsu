@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">今すぐカモフラージュを表示</string>
     <string name="disguise_settings_volume_title">音量ダウンですばやく退出</string>
     <string name="disguise_settings_volume_text">Himitsu の画面で音量ダウンを素早く 2 回押すと、すぐにカモフラージュを表示します。</string>
+    <string name="disguise_limits_restart">Android がバックグラウンドで Himitsu を終了した場合、再び開くとカモフラージュの前に一瞬 Himitsu の色やアイコンが見えることがあり、短いシステムメッセージにもアイコンが表示されることがあります。</string>
 </resources>

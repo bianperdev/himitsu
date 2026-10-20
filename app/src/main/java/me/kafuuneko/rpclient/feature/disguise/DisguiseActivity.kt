@@ -74,7 +74,10 @@ class DisguiseActivity : FragmentActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         DisguiseTaskDescription.apply(this)
-        val covering = intent.getBooleanExtra(EXTRA_COVERING, false)
+        // Only DisguiseUnlockEntry opens this class directly; launches through an exported alias
+        // come from any app and may not choose covering mode
+        val covering = intent.component?.className == DisguiseActivity::class.java.name &&
+            intent.getBooleanExtra(EXTRA_COVERING, false)
         if (covering) {
             onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
@@ -94,11 +97,21 @@ class DisguiseActivity : FragmentActivity(), KoinComponent {
         }
         collectViewEvents(mViewModel.viewEventFlow)
         initDecoy()
-        mViewModel.emit(DisguiseUiIntent.Init(mAppearance, versionName(), covering))
+        mViewModel.emit(DisguiseUiIntent.Init(mAppearance, DECOY_VERSION_NAME, covering))
     }
 
     override fun onResume() {
         super.onResume()
+        // As in LockActivity: on API 26-29 a prompt callback can be lost, which would leave the
+        // lock manager waiting forever and the shortcut dead. Checked one frame later, so a
+        // success callback that arrives after onResume comes first.
+        window.decorView.post {
+            if (isFinishing || !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return@post
+            supportFragmentManager.executePendingTransactions()
+            if (mLockManager.isAuthenticating && supportFragmentManager.findFragmentByTag(BIOMETRIC_FRAGMENT_TAG) == null) {
+                mLockManager.clearStaleAuthentication()
+            }
+        }
         if (mAppearance == Appearance.Compass) {
             val rotation = ContextCompat.getDisplayOrDefault(this).rotation
             mCompassViewModel.emit(CompassUiIntent.Resume(rotation))
@@ -176,10 +189,14 @@ class DisguiseActivity : FragmentActivity(), KoinComponent {
         )
     }
 
-    private fun versionName(): String = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
-
     companion object {
         /** Boolean extra: the decoy covers a Himitsu page because the app locked. */
         const val EXTRA_COVERING = "me.kafuuneko.rpclient.disguise.COVERING"
+
+        /** Version shown in the decoy's About; Himitsu's real version would identify the app. */
+        internal const val DECOY_VERSION_NAME = "2.4.1"
+
+        /** Tag under which `androidx.biometric` adds the fragment of a prompt on screen. */
+        private const val BIOMETRIC_FRAGMENT_TAG = "androidx.biometric.BiometricFragment"
     }
 }

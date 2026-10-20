@@ -82,6 +82,7 @@ internal fun LimitsDialog(emit: DisguiseSettingsUiIntent.() -> Unit) {
         listOf(
             R.string.disguise_limits_settings,
             R.string.disguise_limits_system,
+            R.string.disguise_limits_restart,
             R.string.disguise_limits_package,
             R.string.disguise_limits_store,
             R.string.disguise_limits_technical,

@@ -7,6 +7,9 @@ import me.kafuuneko.rpclient.libs.core.IViewEvent
 sealed class DisguiseSettingsViewEvent : IViewEvent {
     data object OpenSecuritySettings : DisguiseSettingsViewEvent()
 
+    /** Ask for biometrics or the device credential before changing or turning off an active disguise. */
+    data object RequestCredential : DisguiseSettingsViewEvent()
+
     /**
      * The launcher icon changed: close every Himitsu screen, as the warning said, so the user
      * picks the new icon from the launcher.

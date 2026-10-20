@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Tampilkan penyamaran sekarang</string>
     <string name="disguise_settings_volume_title">Keluar cepat dengan volume turun</string>
     <string name="disguise_settings_volume_text">Tekan volume turun dua kali dengan cepat di Himitsu untuk langsung menampilkan penyamaran.</string>
+    <string name="disguise_limits_restart">Jika Android menutup Himitsu di latar belakang, saat dibuka lagi warna atau ikonnya bisa terlihat sesaat sebelum penyamaran, dan pesan singkat sistem bisa menampilkan ikonnya.</string>
 </resources>

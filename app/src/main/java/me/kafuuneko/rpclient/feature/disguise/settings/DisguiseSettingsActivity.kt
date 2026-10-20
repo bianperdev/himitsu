@@ -12,6 +12,7 @@ import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSett
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSettingsUiState
 import me.kafuuneko.rpclient.feature.disguise.settings.presentation.DisguiseSettingsViewEvent
 import me.kafuuneko.rpclient.feature.disguise.settings.ui.DisguiseSettingsLayout
+import me.kafuuneko.rpclient.feature.lock.ConfirmCredentialContract
 import me.kafuuneko.rpclient.feature.lock.settings.SecuritySettingsActivity
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
@@ -19,6 +20,9 @@ import me.kafuuneko.rpclient.libs.core.IViewEvent
 /** Host of the disguise settings screen, opened from the main settings page. */
 class DisguiseSettingsActivity : CoreActivityWithEvent() {
     private val mViewModel by viewModels<DisguiseSettingsViewModel>()
+    private val mConfirmLauncher = registerForActivityResult(ConfirmCredentialContract()) { confirmed ->
+        mViewModel.emit(DisguiseSettingsUiIntent.CredentialConfirmed(confirmed))
+    }
 
     override fun getViewEventFlow() = mViewModel.viewEventFlow
 
@@ -47,6 +51,7 @@ class DisguiseSettingsActivity : CoreActivityWithEvent() {
         when (viewEvent) {
             DisguiseSettingsViewEvent.OpenSecuritySettings -> startActivity(Intent(this, SecuritySettingsActivity::class.java))
             DisguiseSettingsViewEvent.CloseApp -> finishAffinity()
+            DisguiseSettingsViewEvent.RequestCredential -> mConfirmLauncher.launch(Unit)
             else -> super.onReceivedViewEvent(viewEvent)
         }
     }

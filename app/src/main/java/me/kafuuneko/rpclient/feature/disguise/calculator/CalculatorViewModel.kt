@@ -56,6 +56,8 @@ class CalculatorViewModel : CoreViewModelWithEvent<CalculatorUiIntent, Calculato
     private fun checkShortcut(candidate: String) {
         viewModelScope.launch {
             if (mSecretStore.verify(Appearance.Calculator, candidate.toCharArray())) {
+                // The code must not stay on the display, which shows again when leaving Himitsu
+                render(CalculatorState())
                 CalculatorViewEvent.ShortcutMatched.tryEmit()
             }
         }

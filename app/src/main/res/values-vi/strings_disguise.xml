@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Hiện ngụy trang ngay</string>
     <string name="disguise_settings_volume_title">Thoát nhanh bằng nút giảm âm lượng</string>
     <string name="disguise_settings_volume_text">Nhấn nút giảm âm lượng hai lần thật nhanh trong Himitsu để hiện ngụy trang ngay.</string>
+    <string name="disguise_limits_restart">Nếu Android đã đóng Himitsu ở chế độ nền, khi mở lại có thể thoáng thấy màu sắc hoặc biểu tượng của Himitsu trước màn hình ngụy trang, và các thông báo ngắn của hệ thống có thể hiện biểu tượng của nó.</string>
 </resources>

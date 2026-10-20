@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Mostrar o disfarce agora</string>
     <string name="disguise_settings_volume_title">Saída rápida com diminuir volume</string>
     <string name="disguise_settings_volume_text">Pressione diminuir volume duas vezes rápido no Himitsu para mostrar o disfarce na hora.</string>
+    <string name="disguise_limits_restart">Se o Android fechou o Himitsu em segundo plano, ao reabrir podem aparecer por um instante as cores ou o ícone dele antes do disfarce, e mensagens curtas do sistema podem mostrar o ícone.</string>
 </resources>

@@ -58,7 +58,11 @@ class ConverterViewModel : CoreViewModelWithEvent<ConverterUiIntent, ConverterUi
         converterUiState(ConverterEngine.swap(uiState.engine), mFormat).setup()
         if (candidate == null) return
         viewModelScope.launch {
-            if (mSecretStore.verify(Appearance.Converter, candidate.toCharArray())) ConverterViewEvent.ShortcutMatched.tryEmit()
+            if (mSecretStore.verify(Appearance.Converter, candidate.toCharArray())) {
+                // The code must not stay on the display, which shows again when leaving Himitsu
+                update { it.copy(input = "") }
+                ConverterViewEvent.ShortcutMatched.tryEmit()
+            }
         }
     }
 

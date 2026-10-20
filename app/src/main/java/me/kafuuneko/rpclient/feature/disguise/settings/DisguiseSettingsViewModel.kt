@@ -67,6 +67,9 @@ class DisguiseSettingsViewModel :
     private var mFirstSequence: List<CardinalPoint>? = null
     private val mSequenceTaps = mutableListOf<CardinalPoint>()
 
+    /** The user confirmed their credential for the change being applied. */
+    private var mCredentialConfirmed = false
+
     @UiIntentObserver(DisguiseSettingsUiIntent.Init::class)
     private fun onInit() {
         if (!isStateOf<DisguiseSettingsUiState.None>()) return
@@ -299,6 +302,12 @@ class DisguiseSettingsViewModel :
             uiState.copy(step = DisguiseSetupStep.Busy).setup()
             return
         }
+        // Changing or removing an active disguise needs the credential, like turning the lock off
+        if (uiState.appearance.isDecoy && !mCredentialConfirmed) {
+            DisguiseSettingsViewEvent.RequestCredential.tryEmit()
+            return
+        }
+        mCredentialConfirmed = false
         uiState.copy(isWorking = true).setup()
         if (step.target.isDecoy) {
             val secret = mPendingSecret ?: return onCancel()
@@ -314,9 +323,18 @@ class DisguiseSettingsViewModel :
         DisguiseSettingsViewEvent.CloseApp.tryEmit()
     }
 
+    /** Applies the confirmed change after a successful confirmation; a canceled one keeps the warning open. */
+    @UiIntentObserver(DisguiseSettingsUiIntent.CredentialConfirmed::class)
+    private suspend fun onCredentialConfirmed(intent: DisguiseSettingsUiIntent.CredentialConfirmed) {
+        if (!intent.confirmed) return
+        mCredentialConfirmed = true
+        onConfirmChange()
+    }
+
     @UiIntentObserver(DisguiseSettingsUiIntent.Cancel::class)
     private fun onCancel() {
         val uiState = getOrNull<DisguiseSettingsUiState.Normal>() ?: return
+        mCredentialConfirmed = false
         wipePending()
         uiState.copy(step = DisguiseSetupStep.None, isWorking = false).setup()
     }

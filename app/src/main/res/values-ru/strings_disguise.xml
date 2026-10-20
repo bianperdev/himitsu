@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Показать маскировку сейчас</string>
     <string name="disguise_settings_volume_title">Быстрый выход кнопкой громкости</string>
     <string name="disguise_settings_volume_text">Дважды быстро нажмите «тише» в Himitsu, чтобы сразу показать маскировку.</string>
+    <string name="disguise_limits_restart">Если Android закрыл Himitsu в фоне, при повторном открытии перед маскировкой на миг могут появиться её цвета или значок, а короткие системные сообщения могут показывать её значок.</string>
 </resources>

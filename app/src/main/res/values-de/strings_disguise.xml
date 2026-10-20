@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Tarnung jetzt zeigen</string>
     <string name="disguise_settings_volume_title">Schnell verlassen mit Leiser-Taste</string>
     <string name="disguise_settings_volume_text">Drücke in Himitsu zweimal schnell auf Leiser, um sofort die Tarnung zu zeigen.</string>
+    <string name="disguise_limits_restart">Hat Android Himitsu im Hintergrund beendet, können beim erneuten Öffnen kurz seine Farben oder sein Symbol vor der Tarnung erscheinen, und kurze Systemmeldungen können sein Symbol zeigen.</string>
 </resources>

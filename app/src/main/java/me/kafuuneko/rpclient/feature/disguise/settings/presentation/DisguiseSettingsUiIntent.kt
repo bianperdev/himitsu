@@ -47,5 +47,8 @@ sealed class DisguiseSettingsUiIntent {
     data object NextSequence : DisguiseSettingsUiIntent()
     data object FinishPractice : DisguiseSettingsUiIntent()
     data object ConfirmChange : DisguiseSettingsUiIntent()
+
+    /** Result of the credential confirmation asked before changing or turning off an active disguise. */
+    data class CredentialConfirmed(val confirmed: Boolean) : DisguiseSettingsUiIntent()
     data object Cancel : DisguiseSettingsUiIntent()
 }

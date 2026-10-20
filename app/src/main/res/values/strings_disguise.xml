@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Show the disguise now</string>
     <string name="disguise_settings_volume_title">Quick exit with volume down</string>
     <string name="disguise_settings_volume_text">Press volume down twice quickly in Himitsu to show the disguise at once.</string>
+    <string name="disguise_limits_restart">If Android closed Himitsu in the background, reopening it can show Himitsu\'s colours or icon for a moment before the disguise, and short system messages may show its icon.</string>
 </resources>

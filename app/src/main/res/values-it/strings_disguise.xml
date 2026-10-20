@@ -108,4 +108,5 @@
     <string name="disguise_quick_exit">Mostra subito il camuffamento</string>
     <string name="disguise_settings_volume_title">Uscita rapida con volume giù</string>
     <string name="disguise_settings_volume_text">Premi due volte rapidamente volume giù in Himitsu per mostrare subito il camuffamento.</string>
+    <string name="disguise_limits_restart">Se Android ha chiuso Himitsu in background, riaprendola possono comparire per un attimo i suoi colori o la sua icona prima del camuffamento, e i brevi messaggi di sistema possono mostrarne l\'icona.</string>
 </resources>

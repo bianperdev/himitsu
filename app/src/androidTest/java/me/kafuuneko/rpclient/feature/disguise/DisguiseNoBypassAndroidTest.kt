@@ -15,6 +15,8 @@ import kotlinx.coroutines.runBlocking
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.main.MainActivity
 import me.kafuuneko.rpclient.libs.disguise.Appearance
+import me.kafuuneko.rpclient.libs.disguise.assumeEmulator
+import me.kafuuneko.rpclient.libs.disguise.isEmulator
 import me.kafuuneko.rpclient.libs.disguise.secret.DisguiseSecretStore
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import org.junit.After
@@ -44,12 +46,14 @@ class DisguiseNoBypassAndroidTest {
 
     @Before
     fun setCode() {
+        assumeEmulator()
         assumeTrue("needs a device screen lock", lockManager.isDeviceSecure())
         runBlocking { secretStore.set(Appearance.Calculator, "482913".toCharArray()) }
     }
 
     @After
     fun clean() {
+        if (!isEmulator()) return
         closePrompt()
         secretStore.clear()
     }
@@ -76,7 +80,7 @@ class DisguiseNoBypassAndroidTest {
     fun theRecoveryGestureOnlyShowsThePrompt() {
         pressSymbol(R.string.disguise_menu_more)
         composeRule.onNodeWithText(composeRule.activity.getString(R.string.disguise_menu_about)).performClick()
-        val version = composeRule.activity.getString(R.string.disguise_about_version, versionName())
+        val version = composeRule.activity.getString(R.string.disguise_about_version, DisguiseActivity.DECOY_VERSION_NAME)
         composeRule.onNodeWithText(version).performTouchInput {
             down(center)
             advanceEventTime(5_500)
@@ -109,9 +113,6 @@ class DisguiseNoBypassAndroidTest {
         InstrumentationRegistry.getInstrumentation().uiAutomation.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
         Thread.sleep(1_500)
     }
-
-    private fun versionName(): String = composeRule.activity.packageManager
-        .getPackageInfo(composeRule.activity.packageName, 0).versionName.orEmpty()
 
     private fun assertHimitsuNeverOpened() {
         var mainVisible = false
