@@ -20,6 +20,7 @@ import me.kafuuneko.rpclient.libs.room.entity.Character
 import me.kafuuneko.rpclient.libs.room.entity.ChatMessage
 import me.kafuuneko.rpclient.libs.room.model.MessageType
 import me.kafuuneko.rpclient.libs.room.repository.FileRepository
+import me.kafuuneko.rpclient.libs.room.repository.TestFileCipher
 import me.kafuuneko.rpclient.libs.room.repository.ChatRepository
 import me.kafuuneko.rpclient.libs.room.repository.MessageImageRepository
 import org.junit.After
@@ -52,7 +53,7 @@ class ChatArchiveRepositoryTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        files = FileRepository(context, database)
+        files = FileRepository(context, database, TestFileCipher)
         repository = ChatArchiveRepository(
             mContext = context,
             mAppDatabase = database,
@@ -111,7 +112,7 @@ class ChatArchiveRepositoryTest {
                 files.withFileLease(attachment.image.imageUuid) { assertArrayEquals(bytes, it.readBytes()) }
             }
             chats.deleteSession(if (deleteSourceFirst) branch else original.sessionId)
-            assertFalse(File(context.getDir("repository", 0), surviving.first().file!!.hash).exists())
+            assertFalse(TestFileCipher.sealedFile(directory, surviving.first().file!!.hash).exists())
         }
     }
 
@@ -242,7 +243,7 @@ class ChatArchiveRepositoryTest {
             assertEquals(listOf(0, 1), attachments.take(2).map { it.position })
             assertArrayEquals(bytes, files.withFileLease(attachments.last().imageUuid) { it.readBytes() })
             assertTrue(attachments.all { files.getFileEntity(it.imageUuid)?.hash == encoded.hash })
-            assertEquals(1, File(directory, "repository").listFiles().orEmpty().count { it.isFile })
+            assertEquals(1, File(directory, "repository/sealed").listFiles().orEmpty().count { it.isFile })
             // 删除首条消息的所有权后，后续引用仍然可读。
             files.mutate {
                 database.getMessageImageDao().deleteByMessage(MessageType.Single, messages.first().id)
@@ -300,8 +301,8 @@ class ChatArchiveRepositoryTest {
             // 失败发生在文件准备之后，必须检查数据库和物理目录两个存储边界。
             assertTrue(runCatching { repository.saveImport(candidate, character) }.isFailure)
             assertTrue(database.getChatSessionDao().getAllSessions().isEmpty())
-            assertTrue(File(directory, "repository").listFiles().orEmpty().none { it.isFile })
-            assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+            assertTrue(File(directory, "repository").walk().none { it.isFile })
+            assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         }
     }
 
@@ -356,8 +357,8 @@ class ChatArchiveRepositoryTest {
         )) {
             assertTrue(runCatching { repository.saveImport(candidate, id) }.isFailure)
             assertTrue(database.getChatSessionDao().getAllSessions().isEmpty())
-            assertTrue(File(directory, "repository").listFiles().orEmpty().filter { it.isFile }.isEmpty())
-            assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+            assertTrue(File(directory, "repository").walk().none { it.isFile })
+            assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         }
     }
 
@@ -370,7 +371,7 @@ class ChatArchiveRepositoryTest {
         val imported = repository.saveImport(input, characterId)
         val message = database.getChatMessageDao().getMessagesBySessionId(imported.sessionId).single()
         val image = database.getMessageImageDao().getByMessage(MessageType.Single, message.id).single()
-        files.withFileLease(image.imageUuid) { it.delete() }
+        files.withFileLease(image.imageUuid) { it.deleteForTest() }
         val target = File(context.cacheDir, "missing.jsonl")
         assertEquals(1, repository.exportToUri(imported.sessionId, Uri.fromFile(target)))
         val decoded = ChatArchiveCodec(Gson()).decode(target.readText(), "Missing")

@@ -7,11 +7,11 @@ import android.graphics.Matrix
 import android.net.Uri
 import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
+import java.io.BufferedInputStream
+import java.io.DataInputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.io.RandomAccessFile
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
@@ -30,11 +30,16 @@ import me.kafuuneko.rpclient.libs.room.model.MessageImageWithFile
 import me.kafuuneko.rpclient.libs.room.model.MessageWithImages
 import me.kafuuneko.rpclient.libs.room.model.PreparedFile
 import me.kafuuneko.rpclient.libs.room.repository.FileRepository
+import me.kafuuneko.rpclient.libs.room.repository.StoredFile
+import me.kafuuneko.rpclient.libs.room.repository.StoredFileTarget
 
 /**
  * 共享图片处理服务。
  * - 选图只校验暂存，提交时处理新增图片，最终字节统一交给文件仓库持有。
  * - 历史、预览与请求读取同一文件，不再生成独立发送缓存或重复压缩。
+ *
+ * Himitsu (P-06): stored images are sealed, so they are decoded and inspected from streams
+ * ([StoredFile]) and never through a file path.
  */
 class MessageImageRuntime(
     private val mContext: Context,
@@ -84,7 +89,7 @@ class MessageImageRuntime(
     }
 
     /** 在文件仓库保护范围内检查归档资源，导出 MIME 必须与实际字节一致。 */
-    internal fun archiveMimeType(file: File): String {
+    internal fun archiveMimeType(file: StoredFile): String {
         validate(file)
         return requireNotNull(bounds(file).outMimeType)
     }
@@ -98,7 +103,7 @@ class MessageImageRuntime(
     suspend fun prepareArchive(owner: String, input: InputStream): PreparedFile = input.use { source ->
         mFiles.prepareGenerated(owner) { target ->
             // 边复制边检查资源上限，避免先写完超大文件再校验。
-            target.outputStream().use { output ->
+            target.write { output ->
                 val buffer = ByteArray(8192)
                 var total = 0L
                 while (true) {
@@ -110,8 +115,8 @@ class MessageImageRuntime(
                     output.write(buffer, 0, count)
                 }
             }
-            validate(target)
-            requireNotNull(bounds(target).outMimeType)
+            validate(target.content())
+            requireNotNull(bounds(target.content()).outMimeType)
         }
     }
 
@@ -183,7 +188,7 @@ class MessageImageRuntime(
      * @param block 在读取保护范围内同步消费图片的操作。
      * @return 消费操作的结果。
      */
-    suspend fun <T> withSendFile(reference: LLMImageReference, block: (File) -> T): T =
+    suspend fun <T> withSendFile(reference: LLMImageReference, block: (StoredFile) -> T): T =
         mFiles.withFileLease(reference.uuid) { file -> block(file) }
 
     /**
@@ -229,11 +234,11 @@ class MessageImageRuntime(
                 // 原图模式只复制已校验的字节，其他模式只在此次入库前执行一次压缩。
                 if (settings.mode == ImageSendMode.Original) {
                     validateSendable(source)
-                    source.inputStream().use { input -> target.outputStream().use { input.copyTo(it) } }
+                    target.write { output -> source.openStream().use { it.copyTo(output) } }
                 } else {
                     encodeCompressed(source, target, settings)
                 }
-                requireNotNull(bounds(target).outMimeType) { "Invalid generated image" }
+                requireNotNull(bounds(target.content()).outMimeType) { "Invalid generated image" }
             }
         }
     }
@@ -267,7 +272,7 @@ class MessageImageRuntime(
      */
     suspend fun exportMetadata(uuid: String, prepared: PreparedFile? = null): ImageExportMetadata {
         // 在文件仓库保护范围内检查实际容器，草稿和历史图片都以当前字节为准。
-        val inspect: suspend (File) -> ImageExportMetadata = { original ->
+        val inspect: suspend (StoredFile) -> ImageExportMetadata = { original ->
             validate(original)
             val mimeType = bounds(original).outMimeType
             val extension = when (mimeType) {
@@ -293,43 +298,43 @@ class MessageImageRuntime(
      * @param prepared 未提交草稿的凭据；历史图片传 null。
      */
     suspend fun save(uuid: String, destination: Uri, prepared: PreparedFile? = null) {
-        val copy: suspend (File) -> Unit = { original ->
+        val copy: suspend (StoredFile) -> Unit = { original ->
             val output = mContext.contentResolver.openOutputStream(destination)
                 ?: error("Could not save the image")
-            output.use { target -> original.inputStream().use { it.copyTo(target) } }
+            output.use { target -> original.openStream().use { it.copyTo(target) } }
         }
         if (prepared != null) mFiles.withPreparedFile(prepared, copy)
         else mFiles.withFileLease(uuid, copy)
     }
 
     /** 读取已入库图片的实际元数据，历史请求不再依赖发送设置。 */
-    private fun describe(uuid: String, file: File): LLMImageReference {
+    private fun describe(uuid: String, file: StoredFile): LLMImageReference {
         val bounds = bounds(file)
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
             throw ImageRequestException(ImageRequestFailure.InvalidImage)
         }
         validateSendable(file)
-        val rotation = runCatching { ExifInterface(file).rotationDegrees }.getOrDefault(0)
+        val rotation = runCatching { exif(file).rotationDegrees }.getOrDefault(0)
         val swap = rotation == 90 || rotation == 270
         return LLMImageReference(uuid, bounds.outMimeType,
             if (swap) bounds.outHeight else bounds.outWidth,
-            if (swap) bounds.outWidth else bounds.outHeight, file.length())
+            if (swap) bounds.outWidth else bounds.outHeight, file.length)
     }
 
     /** 原图模式与历史读取共用协议支持范围，禁止发送不支持或超过硬上限的文件。 */
-    private fun validateSendable(file: File) {
+    private fun validateSendable(file: StoredFile) {
         val bounds = bounds(file)
         if (bounds.outMimeType !in setOf("image/jpeg", "image/png", "image/webp")) {
             throw ImageRequestException(ImageRequestFailure.OriginalUnsupported)
         }
-        if (file.length() > MessageImagePolicy.MAX_SEND_BYTES ||
+        if (file.length > MessageImagePolicy.MAX_SEND_BYTES ||
             maxOf(bounds.outWidth, bounds.outHeight) > 8000) {
             throw ImageRequestException(ImageRequestFailure.OriginalTooLarge)
         }
     }
 
     /** 透明图片保留 Alpha；逐步缩小高噪声图片，直到实际文件满足用户上限。 */
-    private suspend fun encodeCompressed(original: File, target: File, settings: ImageSendSettings) {
+    private suspend fun encodeCompressed(original: StoredFile, target: StoredFileTarget, settings: ImageSendSettings) {
         // 自动模式保留既有采样和质量，自定义模式额外施加宽高包围框。
         val edge = if (settings.mode == ImageSendMode.Custom) maxOf(settings.maxWidth, settings.maxHeight)
             else MessageImagePolicy.SEND_LONG_EDGE
@@ -344,11 +349,12 @@ class MessageImageRuntime(
             // 不依赖压缩质量与文件大小单调对应，使用真实编码结果检查预算。
             while (true) {
                 currentCoroutineContext().ensureActive()
-                FileOutputStream(target).use { output ->
-                    val format = if (bitmap.hasAlpha()) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
-                    if (!bitmap.compress(format, 85, output)) throw ImageRequestException(ImageRequestFailure.InvalidImage)
+                val current = bitmap
+                target.write { output ->
+                    val format = if (current.hasAlpha()) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
+                    if (!current.compress(format, 85, output)) throw ImageRequestException(ImageRequestFailure.InvalidImage)
                 }
-                if (target.length() <= settings.maxBytes) break
+                if (target.content().length <= settings.maxBytes) break
                 if (maxOf(bitmap.width, bitmap.height) <= 128) throw ImageRequestException(ImageRequestFailure.InvalidImage)
                 val scaled = bitmap.scale(
                     (bitmap.width * 0.75).roundToInt().coerceAtLeast(1),
@@ -363,23 +369,43 @@ class MessageImageRuntime(
     }
 
     /** 通过解码器与容器结构校验真实格式，禁止伪 MIME、动画和超大像素。 */
-    private fun validate(file: File) {
-        requireValidImage(file.length() <= MessageImagePolicy.MAX_ORIGINAL_BYTES)
+    private fun validate(file: StoredFile) {
+        val fileLength = file.length
+        requireValidImage(fileLength <= MessageImagePolicy.MAX_ORIGINAL_BYTES)
         val bounds = bounds(file)
         requireValidImage(bounds.outWidth > 0 && bounds.outHeight > 0)
         requireValidImage(bounds.outWidth.toLong() * bounds.outHeight <= MessageImagePolicy.MAX_ORIGINAL_PIXELS)
         requireValidImage(bounds.outMimeType in setOf("image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"))
+        if (bounds.outMimeType !in setOf("image/png", "image/webp")) return
         // PNG / WebP 按容器块跳转检查动画标记，不将压缩像素误识别成块头。
-        RandomAccessFile(file, "r").use { input ->
-            var offset = if (bounds.outMimeType == "image/png") 8L else 12L
-            while (bounds.outMimeType in setOf("image/png", "image/webp") && offset + 8 <= input.length()) {
-                input.seek(offset)
-                val png = bounds.outMimeType == "image/png"
+        // Himitsu (P-06): walks the stream forward with skips, since a sealed file cannot seek.
+        DataInputStream(BufferedInputStream(file.openStream())).use { input ->
+            val png = bounds.outMimeType == "image/png"
+            var offset = if (png) 8L else 12L
+            skipFully(input, offset)
+            while (offset + 8 <= fileLength) {
                 val size = if (png) input.readInt().toLong() and 0xffffffffL else 0L
                 val name = ByteArray(4).also { input.readFully(it) }.toString(Charsets.US_ASCII)
                 val length = if (png) size else Integer.reverseBytes(input.readInt()).toLong() and 0xffffffffL
                 requireValidImage(name !in setOf("acTL", "ANIM", "ANMF"))
-                offset += 8 + length + if (png) 4 else length % 2
+                val next = offset + 8 + length + if (png) 4 else length % 2
+                if (next + 8 > fileLength) break
+                skipFully(input, next - offset - 8)
+                offset = next
+            }
+        }
+    }
+
+    /** Skips exactly [count] bytes; a short file throws, as a short seek-and-read did. */
+    private fun skipFully(input: InputStream, count: Long) {
+        var remaining = count
+        while (remaining > 0) {
+            val skipped = input.skip(remaining)
+            if (skipped > 0) {
+                remaining -= skipped
+            } else {
+                if (input.read() < 0) throw IOException("Unexpected end of image")
+                remaining--
             }
         }
     }
@@ -390,13 +416,16 @@ class MessageImageRuntime(
     }
 
     /** 读取像素信息，不分配整图内存。 */
-    private fun bounds(file: File): BitmapFactory.Options = BitmapFactory.Options().apply {
+    private fun bounds(file: StoredFile): BitmapFactory.Options = BitmapFactory.Options().apply {
         inJustDecodeBounds = true
-        BitmapFactory.decodeFile(file.absolutePath, this)
+        file.openStream().use { BitmapFactory.decodeStream(it, null, this) }
     }
 
+    /** Himitsu (P-06): EXIF is parsed from a stream; the constructor reads everything it needs. */
+    private fun exif(file: StoredFile): ExifInterface = file.openStream().use { ExifInterface(it) }
+
     /** 有界采样后应用全部 EXIF 镜像及旋转方向，最后精确限制长边。 */
-    private fun decode(file: File, edge: Int): Bitmap? {
+    private fun decode(file: StoredFile, edge: Int): Bitmap? {
         val bounds = bounds(file)
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
         var sample = 1
@@ -405,11 +434,11 @@ class MessageImageRuntime(
             bounds.outWidth.toLong() * bounds.outHeight / sample / sample > 4096L * 4096) {
             sample *= 2
         }
-        var bitmap = BitmapFactory.decodeFile(file.absolutePath, BitmapFactory.Options().apply {
-            inSampleSize = sample
-        }) ?: return null
+        var bitmap = file.openStream().use {
+            BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply { inSampleSize = sample })
+        } ?: return null
         // ExifInterface 统一表示旋转和水平翻转，涵盖八种方向。
-        val exif = runCatching { ExifInterface(file) }.getOrNull()
+        val exif = runCatching { exif(file) }.getOrNull()
         val matrix = Matrix().apply {
             if (exif?.isFlipped == true) postScale(-1f, 1f)
             postRotate((exif?.rotationDegrees ?: 0).toFloat())

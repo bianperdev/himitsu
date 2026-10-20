@@ -71,4 +71,8 @@ interface FileDao {
      */
     @Query("SELECT * FROM files WHERE hash = :hash")
     suspend fun getByHash(hash: String): List<FileEntity>
+
+    /** Himitsu (P-06): every indexed hash, to find sealed files that nothing references. */
+    @Query("SELECT DISTINCT hash FROM files")
+    suspend fun getAllHashes(): List<String>
 }

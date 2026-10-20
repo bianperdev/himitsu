@@ -61,7 +61,7 @@ class LLMProviderDeletionTest {
             mDatabase,
             gson,
             RegexScriptCodec(gson),
-            MessageImageRepository(mDatabase, FileRepository(context, mDatabase))
+            MessageImageRepository(mDatabase, FileRepository(context, mDatabase, TestFileCipher))
         )
     }
 

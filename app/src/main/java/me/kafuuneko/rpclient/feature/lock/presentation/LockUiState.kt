@@ -31,13 +31,20 @@ sealed class LockContentState {
      *
      * @property canRetry whether the failure may be temporary
      * @property canUseRecoveryCode whether a recovery code is configured for this data
+     * @property preferRecoveryCode whether the recovery code is the likely way out, so it comes first
      * @property canStartOver whether retrying cannot help, so setting the data aside is offered
+     * @property canSetAside whether a plain database can never be encrypted, so setting it
+     *   aside and continuing is offered
+     * @property isExporting whether a copy of the files is being saved
      */
     data class StorageError(
         val failure: StorageFailure,
         val canRetry: Boolean,
         val canUseRecoveryCode: Boolean,
-        val canStartOver: Boolean
+        val canStartOver: Boolean,
+        val preferRecoveryCode: Boolean = false,
+        val canSetAside: Boolean = false,
+        val isExporting: Boolean = false
     ) : LockContentState()
 
     /**
@@ -63,6 +70,8 @@ sealed class LockDialogState {
     ) : LockDialogState()
 
     data object ConfirmStartOver : LockDialogState()
+    data object ConfirmSetAside : LockDialogState()
+    data object ConfirmExport : LockDialogState()
 }
 
 /** Why a recovery code was not accepted. */

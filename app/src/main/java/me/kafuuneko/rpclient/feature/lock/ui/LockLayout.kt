@@ -178,25 +178,43 @@ private fun StorageErrorContent(state: LockContentState.StorageError, emit: Lock
         title = stringResource(R.string.security_storage_error_title),
         message = message
     ) {
-        if (state.canRetry) {
-            Button(onClick = { LockUiIntent.Retry.emit() }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.security_action_retry))
+        val recoveryFirst = state.canUseRecoveryCode && (state.preferRecoveryCode || !state.canRetry)
+        val recoveryButton: @Composable () -> Unit = {
+            Icon(Icons.Rounded.Key, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Text(stringResource(R.string.security_action_use_recovery_code))
+        }
+        if (recoveryFirst) {
+            Button(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                recoveryButton()
             }
         }
-        if (state.canUseRecoveryCode) {
-            val recoveryButton: @Composable () -> Unit = {
-                Icon(Icons.Rounded.Key, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-                Text(stringResource(R.string.security_action_use_recovery_code))
-            }
-            if (state.canRetry) {
-                OutlinedButton(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
-                    recoveryButton()
+        if (state.canRetry) {
+            if (recoveryFirst) {
+                OutlinedButton(onClick = { LockUiIntent.Retry.emit() }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.security_action_retry))
                 }
             } else {
-                Button(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
-                    recoveryButton()
+                Button(onClick = { LockUiIntent.Retry.emit() }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.security_action_retry))
                 }
             }
+        }
+        if (state.canUseRecoveryCode && !recoveryFirst) {
+            OutlinedButton(onClick = { LockUiIntent.ShowRecoveryCodeDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                recoveryButton()
+            }
+        }
+        if (state.canSetAside) {
+            OutlinedButton(onClick = { LockUiIntent.ShowSetAsideDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.security_action_set_aside))
+            }
+        }
+        TextButton(
+            onClick = { LockUiIntent.ShowExportDialog.emit() },
+            enabled = !state.isExporting,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(if (state.isExporting) R.string.security_export_working else R.string.security_action_export))
         }
         if (state.canStartOver) {
             TextButton(onClick = { LockUiIntent.ShowStartOverDialog.emit() }, modifier = Modifier.fillMaxWidth()) {
@@ -221,6 +239,25 @@ private fun LockDialogs(state: LockDialogState, emit: LockUiIntent.() -> Unit) {
             confirmText = stringResource(R.string.security_start_over_confirm),
             confirmIsDestructive = true,
             onConfirm = { LockUiIntent.ConfirmStartOver.emit() }
+        )
+        LockDialogState.ConfirmSetAside -> AppConfirmDialog(
+            onDismissRequest = { LockUiIntent.DismissDialog.emit() },
+            title = stringResource(R.string.security_set_aside_title),
+            message = stringResource(R.string.security_set_aside_message),
+            badgeIcon = Icons.Rounded.WarningAmber,
+            badgeTone = DialogBadgeTone.Danger,
+            confirmText = stringResource(R.string.security_set_aside_confirm),
+            confirmIsDestructive = true,
+            onConfirm = { LockUiIntent.ConfirmSetAside.emit() }
+        )
+        LockDialogState.ConfirmExport -> AppConfirmDialog(
+            onDismissRequest = { LockUiIntent.DismissDialog.emit() },
+            title = stringResource(R.string.security_export_title),
+            message = stringResource(R.string.security_export_message),
+            badgeIcon = Icons.Rounded.Key,
+            badgeTone = DialogBadgeTone.Primary,
+            confirmText = stringResource(R.string.security_export_confirm),
+            onConfirm = { LockUiIntent.ConfirmExport.emit() }
         )
     }
 }
@@ -258,6 +295,8 @@ private fun StorageFailure.messageRes(): Int = when (this) {
     StorageFailure.KeystoreUnavailable -> R.string.security_storage_error_keystore_unavailable
     StorageFailure.StorageError -> R.string.security_storage_error_storage
     StorageFailure.MigrationFailed -> R.string.security_storage_error_migration_failed
+    StorageFailure.PlainDatabaseUnusable -> R.string.security_storage_error_plain_unusable
+    StorageFailure.RestoreIncomplete -> R.string.security_storage_error_restore_incomplete
 }
 
 private fun RecoveryCodeError.messageRes(): Int = when (this) {
@@ -275,9 +314,10 @@ private fun LockLayoutStorageErrorPreview() {
             uiState = LockUiState.Normal(
                 LockContentState.StorageError(
                     failure = StorageFailure.KeystoreKeyLost,
-                    canRetry = false,
+                    canRetry = true,
                     canUseRecoveryCode = true,
-                    canStartOver = true
+                    canStartOver = true,
+                    preferRecoveryCode = true
                 )
             ),
             emit = {}

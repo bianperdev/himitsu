@@ -11,7 +11,10 @@ Approved by the maintainer on 2026-10-20. This document records the decisions of
 | API keys | Stay in `llm_providers.apiKey`, protected by the encrypted database. No schema change. |
 | Device without a screen lock | The app lock lets the user in and shows a persistent warning (removing the system screen lock already requires the credential). |
 | Plain database from earlier Himitsu builds | Migrated with `sqlcipher_export`, verified, then the plain files are deleted. |
-| Avatars and images (P-06) | Deferred to a later branch (maintainer decision, 2026-10-20). |
+| Avatars and images (P-06) | Sealed with a segmented AES-256-GCM format under the `Files` key, in `feat/security-followups`. |
+| Sensitive settings changes | Turning the lock off and changing the recovery code ask for biometrics or the device credential. |
+| Recents on Android 12 and earlier | With the lock on, `FLAG_SECURE` hides the preview and also blocks screenshots (maintainer decision, 2026-10-20). |
+| Paranoid mode | Not in `feat/security-followups` (maintainer decision, 2026-10-20). |
 | P-15 encrypted export | Deferred, tracked in ROADMAP.md. |
 | P-16 OpenRouter routing ID | Off by default, opt-in. |
 | User-installed CAs (P-09) | Not trusted; only system CAs. |
@@ -35,6 +38,20 @@ Approved by the maintainer on 2026-10-20. This document records the decisions of
   - The user adds or removes a fingerprint, or disables the screen lock: the Keystore key is not bound to authentication, so nothing happens to the data.
   - The Keystore key is lost (OEM bug, factory reset of the secure element) or the key file is missing: the app shows an error screen. Options: retry, unlock with the recovery code, or start over after moving the old files aside with an `.unrecoverable-<time>` suffix (key file, avatars and chat images, databases, sealed preferences, in that order). Nothing is ever deleted automatically.
 - Paranoid mode (not implemented): a slot wrapped with Argon2id over a user passphrase (`com.lambdapioneer.argon2kt`, MIT). It would require deferring every database access until the passphrase is entered. Forgetting the passphrase would destroy the data.
+
+### Stored files (P-06)
+
+- Format (`FileCipher`, no dependency): header `HMF1`, a version byte and a random 32-byte salt; then AES-256-GCM segments of 64 KiB plaintext with a 16-byte tag. Each file has its own key, HKDF of the `Files` key with the salt (`himitsu/v1/files/segment`). A segment's nonce holds its index and a last-segment flag, and the header is authenticated with every segment, so tampering, reordering, truncation and extension are detected. No plaintext is returned before its segment verifies.
+- Names: HMAC-SHA256 of the content hash under a second derived key (`himitsu/v1/files/name`), in `app_repository/sealed/`, so a name does not reveal a known image. The `files` table keeps the SHA-256 for deduplication, inside SQLCipher. Drafts and their `.meta` files are sealed too.
+- Reading goes through `StoredFile` streams (`BitmapFactory.decodeStream`, `ExifInterface(InputStream)`); nothing reads a stored file by path.
+- Migration: after the app opens, each plain file of an earlier build is sealed into a synced `.sealing` copy, read back and checked against its hash and size, renamed, and only then is the plain file deleted. Files being read, files whose content does not match their name and storage errors are left for a later start.
+- Temporary files (chat archive import and export) are sealed with `FileCipher.ephemeral()`, whose key lives only in the process, and deleted at startup.
+
+### Set-aside data
+
+- "Start over" and "set aside and continue" move files aside with a `.<kind>-<yyyyMMdd-HHmmss>` suffix and never delete them. The security settings list these copies and can save them as a byte-for-byte `.zip`, delete them (a ticked box and reauthentication; the only deletion of user data in the app) or restore them.
+- Restore opens the copy's key file with its own Keystore key or its recovery code, checks the key against the copy's main database, seals it again under a new Keystore key, and records the swap in `himitsu_restore.journal`. The swap happens at the start of the next process, before anything opens the files: the data in use moves aside as `.replaced-<time>` and the copy takes its place. Every step renames only what is still at its source and never replaces anything, so a crash is finished on the next start.
+- A plain database that can never be encrypted (damaged, or two plain copies) is reported as `PlainDatabaseUnusable`; "set aside and continue" moves it aside still in plain form, and the dialog says so.
 
 ### App lock
 

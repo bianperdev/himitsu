@@ -1,7 +1,6 @@
 package me.kafuuneko.rpclient.libs.chat
 
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.MessageDigest
@@ -9,6 +8,7 @@ import java.util.Base64
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import me.kafuuneko.rpclient.libs.room.model.MessageImagePolicy
+import me.kafuuneko.rpclient.libs.room.repository.StoredFile
 
 /**
  * 归档图片字节的无损传输封装。
@@ -54,14 +54,37 @@ internal object ChatArchiveImagePayload {
         return hash
     }
 
-    /** 为文件导出试压缩；临时文件由调用方拥有并在成功、异常或取消后释放。 */
-    fun compress(file: File, temporary: File, hash: String, checkActive: () -> Unit): Boolean {
-        file.inputStream().use { input ->
-            GZIPOutputStream(temporary.outputStream()).use { output ->
+    /**
+     * 为文件导出试压缩；临时文件由调用方拥有并在成功、异常或取消后释放。
+     * Himitsu (P-06): writes to [temporary], which the caller keeps sealed, and counts the bytes itself.
+     */
+    fun compress(file: StoredFile, temporary: OutputStream, hash: String, checkActive: () -> Unit): Boolean {
+        val counted = CountingOutputStream(temporary)
+        file.openStream().use { input ->
+            GZIPOutputStream(counted).use { output ->
                 copyOriginal(input, output, hash, checkActive)
             }
         }
-        return shouldCompress(file.length(), temporary.length())
+        return shouldCompress(file.length, counted.count)
+    }
+
+    private class CountingOutputStream(private val mOut: OutputStream) : OutputStream() {
+        var count = 0L
+            private set
+
+        override fun write(b: Int) {
+            mOut.write(b)
+            count++
+        }
+
+        override fun write(b: ByteArray, off: Int, len: Int) {
+            mOut.write(b, off, len)
+            count += len
+        }
+
+        override fun flush() = mOut.flush()
+
+        override fun close() = mOut.close()
     }
 
     /** 小型内存归档入口；正式文件导出使用 compress 和分块 Base64，不缓存整张图片。 */

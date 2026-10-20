@@ -30,7 +30,7 @@ class GroupChatRepositorySummaryTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = GroupChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database)))
+        repository = GroupChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database, TestFileCipher)))
         sessionId = runBlocking {
             database.getGroupChatSessionDao().insertOrReplace(
                 GroupChatSession(

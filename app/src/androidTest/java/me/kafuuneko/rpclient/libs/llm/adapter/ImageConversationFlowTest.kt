@@ -232,7 +232,7 @@ class ImageConversationFlowTest {
                     await { (vm.uiStateFlow.value as? GroupChatUiState.Normal)?.conversationState?.generationState == GroupChatGenerationState.Idle }
                     val message = repository.getGroupChatData(id)!!.messages.single { it.source == GroupChatMessage.Source.User }
                     val original = repository.getMessagesWithImages(listOf(message.id)).single().images.single().image.imageUuid
-                    val originalBytes = requireNotNull(files.getFile(original)).readBytes()
+                    val originalBytes = requireNotNull(files.readBytes(original))
                     // 已有图片不能因修改设置而重新压缩；新图在编辑保存时才固定尺寸。
                     AppModel.imageSendSettings = ImageSendSettings(ImageSendMode.Custom, 64, 128, 128).encode()
                     vm.emit(GroupChatUiIntent.StartEditMessage(message.id))
@@ -247,7 +247,7 @@ class ImageConversationFlowTest {
                     assertEquals("edited", edited.content)
                     assertEquals(2, edited.images.size)
                     assertEquals(original, edited.images.first().image.imageUuid)
-                    assertTrue(originalBytes.contentEquals(requireNotNull(files.getFile(original)).readBytes()))
+                    assertTrue(originalBytes.contentEquals(requireNotNull(files.readBytes(original))))
                     val refs = runtime.references(listOf(edited)).getValue(message.id)
                     assertTrue(refs.last().width <= 128 && refs.last().height <= 128)
                     vm.emit(GroupChatUiIntent.ImageAction(MessageImageAction.Preview(edited.images.map { it.image.imageUuid }, 1)))

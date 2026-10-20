@@ -71,6 +71,7 @@ import me.kafuuneko.rpclient.libs.room.entity.LLMProvider
 import me.kafuuneko.rpclient.libs.room.model.MessageImageInput
 import me.kafuuneko.rpclient.libs.room.repository.ChatRepository
 import me.kafuuneko.rpclient.libs.room.repository.FileRepository
+import me.kafuuneko.rpclient.libs.room.repository.TestFileCipher
 import me.kafuuneko.rpclient.libs.room.repository.LLMRequestLogRepository
 import me.kafuuneko.rpclient.libs.room.repository.MessageImageRepository
 import okhttp3.MediaType.Companion.toMediaType
@@ -132,7 +133,7 @@ class MultimodalImageIntegrationTest {
         val providerContext = object : ContextWrapper(context) {
             override fun getContentResolver() = resolver
         }
-        val files = FileRepository(providerContext, database)
+        val files = FileRepository(providerContext, database, TestFileCipher)
         val coordinator = MessageImageCoordinator(MessageImageRuntime(providerContext, files), files) {}
         coordinator.choose(editing = false)
         val pick = async(start = CoroutineStart.UNDISPATCHED) {
@@ -226,7 +227,7 @@ class MultimodalImageIntegrationTest {
         // 隔离所有数据库和磁盘目录，不读取或修改用户聊天。
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
         logDatabase = Room.inMemoryDatabaseBuilder(context, RequestLogDatabase::class.java).build()
-        files = FileRepository(context, database)
+        files = FileRepository(context, database, TestFileCipher)
         media = MessageImageRuntime(context, files) { ImageSendSettings() }
         chat = ChatRepository(database, Gson(), MessageImageRepository(database, files))
         logs = LLMRequestLogRepository(logDatabase)
@@ -284,17 +285,18 @@ class MultimodalImageIntegrationTest {
         val custom = runtime.references(listOf(compressed)).getValue(compressed.key.messageId).single()
         assertEquals(128, custom.width)
         assertEquals(256, custom.height)
-        val stored = requireNotNull(files.getFile(custom.uuid))
-        assertFalse(original.readBytes().contentEquals(stored.readBytes()))
+        val stored = requireNotNull(files.readBytes(custom.uuid))
+        val storedFile = TestFileCipher.sealedFile(directory, requireNotNull(files.getFileEntity(custom.uuid)).hash)
+        assertFalse(original.readBytes().contentEquals(stored))
         val destination = File(directory, "saved.jpg")
         runtime.save(custom.uuid, Uri.fromFile(destination))
-        assertTrue(stored.readBytes().contentEquals(destination.readBytes()))
-        assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+        assertTrue(stored.contentEquals(destination.readBytes()))
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
         chat.deleteMessage(compressed.key.messageId)
-        assertFalse(stored.exists())
+        assertFalse(storedFile.exists())
         chat.deleteMessage(saved.key.messageId)
-        assertTrue(File(directory, "repository").listFiles().orEmpty().none { it.isFile })
+        assertTrue(File(directory, "repository").walk().none { it.isFile })
     }
 
     /** 原图发送限制在提交时检查；失败保留草稿，切换压缩后可重试且不保留源图。 */
@@ -330,14 +332,14 @@ class MultimodalImageIntegrationTest {
         assertTrue(reference.byteCount <= 64 * 1024L)
         assertTrue(reference.width < 1024 && reference.height < 1024)
         runtime.withSendFile(reference) {
-            val decoded = BitmapFactory.decodeFile(it.absolutePath)
+            val decoded = it.openStream().use(BitmapFactory::decodeStream)
             assertTrue(decoded.hasAlpha())
             decoded.recycle()
         }
         assertTrue(coordinator.state.draft.isEmpty())
         assertNull(files.getFileEntity(source.file.uuid))
-        assertFalse(File(directory, "repository/${source.file.hash}").exists())
-        assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+        assertFalse(TestFileCipher.sealedFile(directory, source.file.hash).exists())
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
     }
 
@@ -366,7 +368,7 @@ class MultimodalImageIntegrationTest {
             runtime.submit(listOf(good, bad).map(MessageImageInput::Prepared)) { committed = true }
         }.isFailure)
         assertFalse(committed)
-        val staging = File(directory, "repository/staging").listFiles().orEmpty().map { it.name }.toSet()
+        val staging = TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().map { it.name }.toSet()
         assertEquals(setOf(good.handle, "${good.handle}.meta", bad.handle, "${bad.handle}.meta"), staging)
         files.releasePrepared(good)
         files.releasePrepared(bad)
@@ -379,7 +381,7 @@ class MultimodalImageIntegrationTest {
         val started = CompletableDeferred<Unit>()
         val job = async {
             files.prepareGenerated("cancel") { target ->
-                target.writeText("partial image")
+                target.write { it.write("partial image".toByteArray()) }
                 started.complete(Unit)
                 awaitCancellation()
             }
@@ -387,10 +389,10 @@ class MultimodalImageIntegrationTest {
         withTimeout(5_000) { started.await() }
         job.cancelAndJoin()
         assertEquals(setOf(source.handle, "${source.handle}.meta"),
-            File(directory, "repository/staging").listFiles().orEmpty().map { it.name }.toSet())
+            TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().map { it.name }.toSet())
         assertNull(files.getFileEntity(source.file.uuid))
         files.releasePrepared(source)
-        assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
     }
 
     /** 编辑只处理新图；事务失败或取消编辑保留原消息，成功才回收移除项。 */
@@ -405,8 +407,8 @@ class MultimodalImageIntegrationTest {
             chat.createUserMessageWithImages(sessionId, "old", it.filterIsInstance<MessageImageInput.Prepared>())
         }
         val ids = saved.images.map { it.image.imageUuid }
-        val removed = requireNotNull(files.getFile(ids[0]))
-        val retained = requireNotNull(files.getFile(ids[1])).readBytes()
+        val removed = TestFileCipher.sealedFile(directory, requireNotNull(files.getFileEntity(ids[0])).hash)
+        val retained = requireNotNull(files.readBytes(ids[1]))
         settings = ImageSendSettings(ImageSendMode.Custom, 64, 128, 128)
         coordinator.startEditing(ids)
         coordinator.handle(MessageImageAction.Remove(ids[0], editing = true))
@@ -424,25 +426,25 @@ class MultimodalImageIntegrationTest {
         assertEquals(ids, chat.getMessagesWithImages(listOf(saved.key.messageId)).single().images.map { it.image.imageUuid })
         assertTrue(removed.exists())
         assertEquals(setOf(added.handle, "${added.handle}.meta"),
-            File(directory, "repository/staging").listFiles().orEmpty().map { it.name }.toSet())
+            TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().map { it.name }.toSet())
         val edited = coordinator.submit(editing = true) {
             chat.editMessageWithImages(sessionId, saved.key.messageId, "new", it)
         }
         assertFalse(removed.exists())
         assertEquals(ids[1], edited.images.first().image.imageUuid)
-        assertTrue(retained.contentEquals(requireNotNull(files.getFile(ids[1])).readBytes()))
+        assertTrue(retained.contentEquals(requireNotNull(files.readBytes(ids[1]))))
         assertTrue(runtime.references(listOf(edited)).getValue(saved.key.messageId).last().width <= 128)
-        assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         coordinator.startEditing(edited.images.map { it.image.imageUuid })
         coordinator.handle(MessageImageAction.Remove(ids[1], editing = true))
         coordinator.choose(editing = true)
         coordinator.handle(MessageImageAction.Picked(listOf(Uri.fromFile(fixture()))))
         coordinator.cancelEditing()
-        assertTrue(retained.contentEquals(requireNotNull(files.getFile(ids[1])).readBytes()))
+        assertTrue(retained.contentEquals(requireNotNull(files.readBytes(ids[1]))))
         assertEquals(edited, chat.getMessagesWithImages(listOf(saved.key.messageId)).single())
-        assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         chat.deleteSession(sessionId)
-        assertTrue(File(directory, "repository").listFiles().orEmpty().none { it.isFile })
+        assertTrue(File(directory, "repository").walk().none { it.isFile })
     }
 
     /** 保存文档类型必须来自真实字节，且草稿和历史图片导出均保留原图。 */
@@ -509,7 +511,7 @@ class MultimodalImageIntegrationTest {
         assertEquals(listOf(uuid), coordinator.state.draft)
         assertEquals(R.string.image_edit_ended, coordinator.state.errorResId)
         coordinator.releaseDrafts()
-        assertTrue(File(context.getDir("repository", Context.MODE_PRIVATE), "staging").listFiles().orEmpty().isEmpty())
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
     }
 
     @Test
@@ -648,7 +650,7 @@ class MultimodalImageIntegrationTest {
         for (bytes in listOf("not an image".toByteArray(), "GIF89a".toByteArray() + ByteArray(40))) {
             val original = File(directory, UUID.randomUUID().toString() + ".png").apply { writeBytes(bytes) }
             assertTrue(runCatching { media.prepare("invalid", Uri.fromFile(original)) }.isFailure)
-            assertTrue(File(context.getDir("repository", Context.MODE_PRIVATE), "staging").listFiles().orEmpty().isEmpty())
+            assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         }
     }
 
@@ -733,7 +735,7 @@ class MultimodalImageIntegrationTest {
         val reference = media.references(listOf(saved)).getValue(saved.key.messageId).single()
         chat.editMessageWithImages(sessionId, saved.key.messageId, "edited", emptyList())
         assertNotNull(runCatching { chat.saveSummary(sessionId, "stale", saved.key.messageId, expectedSnapshot = snapshot) }.exceptionOrNull())
-        assertNotNull(runCatching { media.withSendFile(reference) { it.length() } }.exceptionOrNull())
+        assertNotNull(runCatching { media.withSendFile(reference) { it.length } }.exceptionOrNull())
         assertEquals(null, chat.getLatestSummary(sessionId))
     }
 

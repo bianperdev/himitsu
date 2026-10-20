@@ -5,9 +5,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -44,6 +46,12 @@ class LockActivity : FragmentActivity(), KoinComponent {
     private val mAppThemeManager by inject<AppThemeManager>()
     private val mLockManager by inject<AppLockManager>()
     private lateinit var mPrompt: BiometricPrompt
+    private val mExportLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+        mViewModel.emit(LockUiIntent.ExportTo(uri))
+    }
+    private val mConfirmLauncher = registerForActivityResult(ConfirmCredentialContract()) { confirmed ->
+        mViewModel.emit(LockUiIntent.ConfirmationFinished(confirmed))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +83,15 @@ class LockActivity : FragmentActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
         WindowProtection.apply(this)
+        // A prompt counted as showing must have its fragment; otherwise its callback was lost.
+        // Checked one frame later, so a success callback that arrives after onResume comes first.
+        window.decorView.post {
+            if (isFinishing || !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return@post
+            supportFragmentManager.executePendingTransactions()
+            if (mLockManager.isAuthenticating && supportFragmentManager.findFragmentByTag(BIOMETRIC_FRAGMENT_TAG) == null) {
+                mLockManager.clearStaleAuthentication()
+            }
+        }
         mViewModel.emit(LockUiIntent.Resume)
     }
 
@@ -84,12 +101,26 @@ class LockActivity : FragmentActivity(), KoinComponent {
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { wrapper ->
                     wrapper.consumeIfNotHandled { event ->
-                        if (event is LockViewEvent.ShowAuthenticationPrompt && !mLockManager.isAuthenticating) {
-                            mLockManager.authenticate(
-                                prompt = mPrompt,
-                                title = getString(R.string.security_lock_prompt_title),
-                                subtitle = getString(R.string.security_lock_prompt_subtitle)
-                            )
+                        when (event) {
+                            LockViewEvent.ShowAuthenticationPrompt -> if (!mLockManager.isAuthenticating) {
+                                mLockManager.authenticate(
+                                    prompt = mPrompt,
+                                    title = getString(R.string.security_lock_prompt_title),
+                                    subtitle = getString(R.string.security_lock_prompt_subtitle)
+                                )
+                            }
+                            is LockViewEvent.PickExportDestination -> mExportLauncher.launch(event.fileName)
+                            LockViewEvent.RequestConfirmation -> mConfirmLauncher.launch(Unit)
+                            LockViewEvent.RestartApp -> {
+                                startActivity(
+                                    Intent(this@LockActivity, MainActivity::class.java)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                )
+                                finishAffinity()
+                                Runtime.getRuntime().exit(0)
+                            }
+                            is LockViewEvent.ShowMessage ->
+                                Toast.makeText(this@LockActivity, event.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -112,6 +143,9 @@ class LockActivity : FragmentActivity(), KoinComponent {
         finish()
     }
 }
+
+/** Tag under which `androidx.biometric` 1.1.0 adds the fragment of a prompt on screen. */
+private const val BIOMETRIC_FRAGMENT_TAG = "androidx.biometric.BiometricFragment"
 
 /** [UnlockEntry] that opens [LockActivity]. */
 object LockActivityEntry : UnlockEntry {

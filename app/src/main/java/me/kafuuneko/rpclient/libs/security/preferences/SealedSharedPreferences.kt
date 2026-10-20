@@ -10,10 +10,14 @@ import me.kafuuneko.rpclient.libs.security.key.AesGcm
 /** Result of reading one stored string. */
 internal sealed class OpenedValue {
     /** A value written before encryption existed; returned as is and sealed at startup. */
-    data class Plain(val value: String) : OpenedValue()
+    data class Plain(val value: String) : OpenedValue() {
+        override fun toString(): String = "Plain([REDACTED])"
+    }
 
     /** A sealed value, decrypted. */
-    data class Value(val value: String) : OpenedValue()
+    data class Value(val value: String) : OpenedValue() {
+        override fun toString(): String = "Value([REDACTED])"
+    }
 
     /** Sealed, but the key is not available yet (startup) or not at all (Keystore failure). */
     data object Unavailable : OpenedValue()

@@ -13,27 +13,34 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.libs.room.repository.StoredFile
+import me.kafuuneko.rpclient.libs.security.files.FileCipher
 
 /**
  * 归档读写阶段的私有图片暂存及用户授权目录解析。
  * - 页面只持随机资源键，不持 Base64 或文件路径。
  * - 外部 URL 仅作为匹配线索，不发起网络下载，不访问授权目录以外的文件。
+ * - Himitsu (P-06): staged images and export temporaries are sealed with a key that lives only
+ *   in this process. Files of an earlier process can never be read again, so they are deleted.
  */
 class ChatArchiveImageStore(private val mContext: Context) {
     private val mRoot = File(mContext.cacheDir, "chat-archive-images")
     private val mActiveOwners = ConcurrentHashMap.newKeySet<String>()
+    private val mCipher = FileCipher.ephemeral()
 
     /** 创建一次导入的独立目录，并清理旧进程留下的过期资源。 */
     fun createOwner(): String {
         mRoot.mkdirs()
-        mRoot.listFiles().orEmpty().filter {
-            it.name !in mActiveOwners && System.currentTimeMillis() - it.lastModified() > 86_400_000L
-        }
-            .forEach { it.deleteRecursively() }
+        discardStale()
         return UUID.randomUUID().toString().also {
-            check(File(mRoot, it).mkdirs()) { "Cannot create archive image directory" }
             mActiveOwners.add(it)
+            check(File(mRoot, it).mkdirs()) { "Cannot create archive image directory" }
         }
+    }
+
+    /** Himitsu (P-06): deletes what no active import or export of this process owns. */
+    fun discardStale() {
+        mRoot.listFiles().orEmpty().filter { it.name !in mActiveOwners }.forEach { it.deleteRecursively() }
     }
 
     /** 将内嵌数据解码到暂存，返回移除 Base64 后的描述；损坏数据使整个导入失败。 */
@@ -45,7 +52,9 @@ class ChatArchiveImageStore(private val mContext: Context) {
             // 严格解码，不把损坏的内嵌图片降级为静默丢失。
             val hash = ChatArchiveImagePayload.open(image).use { input ->
                 target.outputStream().use { output ->
-                    ChatArchiveImagePayload.copyOriginal(input, output, image.hash, checkActive)
+                    mCipher.seal(output) { sealed ->
+                        ChatArchiveImagePayload.copyOriginal(input, sealed, image.hash, checkActive)
+                    }
                 }
             }
             return image.copy(data = null, resourceKey = key, hash = hash, compression = "none")
@@ -57,17 +66,19 @@ class ChatArchiveImageStore(private val mContext: Context) {
 
     /** 尝试无损压缩后分块写出图片，只有原始字节参与 hash 校验。 */
     fun writeExportImage(
-        owner: String, source: File, hash: String, mimeType: String, writer: Writer,
+        owner: String, source: StoredFile, hash: String, mimeType: String, writer: Writer,
         checkActive: () -> Unit
     ) {
         val temporary = file(owner, UUID.randomUUID().toString())
         try {
-            val useGzip = ChatArchiveImagePayload.compress(source, temporary, hash, checkActive)
+            val useGzip = temporary.outputStream().use { output ->
+                mCipher.seal(output) { sealed -> ChatArchiveImagePayload.compress(source, sealed, hash, checkActive) }
+            }
             val image = ChatArchiveImage(mimeType = mimeType, hash = hash,
                 compression = if (useGzip) "gzip" else "none")
             // 试压缩使用磁盘暂存；不把原图或压缩结果整体放入内存。
             ChatArchiveImageCodec.writeImage(image, writer) { output ->
-                (if (useGzip) temporary else source).inputStream().use { input ->
+                (if (useGzip) mCipher.open(temporary) else source.openStream()).use { input ->
                     val buffer = ByteArray(8192)
                     while (true) {
                         checkActive()
@@ -83,7 +94,7 @@ class ChatArchiveImageStore(private val mContext: Context) {
     }
 
     /** 在导入确认时读取当前归档拥有的字节，不接受外部路径或任意文件 URI。 */
-    fun open(owner: String, key: String) = file(owner, key).inputStream()
+    fun open(owner: String, key: String) = mCipher.open(file(owner, key))
 
     /** 取消、成功或失败时释放本次归档暂存；调用方在 IO 上下文执行。 */
     fun release(owner: String) {

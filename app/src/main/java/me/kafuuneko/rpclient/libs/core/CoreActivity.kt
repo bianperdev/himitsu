@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.security.AppGate
 import me.kafuuneko.rpclient.libs.security.GateState
 import me.kafuuneko.rpclient.libs.security.LocalAppGateOpen
+import me.kafuuneko.rpclient.libs.security.PrivateTextInput
 import me.kafuuneko.rpclient.libs.security.UnlockEntry
 import me.kafuuneko.rpclient.libs.security.lock.SecurityPrefs
 import me.kafuuneko.rpclient.libs.security.lock.WindowProtection
@@ -111,7 +112,7 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
      *
      * While the gate is not open, an opaque curtain covers the page, takes every touch and
      * hides the page from accessibility services. The page stays composed so its state
-     * survives a lock.
+     * survives a lock. Copying and typing on every page are kept private ([PrivateTextInput]).
      */
     @Composable
     private fun GatedContent() {
@@ -120,7 +121,7 @@ abstract class CoreActivity : ComponentActivity(), KoinComponent {
         Box(Modifier.fillMaxSize()) {
             Box(if (open) Modifier.fillMaxSize() else Modifier.fillMaxSize().clearAndSetSemantics { }) {
                 CompositionLocalProvider(LocalAppGateOpen provides open) {
-                    ViewContent()
+                    PrivateTextInput { ViewContent() }
                 }
             }
             if (!open) {

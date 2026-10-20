@@ -73,7 +73,7 @@ class MessageImageLifecycleTest {
             override fun getDir(name: String, mode: Int): File = File(directory, name).apply { mkdirs() }
         }
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
-        files = FileRepository(context, database)
+        files = FileRepository(context, database, TestFileCipher)
         images = MessageImageRepository(database, files)
         chat = ChatRepository(database, Gson(), images)
         group = GroupChatRepository(database, Gson(), images)
@@ -194,7 +194,7 @@ class MessageImageLifecycleTest {
                 worker.cancelAndJoin()
             }
             assertEquals(0L, closed.count)
-            assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+            assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         } finally {
             input.close()
             worker.cancelAndJoin()
@@ -216,11 +216,11 @@ class MessageImageLifecycleTest {
         assertNotEquals(message.images.map { it.image.imageUuid }, copied.images.map { it.image.imageUuid })
         chat.deleteSession(sessionId)
         copied.images.forEach { image ->
-            files.withFileLease(image.image.imageUuid) { assertEquals("same original", it.readText()) }
+            files.withFileLease(image.image.imageUuid) { assertEquals("same original", it.readBytes().decodeToString()) }
         }
         assertEquals(2, database.getFileDao().countByHash(first.file.hash))
         chat.deleteSession(branch)
-        assertFalse(File(directory, "repository/${first.file.hash}").exists())
+        assertFalse(TestFileCipher.sealedFile(directory, first.file.hash).exists())
     }
 
     @Test
@@ -259,13 +259,13 @@ class MessageImageLifecycleTest {
         assertEquals(1, chat.getMessageCountBySessionId(sessionId))
         assertNull(files.getFileEntity(retry.file.uuid))
         assertNotNull(files.restorePrepared("draft", retry.handle))
-        files.withFileLease(original.file.uuid) { assertEquals("same original", it.readText()) }
+        files.withFileLease(original.file.uuid) { assertEquals("same original", it.readBytes().decodeToString()) }
         database.openHelper.writableDatabase.execSQL("DROP TRIGGER fail_images")
         chat.createUserMessageWithImages(sessionId, "retry", listOf(MessageImageInput.Prepared(retry)))
         rejected { chat.createUserMessageWithImages(sessionId, "duplicate", listOf(MessageImageInput.Prepared(retry))) }
         assertEquals(2, chat.getMessageCountBySessionId(sessionId))
         chat.deleteMessage(survivor.key.messageId)
-        assertNotNull(files.getFile(retry.file.uuid))
+        assertNotNull(files.readBytes(retry.file.uuid))
     }
 
     @Test
@@ -307,8 +307,8 @@ class MessageImageLifecycleTest {
         group.editMessageWithImages(groupId, groupMessageId, "text only", emptyList())
         assertNull(files.getFileEntity(singleFile.file.uuid))
         assertNull(files.getFileEntity(groupFile.file.uuid))
-        assertFalse(File(directory, "repository/${singleFile.file.hash}").exists())
-        assertFalse(File(directory, "repository/${groupFile.file.hash}").exists())
+        assertFalse(TestFileCipher.sealedFile(directory, singleFile.file.hash).exists())
+        assertFalse(TestFileCipher.sealedFile(directory, groupFile.file.hash).exists())
     }
 
     /** 角色图文编辑保留来源，支持纯图、排序和删除，同时失效覆盖的旧摘要。 */
@@ -357,7 +357,7 @@ class MessageImageLifecycleTest {
         assertNotNull(files.getFileEntity(d.file.uuid))
         characters.deleteCharacter(characterId)
         assertNull(files.getFileEntity(a.file.uuid))
-        files.withFileLease(b.file.uuid) { assertEquals("same original", it.readText()) }
+        files.withFileLease(b.file.uuid) { assertEquals("same original", it.readBytes().decodeToString()) }
         group.deleteSession(groupId)
         assertNull(files.getFileEntity(b.file.uuid))
         assertNotNull(files.getFileEntity(d.file.uuid))
@@ -372,22 +372,22 @@ class MessageImageLifecycleTest {
         val release = CompletableDeferred<Unit>()
         val reader = async(Dispatchers.IO) {
             // 不同实例也应共享目录租约；取消读者时 finally 必须释放保护。
-            FileRepository(context, database).withFileLease(a.file.uuid) {
+            FileRepository(context, database, TestFileCipher).withFileLease(a.file.uuid) {
                 entered.complete(Unit)
                 release.await()
-                assertEquals("same original", it.readText())
+                assertEquals("same original", it.readBytes().decodeToString())
             }
         }
         entered.await()
         chat.deleteMessage(message.key.messageId)
-        assertTrue(File(directory, "repository/${a.file.hash}").exists())
+        assertTrue(TestFileCipher.sealedFile(directory, a.file.hash).exists())
         val b = prepared()
         val replacement = chat.createUserMessageWithImages(sessionId, "", listOf(MessageImageInput.Prepared(b)))
         release.complete(Unit)
         reader.await()
-        assertNotNull(files.getFile(b.file.uuid))
+        assertNotNull(files.readBytes(b.file.uuid))
         chat.deleteMessage(replacement.key.messageId)
-        assertFalse(File(directory, "repository/${a.file.hash}").exists())
+        assertFalse(TestFileCipher.sealedFile(directory, a.file.hash).exists())
     }
 
     @Test
@@ -409,7 +409,7 @@ class MessageImageLifecycleTest {
         assertEquals(1, chat.getMessageCountBySessionId(sessionId))
         files.releasePrepared(a)
         assertNull(files.restorePrepared("draft", a.handle))
-        files.withFileLease(a.file.uuid) { assertEquals("same original", it.readText()) }
+        files.withFileLease(a.file.uuid) { assertEquals("same original", it.readBytes().decodeToString()) }
     }
 
     @Test
@@ -421,19 +421,25 @@ class MessageImageLifecycleTest {
                 override fun read(): Int = throw java.io.IOException("test")
             }, "image/png")
         }
-        assertTrue(File(directory, "repository/staging").listFiles().orEmpty().isEmpty())
+        assertTrue(TestFileCipher.stagingDirectory(directory).listFiles().orEmpty().isEmpty())
         val avatar = files.saveFile(File(directory, "avatar").apply { writeText("avatar") })
         val draft = prepared("recover")
         assertNull(files.restorePrepared("wrong owner", draft.handle))
-        val recovered = FileRepository(context, database).restorePrepared("draft", draft.handle)
+        val recovered = FileRepository(context, database, TestFileCipher).restorePrepared("draft", draft.handle)
         assertEquals(draft, recovered)
         // 模拟崩溃留下的无索引 hash 和不完整旧草稿。
         val orphan = File(directory, "repository/${"a".repeat(64)}").apply { writeText("orphan") }
-        val abandoned = File(directory, "repository/staging/abandoned").apply { writeText("partial"); setLastModified(1) }
+        val sealedOrphan = TestFileCipher.sealedFile(directory, "b".repeat(64)).apply { writeText("orphan") }
+        val abandoned = File(TestFileCipher.stagingDirectory(directory), "abandoned")
+            .apply { writeText("partial"); setLastModified(1) }
+        val legacyAbandoned = File(directory, "repository/staging/abandoned")
+            .apply { parentFile!!.mkdirs(); writeText("partial"); setLastModified(1) }
         files.cleanupAbandonedFiles()
         assertFalse(orphan.exists())
+        assertFalse(sealedOrphan.exists())
         assertFalse(abandoned.exists())
-        assertNotNull(files.getFile(avatar))
+        assertFalse(legacyAbandoned.exists())
+        assertNotNull(files.readBytes(avatar))
         assertNotNull(files.restorePrepared("draft", draft.handle))
         files.releasePrepared(draft)
         assertNull(files.restorePrepared("draft", draft.handle))
@@ -476,9 +482,9 @@ class MessageImageLifecycleTest {
         }
         entered.await()
         chat.deleteMessage(message.key.messageId)
-        assertTrue(File(directory, "repository/${a.file.hash}").exists())
+        assertTrue(TestFileCipher.sealedFile(directory, a.file.hash).exists())
         reader.cancelAndJoin()
-        assertFalse(File(directory, "repository/${a.file.hash}").exists())
+        assertFalse(TestFileCipher.sealedFile(directory, a.file.hash).exists())
     }
 
     @Test
@@ -491,13 +497,13 @@ class MessageImageLifecycleTest {
             "CREATE TRIGGER fail_delete BEFORE DELETE ON files BEGIN SELECT RAISE(ABORT, 'test'); END")
         rejected { chat.deleteMessage(message.key.messageId) }
         assertEquals(a.file.uuid, chat.getMessagesWithImages(listOf(message.key.messageId)).single().images.single().image.imageUuid)
-        files.withFileLease(a.file.uuid) { assertEquals("same original", it.readText()) }
+        files.withFileLease(a.file.uuid) { assertEquals("same original", it.readBytes().decodeToString()) }
         database.openHelper.writableDatabase.execSQL("DROP TRIGGER fail_delete")
         val damaged = prepared("abcd")
-        File(directory, "repository/staging/${damaged.handle}").writeText("dcba")
+        File(TestFileCipher.stagingDirectory(directory), damaged.handle).writeText("dcba")
         rejected { chat.createUserMessageWithImages(sessionId, "", listOf(MessageImageInput.Prepared(damaged))) }
         assertNull(files.getFileEntity(damaged.file.uuid))
-        assertFalse(File(directory, "repository/${damaged.file.hash}").exists())
+        assertFalse(TestFileCipher.sealedFile(directory, damaged.file.hash).exists())
         files.releasePrepared(damaged)
     }
 
@@ -556,6 +562,6 @@ class MessageImageLifecycleTest {
             }.awaitAll()
         }
         assertEquals(1, database.getFileDao().countByHash(survivor.file.hash))
-        files.withFileLease(survivor.file.uuid) { assertEquals("same original", it.readText()) }
+        files.withFileLease(survivor.file.uuid) { assertEquals("same original", it.readBytes().decodeToString()) }
     }
 }

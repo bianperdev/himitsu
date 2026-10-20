@@ -54,13 +54,20 @@ internal object DatabaseFiles {
     fun withCompanions(file: File): List<File> =
         listOf(file) + COMPANION_SUFFIXES.map { File(file.path + it) }.filter { it.exists() }
 
+    /** Whether [file] or any of its companions exists. */
+    fun anyExists(file: File): Boolean = withCompanions(file).any { it.exists() }
+
     /**
      * Renames [file] and its companions so that their names start with [target]'s name.
+     *
+     * Companions move first and the database last, so a crash in between never leaves a WAL
+     * file next to another database: while the database is still at its source, the move is
+     * unfinished and is repeated.
      *
      * @throws IOException when a file cannot be moved
      */
     fun move(file: File, target: File) {
-        withCompanions(file).forEach { source ->
+        withCompanions(file).filter { it.exists() }.sortedBy { it == file }.forEach { source ->
             val suffix = source.name.removePrefix(file.name)
             Files.move(source.toPath(), File(target.path + suffix).toPath(), StandardCopyOption.REPLACE_EXISTING)
         }

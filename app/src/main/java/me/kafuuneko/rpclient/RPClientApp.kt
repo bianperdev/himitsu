@@ -5,6 +5,10 @@ import androidx.room.Room
 import com.chibatching.kotpref.Kotpref
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import me.kafuuneko.rpclient.libs.AppModel
 import me.kafuuneko.rpclient.libs.character.CharacterCardRepository
 import me.kafuuneko.rpclient.libs.chat.ChatArchiveCodec
@@ -54,6 +58,7 @@ import me.kafuuneko.rpclient.libs.security.RequestLogGuard
 import me.kafuuneko.rpclient.libs.security.SecureStorageManager
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
+import me.kafuuneko.rpclient.libs.security.storage.RestoreJournal
 import me.kafuuneko.rpclient.libs.story.StoryArchiveCodec
 import me.kafuuneko.rpclient.libs.story.StoryArchiveRepository
 import me.kafuuneko.rpclient.libs.story.StoryCharacterActivator
@@ -74,8 +79,13 @@ import org.koin.dsl.module
 
 /** 应用进程入口，初始化偏好存储与全局 Koin 依赖图。 */
 class RPClientApp : Application() {
+    /** Himitsu: work that must not delay opening the app. */
+    private val mBackgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     override fun onCreate() {
         super.onCreate()
+        // Himitsu: a restore chosen in the security settings swaps files before anything opens them
+        RestoreJournal.completePending(this)
         Kotpref.init(this)
         val koinApplication = startKoin {
             androidContext(this@RPClientApp)
@@ -87,13 +97,20 @@ class RPClientApp : Application() {
         // Himitsu: startup work needs the encrypted databases, so it runs off the main thread
         // once the master key is loaded; screens wait behind the app gate until it finishes.
         secureStorage.start(
-            beforeKey = { koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles() }
+            beforeKey = {
+                koinApplication.koin.get<MessageImageRuntime>().discardStaleRequestFiles()
+                // Himitsu (P-06): sealed with a key of the process that wrote them, so unreadable now
+                koinApplication.koin.get<ChatArchiveImageStore>().discardStale()
+            }
         ) {
             SealedPreferencesProvider.sealPlainValues(AppModel)
             contentResolver.releaseObsoletePersistedUriPermissions()
             koinApplication.koin.get<AppUpgradeManager>().upgrade()
             koinApplication.koin.get<FileRepository>().cleanupAbandonedFiles()
             koinApplication.koin.get<RequestLogGuard>().start()
+            // Himitsu (P-06): images of earlier builds are sealed in the background, one at a
+            // time; what is left (a file being read, a storage error) waits for the next start
+            mBackgroundScope.launch { runCatching { koinApplication.koin.get<FileRepository>().sealPlainFiles() } }
         }
     }
 }

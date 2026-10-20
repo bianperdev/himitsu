@@ -36,8 +36,8 @@ class ConversationPageRepositoryTest {
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        chatRepository = ChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database)))
-        groupChatRepository = GroupChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database)))
+        chatRepository = ChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database, TestFileCipher)))
+        groupChatRepository = GroupChatRepository(database, Gson(), MessageImageRepository(database, FileRepository(context, database, TestFileCipher)))
 
         // 创建单聊和群聊页面查询需要的最小会话数据
         val characterId = database.getCharacterDao().insertOrReplace(

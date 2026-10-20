@@ -29,6 +29,9 @@ import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.database.SqlCipherKey
+import me.kafuuneko.rpclient.libs.security.files.FileCipher
+import me.kafuuneko.rpclient.libs.security.files.FileCipherSource
+import me.kafuuneko.rpclient.libs.security.files.StoredFileLayout
 import me.kafuuneko.rpclient.libs.security.key.KeyPurpose
 import me.kafuuneko.rpclient.libs.security.key.MasterKey
 import me.kafuuneko.rpclient.libs.security.key.MasterKeyVault
@@ -39,6 +42,7 @@ import me.kafuuneko.rpclient.libs.security.key.VaultLoadResult
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_DIR_NAME
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_STAGING_DIR_NAME
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
+import me.kafuuneko.rpclient.libs.security.storage.RestoreJournal
 import net.zetetic.database.Logger
 import net.zetetic.database.NoopTarget
 
@@ -51,7 +55,16 @@ enum class StorageFailure {
     StorageError,
 
     /** A plain database from an earlier build could not be encrypted. It is still intact. */
-    MigrationFailed;
+    MigrationFailed,
+
+    /**
+     * A plain database from an earlier build is damaged, or exists twice, so it can never be
+     * encrypted. It can only be exported or set aside, still in plain form.
+     */
+    PlainDatabaseUnusable,
+
+    /** A restore of set-aside data did not finish; restarting the app continues it. */
+    RestoreIncomplete;
 
     companion object {
         /**
@@ -99,7 +112,7 @@ class SecureStorageManager(
     private val mContext: Context,
     private val mVault: MasterKeyVault,
     private val mMigrator: PlaintextDatabaseMigrator
-) : DatabaseKeySource {
+) : DatabaseKeySource, FileCipherSource {
     private val mScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val mMutex = Mutex()
     private val mState = MutableStateFlow<SecureStorageState>(SecureStorageState.Starting)
@@ -118,9 +131,16 @@ class SecureStorageManager(
     @Volatile
     private var mLastFailure: VaultFailure? = null
 
+    /** Database whose plain file cannot be encrypted, while the state is [StorageFailure.PlainDatabaseUnusable]. */
+    private var mUnusableDatabase: EncryptedDatabase? = null
+
     /** Key released to Room once every database is encrypted. Never reset within a process. */
     private val mReleasedKey = MutableStateFlow<MasterKey?>(null)
     private var mStartupTasks: suspend () -> Unit = {}
+
+    /** Cipher of stored files, created from [mReleasedKey] on first use. Written only under [mKeyLock]. */
+    @Volatile
+    private var mFileCipher: FileCipher? = null
 
     /** Current storage state. */
     val state: StateFlow<SecureStorageState> = mState.asStateFlow()
@@ -161,6 +181,8 @@ class SecureStorageManager(
     suspend fun recover(code: RecoveryCode): RecoveryResult = withContext(Dispatchers.IO) {
         // Keystore key generation, the key file write and the startup tasks must not run on Main
         mMutex.withLock {
+            // Halfway through a restore the live key file may be the restored one: finish the swap first
+            if (RestoreJournal.isPending(mContext)) return@withLock RecoveryResult.Failed(VaultFailure.StorageError)
             val result = mVault.recover(code)
             if (result is RecoveryResult.Recovered) {
                 continueWith(result.masterKey)
@@ -184,9 +206,13 @@ class SecureStorageManager(
                 val state = mState.value as? SecureStorageState.Failed ?: return@withLock
                 if (state.failure !in StorageFailure.START_OVER_ALLOWED) return@withLock
                 val suffix = ".unrecoverable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                // Decided before anything moves: a plain main database stays and is encrypted with the new key
+                val primary = mContext.getDatabasePath(EncryptedDatabase.Primary.fileName)
+                val primaryStaysPlain = DatabaseFiles.kindOf(primary) == DatabaseFileKind.Plaintext ||
+                    (DatabaseFiles.kindOf(primary) == DatabaseFileKind.Missing && File(primary.path + ".plaintext").exists())
                 try {
                     mVault.moveKeyFileAside(suffix)
-                    setAsideStoredFiles(suffix)
+                    setAsideStoredFiles(suffix, keepPlainFiles = primaryStaysPlain)
                     EncryptedDatabase.entries.forEach { database -> setAside(mContext.getDatabasePath(database.fileName), suffix) }
                     SealedPreferencesProvider.setAside(mContext, suffix)
                     synchronized(mKeyLock) {
@@ -209,14 +235,58 @@ class SecureStorageManager(
      * The startup cleanup deletes every stored file the database does not reference, so with
      * the new empty database it would delete them all. An empty directory for the new storage
      * is created in its place.
+     *
+     * @param keepPlainFiles true when a plain main database survives and is encrypted with the
+     *   new key: its plain files (from builds before P-06) stay with it, and only the sealed
+     *   files, which need the lost key, go aside
      */
-    private fun setAsideStoredFiles(suffix: String) {
+    private fun setAsideStoredFiles(suffix: String, keepPlainFiles: Boolean = false) {
         val directory = mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE)
         // An unreadable directory must not pass as empty, or the cleanup would delete its files
-        val entries = directory.list() ?: throw IOException("Stored files directory is unreadable")
-        if (entries.isEmpty()) return
+        directory.list() ?: throw IOException("Stored files directory is unreadable")
+        // Only empty directories, as a retry after a half-finished start over finds: nothing to keep
+        if (directory.walk().none { it.isFile }) return
+        if (keepPlainFiles) {
+            val sealed = File(directory, StoredFileLayout.SEALED_DIRECTORY)
+            if (sealed.walk().none { it.isFile }) return
+            val target = File(directory.path + suffix).apply { mkdirs() }
+            Files.move(sealed.toPath(), File(target, StoredFileLayout.SEALED_DIRECTORY).toPath())
+            return
+        }
         Files.move(directory.toPath(), File(directory.path + suffix).toPath())
         File(mContext.getDir(FILE_REPOSITORY_DIR_NAME, Context.MODE_PRIVATE), FILE_REPOSITORY_STAGING_DIR_NAME).mkdirs()
+    }
+
+    /**
+     * Sets a plain database that can never be encrypted aside, still in plain form, and opens
+     * the storage without it, after the user chose to.
+     *
+     * Nothing is deleted: the plain files (the database and a copy left by an interrupted
+     * migration) keep their content under an `.unusable-<time>` suffix. Setting the main
+     * database aside also sets the stored files aside, because their index lives in it.
+     */
+    fun setAsideUnusableDatabase() {
+        mScope.launch {
+            mMutex.withLock {
+                val state = mState.value as? SecureStorageState.Failed ?: return@withLock
+                if (state.failure != StorageFailure.PlainDatabaseUnusable) return@withLock
+                val database = mUnusableDatabase ?: return@withLock
+                val suffix = ".unusable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                val file = mContext.getDatabasePath(database.fileName)
+                try {
+                    if (database == EncryptedDatabase.Primary) setAsideStoredFiles(suffix)
+                    DatabaseFiles.delete(File(file.path + ".encrypting"))
+                    val plainCopy = File(file.path + ".plaintext")
+                    if (DatabaseFiles.anyExists(plainCopy)) DatabaseFiles.move(plainCopy, File(plainCopy.path + suffix))
+                    if (DatabaseFiles.anyExists(file)) DatabaseFiles.move(file, File(file.path + suffix))
+                } catch (_: IOException) {
+                    fail(StorageFailure.StorageError)
+                    return@withLock
+                }
+                mUnusableDatabase = null
+                load()
+            }
+        }
     }
 
     /**
@@ -291,6 +361,14 @@ class SecureStorageManager(
         }
     }
 
+    override fun fileCipher(): FileCipher {
+        mFileCipher?.let { return it }
+        val masterKey = mReleasedKey.value ?: runBlocking { mReleasedKey.first { it != null } }!!
+        return synchronized(mKeyLock) {
+            mFileCipher ?: FileCipher.create(masterKey.derive(KeyPurpose.Files)).also { mFileCipher = it }
+        }
+    }
+
     private fun launchSequence() {
         mScope.launch { mMutex.withLock { load() } }
     }
@@ -302,6 +380,10 @@ class SecureStorageManager(
             return
         }
         mState.value = SecureStorageState.Starting
+        if (RestoreJournal.isPending(mContext)) {
+            fail(StorageFailure.RestoreIncomplete)
+            return
+        }
         when (val result = loadMasterKeyBlocking(retryFailure = true)) {
             is VaultLoadResult.Loaded -> continueWith(result.masterKey)
             is VaultLoadResult.Failed -> fail(StorageFailure.from(result.failure))
@@ -317,6 +399,8 @@ class SecureStorageManager(
     private fun loadMasterKeyBlocking(retryFailure: Boolean): VaultLoadResult = synchronized(mKeyLock) {
         mLoadedKey?.let { return VaultLoadResult.Loaded(it, created = false) }
         if (!retryFailure) mLastFailure?.let { return VaultLoadResult.Failed(it) }
+        // Halfway through a restore the key file may be missing on purpose: never create one
+        if (RestoreJournal.isPending(mContext)) return VaultLoadResult.Failed(VaultFailure.StorageError)
         val result = mVault.loadOrCreate(hasEncryptedData = hasEncryptedData())
         when (result) {
             is VaultLoadResult.Loaded -> {
@@ -337,20 +421,19 @@ class SecureStorageManager(
         }
         mState.value = SecureStorageState.Starting
         // Encrypt databases left in plain form by earlier builds before Room can open them
-        try {
-            EncryptedDatabase.entries.forEach { database ->
-                val key = masterKey.derive(database.purpose)
-                val passphrase = SqlCipherKey.rawKeyPassphrase(key)
-                key.fill(0)
-                try {
-                    mMigrator.migrateIfNeeded(mContext.getDatabasePath(database.fileName), passphrase)
-                } finally {
-                    passphrase.fill(0)
-                }
+        for (database in EncryptedDatabase.entries) {
+            val key = masterKey.derive(database.purpose)
+            val passphrase = SqlCipherKey.rawKeyPassphrase(key)
+            key.fill(0)
+            try {
+                mMigrator.migrateIfNeeded(mContext.getDatabasePath(database.fileName), passphrase)
+            } catch (e: DatabaseMigrationException) {
+                mUnusableDatabase = database.takeIf { e.permanent }
+                fail(if (e.permanent) StorageFailure.PlainDatabaseUnusable else StorageFailure.MigrationFailed)
+                return
+            } finally {
+                passphrase.fill(0)
             }
-        } catch (_: DatabaseMigrationException) {
-            fail(StorageFailure.MigrationFailed)
-            return
         }
         // Release database keys, then run the inherited startup work that needs them
         mReleasedKey.value = masterKey
@@ -362,8 +445,11 @@ class SecureStorageManager(
         mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode())
     }
 
-    /** Whether any database or preference is already encrypted, so a missing key file must not be replaced. */
+    /**
+     * Whether any database, preference or stored file is already encrypted, so a missing key
+     * file must not be replaced.
+     */
     private fun hasEncryptedData(): Boolean = EncryptedDatabase.entries.any { database ->
         DatabaseFiles.kindOf(mContext.getDatabasePath(database.fileName)) == DatabaseFileKind.Encrypted
-    } || SealedPreferencesProvider.hasSealedFiles(mContext)
+    } || SealedPreferencesProvider.hasSealedFiles(mContext) || StoredFileLayout.hasSealedFiles(mContext)
 }

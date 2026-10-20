@@ -50,16 +50,25 @@ object SealedPreferencesProvider : PreferencesProvider {
      * Whether any preference file holds sealed values. Reads the files directly, because the
      * preference objects may not exist yet this early in startup.
      */
-    fun hasSealedFiles(context: Context): Boolean = sharedPrefsDir(context).listFiles().orEmpty().any { file ->
-        file.isFile && file.name.endsWith(".xml") && runCatching { file.readText().contains(">" + PreferenceCipher.PREFIX) }
+    fun hasSealedFiles(context: Context): Boolean = sharedPrefsDir(context).listFiles().orEmpty().any(::hasSealedValues)
+
+    /** Whether [file] is a preference file, or Android's `.bak` backup of one, that holds sealed values. */
+    fun hasSealedValues(file: File): Boolean =
+        file.isFile && (file.name.endsWith(".xml") || file.name.endsWith(".xml.bak")) && runCatching { file.readText().contains(">" + PreferenceCipher.PREFIX) }
             .getOrDefault(false)
-    }
 
     /**
      * Copies every file with sealed values to `<name>.xml<suffix>` and empties it, after the
      * user chose to start over. Nothing is deleted: the copies keep the old sealed values.
      */
     fun setAside(context: Context, suffix: String) {
+        // Android's backup of a preference file is not a preference instance: copy it aside and remove it
+        sharedPrefsDir(context).listFiles().orEmpty()
+            .filter { it.name.endsWith(".xml.bak") && hasSealedValues(it) }
+            .forEach { backup ->
+                backup.copyTo(File(backup.path + suffix), overwrite = true)
+                backup.delete()
+            }
         sharedPrefsDir(context).listFiles().orEmpty()
             .filter { it.isFile && it.name.endsWith(".xml") && it.readText().contains(">" + PreferenceCipher.PREFIX) }
             .forEach { file ->

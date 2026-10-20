@@ -31,8 +31,8 @@ class SessionOverviewRepositoryTest {
         mDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        mChatRepository = ChatRepository(mDatabase, Gson(), MessageImageRepository(mDatabase, FileRepository(context, mDatabase)))
-        mGroupChatRepository = GroupChatRepository(mDatabase, Gson(), MessageImageRepository(mDatabase, FileRepository(context, mDatabase)))
+        mChatRepository = ChatRepository(mDatabase, Gson(), MessageImageRepository(mDatabase, FileRepository(context, mDatabase, TestFileCipher)))
+        mGroupChatRepository = GroupChatRepository(mDatabase, Gson(), MessageImageRepository(mDatabase, FileRepository(context, mDatabase, TestFileCipher)))
     }
 
     @After

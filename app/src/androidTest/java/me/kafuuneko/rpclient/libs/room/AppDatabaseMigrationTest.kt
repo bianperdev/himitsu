@@ -3,7 +3,6 @@ package me.kafuuneko.rpclient.libs.room
 import androidx.room.testing.MigrationTestHelper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import me.kafuuneko.rpclient.libs.llm.model.OPENROUTER_SESSION_AFFINITY_REQUEST_BODY_PATCH_JSON
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Rule
@@ -173,10 +172,8 @@ class AppDatabaseMigrationTest {
         ).use { cursor ->
             assertEquals(true, cursor.moveToFirst())
             assertEquals(404L, cursor.getLong(0))
-            assertEquals(
-                OPENROUTER_SESSION_AFFINITY_REQUEST_BODY_PATCH_JSON,
-                cursor.getString(1)
-            )
+            // Himitsu (P-16): the routing ID is never added by a migration
+            assertEquals("{}", cursor.getString(1))
             assertEquals(true, cursor.moveToNext())
             assertEquals(405L, cursor.getLong(0))
             assertEquals("{}", cursor.getString(1))

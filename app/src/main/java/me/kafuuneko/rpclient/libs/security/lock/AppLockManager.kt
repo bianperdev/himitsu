@@ -70,6 +70,14 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
     fun isDeviceSecure(): Boolean =
         mContext.getSystemService(KeyguardManager::class.java)?.isDeviceSecure == true
 
+    /**
+     * Forgets a prompt that is no longer on screen. The platform can drop the prompt's callback
+     * (API 26-29); without this, "Unlock" would do nothing until the process ends.
+     */
+    fun clearStaleAuthentication() {
+        mAuthenticating = false
+    }
+
     /** Turns the lock on or off. Turning it on does not lock the current session. */
     fun setEnabled(enabled: Boolean) {
         SecurityPrefs.appLockEnabled = enabled
@@ -109,17 +117,48 @@ class AppLockManager(private val mContext: Context) : DefaultLifecycleObserver {
             }
         )
 
+    /**
+     * Creates a prompt that only confirms the user before a sensitive settings change. Unlike
+     * [createPrompt] it never changes the lock state. Must be called from `onCreate`, and
+     * [onOutcome] runs on the main thread.
+     */
+    fun createConfirmPrompt(activity: FragmentActivity, onOutcome: (AuthOutcome) -> Unit): BiometricPrompt =
+        BiometricPrompt(
+            activity,
+            ContextCompat.getMainExecutor(activity),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    onOutcome(AuthOutcome.Succeeded)
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    onOutcome(AuthOutcome.Canceled)
+                }
+            }
+        )
+
     /** Shows [prompt] with the strongest authenticators the platform allows together with the device credential. */
     fun authenticate(prompt: BiometricPrompt, title: String, subtitle: String) {
         mAuthenticating = true
-        val info = BiometricPrompt.PromptInfo.Builder()
+        prompt.authenticate(promptInfo(title, subtitle))
+    }
+
+    /**
+     * Shows a prompt made by [createConfirmPrompt]. Unlike [authenticate] it does not mark the
+     * app as authenticating: the app is unlocked, so leaving it for the credential screen
+     * counts as leaving, and the lock timeout still applies when the user comes back.
+     */
+    fun confirm(prompt: BiometricPrompt, title: String, subtitle: String) {
+        prompt.authenticate(promptInfo(title, subtitle))
+    }
+
+    private fun promptInfo(title: String, subtitle: String): BiometricPrompt.PromptInfo =
+        BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
             .setSubtitle(subtitle)
             .setAllowedAuthenticators(allowedAuthenticators())
             .setConfirmationRequired(false)
             .build()
-        prompt.authenticate(info)
-    }
 
     /**
      * Unlocks without authentication, only when the device has no secure lock screen and so

@@ -14,12 +14,14 @@ import android.os.PersistableBundle
  */
 object SensitiveClip {
     /** Same as [ClipData.newPlainText], with the sensitive flag set. */
-    fun plainText(label: CharSequence, text: CharSequence): ClipData =
-        ClipData.newPlainText(label, text).apply {
-            description.extras = PersistableBundle().apply {
-                putBoolean(sensitiveExtraKey(), true)
-            }
+    fun plainText(label: CharSequence, text: CharSequence): ClipData = markSensitive(ClipData.newPlainText(label, text))
+
+    /** Sets the sensitive flag on [clip], keeping its other extras. */
+    fun markSensitive(clip: ClipData): ClipData = clip.apply {
+        description.extras = (description.extras ?: PersistableBundle()).apply {
+            putBoolean(sensitiveExtraKey(), true)
         }
+    }
 
     private fun sensitiveExtraKey(): String =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

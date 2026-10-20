@@ -146,6 +146,11 @@
             android:exported="false"
             android:theme="@style/Theme.RPClient"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".feature.lock.ConfirmCredentialActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient.Confirm" />
         <!-- END feat/security -->
         <!-- feat/local-inference -->
         <uses-native-library

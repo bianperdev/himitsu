@@ -154,7 +154,7 @@ internal class MultimodalWireCodec(private val mProvider: LLMProviderConfig) {
         // 文件版本一致性与租约由 Runtime 保证，编码器只持有当前单图缓冲区。
         runtime.withSendFile(reference) { file ->
             Base64.getEncoder().wrap(NonClosingOutputStream(output)).use { encoded ->
-                file.inputStream().use { input ->
+                file.openStream().use { input ->
                     val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
                     while (true) {
                         context.ensureActive()

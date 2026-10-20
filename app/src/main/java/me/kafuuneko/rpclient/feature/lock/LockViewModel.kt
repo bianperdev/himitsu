@@ -1,10 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.feature.lock
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.lock.presentation.LockContentState
 import me.kafuuneko.rpclient.feature.lock.presentation.LockDialogState
 import me.kafuuneko.rpclient.feature.lock.presentation.LockUiIntent
@@ -22,6 +31,8 @@ import me.kafuuneko.rpclient.libs.security.key.RecoveryCode
 import me.kafuuneko.rpclient.libs.security.key.RecoveryResult
 import me.kafuuneko.rpclient.libs.security.lock.AppLockManager
 import me.kafuuneko.rpclient.libs.security.lock.AuthOutcome
+import me.kafuuneko.rpclient.libs.security.storage.EncryptedExport
+import me.kafuuneko.rpclient.libs.security.storage.ProtectedFiles
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -29,8 +40,9 @@ import org.koin.core.component.inject
  * ViewModel of the gate screen, shown whenever the app gate is not open.
  *
  * Responsibilities:
- * - mirror the encrypted storage state, and offer retry, recovery code and start over when it
- *   cannot be opened; none of these deletes data
+ * - mirror the encrypted storage state, and offer retry, recovery code, start over, setting a
+ *   damaged plain database aside and saving a copy of the files when it cannot be opened;
+ *   none of these deletes data
  * - when the app is locked, ask the host to show the system prompt, automatically on arrival
  *   and on return to the screen; unlocking itself happens inside [AppLockManager]
  * - finish as soon as the gate opens
@@ -39,6 +51,11 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
     private val mStorage by inject<SecureStorageManager>()
     private val mLockManager by inject<AppLockManager>()
     private val mAppGate by inject<AppGate>()
+    private val mProtectedFiles by inject<ProtectedFiles>()
+    private val mContext by inject<Context>()
+
+    /** Action waiting for the user's confirmation; lost with the process, which then does nothing. */
+    private var mPendingAction: LockUiIntent? = null
 
     /** Whether the storage failed while this screen was shown (privacy review M3). */
     private var mStorageFailed = false
@@ -110,10 +127,18 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         }
     }
 
-    /** Retries opening the storage after a failure that may be temporary. */
+    /**
+     * Retries opening the storage after a failure that may be temporary. An unfinished restore
+     * continues only at the start of a process, before any preference is read, so the app
+     * restarts instead.
+     */
     @UiIntentObserver(LockUiIntent.Retry::class)
     private fun onRetry() {
-        getOrNull<LockUiState.Normal>() ?: return
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        if ((uiState.contentState as? LockContentState.StorageError)?.failure == StorageFailure.RestoreIncomplete) {
+            LockViewEvent.RestartApp.tryEmit()
+            return
+        }
         mStorage.retry()
     }
 
@@ -176,6 +201,95 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
         mStorage.startOver()
     }
 
+    /** Asks for confirmation before setting a damaged plain database aside. */
+    @UiIntentObserver(LockUiIntent.ShowSetAsideDialog::class)
+    private fun onShowSetAsideDialog() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        if ((uiState.contentState as? LockContentState.StorageError)?.canSetAside != true) return
+        uiState.copy(dialogState = LockDialogState.ConfirmSetAside).setup()
+    }
+
+    /** Sets the damaged plain database aside, without deleting it, and continues without it. */
+    @UiIntentObserver(LockUiIntent.ConfirmSetAside::class)
+    private fun onConfirmSetAside() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        if (uiState.dialogState != LockDialogState.ConfirmSetAside) return
+        uiState.copy(dialogState = LockDialogState.None).setup()
+        requestConfirmation(LockUiIntent.ConfirmSetAside)
+    }
+
+    /** Explains what an export holds before the file picker opens. */
+    @UiIntentObserver(LockUiIntent.ShowExportDialog::class)
+    private fun onShowExportDialog() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        val content = uiState.contentState as? LockContentState.StorageError ?: return
+        if (content.isExporting) return
+        uiState.copy(dialogState = LockDialogState.ConfirmExport).setup()
+    }
+
+    @UiIntentObserver(LockUiIntent.ConfirmExport::class)
+    private fun onConfirmExport() {
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        if (uiState.dialogState != LockDialogState.ConfirmExport) return
+        uiState.copy(dialogState = LockDialogState.None).setup()
+        requestConfirmation(LockUiIntent.ConfirmExport)
+    }
+
+    /**
+     * Runs the action that waited for the confirmation, only when the user confirmed. The
+     * storage error screen comes before the app lock, so without this anyone holding an
+     * unlocked phone could export or set aside the data.
+     */
+    @UiIntentObserver(LockUiIntent.ConfirmationFinished::class)
+    private fun onConfirmationFinished(intent: LockUiIntent.ConfirmationFinished) {
+        val action = mPendingAction ?: return
+        mPendingAction = null
+        if (!intent.confirmed) {
+            LockViewEvent.ShowMessage(R.string.security_confirm_canceled).tryEmit()
+            return
+        }
+        getOrNull<LockUiState.Normal>()?.contentState as? LockContentState.StorageError ?: return
+        when (action) {
+            LockUiIntent.ConfirmSetAside -> mStorage.setAsideUnusableDatabase()
+            LockUiIntent.ConfirmExport -> {
+                // A neutral name: the file manager must not reveal the app
+                val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                LockViewEvent.PickExportDestination("data-$date.zip").tryEmit()
+            }
+            else -> Unit
+        }
+    }
+
+    /** A new request replaces one whose confirmation never came back. */
+    private fun requestConfirmation(action: LockUiIntent) {
+        mPendingAction = action
+        LockViewEvent.RequestConfirmation.tryEmit()
+    }
+
+    /**
+     * Saves the files exactly as they are on disk into the chosen document. It only reads them,
+     * so a failure halfway leaves the data untouched.
+     */
+    @UiIntentObserver(LockUiIntent.ExportTo::class)
+    private suspend fun onExportTo(intent: LockUiIntent.ExportTo) {
+        val destination = intent.destination ?: return
+        val uiState = getOrNull<LockUiState.Normal>() ?: return
+        val content = uiState.contentState as? LockContentState.StorageError ?: return
+        if (content.isExporting) return
+        uiState.copy(contentState = content.copy(isExporting = true)).setup()
+        val saved = withContext(Dispatchers.IO) {
+            val context = currentCoroutineContext()
+            runCatching {
+                val output = mContext.contentResolver.openOutputStream(destination) ?: error("No output")
+                output.use { EncryptedExport.write(mProtectedFiles.current(), it) { context.ensureActive() } }
+            }.isSuccess
+        }
+        LockViewEvent.ShowMessage(if (saved) R.string.security_export_done else R.string.security_export_failed).tryEmit()
+        val current = getOrNull<LockUiState.Normal>() ?: return
+        val currentContent = current.contentState as? LockContentState.StorageError ?: return
+        current.copy(contentState = currentContent.copy(isExporting = false)).setup()
+    }
+
     @UiIntentObserver(LockUiIntent.DismissDialog::class)
     private fun onDismissDialog() {
         val uiState = getOrNull<LockUiState.Normal>() ?: return
@@ -198,9 +312,13 @@ class LockViewModel : CoreViewModelWithEvent<LockUiIntent, LockUiState>(LockUiSt
             SecureStorageState.Starting -> LockContentState.Loading
             is SecureStorageState.Failed -> LockContentState.StorageError(
                 failure = storage.failure,
-                canRetry = storage.failure != StorageFailure.KeystoreKeyLost,
-                canUseRecoveryCode = storage.recoveryAvailable,
-                canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED
+                // Some devices report a lost key for errors that pass, so retrying is always offered
+                canRetry = true,
+                preferRecoveryCode = storage.failure == StorageFailure.KeystoreKeyLost,
+                canUseRecoveryCode = storage.recoveryAvailable && storage.failure != StorageFailure.RestoreIncomplete,
+                canStartOver = storage.failure in StorageFailure.START_OVER_ALLOWED,
+                canSetAside = storage.failure == StorageFailure.PlainDatabaseUnusable,
+                isExporting = (previous as? LockContentState.StorageError)?.isExporting == true
             )
             SecureStorageState.Ready -> if (locked) {
                 previous as? LockContentState.Locked ?: LockContentState.Locked(mLockManager.isDeviceSecure())

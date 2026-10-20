@@ -212,7 +212,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 3. [x] Encrypted Room databases (P-02, and the request log database for P-07). Note: the new `applicationId` means there is no RPClient data to migrate; only earlier Himitsu debug builds may have a plain database.
 4. [x] API key and custom header protection (P-01, P-04, P-13). API keys live in Room, not in Kotpref; the migration moves them out of the plain database.
 5. [x] App lock: biometrics with device credential fallback, re-lock after a configurable time in background (immediately, 1 min, 5 min), lock screen.
-6. [x] Hardening: backup rules (P-03), Kotpref and file encryption (P-05, P-06), debug log retention and redaction (P-07), cache file (P-10), clipboard (P-11), optional `FLAG_SECURE` (P-12), logging (P-14), clear-text warning (P-09), Gemini header (P-08), main-thread startup (O-01). Present P-15 and P-16 as decisions. File encryption (P-06) and the in-flight part of P-10 were deferred by the maintainer to `feat/security-followups`.
+6. [x] Hardening: backup rules (P-03), Kotpref and file encryption (P-05, P-06), debug log retention and redaction (P-07), cache file (P-10), clipboard (P-11), optional `FLAG_SECURE` (P-12), logging (P-14), clear-text warning (P-09), Gemini header (P-08), main-thread startup (O-01). Present P-15 and P-16 as decisions. File encryption (P-06) and the in-flight part of P-10 were deferred by the maintainer to `feat/security-followups`, where P-06 is done.
 7. [x] Final review: go through the findings table and mark what is resolved.
 
 **Contracts this track must document here before it is merged:**
@@ -249,9 +249,9 @@ Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design
 - **Startup.** Startup work that reads the database or sealed preferences goes in the block passed to `SecureStorageManager.start` in `RPClientApp.onCreate`. Work that must run before the key is loaded (for example deleting stale cache files) goes in `beforeKey` and must not touch the database.
 - **Preferences.** `AppModel` uses `SealedPreferencesProvider`: its strings are sealed, numbers and booleans stay plain. A track's own Kotpref object that holds personal text uses the same provider and calls `SealedPreferencesProvider.sealPlainValues(it)` in the startup block. Settings the first frame needs (theme) must stay plain: either non-string values, a Kotpref object without the provider, or an entry in the provider's plain list. Reading a sealed string may perform a Keystore operation, so never read one in the first frame.
 - **Secrets.** API keys, tokens and passwords go in the encrypted database, never in Kotpref. Inputs for secrets use `AppInputDialog(password = true)`, which sets a password keyboard without autocorrect.
-- **Clipboard.** Copy user content with `SensitiveClip.plainText(label, text)` so it is marked `IS_SENSITIVE`.
+- **Clipboard and keyboard.** Copy user content with `SensitiveClip.plainText(label, text)` so it is marked `IS_SENSITIVE`. On every `CoreActivity` page, `PrivateTextInput` already marks what Compose copies (selection toolbar, text fields) and asks keyboards not to learn from text fields; pages outside `CoreActivity` that take user text should wrap their content in it.
 - **Request log.** Entries are written only through `LLMRequestLogRepository`, which redacts credentials (`RequestLogRedactor`) and applies retention. A local engine that logs requests uses the same repository.
-- **Files.** Avatars and chat images under `app_repository/` are still plain (P-06, deferred). New features must not write other user content to plain files; temporary files that must exist go in `cacheDir`, are deleted after use and at startup (`beforeKey`).
+- **Files.** Avatars, chat images and drafts are sealed by `FileRepository` (P-06) and read as streams through `StoredFile`; never read `app_repository/` by path. New features must not write user content to plain files: keep it in `FileRepository`, or seal temporary files with `FileCipher.ephemeral()` (key in memory only), delete them after use and at startup (`beforeKey`).
 - **Backups and network.** Every data domain is excluded from backup and device transfer, so new files need no rule. Only system CAs are trusted; clear text stays allowed for LAN servers.
 - **Logging.** Never log user content or secrets. R8 strips `android.util.Log` and `printStackTrace` from release builds, but debug builds keep them.
 
@@ -266,46 +266,52 @@ Final review of the [privacy audit findings](#privacy-audit-findings) on this br
 | P-03 | Resolved | `a39fd4e`, `022e835` | `allowBackup="false"`; every domain excluded from full backup, cloud backup and device transfer. |
 | P-04 | Resolved | `1bb63d2` | Header values are masked in the editor; stored inside the encrypted database. |
 | P-05 | Resolved | `309abf8` | `AppModel` strings are sealed (AES-GCM, key derived from the master key). Numbers and booleans stay plain. |
-| P-06 | Deferred (decision) | | Maintainer decision (2026-10-20): done later in its own branch, following the plan in "Follow-ups". Avatars and chat images stay plain until then. |
+| P-06 | Resolved (feat/security-followups) | `a47334a`, `690a7e7`, `d9e5fc8`, `d153943`, `6f07d3e` | Files sealed with AES-256-GCM in 64 KiB segments under the `Files` key, keyed file names, drafts and their metadata sealed too; plain files of earlier builds sealed in the background with verification before each delete; chat archive temporaries sealed with an in-memory key. |
 | P-07 | Resolved | `c7b1141`, `7d27cba` | Encrypted database, credentials redacted, 7 days / 200 entries, wiped when debug mode is turned off. |
 | P-08 | Resolved | `46a3959` | `x-goog-api-key` header. |
 | P-09 | Resolved (decision) | `f24e6ba`, `3fa3047` | Warning when saving a plain-HTTP remote provider; clear text stays allowed for LAN servers. Only system CAs are trusted (maintainer decision, 2026-10-20). |
-| P-10 | Partly, rest deferred (decision) | `0d782e4` | Leftover request files are deleted at startup. Encrypting the file while a request is in flight needs a change in `MultimodalWireCodec` (local-inference); deferred by the maintainer on 2026-10-20 (see "P-10 rest" in Follow-ups). |
-| P-11 | Resolved | `c3b12b1` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs. |
-| P-12 | Resolved | `655a726` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on Android 13+. |
+| P-10 | Partly, rest deferred (decision) | `0d782e4` | Leftover request files are deleted at startup. Encrypting the file while a request is in flight needs a change in `MultimodalWireCodec` (local-inference); the maintainer decided on 2026-10-20 to do it after `feat/local-inference` is on main (see "P-10 rest" in Follow-ups). |
+| P-11 | Resolved | `c3b12b1`, `3449426` | `IS_SENSITIVE` on copies of messages, stories, characters, prompts and logs, and on everything Compose copies (selection toolbar, text fields). Text fields ask keyboards not to learn. |
+| P-12 | Resolved | `655a726`, `5ea24c3` | Optional `FLAG_SECURE`; with the lock on, recents previews are hidden on every version (on Android 12 and earlier through `FLAG_SECURE`, maintainer decision 2026-10-20). |
 | P-13 | Resolved | `1bb63d2` | Password keyboard without autocorrect. |
 | P-14 | Resolved | `2425e39` | `printStackTrace` removed; R8 strips `Log`, `printStackTrace` and SQLCipher logging in release (verified on the dex). |
 | P-15 | Deferred (decision) | | Optional encrypted export, after P-06. |
-| P-16 | Resolved (decision) | `d31820e` | The OpenRouter routing ID is no longer in the default template; opt-in through the request JSON. |
+| P-16 | Resolved (decision) | `d31820e`, `d92a766` | The OpenRouter routing ID is no longer in the default template nor added by the 2 to 3 migration; opt-in through the request JSON. |
 | O-01 | Resolved | `c7b1141`, `77ffea0` | Startup work runs off the main thread behind the gate. The theme stays plain so the first frame never waits; the first read of a sealed `AppModel` string may still perform one Keystore operation on the main thread (P-05). |
 
 ### Follow-ups (feat/security)
 
-- **P-06 plan (deferred by the maintainer):** encrypt `app_repository/` files with AES-256-GCM in 64 KiB segments under the `Files` key (no new dependency); name files by HMAC instead of the plain SHA-256 so names do not reveal known images; replace `File`-based leases with streams (`BitmapFactory.decodeStream`, `ExifInterface(InputStream)`); adapt `MessageImageRuntime`, `CharacterCardRepository.exportPng` and `ChatArchiveRepository` (narrow edits outside this track); migrate existing files in the background at startup.
-- **P-10 rest:** write the image request file with an ephemeral in-memory key and decrypt while streaming (`MultimodalWireCodec`, local-inference).
-- **Paranoid mode:** a PIN or passphrase key slot with Argon2id (`argon2kt`, MIT); the key file format already supports extra slots.
-- **Keystore error screen:** add an option to export the encrypted files through the system file picker, and a way to delete `.unrecoverable-*` copies left by "start over".
+Done in `feat/security-followups` (2026-10-20): P-06; reauthentication before turning the lock off and changing the recovery code (`2f3157b`); export of the files from the storage error screen, "set aside and continue" for a plain database that can never be encrypted, and a "Set-aside data" section that exports, deletes (ticked box and reauthentication) and restores set-aside copies (`c4ee750`, `4b05bf6`, `ff669e0`).
+
+- **P-10 rest (unblocked: `feat/local-inference` is on main):** write the image request file with `FileCipher.ephemeral()` and decrypt while OkHttp streams it (`MultimodalWireCodec.prepare`, about 10 lines). The request JSON, with prompts and decoded images, is still plain in `cacheDir/image-requests` while a request runs.
+- **Dropdown menus while locked (unblocked: `feat/aesthetic` is on main):** a `GatedDropdownMenu` that reads `LocalAppGateOpen`, used by the 10 `DropdownMenu`/`ExposedDropdownMenu` calls in 7 files (`CharacterEditLayout`, `LLMProviderEditLayout`, `MainLayout`, `StoryEditorLayout`, `WorldBookEntryEditLayout`, `MessageImageGallery`, `MessageImages`).
+- **Restore and local inference:** the restart of a restore ends a running model download (its `.partial` file is deleted at the next start) or local generation; warn in the restore dialog or wait until they finish.
+- **Paranoid mode (not in this branch, maintainer decision 2026-10-20):** a PIN or passphrase key slot with Argon2id. `argon2kt` 1.6.0 (MIT) ships prebuilt native libraries (F-Droid would need them built from source) whose 16 KB page alignment is unverified; the reference Argon2 (CC0 or Apache-2.0) could be built with the local-inference CMake instead.
+- **Set-aside data:** importing an exported `.zip` back is not supported yet. A restore leaves the copy's original key file as a small set-aside entry (it held only a lost Keystore slot), which the user can delete.
+- **Known limits (privacy review of the follow-ups, 2026-10-20):**
+  - A restore restarts the app with `Runtime.exit`, which can cut a pending `SharedPreferences.apply()`; the journal finishes the swap on the next start either way, and some OEMs may not relaunch the app by themselves.
+  - Sealing a plain file renames and then deletes without syncing the directory in between; a plain file whose content does not match its name stays plain and is retried at every start.
+  - On a device without a screen lock, the confirmation passes at once, also before "Delete permanently" (the ticked box remains), like the gate.
+  - On API 26-29 the device credential opens its own screen, so confirming a settings change with the PIN counts as leaving the app: with the "Immediately" timeout the app locks again and asks to unlock once more.
+  - `LockActivity` recognizes a prompt on screen by the fragment tag `androidx.biometric.BiometricFragment`, internal to `androidx.biometric` 1.1.0; check it when updating that library.
+  - `PreparedFile` and `FileEntity` are inherited data classes whose `toString` prints the image hash; nothing logs them.
+  - If a restore can never finish (a destination that stays taken), the error screen offers only a restart and an export; an "abandon the restore" action that undoes phase 1 would be the way out.
 - **F-Droid:** SQLCipher ships prebuilt native libraries from Maven Central; confirm the F-Droid scanner accepts them or build `sqlcipher-android` from source in the recipe (release-readiness).
 - **Privacy review (2026-10-20), not fixed in this track:**
   - Ship the SQLCipher BSD-3 notice inside the app (licenses screen or packaged `NOTICE`) before any release (release-readiness).
-  - Text copied through the system selection toolbar (`MarkdownMessage`, `PromptInspectorDialog`) is not marked `IS_SENSITIVE`; needs a clipboard manager that flags it.
-  - Turning the lock off and creating, replacing or removing the recovery code need no fresh authentication; consider a prompt for these actions.
-  - `AppDatabaseAutoMigrationSpec` (2 to 3) still injects `session_id` into OpenRouter providers migrated from RPClient databases, and the provider editor's example JSON shows it.
-  - Chat, persona and character inputs do not set the IME "no personalized learning" flag.
-  - Recents previews: on Android 12 and earlier only `FLAG_SECURE` hides them; the app lock alone does not.
+  - Done in `feat/security-followups`: selection toolbar copies, reauthentication, the `session_id` migration, the keyboard flag and recents previews on Android 12 and earlier.
 - **Second privacy review (2026-10-20), documented limits:**
-  - Dropdown menus and small popups are not hidden while locked; only the dialogs that show private content are (`AppDialogScaffold`, `PromptInspectorDialog`, `MessageImageViewerDialog`). The gate screen covers them right after.
-  - Permanent failures that are not about the key (a damaged plain database, "two plain copies") only offer Retry; the way out is clearing the app data in system settings. Only earlier debug builds can reach them.
+  - Dropdown menus and small popups are not hidden while locked; only the dialogs that show private content are (`AppDialogScaffold`, `PromptInspectorDialog`, `MessageImageViewerDialog`). The gate screen covers them right after. Planned: `GatedDropdownMenu`, see above.
   - With only system CAs trusted, self-hosted HTTPS servers with a self-signed certificate no longer work; plain HTTP on the LAN still does, with the warning.
-  - `.unrecoverable-*` copies left by "start over" cannot be restored from the app; restoring them with a recovery code would need a new action.
-- **Pre-merge privacy review (2026-10-20), open, waiting for the maintainer's decision:**
-  - Medium: with `KeystoreKeyLost` the error screen offers no Retry (`LockViewModel`, `canRetry`), although `UnrecoverableKeyException` and `AEADBadTagException` can be temporary on some devices; the user may start over with data that was still readable.
-  - Medium: start over sets `app_repository/` aside even when a plain database survives and is re-encrypted with the new key (only reachable from earlier debug builds); that database then loses its images. Set the files aside only when the primary database was moved aside.
-  - Low: `OpenedValue.Plain` and `OpenedValue.Value` in `SealedSharedPreferences` are data classes, so their `toString` would print decrypted text; override it with `[REDACTED]`.
-  - Low: `AppLockManager.mAuthenticating` can stay true if the `BiometricPrompt` callback is lost (API 26-29), so "Unlock" does nothing until the process dies; reset it when `LockActivity` resumes without a prompt.
-  - Low: the licenses table lists Kotlin stdlib 2.0.21, but SQLCipher pulls in 2.2.10 (same license).
-  - Low: retrying a start over that failed halfway sets aside one more empty `app_repository` directory.
-  - Low: no automated test covers start over keeping stored files (verified manually on the emulator).
+  - Done in `feat/security-followups`: a way out for permanent failures that are not about the key, and restoring set-aside copies with their recovery code.
+- **Pre-merge privacy review (2026-10-20), resolved in `feat/security-followups` (maintainer decision, 2026-10-20):**
+  - Medium, done: the error screen always offers Retry; with a lost Keystore key the recovery code stays the first button.
+  - Medium, done: when a plain main database survives start over, only `app_repository/sealed/` goes aside (it needs the lost key); its plain files from builds before P-06 stay with it.
+  - Low, done: `OpenedValue.Plain` and `OpenedValue.Value` print `[REDACTED]`.
+  - Low, done: `LockActivity` forgets a prompt whose fragment is gone, so "Unlock" works after a lost callback.
+  - Low, done: the licenses table lists the Kotlin stdlib that is packaged (2.2.10).
+  - Low, done: retrying a half-finished start over sets no empty directory aside.
+  - Low, done: `StartOverAndroidTest` covers start over keeping stored files.
 - **Build:** a combined `assembleFdroidDebug assembleGithubDebug assemblePlayDebug testFdroidDebugUnitTest` once failed in KSP with Room errors on `MutableDao<T>`; rerunning passed. Probably KSP incremental state; watch for it.
 
 **Done when:** P-01 to P-14 are resolved or have an approved decision; a Keystore failure never deletes data silently (a clear error and options are shown); no key, passphrase or API key appears in logs or tests; `assembleDebug` for every flavor and the unit tests pass; the privacy-reviewer agent marks the branch fit to merge.
@@ -507,7 +513,8 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | AndroidX core-ktx, exifinterface, lifecycle-runtime-ktx, activity-compose | 1.18.0, 1.3.6, 2.10.0, 1.13.0 | Apache-2.0 | No |
 | Jetpack Compose BOM (ui, foundation, material3, material3-adaptive, material-icons-extended) | 2026.05.00 | Apache-2.0 | No |
 | AndroidX Room (runtime, ktx) | 2.8.4 | Apache-2.0 | No |
-| Kotlin stdlib, kotlin-reflect | 2.0.21 | Apache-2.0 | No |
+| Kotlin stdlib | 2.2.10 (resolved; SQLCipher and other libraries need it) | Apache-2.0 | No |
+| kotlin-reflect | 2.0.21 | Apache-2.0 | No |
 | kotlinx-serialization-core | 1.8.1 | Apache-2.0 | No |
 | Koin (koin-android) | 4.0.0-RC1 | Apache-2.0 | No |
 | Kotpref | 2.13.2 | Apache-2.0 | No |

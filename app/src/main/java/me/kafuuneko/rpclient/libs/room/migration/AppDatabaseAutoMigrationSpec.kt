@@ -3,7 +3,6 @@ package me.kafuuneko.rpclient.libs.room.migration
 import androidx.room.DeleteTable
 import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
-import me.kafuuneko.rpclient.libs.llm.model.OPENROUTER_SESSION_AFFINITY_REQUEST_BODY_PATCH_JSON
 
 /**
  * 主业务数据库 v1→v2 自动迁移所需的删表消歧义声明。
@@ -23,22 +22,14 @@ class AppDatabaseAutoMigration1To2Spec : AutoMigrationSpec {
 /**
  * 主业务数据库 v2→v3 完成 Regex、故事、角色模型关联表和高级请求 JSON 结构升级后的默认值迁移。
  *
- * 表和字段由 Room 按当前尚未发布的 v3 schema 自动创建；这里仅补写升级当下仍为空的
- * OpenRouter 模板。迁移结束后不再自动补写，因此用户可以从高级 JSON 删除 session_id
- * 并持续保持关闭状态。
+ * 表和字段由 Room 按当前尚未发布的 v3 schema 自动创建。
+ *
+ * Himitsu (P-16): the inherited migration filled empty OpenRouter templates with a
+ * `session_id` routing ID. Himitsu keeps that ID off unless the user adds it, so the
+ * migration no longer writes it; the class stays because the auto-migration references it.
+ * Rows that already hold the template are left alone: the user may have chosen it.
  */
-class AppDatabaseAutoMigration2To3Spec : AutoMigrationSpec {
-    override fun onPostMigrate(db: SupportSQLiteDatabase) {
-        db.execSQL(
-            """
-            UPDATE llm_providers
-            SET requestBodyPatchJson = ?
-            WHERE providerType = 'OpenRouter' AND requestBodyPatchJson = '{}'
-            """.trimIndent(),
-            arrayOf(OPENROUTER_SESSION_AFFINITY_REQUEST_BODY_PATCH_JSON)
-        )
-    }
-}
+class AppDatabaseAutoMigration2To3Spec : AutoMigrationSpec
 
 /**
  * 主业务数据库 v3→v4 为原生用量协议保留升级前的服务端统计行为。
