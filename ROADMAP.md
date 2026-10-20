@@ -213,9 +213,19 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - The `when` branches in `…/libs/llm/catalog/LLMModelCatalogClientFactory.kt:15`, `…/libs/llm/model/LLMProviderCapabilities.kt:17`, `…/libs/llm/adapter/RequestBodyPatch.kt:114`, `…/libs/llm/adapter/MultimodalWireCodec.kt:74`, `…/feature/tokenusage/ui/TokenUsageLayout.kt:947`
 - Protocol checks in `…/libs/prompt/PromptPostProcessor.kt:225`, `…/libs/prompt/PromptRequestFinalizer.kt:107`, `…/libs/prompt/PromptTokenizer.kt:143-161`
 - `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**`
+- Additive changes only: `…/libs/prompt/model/PromptInspection.kt` (an optional rendered-prompt field) and `…/ui/dialog/PromptInspectorDialog.kt` (a collapsible section that shows it)
+
+**Design decisions (approved by the maintainer on 2026-10-20):**
+- Local engines plug in as `LLMProviderProtocol.Local` and a `LocalLLMClient` on top of a `LocalInferenceEngine` interface, so the prompt pipeline runs unchanged.
+- llama.cpp is a git submodule pinned to a release tag, built with the NDK and CMake behind a thin JNI layer of our own. No binding library. ggml and llama are linked statically into libraries with Himitsu-specific names and hidden symbols, and `llama-common` (which links an HTTP client) is not built.
+- Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
+- GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
+- Models are copied to `noBackupFilesDir` and are not encrypted; their names and metadata live in a `local_models` table in the encrypted database.
+- The optional download list contains only Apache-2.0 models; any other model is imported by hand.
+- New permissions accepted for model downloads and background generation: `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_DATA_SYNC`, `POST_NOTIFICATIONS`.
 
 **Tasks, in order:**
-1. Design document, approved by the maintainer: engine interface, chat templates and how the Prompt Inspector shows them, llama.cpp from source (NDK, CMake, pinned commit) versus existing bindings, GenieX runtime detection, native library conflicts between llama.cpp and GenieX, licensing options for GenieX, model import and download, memory and thermal management, and a short list of recommended models.
+1. [x] Design document, approved by the maintainer: engine interface, chat templates and how the Prompt Inspector shows them, llama.cpp from source (NDK, CMake, pinned commit) versus existing bindings, GenieX runtime detection, native library conflicts between llama.cpp and GenieX, licensing options for GenieX, model import and download, memory and thermal management, and a short list of recommended models.
 2. `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
 3. llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
