@@ -3,14 +3,20 @@ package me.kafuuneko.rpclient.libs.llm.catalog
 import me.kafuuneko.rpclient.libs.llm.catalog.adapter.AnthropicModelCatalogClient
 import me.kafuuneko.rpclient.libs.llm.catalog.adapter.GeminiModelCatalogClient
 import me.kafuuneko.rpclient.libs.llm.catalog.adapter.OpenAICompatibleModelCatalogClient
+import me.kafuuneko.rpclient.libs.llm.local.LocalModelCatalogClient
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderConfig
 import me.kafuuneko.rpclient.libs.llm.model.LLMProviderProtocol
 import okhttp3.OkHttpClient
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /** 根据模型配置的协议创建模型目录适配器。 */
 class LLMModelCatalogClientFactory(
     private val mOkHttpClient: OkHttpClient
-) {
+) : KoinComponent {
+    // Lazy, so the upstream Koin registration of this factory stays unchanged
+    private val mLocalCatalogClient by inject<LocalModelCatalogClient>()
+
     fun create(provider: LLMProviderConfig): LLMModelCatalogClient {
         return when (provider.protocol) {
             LLMProviderProtocol.OpenAICompatible -> {
@@ -24,6 +30,9 @@ class LLMModelCatalogClientFactory(
             LLMProviderProtocol.AnthropicMessages -> {
                 AnthropicModelCatalogClient(mOkHttpClient, provider)
             }
+
+            // Himitsu: models stored on this device, no network call
+            LLMProviderProtocol.Local -> mLocalCatalogClient
         }
     }
 }

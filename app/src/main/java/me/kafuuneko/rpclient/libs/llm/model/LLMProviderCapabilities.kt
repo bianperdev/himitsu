@@ -33,6 +33,13 @@ data class LLMProviderCapabilities(
                     defaultSendTemperature = true,
                     defaultSendTopP = false
                 )
+                // Himitsu: llama.cpp samplers accept the same ranges as OpenAI-compatible servers
+                LLMProviderProtocol.Local -> LLMProviderCapabilities(
+                    temperatureRange = 0f..2f,
+                    topPRange = 0f..1f,
+                    defaultSendTemperature = true,
+                    defaultSendTopP = true
+                )
             }
         }
     }

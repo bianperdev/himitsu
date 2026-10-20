@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient
 
+import me.kafuuneko.rpclient.libs.llm.local.localInferenceModule
 import org.koin.core.module.Module
 
 /**
@@ -10,4 +11,5 @@ import org.koin.core.module.Module
  * editing [appModules]. This keeps parallel tracks and upstream merges free of conflicts.
  */
 internal val himitsuModules: List<Module> = listOf(
+    localInferenceModule, // feat/local-inference
 )

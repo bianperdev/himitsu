@@ -115,6 +115,8 @@ internal fun protectedRequestBodyPaths(
         LLMProviderProtocol.OpenAICompatible -> OPEN_AI_PROTECTED_REQUEST_FIELDS
         LLMProviderProtocol.AnthropicMessages -> ANTHROPIC_PROTECTED_REQUEST_FIELDS
         LLMProviderProtocol.Gemini -> GEMINI_PROTECTED_REQUEST_FIELDS
+        // Himitsu: no HTTP body; the patch only carries extra sampler settings
+        LLMProviderProtocol.Local -> emptySet()
     }
     return protocolPaths
 }

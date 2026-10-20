@@ -30,6 +30,7 @@ import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Dns
 import androidx.compose.material.icons.rounded.Hub
 import androidx.compose.material.icons.rounded.Memory
+import androidx.compose.material.icons.rounded.PhoneAndroid
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.SmartToy
 import androidx.compose.material3.Button
@@ -428,6 +429,7 @@ private fun ProviderBrandBadge(
         LLMProviderType.Grok -> Color(0xFF475569) to Icons.Rounded.Bolt
         LLMProviderType.OpenRouter -> Color(0xFF7C3AED) to Icons.Rounded.Hub
         LLMProviderType.Custom -> MaterialTheme.colorScheme.primary to Icons.Rounded.Dns
+        LLMProviderType.Local -> MaterialTheme.colorScheme.tertiary to Icons.Rounded.PhoneAndroid
     }
 
     val activeColor = if (isEnabled) brandColor else brandColor.copy(alpha = 0.4f)

@@ -79,6 +79,8 @@ internal class MultimodalWireCodec(private val mProvider: LLMProviderConfig) {
             LLMProviderProtocol.AnthropicMessages -> JSONObject().put("type", "image")
                 .put("source", JSONObject().put("type", "base64")
                     .put("media_type", reference.mimeType).put("data", marker))
+            // Himitsu: local engines are text only and never build an HTTP body
+            LLMProviderProtocol.Local -> throw ImageRequestException(ImageRequestFailure.Unsupported)
         }
     }
 
