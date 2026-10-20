@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Pilih lokasi penyimpanan</string>
     <string name="security_export_done">Salinan disimpan.</string>
     <string name="security_export_failed">Salinan tidak dapat disimpan. Data Anda tidak diubah.</string>
+    <string name="security_settings_section_set_aside">Data yang disisihkan</string>
+    <string name="security_settings_set_aside_desc">Salinan yang disisihkan oleh \"Mulai dari awal\" atau \"Sisihkan\". Salinan tetap ada di perangkat ini hingga Anda menghapusnya.</string>
+    <string name="security_set_aside_kind_unrecoverable">Disisihkan saat mulai dari awal</string>
+    <string name="security_set_aside_kind_unusable">Data rusak dari versi sebelumnya (tidak terenkripsi)</string>
+    <string name="security_set_aside_kind_replaced">Diganti oleh pemulihan</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Hapus permanen</string>
+    <string name="security_set_aside_delete_title">Hapus data ini secara permanen?</string>
+    <string name="security_set_aside_delete_message">File ini akan dihapus dari perangkat ini. Tindakan ini tidak dapat dibatalkan: bahkan kode pemulihan tidak dapat mengembalikannya.</string>
+    <string name="security_set_aside_delete_understood">Saya mengerti bahwa ini tidak dapat dibatalkan</string>
+    <string name="security_set_aside_delete_confirm">Hapus</string>
+    <string name="security_set_aside_deleted">Dihapus.</string>
+    <string name="security_set_aside_delete_failed">Beberapa file tidak dapat dihapus. Coba lagi.</string>
 </resources>

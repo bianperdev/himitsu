@@ -79,4 +79,17 @@
     <string name="security_export_confirm">选择保存位置</string>
     <string name="security_export_done">副本已保存。</string>
     <string name="security_export_failed">无法保存副本。你的数据未被更改。</string>
+    <string name="security_settings_section_set_aside">移到一旁的数据</string>
+    <string name="security_settings_set_aside_desc">“重新开始”或“移到一旁”移开的副本。它们会保留在此设备上，直到你删除。</string>
+    <string name="security_set_aside_kind_unrecoverable">重新开始时移到一旁</string>
+    <string name="security_set_aside_kind_unusable">旧版本中损坏的数据（未加密）</string>
+    <string name="security_set_aside_kind_replaced">被恢复操作替换</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">永久删除</string>
+    <string name="security_set_aside_delete_title">永久删除这些数据？</string>
+    <string name="security_set_aside_delete_message">这些文件将从此设备删除。此操作无法撤销：即使有恢复码也无法找回。</string>
+    <string name="security_set_aside_delete_understood">我明白此操作无法撤销</string>
+    <string name="security_set_aside_delete_confirm">删除</string>
+    <string name="security_set_aside_deleted">已删除。</string>
+    <string name="security_set_aside_delete_failed">部分文件无法删除。请重试。</string>
 </resources>

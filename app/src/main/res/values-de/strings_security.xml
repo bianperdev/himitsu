@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Speicherort wählen</string>
     <string name="security_export_done">Kopie gespeichert.</string>
     <string name="security_export_failed">Die Kopie konnte nicht gespeichert werden. Deine Daten wurden nicht geändert.</string>
+    <string name="security_settings_section_set_aside">Beiseitegelegte Daten</string>
+    <string name="security_settings_set_aside_desc">Kopien, die „Neu beginnen“ oder „Beiseitelegen“ aus dem Weg geräumt hat. Sie bleiben auf diesem Gerät, bis du sie löschst.</string>
+    <string name="security_set_aside_kind_unrecoverable">Beim Neubeginn beiseitegelegt</string>
+    <string name="security_set_aside_kind_unusable">Beschädigte Daten aus einer früheren Version (unverschlüsselt)</string>
+    <string name="security_set_aside_kind_replaced">Durch eine Wiederherstellung ersetzt</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Endgültig löschen</string>
+    <string name="security_set_aside_delete_title">Diese Daten endgültig löschen?</string>
+    <string name="security_set_aside_delete_message">Diese Dateien werden von diesem Gerät gelöscht. Das lässt sich nicht rückgängig machen: Nicht einmal ein Wiederherstellungscode kann sie zurückholen.</string>
+    <string name="security_set_aside_delete_understood">Ich verstehe, dass dies nicht rückgängig gemacht werden kann</string>
+    <string name="security_set_aside_delete_confirm">Löschen</string>
+    <string name="security_set_aside_deleted">Gelöscht.</string>
+    <string name="security_set_aside_delete_failed">Einige Dateien konnten nicht gelöscht werden. Versuche es erneut.</string>
 </resources>

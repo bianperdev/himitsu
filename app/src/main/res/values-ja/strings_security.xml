@@ -79,4 +79,17 @@
     <string name="security_export_confirm">保存先を選択</string>
     <string name="security_export_done">コピーを保存しました。</string>
     <string name="security_export_failed">コピーを保存できませんでした。データは変更されていません。</string>
+    <string name="security_settings_section_set_aside">別の場所に移したデータ</string>
+    <string name="security_settings_set_aside_desc">「最初からやり直す」または「別の場所に移す」で移されたコピーです。削除するまでこの端末に残ります。</string>
+    <string name="security_set_aside_kind_unrecoverable">やり直したときに移したデータ</string>
+    <string name="security_set_aside_kind_unusable">以前のバージョンの破損したデータ（暗号化なし）</string>
+    <string name="security_set_aside_kind_replaced">復元で置き換えたデータ</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">完全に削除</string>
+    <string name="security_set_aside_delete_title">このデータを完全に削除しますか？</string>
+    <string name="security_set_aside_delete_message">これらのファイルはこの端末から削除されます。元に戻すことはできず、復旧コードでも復元できません。</string>
+    <string name="security_set_aside_delete_understood">元に戻せないことを理解しました</string>
+    <string name="security_set_aside_delete_confirm">削除</string>
+    <string name="security_set_aside_deleted">削除しました。</string>
+    <string name="security_set_aside_delete_failed">一部のファイルを削除できませんでした。もう一度お試しください。</string>
 </resources>

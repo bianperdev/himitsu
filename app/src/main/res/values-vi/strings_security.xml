@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Chọn nơi lưu</string>
     <string name="security_export_done">Đã lưu bản sao.</string>
     <string name="security_export_failed">Không thể lưu bản sao. Dữ liệu của bạn không thay đổi.</string>
+    <string name="security_settings_section_set_aside">Dữ liệu để riêng</string>
+    <string name="security_settings_set_aside_desc">Các bản sao được \"Bắt đầu lại\" hoặc \"Để riêng\" chuyển sang một bên. Chúng vẫn ở trên thiết bị này cho đến khi bạn xóa.</string>
+    <string name="security_set_aside_kind_unrecoverable">Để riêng khi bắt đầu lại</string>
+    <string name="security_set_aside_kind_unusable">Dữ liệu bị hỏng từ phiên bản trước (không mã hóa)</string>
+    <string name="security_set_aside_kind_replaced">Bị thay thế khi khôi phục</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Xóa vĩnh viễn</string>
+    <string name="security_set_aside_delete_title">Xóa vĩnh viễn dữ liệu này?</string>
+    <string name="security_set_aside_delete_message">Các tệp này sẽ bị xóa khỏi thiết bị. Không thể hoàn tác: ngay cả mã khôi phục cũng không thể lấy lại chúng.</string>
+    <string name="security_set_aside_delete_understood">Tôi hiểu rằng việc này không thể hoàn tác</string>
+    <string name="security_set_aside_delete_confirm">Xóa</string>
+    <string name="security_set_aside_deleted">Đã xóa.</string>
+    <string name="security_set_aside_delete_failed">Không thể xóa một số tệp. Hãy thử lại.</string>
 </resources>

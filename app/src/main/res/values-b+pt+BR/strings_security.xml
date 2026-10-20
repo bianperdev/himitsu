@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Escolher onde salvar</string>
     <string name="security_export_done">Cópia salva.</string>
     <string name="security_export_failed">Não foi possível salvar a cópia. Seus dados não foram alterados.</string>
+    <string name="security_settings_section_set_aside">Dados deixados de lado</string>
+    <string name="security_settings_set_aside_desc">Cópias que \"Começar do zero\" ou \"Deixar de lado\" tiraram do caminho. Elas ficam neste dispositivo até você excluí-las.</string>
+    <string name="security_set_aside_kind_unrecoverable">Deixados de lado ao começar do zero</string>
+    <string name="security_set_aside_kind_unusable">Dados danificados de uma versão anterior (sem criptografia)</string>
+    <string name="security_set_aside_kind_replaced">Substituídos por uma restauração</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Excluir definitivamente</string>
+    <string name="security_set_aside_delete_title">Excluir estes dados definitivamente?</string>
+    <string name="security_set_aside_delete_message">Estes arquivos serão excluídos deste dispositivo. Não é possível desfazer: nem mesmo um código de recuperação poderá trazê-los de volta.</string>
+    <string name="security_set_aside_delete_understood">Entendo que não é possível desfazer</string>
+    <string name="security_set_aside_delete_confirm">Excluir</string>
+    <string name="security_set_aside_deleted">Excluídos.</string>
+    <string name="security_set_aside_delete_failed">Não foi possível excluir alguns arquivos. Tente novamente.</string>
 </resources>

@@ -2,6 +2,7 @@
 package me.kafuuneko.rpclient.feature.lock.settings
 
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,9 @@ class SecuritySettingsActivity : CoreActivityWithEvent() {
     private val mViewModel by viewModels<SecuritySettingsViewModel>()
     private val mConfirmLauncher = registerForActivityResult(ConfirmCredentialContract()) { confirmed ->
         mViewModel.emit(SecuritySettingsUiIntent.ConfirmationFinished(confirmed))
+    }
+    private val mExportLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+        mViewModel.emit(SecuritySettingsUiIntent.ExportSetAsideTo(uri))
     }
 
     override fun getViewEventFlow() = mViewModel.viewEventFlow
@@ -53,6 +57,7 @@ class SecuritySettingsActivity : CoreActivityWithEvent() {
         when (viewEvent) {
             SecuritySettingsViewEvent.ApplyWindowProtection -> WindowProtection.apply(this)
             SecuritySettingsViewEvent.RequestConfirmation -> mConfirmLauncher.launch(Unit)
+            is SecuritySettingsViewEvent.PickExportDestination -> mExportLauncher.launch(viewEvent.fileName)
             else -> super.onReceivedViewEvent(viewEvent)
         }
     }

@@ -2,9 +2,13 @@
 package me.kafuuneko.rpclient.feature.lock.settings.ui
 
 import androidx.activity.compose.BackHandler
+import android.text.format.DateFormat
+import android.text.format.Formatter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,18 +19,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Archive
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.SaveAlt
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +46,9 @@ import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsDialogState
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiIntent
 import me.kafuuneko.rpclient.feature.lock.settings.presentation.SecuritySettingsUiState
+import me.kafuuneko.rpclient.feature.lock.settings.presentation.SetAsideItem
 import me.kafuuneko.rpclient.libs.security.lock.LockTimeout
+import me.kafuuneko.rpclient.libs.security.storage.SetAsideKind
 import me.kafuuneko.rpclient.ui.dialog.AppActionItem
 import me.kafuuneko.rpclient.ui.dialog.AppActionListDialog
 import me.kafuuneko.rpclient.ui.dialog.AppConfirmDialog
@@ -96,6 +107,7 @@ private fun NormalView(uiState: SecuritySettingsUiState.Normal, emit: SecuritySe
             LockSection(uiState, emit)
             ScreenSection(uiState, emit)
             RecoverySection(uiState, emit)
+            if (uiState.setAside.isNotEmpty()) SetAsideSection(uiState, emit)
             AboutSection()
         }
     }
@@ -179,6 +191,44 @@ private fun RecoverySection(uiState: SecuritySettingsUiState.Normal, emit: Secur
 }
 
 @Composable
+private fun SetAsideSection(uiState: SecuritySettingsUiState.Normal, emit: SecuritySettingsUiIntent.() -> Unit) {
+    RpSectionHeader(title = stringResource(R.string.security_settings_section_set_aside))
+    RpSettingsGroup {
+        uiState.setAside.forEachIndexed { index, item ->
+            if (index > 0) RpSettingsDivider()
+            RpSettingsTile(
+                title = stringResource(item.kind.labelRes()),
+                subtitle = item.details(),
+                icon = Icons.Rounded.Archive,
+                enabled = !uiState.isWorking,
+                onClick = { SecuritySettingsUiIntent.ShowSetAsideActions(item.suffix).emit() }
+            )
+        }
+    }
+    Text(
+        text = stringResource(R.string.security_settings_set_aside_desc),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    )
+}
+
+/** Date and size of a set, formatted for the device locale. */
+@Composable
+private fun SetAsideItem.details(): String {
+    val context = LocalContext.current
+    val size = Formatter.formatShortFileSize(context, sizeBytes)
+    val date = time?.let { DateFormat.getMediumDateFormat(context).format(it) + " " + DateFormat.getTimeFormat(context).format(it) }
+    return if (date == null) size else stringResource(R.string.security_set_aside_details, date, size)
+}
+
+private fun SetAsideKind.labelRes(): Int = when (this) {
+    SetAsideKind.Unrecoverable -> R.string.security_set_aside_kind_unrecoverable
+    SetAsideKind.Unusable -> R.string.security_set_aside_kind_unusable
+    SetAsideKind.Replaced -> R.string.security_set_aside_kind_replaced
+}
+
+@Composable
 private fun AboutSection() {
     RpSettingsGroup {
         RpSettingsTile(
@@ -230,7 +280,70 @@ private fun DialogSwitch(
             onConfirm = { SecuritySettingsUiIntent.ConfirmRemoveRecoveryCode.emit() }
         )
         is SecuritySettingsDialogState.ShowRecoveryCode -> RecoveryCodeDialog(dialogState.code, dismiss)
+        is SecuritySettingsDialogState.SetAsideActions -> SetAsideActionsDialog(dialogState, dismiss, emit)
+        is SecuritySettingsDialogState.ConfirmDeleteSetAside -> AppConfirmDialog(
+            onDismissRequest = dismiss,
+            title = stringResource(R.string.security_set_aside_delete_title),
+            message = stringResource(R.string.security_set_aside_delete_message),
+            badgeIcon = Icons.Rounded.Delete,
+            badgeTone = DialogBadgeTone.Danger,
+            confirmText = stringResource(R.string.security_set_aside_delete_confirm),
+            confirmEnabled = dialogState.understood,
+            confirmIsDestructive = true,
+            onConfirm = { SecuritySettingsUiIntent.ConfirmDeleteSetAside.emit() }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { SecuritySettingsUiIntent.SetDeleteUnderstood(!dialogState.understood).emit() }
+            ) {
+                Checkbox(
+                    checked = dialogState.understood,
+                    onCheckedChange = { SecuritySettingsUiIntent.SetDeleteUnderstood(it).emit() }
+                )
+                Text(
+                    text = stringResource(R.string.security_set_aside_delete_understood),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
+}
+
+/**
+ * Actions on a set-aside copy. The list closes itself after an action; that close is ignored,
+ * so the dialog the action opened (the delete confirmation) stays.
+ */
+@Composable
+private fun SetAsideActionsDialog(
+    dialogState: SecuritySettingsDialogState.SetAsideActions,
+    dismiss: () -> Unit,
+    emit: SecuritySettingsUiIntent.() -> Unit
+) {
+    var chosen = false
+    AppActionListDialog(
+        onDismissRequest = { if (chosen) chosen = false else dismiss() },
+        title = stringResource(dialogState.item.kind.labelRes()),
+        subtitle = dialogState.item.details(),
+        badgeIcon = Icons.Rounded.Archive,
+        actions = listOf(
+            AppActionItem(
+                icon = Icons.Rounded.SaveAlt,
+                title = stringResource(R.string.security_action_export),
+                onClick = { SecuritySettingsUiIntent.ExportSetAside.emit() }
+            ),
+            AppActionItem(
+                icon = Icons.Rounded.Delete,
+                title = stringResource(R.string.security_set_aside_delete),
+                isDestructive = true,
+                onClick = {
+                    chosen = true
+                    SecuritySettingsUiIntent.ShowDeleteSetAside.emit()
+                }
+            )
+        )
+    )
 }
 
 /**

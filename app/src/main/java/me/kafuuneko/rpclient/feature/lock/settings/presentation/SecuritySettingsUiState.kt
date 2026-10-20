@@ -2,6 +2,7 @@
 package me.kafuuneko.rpclient.feature.lock.settings.presentation
 
 import me.kafuuneko.rpclient.libs.security.lock.LockTimeout
+import me.kafuuneko.rpclient.libs.security.storage.SetAsideKind
 
 /** State of the security settings screen. */
 sealed class SecuritySettingsUiState {
@@ -16,6 +17,7 @@ sealed class SecuritySettingsUiState {
         val lockTimeout: LockTimeout,
         val hasRecoveryCode: Boolean,
         val secureScreenEnabled: Boolean,
+        val setAside: List<SetAsideItem> = emptyList(),
         val isWorking: Boolean = false,
         val dialogState: SecuritySettingsDialogState = SecuritySettingsDialogState.None
     ) : SecuritySettingsUiState()
@@ -23,12 +25,29 @@ sealed class SecuritySettingsUiState {
     data class Finished(val previous: SecuritySettingsUiState) : SecuritySettingsUiState()
 }
 
+/**
+ * A set of files moved aside, as listed on the screen.
+ *
+ * @property suffix identifies the set; it holds only its kind and time, never content
+ */
+data class SetAsideItem(
+    val suffix: String,
+    val kind: SetAsideKind,
+    val time: Long?,
+    val sizeBytes: Long
+)
+
 /** Dialogs of the security settings screen. */
 sealed class SecuritySettingsDialogState {
     data object None : SecuritySettingsDialogState()
     data object TimeoutPicker : SecuritySettingsDialogState()
     data object ConfirmReplaceRecoveryCode : SecuritySettingsDialogState()
     data object ConfirmRemoveRecoveryCode : SecuritySettingsDialogState()
+    data class SetAsideActions(val item: SetAsideItem) : SecuritySettingsDialogState()
+
+    /** Deleting needs the box ticked first, then the user's confirmation. */
+    data class ConfirmDeleteSetAside(val item: SetAsideItem, val understood: Boolean = false) :
+        SecuritySettingsDialogState()
 
     /**
      * Shows a new recovery code once. It is dropped from state as soon as the dialog closes,

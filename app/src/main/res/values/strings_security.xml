@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Choose where to save</string>
     <string name="security_export_done">Copy saved.</string>
     <string name="security_export_failed">The copy could not be saved. Your data was not changed.</string>
+    <string name="security_settings_section_set_aside">Set-aside data</string>
+    <string name="security_settings_set_aside_desc">Copies that \"Start over\" or \"Set aside\" moved out of the way. They stay on this device until you delete them.</string>
+    <string name="security_set_aside_kind_unrecoverable">Set aside when starting over</string>
+    <string name="security_set_aside_kind_unusable">Damaged data from an earlier version (not encrypted)</string>
+    <string name="security_set_aside_kind_replaced">Replaced by a restore</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Delete permanently</string>
+    <string name="security_set_aside_delete_title">Delete this data permanently?</string>
+    <string name="security_set_aside_delete_message">These files will be deleted from this device. This cannot be undone: not even a recovery code can bring them back.</string>
+    <string name="security_set_aside_delete_understood">I understand that this cannot be undone</string>
+    <string name="security_set_aside_delete_confirm">Delete</string>
+    <string name="security_set_aside_deleted">Deleted.</string>
+    <string name="security_set_aside_delete_failed">Some files could not be deleted. Try again.</string>
 </resources>

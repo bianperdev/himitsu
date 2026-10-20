@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Elegir dónde guardar</string>
     <string name="security_export_done">Copia guardada.</string>
     <string name="security_export_failed">No se ha podido guardar la copia. Tus datos no han cambiado.</string>
+    <string name="security_settings_section_set_aside">Datos apartados</string>
+    <string name="security_settings_set_aside_desc">Copias que «Empezar de cero» o «Apartar» quitaron de en medio. Siguen en este dispositivo hasta que las borres.</string>
+    <string name="security_set_aside_kind_unrecoverable">Apartados al empezar de cero</string>
+    <string name="security_set_aside_kind_unusable">Datos dañados de una versión anterior (sin cifrar)</string>
+    <string name="security_set_aside_kind_replaced">Sustituidos al restaurar</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Borrar definitivamente</string>
+    <string name="security_set_aside_delete_title">¿Borrar estos datos definitivamente?</string>
+    <string name="security_set_aside_delete_message">Estos archivos se borrarán de este dispositivo. No se puede deshacer: ni siquiera un código de recuperación podrá recuperarlos.</string>
+    <string name="security_set_aside_delete_understood">Entiendo que no se puede deshacer</string>
+    <string name="security_set_aside_delete_confirm">Borrar</string>
+    <string name="security_set_aside_deleted">Borrados.</string>
+    <string name="security_set_aside_delete_failed">No se han podido borrar algunos archivos. Vuelve a intentarlo.</string>
 </resources>

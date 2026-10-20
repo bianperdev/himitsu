@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Scegli dove salvare</string>
     <string name="security_export_done">Copia salvata.</string>
     <string name="security_export_failed">Non è stato possibile salvare la copia. I tuoi dati non sono stati modificati.</string>
+    <string name="security_settings_section_set_aside">Dati messi da parte</string>
+    <string name="security_settings_set_aside_desc">Copie spostate da «Ricomincia da zero» o «Metti da parte». Restano su questo dispositivo finché non le elimini.</string>
+    <string name="security_set_aside_kind_unrecoverable">Messi da parte ricominciando da zero</string>
+    <string name="security_set_aside_kind_unusable">Dati danneggiati di una versione precedente (non cifrati)</string>
+    <string name="security_set_aside_kind_replaced">Sostituiti da un ripristino</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Elimina definitivamente</string>
+    <string name="security_set_aside_delete_title">Eliminare definitivamente questi dati?</string>
+    <string name="security_set_aside_delete_message">Questi file verranno eliminati da questo dispositivo. Non si può annullare: nemmeno un codice di recupero potrà riportarli indietro.</string>
+    <string name="security_set_aside_delete_understood">Ho capito che non si può annullare</string>
+    <string name="security_set_aside_delete_confirm">Elimina</string>
+    <string name="security_set_aside_deleted">Eliminati.</string>
+    <string name="security_set_aside_delete_failed">Non è stato possibile eliminare alcuni file. Riprova.</string>
 </resources>

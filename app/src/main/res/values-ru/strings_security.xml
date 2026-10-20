@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Выбрать, куда сохранить</string>
     <string name="security_export_done">Копия сохранена.</string>
     <string name="security_export_failed">Не удалось сохранить копию. Ваши данные не изменились.</string>
+    <string name="security_settings_section_set_aside">Отложенные данные</string>
+    <string name="security_settings_set_aside_desc">Копии, которые «Начать заново» или «Отложить» убрали в сторону. Они остаются на устройстве, пока вы их не удалите.</string>
+    <string name="security_set_aside_kind_unrecoverable">Отложены при начале заново</string>
+    <string name="security_set_aside_kind_unusable">Повреждённые данные из предыдущей версии (не зашифрованы)</string>
+    <string name="security_set_aside_kind_replaced">Заменены при восстановлении</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Удалить навсегда</string>
+    <string name="security_set_aside_delete_title">Удалить эти данные навсегда?</string>
+    <string name="security_set_aside_delete_message">Эти файлы будут удалены с устройства. Это необратимо: даже код восстановления не вернёт их.</string>
+    <string name="security_set_aside_delete_understood">Я понимаю, что это необратимо</string>
+    <string name="security_set_aside_delete_confirm">Удалить</string>
+    <string name="security_set_aside_deleted">Удалено.</string>
+    <string name="security_set_aside_delete_failed">Не удалось удалить некоторые файлы. Повторите попытку.</string>
 </resources>

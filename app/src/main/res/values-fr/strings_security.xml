@@ -79,4 +79,17 @@
     <string name="security_export_confirm">Choisir l\'emplacement</string>
     <string name="security_export_done">Copie enregistrée.</string>
     <string name="security_export_failed">La copie n\'a pas pu être enregistrée. Vos données n\'ont pas été modifiées.</string>
+    <string name="security_settings_section_set_aside">Données mises de côté</string>
+    <string name="security_settings_set_aside_desc">Copies mises de côté par « Repartir de zéro » ou « Mettre de côté ». Elles restent sur cet appareil jusqu\'à ce que vous les supprimiez.</string>
+    <string name="security_set_aside_kind_unrecoverable">Mises de côté en repartant de zéro</string>
+    <string name="security_set_aside_kind_unusable">Données endommagées d\'une version précédente (non chiffrées)</string>
+    <string name="security_set_aside_kind_replaced">Remplacées par une restauration</string>
+    <string name="security_set_aside_details">%1$s · %2$s</string>
+    <string name="security_set_aside_delete">Supprimer définitivement</string>
+    <string name="security_set_aside_delete_title">Supprimer définitivement ces données ?</string>
+    <string name="security_set_aside_delete_message">Ces fichiers seront supprimés de cet appareil. C\'est irréversible : même un code de récupération ne pourra pas les récupérer.</string>
+    <string name="security_set_aside_delete_understood">Je comprends que c\'est irréversible</string>
+    <string name="security_set_aside_delete_confirm">Supprimer</string>
+    <string name="security_set_aside_deleted">Supprimées.</string>
+    <string name="security_set_aside_delete_failed">Certains fichiers n\'ont pas pu être supprimés. Réessayez.</string>
 </resources>
