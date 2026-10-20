@@ -1,6 +1,5 @@
 package me.kafuuneko.rpclient.feature.storyeditor
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +16,7 @@ import me.kafuuneko.rpclient.feature.storyeditor.presentation.StoryEditorViewEve
 import me.kafuuneko.rpclient.feature.storyeditor.ui.StoryEditorLayout
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.SensitiveClip
 
 /** 分卷/章节编辑器宿主，负责页面生命周期与剪贴板系统能力。 */
 class StoryEditorActivity : CoreActivityWithEvent() {
@@ -81,13 +81,13 @@ class StoryEditorActivity : CoreActivityWithEvent() {
             is StoryEditorViewEvent.CopyDraft -> {
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(
-                    ClipData.newPlainText(getString(R.string.story_draft_clip_label), viewEvent.content)
+                    SensitiveClip.plainText(getString(R.string.story_draft_clip_label), viewEvent.content)
                 )
             }
             is StoryEditorViewEvent.CopyGeneratedText -> {
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(
-                    ClipData.newPlainText(
+                    SensitiveClip.plainText(
                         getString(R.string.story_generated_text_clip_label),
                         viewEvent.content
                     )
@@ -96,7 +96,7 @@ class StoryEditorActivity : CoreActivityWithEvent() {
             is StoryEditorViewEvent.CopyPromptText -> {
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(
-                    ClipData.newPlainText(
+                    SensitiveClip.plainText(
                         getString(R.string.prompt_inspector_title),
                         viewEvent.content
                     )

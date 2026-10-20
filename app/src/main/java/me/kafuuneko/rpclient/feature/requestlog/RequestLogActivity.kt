@@ -1,6 +1,5 @@
 package me.kafuuneko.rpclient.feature.requestlog
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
@@ -18,6 +17,7 @@ import me.kafuuneko.rpclient.feature.requestlog.presentation.RequestLogViewEvent
 import me.kafuuneko.rpclient.feature.requestlog.ui.RequestLogLayout
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.SensitiveClip
 
 /** LLM 请求日志页面宿主，处理复制与 JSON 详情导航。 */
 class RequestLogActivity : CoreActivityWithEvent() {
@@ -54,7 +54,7 @@ class RequestLogActivity : CoreActivityWithEvent() {
 
     private fun copyText(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.request_log_json), text))
+        clipboard.setPrimaryClip(SensitiveClip.plainText(getString(R.string.request_log_json), text))
         Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
     }
 

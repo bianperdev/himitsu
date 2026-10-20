@@ -1,6 +1,5 @@
 package me.kafuuneko.rpclient.feature.characteredit
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
@@ -20,6 +19,7 @@ import me.kafuuneko.rpclient.feature.characteredit.ui.CharacterEditLayout
 import me.kafuuneko.rpclient.feature.imagecrop.ImageCropActivity
 import me.kafuuneko.rpclient.libs.core.CoreActivityWithEvent
 import me.kafuuneko.rpclient.libs.core.IViewEvent
+import me.kafuuneko.rpclient.libs.security.SensitiveClip
 
 /** 角色创建与编辑页面宿主，处理头像文件选择等系统事件。 */
 class CharacterEditActivity : CoreActivityWithEvent() {
@@ -71,7 +71,7 @@ class CharacterEditActivity : CoreActivityWithEvent() {
             is CharacterEditViewEvent.CopyText -> {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(
-                    ClipData.newPlainText(getString(R.string.character), viewEvent.text)
+                    SensitiveClip.plainText(getString(R.string.character), viewEvent.text)
                 )
                 Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
             }
