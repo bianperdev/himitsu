@@ -199,6 +199,8 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 
 **Follow-ups after the owning tracks merge:** theme tokens and `HimitsuMonoFamily` in `…/feature/llmprovideredit/**`, `…/feature/llmproviderlist/**` (10 color literals, monospace fields) and `…/feature/requestlog/**` (monospace), and `…/utils/PromptMacroHighlighting.kt` (monospace).
 
+**Spanish register (decided by the maintainer):** Himitsu addresses the user with informal "tú" in Spanish. `strings_aesthetic.xml` already does; the inherited `values-es/strings.xml` still uses formal "usted" ("Cree", "Elija"). Converting it touches a file no track owns, so do it in one dedicated commit after every track is merged.
+
 **Kept on purpose:** the neutral "darkroom" greys of `…/feature/imagecrop/**` and the black/white overlays drawn on top of photos (`…/ui/message/**`, `MessageImageViewerDialog`), so images are judged without a color cast.
 
 **Possible follow-ups (not started):**
