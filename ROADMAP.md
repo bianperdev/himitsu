@@ -159,13 +159,13 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - Narrow edits allowed in files owned by local-inference: the Gemini key header (P-08) in `GeminiLLMClient.kt` and `GeminiModelCatalogClient.kt`, and the masking of custom headers in `LLMProviderEditViewModel.kt` (P-04). Coordinate in the pull request.
 
 **Tasks, in order:**
-1. Design document (options, trade-offs and a recommendation for each), approved by the maintainer: SQLCipher library and Room integration (verify the current version and license), database key management (Keystore-wrapped random key, optional PIN-derived "paranoid mode"), API key storage, app lock with `androidx.biometric`, hardening.
-2. Master key generation and storage, with unit tests for the parts that do not depend on the Keystore.
-3. Encrypted Room databases (P-02, and the request log database for P-07). Note: the new `applicationId` means there is no RPClient data to migrate; only earlier Himitsu debug builds may have a plain database.
-4. API key and custom header protection (P-01, P-04, P-13). API keys live in Room, not in Kotpref; the migration moves them out of the plain database.
-5. App lock: biometrics with device credential fallback, re-lock after a configurable time in background (immediately, 1 min, 5 min), lock screen.
-6. Hardening: backup rules (P-03), Kotpref and file encryption (P-05, P-06), debug log retention and redaction (P-07), cache file (P-10), clipboard (P-11), optional `FLAG_SECURE` (P-12), logging (P-14), clear-text warning (P-09), Gemini header (P-08), main-thread startup (O-01). Present P-15 and P-16 as decisions.
-7. Final review: go through the findings table and mark what is resolved.
+1. [x] Design document (options, trade-offs and a recommendation for each), approved by the maintainer: SQLCipher library and Room integration (verify the current version and license), database key management (Keystore-wrapped random key, optional PIN-derived "paranoid mode"), API key storage, app lock with `androidx.biometric`, hardening.
+2. [x] Master key generation and storage, with unit tests for the parts that do not depend on the Keystore.
+3. [x] Encrypted Room databases (P-02, and the request log database for P-07). Note: the new `applicationId` means there is no RPClient data to migrate; only earlier Himitsu debug builds may have a plain database.
+4. [x] API key and custom header protection (P-01, P-04, P-13). API keys live in Room, not in Kotpref; the migration moves them out of the plain database.
+5. [x] App lock: biometrics with device credential fallback, re-lock after a configurable time in background (immediately, 1 min, 5 min), lock screen.
+6. [x] Hardening: backup rules (P-03), Kotpref and file encryption (P-05, P-06), debug log retention and redaction (P-07), cache file (P-10), clipboard (P-11), optional `FLAG_SECURE` (P-12), logging (P-14), clear-text warning (P-09), Gemini header (P-08), main-thread startup (O-01). Present P-15 and P-16 as decisions. File encryption (P-06) and the in-flight part of P-10 were deferred by the maintainer to `feat/security-followups`.
+7. [x] Final review: go through the findings table and mark what is resolved.
 
 **Contracts this track must document here before it is merged:**
 - How the database is opened (key retrieval, error handling) and what other tracks must call.
@@ -182,6 +182,7 @@ Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design
 - The key is derived from the master key per database (`KeyPurpose`). The first query waits on a background thread until the key is loaded; Room never queries on the main thread, so do not enable `allowMainThreadQueries`.
 - If the key cannot be loaded, queries keep waiting and the app gate shows the error screen with retry, recovery code and start over. Nothing is deleted automatically, and no screen crashes.
 - A new database file must be added to `EncryptedDatabase` with its own `KeyPurpose` so it is encrypted, migrated from plain form and moved aside on "start over".
+- "Start over" (`SecureStorageManager.startOver`) moves the key file, the `FileRepository` directory (`app_repository/`), the databases and the sealed preferences aside, in that order, with one `.unrecoverable-<time>` suffix. A track that stores user files in a new directory must add it there too, or startup cleanup code may treat them as abandoned once the database is empty.
 - Schema versions and auto-migrations work as before; this track did not change the schema.
 - Startup work that needs the database (upgrades, file cleanup) runs in the block passed to `SecureStorageManager.start` in `RPClientApp.onCreate`, off the main thread. Screens stay behind the gate curtain until it finishes.
 
@@ -192,6 +193,19 @@ Design and reasons: [doc/himitsu/security-design.md](doc/himitsu/security-design
 - Note for `feat/disguise`: the system authentication prompt shows the application label (seen as "Himitsu (Dev)" on Android 17). Check what it shows when an activity-alias is the launcher entry, and document it as a known limit if it cannot be hidden.
 
 **Lock screen styling.** `LockScreenFrame(icon, title, message, modifier, actions)` in `…/feature/lock/ui/LockLayout.kt` draws every gate state and reads only `MaterialTheme` tokens, so `feat/aesthetic` can restyle it through the theme.
+
+**Rules for code in other tracks.**
+
+- **Screens.** Every Activity that can show user data extends `CoreActivity` (or `CoreActivityWithEvent`): that is what puts it behind the gate curtain. An Activity that must work while the app is locked (the `feat/disguise` decoys, the gate screen itself) must not extend it and must never show user data; its secret entry calls `UnlockEntry`.
+- **Dialogs and popups.** The curtain only covers the Activity window. A dialog that shows private content skips its window while `LocalAppGateOpen.current` is false, as `AppDialogScaffold` does; reuse `AppDialogScaffold` where possible.
+- **Startup.** Startup work that reads the database or sealed preferences goes in the block passed to `SecureStorageManager.start` in `RPClientApp.onCreate`. Work that must run before the key is loaded (for example deleting stale cache files) goes in `beforeKey` and must not touch the database.
+- **Preferences.** `AppModel` uses `SealedPreferencesProvider`: its strings are sealed, numbers and booleans stay plain. A track's own Kotpref object that holds personal text uses the same provider and calls `SealedPreferencesProvider.sealPlainValues(it)` in the startup block. Settings the first frame needs (theme) must stay plain: either non-string values, a Kotpref object without the provider, or an entry in the provider's plain list. Reading a sealed string may perform a Keystore operation, so never read one in the first frame.
+- **Secrets.** API keys, tokens and passwords go in the encrypted database, never in Kotpref. Inputs for secrets use `AppInputDialog(password = true)`, which sets a password keyboard without autocorrect.
+- **Clipboard.** Copy user content with `SensitiveClip.plainText(label, text)` so it is marked `IS_SENSITIVE`.
+- **Request log.** Entries are written only through `LLMRequestLogRepository`, which redacts credentials (`RequestLogRedactor`) and applies retention. A local engine that logs requests uses the same repository.
+- **Files.** Avatars and chat images under `app_repository/` are still plain (P-06, deferred). New features must not write other user content to plain files; temporary files that must exist go in `cacheDir`, are deleted after use and at startup (`beforeKey`).
+- **Backups and network.** Every data domain is excluded from backup and device transfer, so new files need no rule. Only system CAs are trusted; clear text stays allowed for LAN servers.
+- **Logging.** Never log user content or secrets. R8 strips `android.util.Log` and `printStackTrace` from release builds, but debug builds keep them.
 
 ### Findings status (feat/security)
 

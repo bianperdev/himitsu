@@ -33,7 +33,7 @@ Approved by the maintainer on 2026-10-20. This document records the decisions of
 - SQLCipher receives the derived key as a raw key (`x'…'`), which skips its internal PBKDF2.
 - **What happens when…**
   - The user adds or removes a fingerprint, or disables the screen lock: the Keystore key is not bound to authentication, so nothing happens to the data.
-  - The Keystore key is lost (OEM bug, factory reset of the secure element) or the key file is missing: the app shows an error screen. Options: retry, unlock with the recovery code, or start over after moving the old files aside with an `.unrecoverable-<time>` suffix. Nothing is ever deleted automatically.
+  - The Keystore key is lost (OEM bug, factory reset of the secure element) or the key file is missing: the app shows an error screen. Options: retry, unlock with the recovery code, or start over after moving the old files aside with an `.unrecoverable-<time>` suffix (key file, avatars and chat images, databases, sealed preferences, in that order). Nothing is ever deleted automatically.
 - Paranoid mode (not implemented): a slot wrapped with Argon2id over a user passphrase (`com.lambdapioneer.argon2kt`, MIT). It would require deferring every database access until the passphrase is entered. Forgetting the passphrase would destroy the data.
 
 ### App lock
