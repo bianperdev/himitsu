@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Pantalla</string>
     <string name="security_settings_secure_screen">Ocultar el contenido en capturas y recientes</string>
     <string name="security_settings_secure_screen_desc">Bloquea las capturas y la grabación de pantalla, y muestra una vista previa en blanco en recientes. Con el bloqueo de la app activo, Android 13 o superior ya oculta la vista previa.</string>
+    <string name="security_cleartext_saved_warning">Guardado. Este proveedor usa HTTP sin cifrar: cualquiera en la misma red puede leer tus chats y tu API key.</string>
 </resources>

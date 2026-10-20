@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Tela</string>
     <string name="security_settings_secure_screen">Ocultar conteúdo de capturas e recentes</string>
     <string name="security_settings_secure_screen_desc">Bloqueia capturas e gravação de tela e mostra uma prévia em branco nos apps recentes. Com o bloqueio do app ativo, o Android 13 ou mais recente já oculta a prévia.</string>
+    <string name="security_cleartext_saved_warning">Salvo. Este provedor usa HTTP sem criptografia: qualquer pessoa na mesma rede pode ler suas conversas e sua chave de API.</string>
 </resources>

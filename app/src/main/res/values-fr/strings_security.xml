@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Écran</string>
     <string name="security_settings_secure_screen">Masquer le contenu des captures et des applis récentes</string>
     <string name="security_settings_secure_screen_desc">Bloque les captures et l\'enregistrement d\'écran, et affiche un aperçu vide dans les applis récentes. Avec le verrouillage activé, Android 13 et versions ultérieures masquent déjà l\'aperçu.</string>
+    <string name="security_cleartext_saved_warning">Enregistré. Ce fournisseur utilise HTTP non chiffré : toute personne sur le même réseau peut lire vos discussions et votre clé API.</string>
 </resources>

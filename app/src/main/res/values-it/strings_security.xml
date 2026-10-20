@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Schermo</string>
     <string name="security_settings_secure_screen">Nascondi i contenuti da screenshot e app recenti</string>
     <string name="security_settings_secure_screen_desc">Blocca screenshot e registrazione dello schermo e mostra un\'anteprima vuota nelle app recenti. Con il blocco dell\'app attivo, Android 13 e versioni successive nascondono già l\'anteprima.</string>
+    <string name="security_cleartext_saved_warning">Salvato. Questo provider usa HTTP non cifrato: chiunque sulla stessa rete può leggere le tue chat e la tua chiave API.</string>
 </resources>

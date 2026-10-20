@@ -48,6 +48,7 @@ import me.kafuuneko.rpclient.libs.room.entity.MAX_TOKEN_ESTIMATE_RESERVE_PERCENT
 import me.kafuuneko.rpclient.libs.room.entity.MIN_TOKEN_ESTIMATE_RESERVE_PERCENT
 import me.kafuuneko.rpclient.libs.room.entity.toConfig
 import me.kafuuneko.rpclient.libs.room.repository.LLMRepository
+import me.kafuuneko.rpclient.libs.security.CleartextPolicy
 import me.kafuuneko.rpclient.libs.security.CustomHeaderMasking
 import me.kafuuneko.rpclient.utils.formatJsonPretty
 import org.koin.core.component.KoinComponent
@@ -526,9 +527,13 @@ class LLMProviderEditViewModel :
         cancelNetworkTasks()
         uiState.copy(loadState = LLMProviderEditLoadState.Saving).setup()
         withContext(Dispatchers.IO) { mLLMRepository.saveProvider(provider) }
-        AppViewEvent.PopupToastMessageByResId(
-            if (uiState.mode == LLMProviderEditMode.Create) R.string.model_created else R.string.model_saved
-        ).tryEmit()
+        // Himitsu (P-09): saving a plain-HTTP remote endpoint warns about who can read the traffic
+        val savedMessage = when {
+            CleartextPolicy.isUnencryptedRemote(provider.baseUrl) -> R.string.security_cleartext_saved_warning
+            uiState.mode == LLMProviderEditMode.Create -> R.string.model_created
+            else -> R.string.model_saved
+        }
+        AppViewEvent.PopupToastMessageByResId(savedMessage).tryEmit()
         finishPage()
     }
 

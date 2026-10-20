@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Bildschirm</string>
     <string name="security_settings_secure_screen">Inhalte in Screenshots und „Zuletzt verwendet“ ausblenden</string>
     <string name="security_settings_secure_screen_desc">Blockiert Screenshots und Bildschirmaufnahmen und zeigt in „Zuletzt verwendet“ eine leere Vorschau. Mit aktiver App-Sperre blendet Android 13 und neuer die Vorschau bereits aus.</string>
+    <string name="security_cleartext_saved_warning">Gespeichert. Dieser Anbieter nutzt unverschlüsseltes HTTP: Jeder im selben Netzwerk kann deine Chats und deinen API-Schlüssel mitlesen.</string>
 </resources>

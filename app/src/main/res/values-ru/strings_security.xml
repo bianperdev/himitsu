@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Экран</string>
     <string name="security_settings_secure_screen">Скрывать содержимое на скриншотах и в недавних</string>
     <string name="security_settings_secure_screen_desc">Блокирует скриншоты и запись экрана и показывает пустой эскиз в недавних приложениях. При включённой блокировке Android 13 и новее уже скрывает эскиз.</string>
+    <string name="security_cleartext_saved_warning">Сохранено. Этот провайдер использует незашифрованный HTTP: любой в той же сети может прочитать ваши чаты и API-ключ.</string>
 </resources>

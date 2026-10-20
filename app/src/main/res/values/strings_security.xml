@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">Screen</string>
     <string name="security_settings_secure_screen">Hide content from screenshots and recents</string>
     <string name="security_settings_secure_screen_desc">Blocks screenshots and screen recording, and shows a blank preview in recent apps. With the app lock on, Android 13 and later already hide the preview.</string>
+    <string name="security_cleartext_saved_warning">Saved. This provider uses unencrypted HTTP: anyone on the same network can read your chats and API key.</string>
 </resources>

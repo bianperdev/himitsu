@@ -63,4 +63,5 @@
     <string name="security_settings_section_screen">화면</string>
     <string name="security_settings_secure_screen">스크린샷과 최근 앱에서 내용 숨기기</string>
     <string name="security_settings_secure_screen_desc">스크린샷과 화면 녹화를 차단하고 최근 앱에 빈 미리보기를 표시합니다. 앱 잠금이 켜져 있으면 Android 13 이상에서는 이미 미리보기가 숨겨집니다.</string>
+    <string name="security_cleartext_saved_warning">저장했습니다. 이 제공업체는 암호화되지 않은 HTTP를 사용합니다. 같은 네트워크에 있는 누구나 채팅과 API 키를 읽을 수 있습니다.</string>
 </resources>
