@@ -135,6 +135,9 @@
         </activity>
 
         <!-- feat/local-inference -->
+        <uses-native-library
+            android:name="libOpenCL.so"
+            android:required="false" />
         <activity
             android:name=".feature.localmodels.LocalModelsActivity"
             android:exported="false"

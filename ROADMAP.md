@@ -221,6 +221,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 - Changed during implementation and confirmed by the maintainer on 2026-10-20: ggml uses its upstream runtime CPU dispatch (`GGML_BACKEND_DL` + `GGML_CPU_ALL_VARIANTS`), which loads `libggml-cpu-*.so` by their fixed upstream names. The static, renamed build in the design only served to coexist with GenieX, which is paused. If GenieX returns, its libraries must be isolated (separate process or renamed build) before both ship together.
 - The model registry is a separate Room database (`local_models.sqlite`) in `noBackupFilesDir`, so this track never bumps the main schema. It must be opened with the encrypted helper from feat/security once that track is merged.
 - Chat templates come from the GGUF metadata and are rendered natively. The Prompt Inspector shows the rendered prompt for local providers.
+- Changed after testing on the S26 Ultra: Local messages get the same strict normalization as Gemini (one leading system message, mid-chat system messages become user turns, alternating roles), because GGUF templates such as Qwen3.5, Gemma and Mistral raise an error otherwise. The Prompt Inspector shows the normalized messages.
 - GenieX: option (c), no GenieX for now. Task 5 is paused until the maintainer has read the QAIRT EULA, because the AAR bundles proprietary Qualcomm runtime libraries.
 - Models are copied to `noBackupFilesDir` and are not encrypted; their names and metadata live in a `local_models` table in the encrypted database.
 - The optional download list contains only Apache-2.0 models; any other model is imported by hand.
@@ -231,7 +232,7 @@ Each track adds one line or one entry per hook, so merges only need to keep both
 2. [x] `LocalInferenceEngine` interface and provider integration, with a fake engine that streams text, to validate the UI and the Prompt Inspector.
 3. [x] llama.cpp engine: load an imported GGUF, streaming generation, cancellation, memory release.
 4. [x] Model management screen: import through the Storage Access Framework; optional download only on explicit user action, with SHA-256 verification, free-space check and progress.
-5. GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices.
+5. Moved to a later branch (maintainer, 2026-10-20): GenieX engine, only in the flavors that allow it, with runtime compatibility detection; hidden on unsupported devices. Needs the QAIRT EULA read and a licensing decision first. Verified on the maintainer's Galaxy S26 Ultra: `ro.soc.model` reports `SM8850`.
 6. Performance settings (threads, context size, GPU or NPU) with sensible defaults.
 
 **Done when:** a downloaded or imported GGUF can be used offline with the same presets, lorebooks, Regex and Prompt Inspector as remote providers; no network call is added except the explicit model download; nothing heavy runs on the main thread; generation can be cancelled and the model is released; the `fdroid` build contains only source-built llama.cpp and no GenieX; unsupported devices never crash; every new license is in `NOTICE` and in the table below; every flavor builds.
@@ -315,6 +316,7 @@ Current dependencies (audited at commit `c3ed325`). Keep this table and `NOTICE`
 | llama.cpp and ggml (git submodule `third_party/llama.cpp`, built from source; local-inference) | b11748 (`3bb63cb`) | MIT | No (built without `llama-common`, OpenSSL or any downloader) |
 | JSON for Modern C++, vendored in llama.cpp (local-inference) | 3.12.0 | MIT | No |
 | LLVM libc++ (`libc++_shared.so` from NDK 30.0.16248370; local-inference) | NDK r30 | Apache-2.0 WITH LLVM-exception | No |
+| OpenCL-Headers (git submodule, compiled into `libggml-opencl.so`; local-inference) | v2026.05.29 | Apache-2.0 | No |
 
 Notable transitive dependencies (appcompat, fragment, sqlite, kotlinx-coroutines, atomicfu, error_prone_annotations) are Apache-2.0. There is no Google Play Services, Firebase, ML Kit or analytics SDK.
 
@@ -328,5 +330,6 @@ Bundled resources: the launcher icon background vector is from the AOSP template
 | Room compiler, AndroidX Test, Espresso, Compose UI test | Apache-2.0 |
 | JUnit 4.13.2 | EPL-1.0 (not GPL-compatible, acceptable because it is never shipped) |
 | Hamcrest 1.3 | BSD-3-Clause |
+| OpenCL ICD Loader v2026.05.29 (git submodule; link-time stub, excluded from the APK; local-inference) | Apache-2.0 |
 
 No current dependency is incompatible with GPLv3.

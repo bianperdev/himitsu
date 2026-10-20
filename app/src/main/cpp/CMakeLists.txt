@@ -9,7 +9,8 @@ project(himitsu_llama LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(LLAMA_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/llama.cpp)
+set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party)
+set(LLAMA_SRC_DIR ${THIRD_PARTY_DIR}/llama.cpp)
 
 # Strip absolute paths from the binaries, for reproducible builds (F-Droid).
 add_compile_options("-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}/../../../..=.")
@@ -39,6 +40,22 @@ set(GGML_LLAMAFILE        OFF CACHE BOOL "" FORCE)
 set(GGML_CPU_KLEIDIAI     OFF CACHE BOOL "" FORCE)
 set(GGML_BACKEND_DL       ON  CACHE BOOL "" FORCE)
 set(GGML_CPU_ALL_VARIANTS ON  CACHE BOOL "" FORCE)
+
+# GPU through OpenCL, arm64 only (Adreno). The Khronos ICD loader is built from source just to
+# link against; it is not packaged (see app/build.gradle.kts), so at runtime libggml-opencl.so
+# uses the phone's own libOpenCL.so, declared with <uses-native-library>. Phones without an
+# OpenCL driver simply do not load the GPU backend. Prebuilt Adreno kernels stay off: they are
+# a binary download.
+if(ANDROID_ABI STREQUAL "arm64-v8a")
+    set(OPENCL_ICD_LOADER_HEADERS_DIR ${THIRD_PARTY_DIR}/OpenCL-Headers CACHE PATH "" FORCE)
+    set(OPENCL_ICD_LOADER_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+    set(ENABLE_OPENCL_LAYERS OFF CACHE BOOL "" FORCE)
+    add_subdirectory(${THIRD_PARTY_DIR}/OpenCL-ICD-Loader opencl-icd-loader EXCLUDE_FROM_ALL)
+    set(OpenCL_INCLUDE_DIR ${THIRD_PARTY_DIR}/OpenCL-Headers CACHE PATH "" FORCE)
+    set(OpenCL_LIBRARY OpenCL CACHE STRING "" FORCE)
+    set(GGML_OPENCL ON CACHE BOOL "" FORCE)
+    set(GGML_OPENCL_USE_ADRENO_BIN_KERNELS OFF CACHE BOOL "" FORCE)
+endif()
 
 add_subdirectory(${LLAMA_SRC_DIR} llama.cpp)
 

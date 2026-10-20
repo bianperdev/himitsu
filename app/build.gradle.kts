@@ -117,6 +117,8 @@ android {
         // ggml scans nativeLibraryDir for the best CPU backend variant, so the libraries must be
         // extracted on install
         jniLibs.useLegacyPackaging = true
+        // The OpenCL ICD loader is only a link-time stub; the phone's own driver library is used
+        jniLibs.excludes += "**/libOpenCL.so"
     }
 }
 

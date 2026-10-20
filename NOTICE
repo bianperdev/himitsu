@@ -42,6 +42,8 @@ Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0):
   - OkHttp and Okio - Square, Inc.
   - Gson - Google LLC
   - Error Prone annotations - Google LLC
+  - OpenCL-Headers (v2026.05.29), compiled into the GPU backend - The
+    Khronos Group Inc.
 
 MIT License:
   - JTokkit - Knuddels GmbH
@@ -60,8 +62,10 @@ Resources:
 
 Build and test tools (not shipped in the application): Android Gradle
 Plugin, Kotlin compiler plugins, KSP and the Gradle wrapper (Apache
-License 2.0); JUnit 4 (Eclipse Public License 1.0); Hamcrest (BSD
-3-Clause).
+License 2.0); the OpenCL ICD Loader (v2026.05.29), built only to link the
+GPU backend against, which uses the phone's own OpenCL driver at runtime
+(Apache License 2.0, The Khronos Group Inc.); JUnit 4 (Eclipse Public
+License 1.0); Hamcrest (BSD 3-Clause).
 
 This list must be kept up to date with every dependency change,
 including native libraries.
