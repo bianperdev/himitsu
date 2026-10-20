@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.kafuuneko.rpclient.libs.llm.local.ChatTemplateSource
@@ -40,6 +41,7 @@ import java.util.concurrent.FutureTask
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * [LocalInferenceEngine] backed by llama.cpp, built from source (see `app/src/main/cpp`).
@@ -151,18 +153,22 @@ class LlamaCppEngine(
 
     override fun generate(prompt: RenderedPrompt, sampling: LocalSamplingParams): Flow<LocalGenerationEvent> = callbackFlow {
         val running = AtomicBoolean(true)
-        val handle = mHandle
+        val activeHandle = AtomicLong(0L)
         val worker = launch(mDispatcher) {
+            // Read on the engine thread, so a queued unload or load cannot free it first
+            val handle = mHandle
             val modelId = mModelId
             if (handle == 0L || modelId == null) throw LocalModelLoadException()
+            activeHandle.set(handle)
             mState.value = LocalEngineState.Generating(modelId)
             try {
                 val filter = StopSequenceFilter(sampling.stop)
-                // The sink runs on the engine thread inside the native decode loop
+                // The sink runs on the engine thread inside the native decode loop. Checking isActive
+                // also stops a generation whose abort arrived before the native call reset the flag.
                 val sink = LlamaTokenSink { bytes ->
                     val text = filter.accept(String(bytes))
                     if (text.isNotEmpty()) trySendBlocking(LocalGenerationEvent.Token(text))
-                    !filter.stopped
+                    !filter.stopped && isActive
                 }
                 val result = LlamaCppNative.nativeGenerate(
                     handle = handle,
@@ -196,7 +202,7 @@ class LlamaCppEngine(
             }
         }
         // The native call ignores coroutine cancellation, so stop it explicitly
-        awaitClose { if (running.get()) abortIfCurrent(handle) }
+        awaitClose { if (running.get()) abortIfCurrent(activeHandle.get()) }
         worker.join()
     }.buffer(Channel.UNLIMITED)
 
