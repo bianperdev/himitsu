@@ -65,7 +65,7 @@ fun LockLayout(
         LockUiState.None -> LockScreenFrame(icon = Icons.Rounded.Lock, title = null, message = null) {}
         is LockUiState.Normal -> {
             LockContent(uiState.contentState, emit)
-            LockDialogs(uiState.dialogState, emit)
+            LockDialogs(uiState.dialogState, uiState.contentState as? LockContentState.StorageError, emit)
         }
         is LockUiState.Finished -> LockLayout(uiState.previous) { }
     }
@@ -171,7 +171,9 @@ private fun LockedContent(state: LockContentState.Locked, emit: LockUiIntent.() 
 
 @Composable
 private fun StorageErrorContent(state: LockContentState.StorageError, emit: LockUiIntent.() -> Unit) {
-    val message = stringResource(state.failure.messageRes()) + "\n\n" +
+    // The request log holds no chats, so its own message says chats are not affected
+    val messageRes = if (state.isRequestLog && state.canSetAside) R.string.security_storage_error_request_log_unusable else state.failure.messageRes()
+    val message = stringResource(messageRes) + "\n\n" +
         stringResource(R.string.security_storage_error_nothing_deleted)
     LockScreenFrame(
         icon = Icons.Rounded.WarningAmber,
@@ -226,7 +228,7 @@ private fun StorageErrorContent(state: LockContentState.StorageError, emit: Lock
 }
 
 @Composable
-private fun LockDialogs(state: LockDialogState, emit: LockUiIntent.() -> Unit) {
+private fun LockDialogs(state: LockDialogState, error: LockContentState.StorageError?, emit: LockUiIntent.() -> Unit) {
     when (state) {
         LockDialogState.None -> Unit
         is LockDialogState.RecoveryCodeInput -> RecoveryCodeDialog(state, emit)
@@ -243,7 +245,14 @@ private fun LockDialogs(state: LockDialogState, emit: LockUiIntent.() -> Unit) {
         LockDialogState.ConfirmSetAside -> AppConfirmDialog(
             onDismissRequest = { LockUiIntent.DismissDialog.emit() },
             title = stringResource(R.string.security_set_aside_title),
-            message = stringResource(R.string.security_set_aside_message),
+            // The request log holds no chats; a damaged encrypted copy stays encrypted, a plain one does not
+            message = stringResource(
+                when {
+                    error?.isRequestLog == true -> R.string.security_set_aside_message_request_log
+                    error?.failure == StorageFailure.DatabaseDamaged -> R.string.security_set_aside_message_damaged
+                    else -> R.string.security_set_aside_message
+                }
+            ),
             badgeIcon = Icons.Rounded.WarningAmber,
             badgeTone = DialogBadgeTone.Danger,
             confirmText = stringResource(R.string.security_set_aside_confirm),
@@ -296,6 +305,8 @@ private fun StorageFailure.messageRes(): Int = when (this) {
     StorageFailure.StorageError -> R.string.security_storage_error_storage
     StorageFailure.MigrationFailed -> R.string.security_storage_error_migration_failed
     StorageFailure.PlainDatabaseUnusable -> R.string.security_storage_error_plain_unusable
+    StorageFailure.DatabaseDamaged -> R.string.security_storage_error_database_damaged
+    StorageFailure.StartupDatabaseError -> R.string.security_storage_error_startup_database
     StorageFailure.RestoreIncomplete -> R.string.security_storage_error_restore_incomplete
 }
 

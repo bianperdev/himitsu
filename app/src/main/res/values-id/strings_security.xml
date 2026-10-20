@@ -101,4 +101,10 @@
     <string name="security_restore_failed">Salinan ini tidak dapat dipulihkan. Tidak ada yang diubah.</string>
     <string name="security_restore_not_configured">Salinan ini tidak memiliki kode pemulihan dan perangkat ini tidak dapat lagi membukanya, jadi tidak dapat dipulihkan.</string>
     <string name="security_storage_error_restore_incomplete">Pemulihan data yang disisihkan belum selesai. Coba lagi untuk memulai ulang aplikasi dan menyelesaikannya.</string>
+    <string name="security_storage_error_database_damaged">Data terenkripsi Anda rusak dan tidak dapat dibuka. Anda dapat menyimpan salinan file, atau menyisihkan data yang rusak dan melanjutkan dengan data kosong.</string>
+    <string name="security_set_aside_message_damaged">Data yang rusak beserta gambarnya akan disisihkan, dan aplikasi akan berlanjut dengan data kosong. Tidak ada yang dihapus: salinan yang disisihkan tetap terenkripsi di penyimpanan pribadi aplikasi hingga Anda menghapusnya di Privasi dan keamanan.</string>
+    <string name="security_set_aside_kind_damaged">Data rusak (terenkripsi)</string>
+    <string name="security_storage_error_startup_database">Data Anda tidak dapat dibaca saat aplikasi dimulai. Coba lagi, dan jika masih gagal, simpan salinan file.</string>
+    <string name="security_storage_error_request_log_unusable">Log Permintaan mode debug rusak dan tidak dapat dibuka. Obrolan Anda tidak terpengaruh. Anda dapat menyimpan salinan file, atau menyisihkan log dan melanjutkan.</string>
+    <string name="security_set_aside_message_request_log">Log Permintaan akan disisihkan dan mode debug akan mulai dengan log kosong. Obrolan Anda tidak terpengaruh. Tidak ada yang dihapus: salinan yang disisihkan tetap ada di penyimpanan pribadi aplikasi hingga Anda menghapusnya di Privasi dan keamanan.</string>
 </resources>

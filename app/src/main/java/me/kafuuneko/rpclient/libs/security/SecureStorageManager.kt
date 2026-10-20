@@ -2,6 +2,7 @@
 package me.kafuuneko.rpclient.libs.security
 
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -21,11 +22,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import me.kafuuneko.rpclient.libs.security.database.DatabaseCheck
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFileKind
 import me.kafuuneko.rpclient.libs.security.database.DatabaseFiles
 import me.kafuuneko.rpclient.libs.security.database.DatabaseKeySource
 import me.kafuuneko.rpclient.libs.security.database.DatabaseMigrationException
 import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabase
+import me.kafuuneko.rpclient.libs.security.database.EncryptedDatabaseCheck
 import me.kafuuneko.rpclient.libs.security.database.KeyedOpenHelperFactory
 import me.kafuuneko.rpclient.libs.security.database.PlaintextDatabaseMigrator
 import me.kafuuneko.rpclient.libs.security.database.SqlCipherKey
@@ -42,7 +45,9 @@ import me.kafuuneko.rpclient.libs.security.key.VaultLoadResult
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_DIR_NAME
 import me.kafuuneko.rpclient.libs.room.repository.FILE_REPOSITORY_STAGING_DIR_NAME
 import me.kafuuneko.rpclient.libs.security.preferences.SealedPreferencesProvider
+import me.kafuuneko.rpclient.libs.security.storage.ProtectedFiles
 import me.kafuuneko.rpclient.libs.security.storage.RestoreJournal
+import me.kafuuneko.rpclient.libs.security.storage.SetAsideKind
 import net.zetetic.database.Logger
 import net.zetetic.database.NoopTarget
 
@@ -63,6 +68,18 @@ enum class StorageFailure {
      */
     PlainDatabaseUnusable,
 
+    /**
+     * An encrypted database does not open with its key: the file is damaged, or was encrypted
+     * with another key. It can be exported or set aside, still encrypted.
+     */
+    DatabaseDamaged,
+
+    /**
+     * Every database opened, but a query of the startup work failed. Nothing was changed; the
+     * error may pass on a retry, and the files can be exported.
+     */
+    StartupDatabaseError,
+
     /** A restore of set-aside data did not finish; restarting the app continues it. */
     RestoreIncomplete;
 
@@ -73,6 +90,10 @@ enum class StorageFailure {
          * nothing.
          */
         val START_OVER_ALLOWED: Set<StorageFailure> = setOf(KeystoreKeyLost, KeyFileMissing, KeyFileCorrupt)
+
+        /** Failures that happen after the master key loaded, so a recovery code cannot help. */
+        val AFTER_KEY_LOADED: Set<StorageFailure> =
+            setOf(MigrationFailed, PlainDatabaseUnusable, DatabaseDamaged, StartupDatabaseError)
 
         internal fun from(failure: VaultFailure): StorageFailure = when (failure) {
             VaultFailure.KeyFileMissing -> KeyFileMissing
@@ -92,8 +113,17 @@ sealed class SecureStorageState {
     /** Databases can be used. */
     data object Ready : SecureStorageState()
 
-    /** The user must choose how to proceed. [recoveryAvailable] tells whether a code can help. */
-    data class Failed(val failure: StorageFailure, val recoveryAvailable: Boolean) : SecureStorageState()
+    /**
+     * The user must choose how to proceed.
+     *
+     * @property recoveryAvailable whether a recovery code is configured
+     * @property database the database that cannot be used, for the failures about one database
+     */
+    data class Failed(
+        val failure: StorageFailure,
+        val recoveryAvailable: Boolean,
+        val database: EncryptedDatabase? = null
+    ) : SecureStorageState()
 }
 
 /**
@@ -131,7 +161,10 @@ class SecureStorageManager(
     @Volatile
     private var mLastFailure: VaultFailure? = null
 
-    /** Database whose plain file cannot be encrypted, while the state is [StorageFailure.PlainDatabaseUnusable]. */
+    /**
+     * Database that cannot be used, while the state is [StorageFailure.PlainDatabaseUnusable]
+     * or [StorageFailure.DatabaseDamaged].
+     */
     private var mUnusableDatabase: EncryptedDatabase? = null
 
     /** Key released to Room once every database is encrypted. Never reset within a process. */
@@ -258,26 +291,36 @@ class SecureStorageManager(
     }
 
     /**
-     * Sets a plain database that can never be encrypted aside, still in plain form, and opens
-     * the storage without it, after the user chose to.
+     * Sets a database that cannot be used aside and opens the storage without it, after the
+     * user chose to.
      *
-     * Nothing is deleted: the plain files (the database and a copy left by an interrupted
-     * migration) keep their content under an `.unusable-<time>` suffix. Setting the main
-     * database aside also sets the stored files aside, because their index lives in it.
+     * - A plain database that can never be encrypted goes aside in plain form, under an
+     *   `.unusable-<time>` suffix, with a copy left by an interrupted migration.
+     * - A damaged encrypted database goes aside still encrypted, under a `.damaged-<time>`
+     *   suffix.
+     * - Nothing is deleted. Setting the main database aside also sets the stored files aside,
+     *   because their index lives in it.
      */
     fun setAsideUnusableDatabase() {
         mScope.launch {
             mMutex.withLock {
                 val state = mState.value as? SecureStorageState.Failed ?: return@withLock
-                if (state.failure != StorageFailure.PlainDatabaseUnusable) return@withLock
+                val kind = when (state.failure) {
+                    StorageFailure.PlainDatabaseUnusable -> SetAsideKind.Unusable
+                    StorageFailure.DatabaseDamaged -> SetAsideKind.Damaged
+                    else -> return@withLock
+                }
                 val database = mUnusableDatabase ?: return@withLock
-                val suffix = ".unusable-" + SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                val suffix = ProtectedFiles.newSuffix(kind)
                 val file = mContext.getDatabasePath(database.fileName)
                 try {
                     if (database == EncryptedDatabase.Primary) setAsideStoredFiles(suffix)
                     DatabaseFiles.delete(File(file.path + ".encrypting"))
+                    // A plain copy left by an interrupted migration is listed as plain, never
+                    // under the damaged encrypted file's marker
                     val plainCopy = File(file.path + ".plaintext")
-                    if (DatabaseFiles.anyExists(plainCopy)) DatabaseFiles.move(plainCopy, File(plainCopy.path + suffix))
+                    val plainSuffix = if (kind == SetAsideKind.Damaged) ProtectedFiles.newSuffix(SetAsideKind.Unusable) else suffix
+                    if (DatabaseFiles.anyExists(plainCopy)) DatabaseFiles.move(plainCopy, File(plainCopy.path + plainSuffix))
                     if (DatabaseFiles.anyExists(file)) DatabaseFiles.move(file, File(file.path + suffix))
                 } catch (_: IOException) {
                     fail(StorageFailure.StorageError)
@@ -420,16 +463,25 @@ class SecureStorageManager(
             mLastFailure = null
         }
         mState.value = SecureStorageState.Starting
-        // Encrypt databases left in plain form by earlier builds before Room can open them
+        // Encrypt databases left in plain form by earlier builds, and check the encrypted ones,
+        // before Room can open them
         for (database in EncryptedDatabase.entries) {
+            val file = mContext.getDatabasePath(database.fileName)
             val key = masterKey.derive(database.purpose)
             val passphrase = SqlCipherKey.rawKeyPassphrase(key)
             key.fill(0)
             try {
-                mMigrator.migrateIfNeeded(mContext.getDatabasePath(database.fileName), passphrase)
+                mMigrator.migrateIfNeeded(file, passphrase)
+                // A damaged file would fail the first query of every screen: stop on the error
+                // screen while Room has no key yet, so those queries wait instead
+                if (EncryptedDatabaseCheck.check(file, passphrase) == DatabaseCheck.Damaged) {
+                    mUnusableDatabase = database
+                    fail(StorageFailure.DatabaseDamaged, database)
+                    return
+                }
             } catch (e: DatabaseMigrationException) {
                 mUnusableDatabase = database.takeIf { e.permanent }
-                fail(if (e.permanent) StorageFailure.PlainDatabaseUnusable else StorageFailure.MigrationFailed)
+                fail(if (e.permanent) StorageFailure.PlainDatabaseUnusable else StorageFailure.MigrationFailed, database)
                 return
             } finally {
                 passphrase.fill(0)
@@ -437,12 +489,19 @@ class SecureStorageManager(
         }
         // Release database keys, then run the inherited startup work that needs them
         mReleasedKey.value = masterKey
-        mStartupTasks()
+        try {
+            mStartupTasks()
+        } catch (_: SQLiteException) {
+            // Last barrier: a database error the check missed (damage deeper than its first
+            // pages) shows the error screen with "try again" instead of crashing at every start
+            fail(StorageFailure.StartupDatabaseError)
+            return
+        }
         mState.value = SecureStorageState.Ready
     }
 
-    private fun fail(failure: StorageFailure) {
-        mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode())
+    private fun fail(failure: StorageFailure, database: EncryptedDatabase? = null) {
+        mState.value = SecureStorageState.Failed(failure, recoveryAvailable = mVault.hasRecoveryCode(), database = database)
     }
 
     /**

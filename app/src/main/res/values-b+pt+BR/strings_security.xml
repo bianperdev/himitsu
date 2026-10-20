@@ -101,4 +101,10 @@
     <string name="security_restore_failed">Não foi possível restaurar esta cópia. Nada foi alterado.</string>
     <string name="security_restore_not_configured">Esta cópia não tem código de recuperação e este dispositivo não consegue mais abri-la, então ela não pode ser restaurada.</string>
     <string name="security_storage_error_restore_incomplete">Uma restauração de dados deixados de lado não terminou. Tente novamente para reiniciar o app e concluí-la.</string>
+    <string name="security_storage_error_database_damaged">Seus dados criptografados estão danificados e não podem ser abertos. Você pode salvar uma cópia dos arquivos ou deixar os dados danificados de lado e continuar com os dados vazios.</string>
+    <string name="security_set_aside_message_damaged">Os dados danificados e suas imagens serão deixados de lado, e o app continuará com os dados vazios. Nada é excluído: a cópia deixada de lado continua criptografada no armazenamento privado do app até você excluí-la em Privacidade e segurança.</string>
+    <string name="security_set_aside_kind_damaged">Dados danificados (criptografados)</string>
+    <string name="security_storage_error_startup_database">Não foi possível ler seus dados ao iniciar o app. Tente de novo e, se continuar falhando, salve uma cópia dos arquivos.</string>
+    <string name="security_storage_error_request_log_unusable">Os logs de solicitação do modo de depuração estão danificados e não podem ser abertos. Suas conversas não são afetadas. Você pode salvar uma cópia dos arquivos ou deixar os logs de lado e continuar.</string>
+    <string name="security_set_aside_message_request_log">Os logs de solicitação serão deixados de lado e o modo de depuração começará com logs vazios. Suas conversas não são afetadas. Nada é excluído: a cópia deixada de lado continua no armazenamento privado do app até você excluí-la em Privacidade e segurança.</string>
 </resources>

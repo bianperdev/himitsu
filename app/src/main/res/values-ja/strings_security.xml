@@ -101,4 +101,10 @@
     <string name="security_restore_failed">このコピーを復元できませんでした。何も変更されていません。</string>
     <string name="security_restore_not_configured">このコピーには復旧コードがなく、この端末でも開けなくなっているため、復元できません。</string>
     <string name="security_storage_error_restore_incomplete">別の場所に移したデータの復元が完了していません。もう一度試すとアプリが再起動し、復元が完了します。</string>
+    <string name="security_storage_error_database_damaged">暗号化されたデータが破損しているため、開けません。ファイルのコピーを保存するか、破損したデータを別の場所に移して空のデータで続行できます。</string>
+    <string name="security_set_aside_message_damaged">破損したデータとその画像は別の場所に移され、アプリは空のデータで続行します。何も削除されません。移したコピーは「プライバシーとセキュリティ」で削除するまで、暗号化されたままアプリの非公開ストレージに残ります。</string>
+    <string name="security_set_aside_kind_damaged">破損したデータ（暗号化済み）</string>
+    <string name="security_storage_error_startup_database">アプリの起動時にデータを読み取れませんでした。もう一度お試しください。解決しない場合は、ファイルのコピーを保存してください。</string>
+    <string name="security_storage_error_request_log_unusable">デバッグモードのリクエストログが破損しているため、開けません。チャットには影響ありません。ファイルのコピーを保存するか、ログを別の場所に移して続行できます。</string>
+    <string name="security_set_aside_message_request_log">リクエストログは別の場所に移され、デバッグモードは空のログで再開します。チャットには影響ありません。何も削除されません。移したコピーは「プライバシーとセキュリティ」で削除するまで、アプリの非公開ストレージに残ります。</string>
 </resources>

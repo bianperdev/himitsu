@@ -101,4 +101,10 @@
     <string name="security_restore_failed">This copy could not be restored. Nothing was changed.</string>
     <string name="security_restore_not_configured">This copy has no recovery code and this device can no longer open it, so it cannot be restored.</string>
     <string name="security_storage_error_restore_incomplete">A restore of set-aside data did not finish. Try again to restart the app and finish it.</string>
+    <string name="security_storage_error_database_damaged">Your encrypted data is damaged and cannot be opened. You can save a copy of the files, or set the damaged data aside and continue with empty data.</string>
+    <string name="security_set_aside_message_damaged">The damaged data and its images will be moved aside, and the app will continue with empty data. Nothing is deleted: the set-aside copy stays encrypted in the app\'s private storage until you delete it in Privacy and security.</string>
+    <string name="security_set_aside_kind_damaged">Damaged data (encrypted)</string>
+    <string name="security_storage_error_startup_database">Your data could not be read while the app was starting. Try again, and if it keeps failing, save a copy of the files.</string>
+    <string name="security_storage_error_request_log_unusable">The request logs of debug mode are damaged and cannot be opened. Your chats are not affected. You can save a copy of the files, or set the logs aside and continue.</string>
+    <string name="security_set_aside_message_request_log">The request logs will be moved aside and debug mode will start with empty logs. Your chats are not affected. Nothing is deleted: the set-aside copy stays in the app\'s private storage until you delete it in Privacy and security.</string>
 </resources>

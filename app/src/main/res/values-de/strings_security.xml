@@ -101,4 +101,10 @@
     <string name="security_restore_failed">Diese Kopie konnte nicht wiederhergestellt werden. Es wurde nichts geändert.</string>
     <string name="security_restore_not_configured">Diese Kopie hat keinen Wiederherstellungscode, und dieses Gerät kann sie nicht mehr öffnen. Sie lässt sich daher nicht wiederherstellen.</string>
     <string name="security_storage_error_restore_incomplete">Eine Wiederherstellung beiseitegelegter Daten wurde nicht abgeschlossen. Versuche es erneut, um die App neu zu starten und sie abzuschließen.</string>
+    <string name="security_storage_error_database_damaged">Deine verschlüsselten Daten sind beschädigt und können nicht geöffnet werden. Du kannst eine Kopie der Dateien speichern oder die beschädigten Daten beiseitelegen und mit leeren Daten fortfahren.</string>
+    <string name="security_set_aside_message_damaged">Die beschädigten Daten und ihre Bilder werden beiseitegelegt, und die App macht mit leeren Daten weiter. Es wird nichts gelöscht: Die beiseitegelegte Kopie bleibt verschlüsselt im privaten Speicher der App, bis du sie unter Datenschutz und Sicherheit löschst.</string>
+    <string name="security_set_aside_kind_damaged">Beschädigte Daten (verschlüsselt)</string>
+    <string name="security_storage_error_startup_database">Deine Daten konnten beim Start der App nicht gelesen werden. Versuche es erneut, und wenn es weiterhin fehlschlägt, speichere eine Kopie der Dateien.</string>
+    <string name="security_storage_error_request_log_unusable">Die Anfrage-Protokolle des Debug-Modus sind beschädigt und können nicht geöffnet werden. Deine Chats sind nicht betroffen. Du kannst eine Kopie der Dateien speichern oder die Protokolle beiseitelegen und fortfahren.</string>
+    <string name="security_set_aside_message_request_log">Die Anfrage-Protokolle werden beiseitegelegt, und der Debug-Modus beginnt mit leeren Protokollen. Deine Chats sind nicht betroffen. Es wird nichts gelöscht: Die beiseitegelegte Kopie bleibt im privaten Speicher der App, bis du sie unter Datenschutz und Sicherheit löschst.</string>
 </resources>
