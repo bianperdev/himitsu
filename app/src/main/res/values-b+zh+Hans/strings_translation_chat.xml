@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">正在从%1$s翻译</string>
+    <string name="translation_chat_banner_generic">正在翻译消息</string>
+    <string name="translation_chat_show_original">查看原文</string>
+    <string name="translation_chat_show_translation">查看译文</string>
+    <string name="translation_chat_mark_translated">已翻译</string>
+    <string name="translation_chat_mark_original">原文</string>
+    <string name="translation_chat_section">翻译</string>
+    <string name="translation_chat_mode_auto">自动</string>
+    <string name="translation_chat_mode_auto_desc">角色使用其他语言时翻译</string>
+    <string name="translation_chat_mode_on">始终</string>
+    <string name="translation_chat_mode_on_desc">始终翻译此聊天</string>
+    <string name="translation_chat_mode_off">从不</string>
+    <string name="translation_chat_mode_off_desc">从不翻译此聊天</string>
+    <string name="translation_chat_send_failed">无法翻译你的消息（%1$s）。再次发送即可按原文发送。</string>
+    <string name="translation_chat_edit_failed">无法翻译你的编辑（%1$s）。再次保存即可按原文保留。</string>
+    <string name="translation_chat_failure_network">无法连接翻译服务</string>
+    <string name="translation_chat_failure_auth">翻译服务拒绝了密钥</string>
+    <string name="translation_chat_failure_quota">已达到翻译额度上限</string>
+    <string name="translation_chat_failure_unsupported">不支持该语言</string>
+    <string name="translation_chat_failure_invalid">服务返回了意外的结果</string>
+</resources>

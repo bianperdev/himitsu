@@ -1,5 +1,6 @@
 package me.kafuuneko.rpclient.feature.groupchat.presentation
 
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationUiState
 import me.kafuuneko.rpclient.feature.groupchat.model.GroupChatGenerationState
 import me.kafuuneko.rpclient.feature.groupchat.model.GroupChatAvailableCharacterItem
 import me.kafuuneko.rpclient.feature.groupchat.model.GroupChatMemberItem
@@ -45,7 +46,9 @@ sealed class GroupChatUiState {
         /** 当前是否存在可用于生成的模型配置。 */
         val hasAvailableProvider: Boolean = true,
         /** 当前页面互斥展示的对话框状态。 */
-        val dialogState: GroupChatDialogState = GroupChatDialogState.None
+        val dialogState: GroupChatDialogState = GroupChatDialogState.None,
+        // Himitsu (translation): banner, marks and per-chat mode; empty while translation is off.
+        val translationState: ChatTranslationUiState = ChatTranslationUiState()
     ) : GroupChatUiState()
 
     data class Finished(val previous: GroupChatUiState) : GroupChatUiState()

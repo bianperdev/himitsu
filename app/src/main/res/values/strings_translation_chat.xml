@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">Translating from %1$s</string>
+    <string name="translation_chat_banner_generic">Translating messages</string>
+    <string name="translation_chat_show_original">Show original</string>
+    <string name="translation_chat_show_translation">Show translation</string>
+    <string name="translation_chat_mark_translated">Translated</string>
+    <string name="translation_chat_mark_original">Original</string>
+    <string name="translation_chat_section">Translation</string>
+    <string name="translation_chat_mode_auto">Auto</string>
+    <string name="translation_chat_mode_auto_desc">Translate when the character writes in another language</string>
+    <string name="translation_chat_mode_on">Always</string>
+    <string name="translation_chat_mode_on_desc">Always translate this chat</string>
+    <string name="translation_chat_mode_off">Never</string>
+    <string name="translation_chat_mode_off_desc">Never translate this chat</string>
+    <string name="translation_chat_send_failed">Couldn\'t translate your message (%1$s). Send it again to send it as written.</string>
+    <string name="translation_chat_edit_failed">Couldn\'t translate your edit (%1$s). Save it again to keep it as written.</string>
+    <string name="translation_chat_failure_network">no connection to the translation service</string>
+    <string name="translation_chat_failure_auth">the translation service rejected the key</string>
+    <string name="translation_chat_failure_quota">translation limit reached</string>
+    <string name="translation_chat_failure_unsupported">language not supported</string>
+    <string name="translation_chat_failure_invalid">unexpected reply from the service</string>
+</resources>

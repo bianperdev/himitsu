@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">Đang dịch từ %1$s</string>
+    <string name="translation_chat_banner_generic">Đang dịch tin nhắn</string>
+    <string name="translation_chat_show_original">Xem bản gốc</string>
+    <string name="translation_chat_show_translation">Xem bản dịch</string>
+    <string name="translation_chat_mark_translated">Đã dịch</string>
+    <string name="translation_chat_mark_original">Bản gốc</string>
+    <string name="translation_chat_section">Dịch</string>
+    <string name="translation_chat_mode_auto">Tự động</string>
+    <string name="translation_chat_mode_auto_desc">Dịch khi nhân vật viết bằng ngôn ngữ khác</string>
+    <string name="translation_chat_mode_on">Luôn luôn</string>
+    <string name="translation_chat_mode_on_desc">Luôn dịch cuộc trò chuyện này</string>
+    <string name="translation_chat_mode_off">Không bao giờ</string>
+    <string name="translation_chat_mode_off_desc">Không bao giờ dịch cuộc trò chuyện này</string>
+    <string name="translation_chat_send_failed">Không thể dịch tin nhắn của bạn (%1$s). Gửi lại để gửi nguyên văn.</string>
+    <string name="translation_chat_edit_failed">Không thể dịch nội dung sửa của bạn (%1$s). Lưu lại để giữ nguyên văn.</string>
+    <string name="translation_chat_failure_network">không kết nối được dịch vụ dịch</string>
+    <string name="translation_chat_failure_auth">dịch vụ dịch đã từ chối khóa</string>
+    <string name="translation_chat_failure_quota">đã đạt giới hạn dịch</string>
+    <string name="translation_chat_failure_unsupported">ngôn ngữ không được hỗ trợ</string>
+    <string name="translation_chat_failure_invalid">phản hồi không mong đợi từ dịch vụ</string>
+</resources>

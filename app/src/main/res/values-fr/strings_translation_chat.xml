@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">Traduit depuis : %1$s</string>
+    <string name="translation_chat_banner_generic">Traduction des messages</string>
+    <string name="translation_chat_show_original">Voir l\'original</string>
+    <string name="translation_chat_show_translation">Voir la traduction</string>
+    <string name="translation_chat_mark_translated">Traduit</string>
+    <string name="translation_chat_mark_original">Original</string>
+    <string name="translation_chat_section">Traduction</string>
+    <string name="translation_chat_mode_auto">Automatique</string>
+    <string name="translation_chat_mode_auto_desc">Traduire quand le personnage écrit dans une autre langue</string>
+    <string name="translation_chat_mode_on">Toujours</string>
+    <string name="translation_chat_mode_on_desc">Toujours traduire cette discussion</string>
+    <string name="translation_chat_mode_off">Jamais</string>
+    <string name="translation_chat_mode_off_desc">Ne jamais traduire cette discussion</string>
+    <string name="translation_chat_send_failed">Impossible de traduire votre message (%1$s). Envoyez-le à nouveau pour l\'envoyer tel quel.</string>
+    <string name="translation_chat_edit_failed">Impossible de traduire votre modification (%1$s). Enregistrez à nouveau pour la garder telle quelle.</string>
+    <string name="translation_chat_failure_network">pas de connexion au service de traduction</string>
+    <string name="translation_chat_failure_auth">le service de traduction a refusé la clé</string>
+    <string name="translation_chat_failure_quota">limite de traduction atteinte</string>
+    <string name="translation_chat_failure_unsupported">langue non prise en charge</string>
+    <string name="translation_chat_failure_invalid">réponse inattendue du service</string>
+</resources>

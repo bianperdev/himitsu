@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">%1$s에서 번역 중</string>
+    <string name="translation_chat_banner_generic">메시지 번역 중</string>
+    <string name="translation_chat_show_original">원문 보기</string>
+    <string name="translation_chat_show_translation">번역 보기</string>
+    <string name="translation_chat_mark_translated">번역됨</string>
+    <string name="translation_chat_mark_original">원문</string>
+    <string name="translation_chat_section">번역</string>
+    <string name="translation_chat_mode_auto">자동</string>
+    <string name="translation_chat_mode_auto_desc">캐릭터가 다른 언어로 쓸 때 번역</string>
+    <string name="translation_chat_mode_on">항상</string>
+    <string name="translation_chat_mode_on_desc">이 채팅을 항상 번역</string>
+    <string name="translation_chat_mode_off">안 함</string>
+    <string name="translation_chat_mode_off_desc">이 채팅을 번역하지 않음</string>
+    <string name="translation_chat_send_failed">메시지를 번역하지 못했습니다(%1$s). 다시 보내면 입력한 그대로 보냅니다.</string>
+    <string name="translation_chat_edit_failed">수정 내용을 번역하지 못했습니다(%1$s). 다시 저장하면 그대로 저장합니다.</string>
+    <string name="translation_chat_failure_network">번역 서비스에 연결할 수 없음</string>
+    <string name="translation_chat_failure_auth">번역 서비스가 키를 거부함</string>
+    <string name="translation_chat_failure_quota">번역 한도에 도달함</string>
+    <string name="translation_chat_failure_unsupported">지원하지 않는 언어</string>
+    <string name="translation_chat_failure_invalid">서비스의 예기치 않은 응답</string>
+</resources>

@@ -3,6 +3,7 @@ package me.kafuuneko.rpclient.feature.groupchat.presentation
 import me.kafuuneko.rpclient.libs.media.MessageImageAction
 import me.kafuuneko.rpclient.libs.groupchat.model.GroupChatActivationStrategy
 import me.kafuuneko.rpclient.libs.groupchat.model.GroupChatCharacterCardMode
+import me.kafuuneko.rpclient.libs.translation.model.TranslationMode
 
 /** 群聊页面可接收的全部用户意图和生命周期事件。 */
 sealed class GroupChatUiIntent {
@@ -77,4 +78,11 @@ sealed class GroupChatUiIntent {
     data object ConfirmDeleteSession : GroupChatUiIntent()
     data object OpenProviderSettings : GroupChatUiIntent()
     data object DismissDialog : GroupChatUiIntent()
+
+    // Himitsu (translation): switch one message, or the whole chat, between translation and original.
+    data class ToggleMessageOriginal(val messageId: Long) : GroupChatUiIntent()
+    data object ToggleShowOriginal : GroupChatUiIntent()
+
+    // Himitsu (translation): the chat's mode (Auto, Always, Never).
+    data class SelectTranslationMode(val mode: TranslationMode) : GroupChatUiIntent()
 }

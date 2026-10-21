@@ -1,5 +1,6 @@
 package me.kafuuneko.rpclient.feature.groupchat.model
 
+import me.kafuuneko.rpclient.feature.chat.translation.MessageTranslationUi
 import me.kafuuneko.rpclient.model.MessageContentPart
 import me.kafuuneko.rpclient.model.toMessageContentParts
 import me.kafuuneko.rpclient.libs.groupchat.model.GroupChatMessageSource
@@ -20,5 +21,7 @@ data class GroupChatMessageItem(
     val time: String,
     /** 当前消息或请求是否处于流式生成状态。 */
     val imageUuids: List<String> = emptyList(),
-    val isStreaming: Boolean = false
+    val isStreaming: Boolean = false,
+    // Himitsu (translation): what the user reads instead of [parts]; null when not translated.
+    val translation: MessageTranslationUi? = null
 )

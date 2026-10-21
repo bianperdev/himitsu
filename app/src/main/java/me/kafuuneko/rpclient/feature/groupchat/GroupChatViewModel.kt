@@ -33,6 +33,12 @@ import me.kafuuneko.rpclient.feature.groupchat.presentation.GroupChatUiIntent
 import me.kafuuneko.rpclient.feature.groupchat.presentation.GroupChatUiState
 import me.kafuuneko.rpclient.feature.groupchat.presentation.GroupChatViewEvent
 import me.kafuuneko.rpclient.feature.groupchat.presentation.withSettingsDraft
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationController
+import me.kafuuneko.rpclient.feature.chat.translation.reasonResId
+import me.kafuuneko.rpclient.feature.chat.translation.toGroupTranslatableMessages
+import me.kafuuneko.rpclient.libs.translation.ChatTranslator
+import me.kafuuneko.rpclient.libs.translation.TranslationPrefs
+import me.kafuuneko.rpclient.libs.translation.TranslationSessionKey
 import me.kafuuneko.rpclient.feature.llmproviderlist.LLMProviderListActivity
 import me.kafuuneko.rpclient.feature.noProviderModelSettingsGuide
 import me.kafuuneko.rpclient.feature.toGenerationFailurePresentation
@@ -225,6 +231,16 @@ class GroupChatViewModel :
     private val mRegexProcessor by inject<RegexMessageProcessor>()
     private val mContext by inject<Context>()
 
+    // Himitsu (translation): display and send through ChatTranslator; inert while translation is off.
+    private val mChatTranslator by inject<ChatTranslator>()
+    private val mTranslation by lazy {
+        ChatTranslationController(mChatTranslator, viewModelScope, { TranslationPrefs.enabled }) {
+            applyTranslations()
+        }
+    }
+    /** Himitsu (translation): the display text a user message's edit started from, if any. */
+    private var mEditingDisplayText: String? = null
+
     /** 当前页面绑定的群聊会话 ID。 */
     private var mSessionId: Long? = null
     /** 当前正在运行的模型生成任务协程 Job，用于停止生成并防止并发请求。 */
@@ -263,6 +279,8 @@ class GroupChatViewModel :
             return
         }
         mSessionId = sessionId
+        // Himitsu (translation)
+        mTranslation.attach(TranslationSessionKey.GroupChat(sessionId))
         // 异步从数据库加载群聊聚合状态
         val state = withContext(Dispatchers.IO) {
             loadState(sessionId, inputDraft = "")
@@ -289,6 +307,8 @@ class GroupChatViewModel :
             editingMessageDraft = uiState.conversationState.editingMessageDraft,
             dialogState = uiState.dialogState
         )
+        // Himitsu (translation): the translation settings may have changed while away.
+        mTranslation.onResume()
     }
 
     /**
@@ -321,6 +341,11 @@ class GroupChatViewModel :
                     beforeCreateTime = cursor.createTime,
                     beforeMessageId = cursor.messageId,
                     pageSize = MESSAGE_PAGE_SIZE
+                )
+                // Himitsu (translation)
+                mTranslation.onMessagesLoaded(
+                    page.messages.toGroupTranslatableMessages(displayContext.translationNames(), mStreamingMessageId),
+                    older = true
                 )
                 LoadedGroupChatMessagePage(
                     items = displayContext.copy(messages = page.messages).toMessageItems(
@@ -535,7 +560,13 @@ class GroupChatViewModel :
     private fun onChangeInputDraft(intent: GroupChatUiIntent.ChangeInputDraft) {
         val uiState = getOrNull<GroupChatUiState.Normal>() ?: return
         uiState.copy(
-            conversationState = uiState.conversationState.copy(inputDraft = intent.value)
+            conversationState = uiState.conversationState.copy(inputDraft = intent.value),
+            // Himitsu (translation): a changed draft drops the "send again as written" notice.
+            translationState = if (mTranslation.onDraftChanged(intent.value)) {
+                mTranslation.uiState()
+            } else {
+                uiState.translationState
+            }
         ).setup()
     }
 
@@ -664,8 +695,14 @@ class GroupChatViewModel :
                 messages = emptyList(),
                 summary = null
             )
+            // Himitsu (translation): what the user typed becomes conversation-language content.
+            val outgoing = mTranslation.prepareOutgoing(rawInput, initialData.translationNames())
+            if (outgoing !is ChatTranslationController.Outgoing.Ready) {
+                applyTranslations()
+                return
+            }
             // 执行用户输入端 Source 正则
-            val input = applyUserRegex(initialData, rawInput)
+            val input = applyUserRegex(initialData, outgoing.content)
             val isUserInput = rawInput.isNotBlank() || images.isNotEmpty()
             // 确定激活文本（若有用户输入使用用户输入，否则使用上一条消息）
             val activationText = if (isUserInput) {
@@ -709,6 +746,10 @@ class GroupChatViewModel :
                     ).key.messageId
                 }
             } else null
+            // Himitsu (translation): the message shows what the user typed.
+            if (triggerUserMessageId != null && outgoing.displayText != null) {
+                mTranslation.rememberOutgoing(triggerUserMessageId, input, outgoing.displayText)
+            }
             // 切换 UI 为生成中状态并启动多角色生成循环
             refreshState(
                 inputDraft = "",
@@ -1218,12 +1259,14 @@ class GroupChatViewModel :
                 ?.content
         } ?: return
         mImageCoordinator.startEditing(message.imageUuids)
+        // Himitsu (translation): a translated user message is edited in the user's language.
+        mEditingDisplayText = mTranslation.editableDisplayText(message.id, rawContent)
         // 将 UI 切换为编辑模式并填入草稿
         uiState.copy(
             imageState = mImageCoordinator.state,
             conversationState = uiState.conversationState.copy(
                 editingMessageId = message.id,
-                editingMessageDraft = rawContent
+                editingMessageDraft = mEditingDisplayText ?: rawContent
             )
         ).setup()
     }
@@ -1240,7 +1283,9 @@ class GroupChatViewModel :
         val uiState = getOrNull<GroupChatUiState.Normal>() ?: return
         val message = uiState.conversationState.messages
             .firstOrNull { it.id == intent.messageId } ?: return
-        val copyText = message.content.toMessageCopyText(
+        // Himitsu (translation): copy the text the user is reading.
+        val shownText = message.translation?.takeUnless { it.showingOriginal }?.displayText ?: message.content
+        val copyText = shownText.toMessageCopyText(
             includeThinkBlocks = AppModel.includeThinkInContext
         )
         if (copyText.isBlank()) return
@@ -1301,12 +1346,15 @@ class GroupChatViewModel :
             val data = mMessageDisplayContext ?: return
             val message = mGroupChatRepository.getMessageById(messageId)
                 ?.takeIf { it.sessionId == uiState.sessionId } ?: return
+            // Himitsu (translation): an edited display text is translated again into content.
+            val userEdit = translateUserEdit(message, uiState, data) ?: return
+            var savedContent = ""
             mImageCoordinator.submit(editing = true) { finalInputs ->
                 // 新增附件在提交前处理，保留项直接沿用原来的仓库文件。
                 val content = withContext(Dispatchers.IO) {
                     when (message.source) {
                         GroupChatMessage.Source.User -> applyUserRegex(
-                            data, uiState.conversationState.editingMessageDraft.trim(), isEdit = true
+                            data, userEdit.content.trim(), isEdit = true
                         )
                         GroupChatMessage.Source.Character -> applyAiRegex(
                             data, uiState.conversationState.editingMessageDraft.trim(),
@@ -1315,8 +1363,12 @@ class GroupChatViewModel :
                         GroupChatMessage.Source.System -> uiState.conversationState.editingMessageDraft.trim()
                     }
                 }
+                savedContent = content
                 mGroupChatRepository.editMessageWithImages(uiState.sessionId, messageId, content, finalInputs)
             }
+            // Himitsu (translation): keep showing what the user wrote for the edited message.
+            mEditingDisplayText = null
+            userEdit.displayText?.let { mTranslation.rememberOutgoing(messageId, savedContent, it) }
             // 退出编辑状态并刷新 UI
             refreshState(editingMessageId = null, editingMessageDraft = "")
         } catch (error: Exception) {
@@ -1334,6 +1386,8 @@ class GroupChatViewModel :
         if (mImageCoordinator.state.submitting) return
         mImageCoordinator.cancelProcessing()
         mImageCoordinator.cancelEditing()
+        // Himitsu (translation)
+        mEditingDisplayText = null
         val uiState = getOrNull<GroupChatUiState.Normal>() ?: return
         uiState.copy(
             conversationState = uiState.conversationState.copy(
@@ -2158,6 +2212,8 @@ class GroupChatViewModel :
         ) ?: return null
         val data = pageData.data
         mMessageDisplayContext = data.copy(messages = emptyList())
+        // Himitsu (translation): hand the stored window to the translator before mapping it.
+        mTranslation.onMessagesLoaded(data.messages.toGroupTranslatableMessages(data.translationNames(), mStreamingMessageId))
         mOldestLoadedMessageCursor = data.messages.firstOrNull()?.toGroupChatMessageCursor()
         val members = data.members.map {
             GroupChatMemberItem(
@@ -2268,7 +2324,9 @@ class GroupChatViewModel :
             ),
             hasPromptInspection = mLastPromptInspection != null,
             hasAvailableProvider = hasAvailableProvider,
-            dialogState = dialogState
+            dialogState = dialogState,
+            // Himitsu (translation)
+            translationState = mTranslation.uiState()
         )
     }
 
@@ -2348,7 +2406,9 @@ class GroupChatViewModel :
                 parts = displayContent.toMessageContentParts(message.id.toString()),
                 time = message.createTime.formatTimestamp("HH:mm"),
                 imageUuids = imageMap[message.id].orEmpty(),
-                isStreaming = message.id == mStreamingMessageId
+                isStreaming = message.id == mStreamingMessageId,
+                // Himitsu (translation)
+                translation = mTranslation.translationFor(message.id, message.id == mStreamingMessageId)
             )
         }
     }
@@ -2525,6 +2585,82 @@ class GroupChatViewModel :
         val coveredMessageId: Long,
         val inputSnapshot: SummaryInputSnapshot
     )
+
+    // Himitsu (translation): intents and helpers of the chat translation; see ChatTranslationController.
+
+    /** Switches one message between its translation and its original. */
+    @UiIntentObserver(GroupChatUiIntent.ToggleMessageOriginal::class)
+    private fun onToggleMessageOriginal(intent: GroupChatUiIntent.ToggleMessageOriginal) {
+        mTranslation.toggleOriginal(intent.messageId)
+        applyTranslations()
+    }
+
+    /** The banner's toggle: shows every original, or every translation again. */
+    @UiIntentObserver(GroupChatUiIntent.ToggleShowOriginal::class)
+    private fun onToggleShowOriginal() {
+        mTranslation.toggleShowAllOriginal()
+        applyTranslations()
+    }
+
+    /** Stores the chat's translation mode and resolves the chat again. */
+    @UiIntentObserver(GroupChatUiIntent.SelectTranslationMode::class)
+    private suspend fun onSelectTranslationMode(intent: GroupChatUiIntent.SelectTranslationMode) {
+        if (!isStateOf<GroupChatUiState.Normal>()) return
+        mTranslation.setMode(intent.mode)
+        applyTranslations()
+    }
+
+    /** Re-renders the current messages and banner from the translation snapshot, without reloading. */
+    private fun applyTranslations() {
+        val uiState = getOrNull<GroupChatUiState.Normal>() ?: return
+        uiState.copy(
+            translationState = mTranslation.uiState(),
+            conversationState = uiState.conversationState.copy(
+                messages = uiState.conversationState.messages.map { message ->
+                    message.copy(translation = mTranslation.translationFor(message.id, message.isStreaming))
+                }
+            )
+        ).setup()
+    }
+
+    /**
+     * The text to store for an edited message, or null when its translation failed (a notice is
+     * shown and the editor stays open; saving the same text again keeps it as written).
+     *
+     * Only a user message edited in the user's language is translated; an unchanged display text
+     * keeps the stored content. Other edits change the content, which makes the stored
+     * translation stale, and the next display sync translates it again.
+     */
+    private suspend fun translateUserEdit(
+        message: GroupChatMessage,
+        uiState: GroupChatUiState.Normal,
+        data: GroupChatData
+    ): ChatTranslationController.Outgoing.Ready? {
+        val draft = uiState.conversationState.editingMessageDraft
+        val startedFrom = mEditingDisplayText
+        if (message.source != GroupChatMessage.Source.User || startedFrom == null) {
+            return ChatTranslationController.Outgoing.Ready(draft, null)
+        }
+        if (draft.trim() == startedFrom.trim()) return ChatTranslationController.Outgoing.Ready(message.content, null)
+        val outgoing = mTranslation.prepareOutgoing(
+            draft.trim(),
+            data.translationNames(),
+            ChatTranslationController.Purpose.Edit
+        )
+        return when (outgoing) {
+            is ChatTranslationController.Outgoing.Ready -> outgoing
+            is ChatTranslationController.Outgoing.Failed -> {
+                AppViewEvent.PopupToastMessage(
+                    mContext.getString(R.string.translation_chat_edit_failed, mContext.getString(outgoing.failure.reasonResId()))
+                ).tryEmit()
+                null
+            }
+        }
+    }
+
+    /** The names the translator protects in this group: every member's and the user's. */
+    private fun GroupChatData.translationNames(): List<String> =
+        members.map { it.character.name } + session.userName
 
     private companion object {
         /** 自动群聊模式下，两轮生成之间的短暂缓冲延时（毫秒）。 */

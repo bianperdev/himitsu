@@ -5,6 +5,7 @@ import me.kafuuneko.rpclient.feature.chat.model.ChatGenerationState
 import me.kafuuneko.rpclient.feature.chat.model.ChatLorebookGroupItem
 import me.kafuuneko.rpclient.feature.chat.model.ChatMessageUiModel
 import me.kafuuneko.rpclient.feature.chat.model.ChatSessionItem
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationUiState
 import me.kafuuneko.rpclient.libs.media.MessageImageState
 import me.kafuuneko.rpclient.libs.prompt.model.PromptInspection
 
@@ -35,7 +36,9 @@ sealed class ChatUiState {
         /** 当前是否存在可用于生成的模型配置。 */
         val hasAvailableProvider: Boolean = true,
         /** 当前页面互斥展示的对话框状态。 */
-        val dialogState: ChatDialogState = ChatDialogState.None
+        val dialogState: ChatDialogState = ChatDialogState.None,
+        // Himitsu (translation): banner, marks and per-chat mode; empty while translation is off.
+        val translationState: ChatTranslationUiState = ChatTranslationUiState()
     ) : ChatUiState()
 
     data class Finished(val previous: ChatUiState) : ChatUiState()
