@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">Перевод с языка: %1$s</string>
+    <string name="translation_chat_banner_generic">Сообщения переводятся</string>
+    <string name="translation_chat_show_original">Показать оригинал</string>
+    <string name="translation_chat_show_translation">Показать перевод</string>
+    <string name="translation_chat_mark_translated">Переведено</string>
+    <string name="translation_chat_mark_original">Оригинал</string>
+    <string name="translation_chat_section">Перевод</string>
+    <string name="translation_chat_mode_auto">Авто</string>
+    <string name="translation_chat_mode_auto_desc">Переводить, когда персонаж пишет на другом языке</string>
+    <string name="translation_chat_mode_on">Всегда</string>
+    <string name="translation_chat_mode_on_desc">Всегда переводить этот чат</string>
+    <string name="translation_chat_mode_off">Никогда</string>
+    <string name="translation_chat_mode_off_desc">Никогда не переводить этот чат</string>
+    <string name="translation_chat_send_failed">Не удалось перевести сообщение (%1$s). Отправьте его ещё раз, чтобы отправить как есть.</string>
+    <string name="translation_chat_edit_failed">Не удалось перевести изменения (%1$s). Сохраните ещё раз, чтобы оставить как есть.</string>
+    <string name="translation_chat_failure_network">нет связи со службой перевода</string>
+    <string name="translation_chat_failure_auth">служба перевода отклонила ключ</string>
+    <string name="translation_chat_failure_quota">достигнут лимит перевода</string>
+    <string name="translation_chat_failure_unsupported">язык не поддерживается</string>
+    <string name="translation_chat_failure_invalid">неожиданный ответ службы</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">Übersetzt aus: %1$s</string>
+    <string name="translation_chat_banner_generic">Nachrichten werden übersetzt</string>
+    <string name="translation_chat_show_original">Original zeigen</string>
+    <string name="translation_chat_show_translation">Übersetzung zeigen</string>
+    <string name="translation_chat_mark_translated">Übersetzt</string>
+    <string name="translation_chat_mark_original">Original</string>
+    <string name="translation_chat_section">Übersetzung</string>
+    <string name="translation_chat_mode_auto">Automatisch</string>
+    <string name="translation_chat_mode_auto_desc">Übersetzen, wenn der Charakter in einer anderen Sprache schreibt</string>
+    <string name="translation_chat_mode_on">Immer</string>
+    <string name="translation_chat_mode_on_desc">Diesen Chat immer übersetzen</string>
+    <string name="translation_chat_mode_off">Nie</string>
+    <string name="translation_chat_mode_off_desc">Diesen Chat nie übersetzen</string>
+    <string name="translation_chat_send_failed">Deine Nachricht konnte nicht übersetzt werden (%1$s). Sende sie erneut, um sie unverändert zu senden.</string>
+    <string name="translation_chat_edit_failed">Deine Änderung konnte nicht übersetzt werden (%1$s). Speichere erneut, um sie unverändert zu übernehmen.</string>
+    <string name="translation_chat_failure_network">keine Verbindung zum Übersetzungsdienst</string>
+    <string name="translation_chat_failure_auth">der Übersetzungsdienst hat den Schlüssel abgelehnt</string>
+    <string name="translation_chat_failure_quota">Übersetzungslimit erreicht</string>
+    <string name="translation_chat_failure_unsupported">Sprache nicht unterstützt</string>
+    <string name="translation_chat_failure_invalid">unerwartete Antwort des Dienstes</string>
+</resources>
