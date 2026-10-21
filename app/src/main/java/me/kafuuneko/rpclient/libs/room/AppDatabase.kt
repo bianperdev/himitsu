@@ -48,6 +48,16 @@ import me.kafuuneko.rpclient.libs.room.entity.StoryVolume
 import me.kafuuneko.rpclient.libs.room.migration.AppDatabaseAutoMigration1To2Spec
 import me.kafuuneko.rpclient.libs.room.migration.AppDatabaseAutoMigration2To3Spec
 import me.kafuuneko.rpclient.libs.room.migration.AppDatabaseAutoMigration3To4Spec
+import me.kafuuneko.rpclient.libs.translation.model.ChatMessageTranslation
+import me.kafuuneko.rpclient.libs.translation.model.ChatMessageTranslationDao
+import me.kafuuneko.rpclient.libs.translation.model.ChatTranslationSetting
+import me.kafuuneko.rpclient.libs.translation.model.ChatTranslationSettingDao
+import me.kafuuneko.rpclient.libs.translation.model.GroupChatMessageTranslation
+import me.kafuuneko.rpclient.libs.translation.model.GroupChatMessageTranslationDao
+import me.kafuuneko.rpclient.libs.translation.model.GroupChatTranslationSetting
+import me.kafuuneko.rpclient.libs.translation.model.GroupChatTranslationSettingDao
+import me.kafuuneko.rpclient.libs.translation.model.TranslationProvider
+import me.kafuuneko.rpclient.libs.translation.model.TranslationProviderDao
 
 /** RPClient 的 Room 数据库入口，集中声明实体、类型转换器和 DAO。 */
 @Database(
@@ -72,13 +82,20 @@ import me.kafuuneko.rpclient.libs.room.migration.AppDatabaseAutoMigration3To4Spe
         StoryCharacter::class,
         StoryLorebookEntry::class,
         LLMTokenUsageRecord::class,
-        MessageImageEntity::class
+        MessageImageEntity::class,
+        // Himitsu (translation): new tables only, so the 4 to 5 migration is automatic
+        TranslationProvider::class,
+        ChatMessageTranslation::class,
+        GroupChatMessageTranslation::class,
+        ChatTranslationSetting::class,
+        GroupChatTranslationSetting::class
     ],
-    version = 4,
+    version = 5,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = AppDatabaseAutoMigration1To2Spec::class),
         AutoMigration(from = 2, to = 3, spec = AppDatabaseAutoMigration2To3Spec::class),
-        AutoMigration(from = 3, to = 4, spec = AppDatabaseAutoMigration3To4Spec::class)
+        AutoMigration(from = 3, to = 4, spec = AppDatabaseAutoMigration3To4Spec::class),
+        AutoMigration(from = 4, to = 5)
     ],
     exportSchema = true
 )
@@ -104,5 +121,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getStoryLorebookEntryDao(): StoryLorebookEntryDao
     abstract fun getLLMTokenUsageDao(): LLMTokenUsageDao
     abstract fun getMessageImageDao(): MessageImageDao
+
+    // Himitsu (translation)
+    abstract fun getTranslationProviderDao(): TranslationProviderDao
+    abstract fun getChatMessageTranslationDao(): ChatMessageTranslationDao
+    abstract fun getGroupChatMessageTranslationDao(): GroupChatMessageTranslationDao
+    abstract fun getChatTranslationSettingDao(): ChatTranslationSettingDao
+    abstract fun getGroupChatTranslationSettingDao(): GroupChatTranslationSettingDao
 
 }
