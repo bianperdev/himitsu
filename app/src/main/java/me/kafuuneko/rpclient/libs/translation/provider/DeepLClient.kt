@@ -17,7 +17,8 @@ import okhttp3.Request
  *   the pro one otherwise.
  * - The key goes only in the `Authorization: DeepL-Auth-Key` header, never in the URL or body.
  * - `tag_handling=xml` makes DeepL keep the XML placeholder tokens; the client passes the texts
- *   through untouched and leaves restoring them to the text protector.
+ *   through untouched and leaves restoring them to the text protector. Entities DeepL may write
+ *   in XML mode are decoded like the other services' replies.
  * - DeepL has no detection endpoint: [detect] translates a short excerpt and reads the
  *   detected source language, so it sends the text to the same service a translation would.
  */
@@ -104,7 +105,7 @@ internal class DeepLClient(
                 val item = element.takeIf { it.isJsonObject }?.asJsonObject
                     ?: throw TranslationException(TranslationFailure.Invalid)
                 DeepLTranslation(
-                    text = item.stringOrNull("text") ?: throw TranslationException(TranslationFailure.Invalid),
+                    text = item.stringOrNull("text")?.let(::decodeHtmlEntities) ?: throw TranslationException(TranslationFailure.Invalid),
                     detectedSourceLanguage = item.stringOrNull("detected_source_language")
                 )
             }

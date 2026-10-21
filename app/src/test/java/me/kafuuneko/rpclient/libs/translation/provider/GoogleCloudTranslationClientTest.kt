@@ -25,10 +25,16 @@ class GoogleCloudTranslationClientTest {
         assertNull(request.url.queryParameter("key"))
         assertEquals("gkey", request.header("X-goog-api-key"))
         val json = http.lastJson().asJsonObject
-        assertEquals("text", json["format"].asString)
+        assertEquals("html", json["format"].asString)
         assertEquals("es", json["target"].asString)
         assertFalse(json.has("source"))
         assertFalse(json.toString().contains("gkey"))
+    }
+
+    @Test
+    fun `html entities of the reply are decoded and placeholder tags kept`() {
+        val reply = TranslationHttpReply(200, """{"data":{"translations":[{"translatedText":"<x id=\"1\"/> it&#39;s &lt;3 &gt; &#x4F60;"}]}}""")
+        assertEquals(listOf("<x id=\"1\"/> it's <3 > 你"), GoogleCloudTranslationClient.parseTranslateReply(reply))
     }
 
     @Test

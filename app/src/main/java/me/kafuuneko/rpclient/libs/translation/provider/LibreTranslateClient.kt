@@ -14,7 +14,8 @@ import okhttp3.Request
  * Client of a LibreTranslate server (`POST /translate`, `POST /detect`).
  *
  * - All texts go in one request as a `q` array; the server answers with an array in the same order.
- * - `format=text` keeps the numbered placeholder tokens as plain text.
+ * - `format=html` makes the server keep the `<x id="N"/>` placeholder tags of the text protector;
+ *   the HTML entities of the reply are decoded before the texts are returned.
  * - The optional API key travels in the JSON body, as the LibreTranslate API defines it.
  */
 internal class LibreTranslateClient(
@@ -42,7 +43,7 @@ internal class LibreTranslateClient(
             add("q", JsonArray().also { array -> texts.forEach(array::add) })
             addProperty("source", primaryLanguageTag(source) ?: "auto")
             addProperty("target", primaryLanguageTag(target) ?: throw TranslationException(TranslationFailure.Unsupported))
-            addProperty("format", "text")
+            addProperty("format", "html")
             addApiKey()
         }
         return post("translate", body)
@@ -77,9 +78,9 @@ internal class LibreTranslateClient(
             val translated = json.get("translatedText") ?: throw TranslationException(TranslationFailure.Invalid)
             return when {
                 translated.isJsonArray -> translated.asJsonArray.map { element ->
-                    if (element.isJsonPrimitive) element.asString else throw TranslationException(TranslationFailure.Invalid)
+                    if (element.isJsonPrimitive) decodeHtmlEntities(element.asString) else throw TranslationException(TranslationFailure.Invalid)
                 }
-                translated.isJsonPrimitive -> listOf(translated.asString)
+                translated.isJsonPrimitive -> listOf(decodeHtmlEntities(translated.asString))
                 else -> throw TranslationException(TranslationFailure.Invalid)
             }
         }

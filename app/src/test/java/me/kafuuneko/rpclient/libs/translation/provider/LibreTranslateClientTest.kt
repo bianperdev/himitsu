@@ -25,7 +25,7 @@ class LibreTranslateClientTest {
         assertEquals(2, json["q"].asJsonArray.size())
         assertEquals("auto", json["source"].asString)
         assertEquals("es", json["target"].asString)
-        assertEquals("text", json["format"].asString)
+        assertEquals("html", json["format"].asString)
         assertEquals("secret", json["api_key"].asString)
     }
 
@@ -44,6 +44,13 @@ class LibreTranslateClientTest {
     fun `a single translatedText string is accepted for one text`() {
         val parsed = LibreTranslateClient.parseTranslateReply(TranslationHttpReply(200, """{"translatedText":"Hola"}"""))
         assertEquals(listOf("Hola"), parsed)
+    }
+
+    @Test
+    fun `html entities of the reply are decoded and placeholder tags kept`() = runBlocking {
+        val http = CannedHttp(body = """{"translatedText":["L&#39;ami <x id=\"1\"/> dit &quot;oui&quot; &amp; part"]}""")
+        val result = client(http).translate(listOf("x"), null, "fr")
+        assertEquals(listOf("L'ami <x id=\"1\"/> dit \"oui\" & part"), result)
     }
 
     @Test

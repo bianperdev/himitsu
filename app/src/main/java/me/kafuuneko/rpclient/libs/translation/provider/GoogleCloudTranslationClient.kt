@@ -15,7 +15,8 @@ import okhttp3.Request
  *
  * - The key goes only in the `X-goog-api-key` header; Google also accepts `?key=`, which would
  *   put it in URLs that proxies and server logs keep, so that form is never used.
- * - `format=text` returns plain text instead of HTML-escaped text.
+ * - `format=html` makes Google keep the `<x id="N"/>` placeholder tags of the text protector; the
+ *   reply is HTML, so its entities are decoded before the texts are returned.
  * - Requests are JSON bodies to `/language/translate/v2` and `/language/translate/v2/detect`.
  */
 internal class GoogleCloudTranslationClient(
@@ -47,7 +48,7 @@ internal class GoogleCloudTranslationClient(
             add("q", JsonArray().also { array -> texts.forEach(array::add) })
             addProperty("target", primaryLanguageTag(target) ?: throw TranslationException(TranslationFailure.Unsupported))
             primaryLanguageTag(source)?.let { addProperty("source", it) }
-            addProperty("format", "text")
+            addProperty("format", "html")
         }
         return post("language/translate/v2", body)
     }
@@ -78,7 +79,7 @@ internal class GoogleCloudTranslationClient(
             val translations = reply.dataObject().get("translations")?.takeIf { it.isJsonArray }?.asJsonArray
                 ?: throw TranslationException(TranslationFailure.Invalid)
             return translations.map { element ->
-                element.takeIf { it.isJsonObject }?.asJsonObject?.stringOrNull("translatedText")
+                element.takeIf { it.isJsonObject }?.asJsonObject?.stringOrNull("translatedText")?.let(::decodeHtmlEntities)
                     ?: throw TranslationException(TranslationFailure.Invalid)
             }
         }

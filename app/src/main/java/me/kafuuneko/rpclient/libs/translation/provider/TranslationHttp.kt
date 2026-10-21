@@ -121,3 +121,32 @@ internal fun List<String>.requireSameSizeAs(texts: List<String>): List<String> {
     if (size != texts.size) throw TranslationException(TranslationFailure.Invalid)
     return this
 }
+
+private val HTML_ENTITY = Regex("&(#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|quot|amp|lt|gt|apos|nbsp);")
+
+/**
+ * Decodes the HTML entities a service writes in `format=html` replies (`&#39;`, `&quot;`,
+ * `&amp;`, `&lt;`, `&gt;` and numeric ones) in a single pass, so "&amp;lt;" becomes "&lt;" and
+ * not "<". Placeholder tags such as `<x id="1"/>` are plain markup and stay as they are.
+ */
+internal fun decodeHtmlEntities(text: String): String {
+    if ('&' !in text) return text
+    return HTML_ENTITY.replace(text) { match ->
+        val entity = match.groupValues[1]
+        when {
+            entity.startsWith("#x") || entity.startsWith("#X") -> entity.substring(2).toIntOrNull(16)?.toCodePointString()
+            entity.startsWith("#") -> entity.substring(1).toIntOrNull()?.toCodePointString()
+            else -> when (entity) {
+                "quot" -> "\""
+                "amp" -> "&"
+                "lt" -> "<"
+                "gt" -> ">"
+                "apos" -> "'"
+                else -> "\u00A0"
+            }
+        } ?: match.value
+    }
+}
+
+private fun Int.toCodePointString(): String? =
+    takeIf { Character.isValidCodePoint(it) && it != 0 }?.let { String(Character.toChars(it)) }

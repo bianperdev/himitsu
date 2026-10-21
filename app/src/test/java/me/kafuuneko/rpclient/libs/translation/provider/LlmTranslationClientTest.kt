@@ -37,7 +37,7 @@ class LlmTranslationClientTest {
         val system = request.messages.first().content
         assertTrue(system.contains("English (en)"))
         assertTrue(system.contains("Spanish (es)"))
-        assertTrue(system.contains("placeholder token"))
+        assertTrue(system.contains("<x id=\"N\"/>"))
     }
 
     @Test
