@@ -4,6 +4,7 @@ package me.kafuuneko.rpclient
 import me.kafuuneko.rpclient.libs.disguise.disguiseModule
 import me.kafuuneko.rpclient.libs.llm.local.localInferenceModule
 import me.kafuuneko.rpclient.libs.security.securityModule
+import me.kafuuneko.rpclient.libs.translation.provider.translationProvidersModule
 import me.kafuuneko.rpclient.libs.translation.translationModule
 import org.koin.core.module.Module
 
@@ -18,4 +19,5 @@ internal val himitsuModules: List<Module> = listOf(
     localInferenceModule, // feat/local-inference
     disguiseModule, // feat/disguise: after securityModule, it rebinds UnlockEntry
     translationModule, // feat/translation-*
+    translationProvidersModule, // feat/translation-providers: after translationModule, it rebinds TranslationClientFactory
 )
