@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">翻訳サービスを削除しました</string>
     <string name="translation_providers_delete_failed">翻訳サービスを削除できませんでした</string>
     <string name="translation_data_notice_title">翻訳で送信されるもの</string>
-    <string name="translation_data_notice_text">翻訳がオンの間、チャットメッセージのテキストは選んだ翻訳サービスに送信され、その運営者が読むことができます。画像や AI プロバイダーのキーは決して送信されません。自前の LibreTranslate サーバーやこの端末上のモデルなら、すべて非公開のままです。</string>
+    <string name="translation_data_notice_text">翻訳がオンの間、キャラクターが別の言語で書くチャットはすべて自動的に翻訳されます（チャットごとにオフにできます）。そのメッセージの本文（スクロールして表示した古いものも含む）とあなたが書いた内容は、選んだ翻訳サービスに送信され、運営者が読むことができます。Android 8 と 9 では、チャットの言語を判定するために短いサンプルが一度送信されることもあります。画像と AI プロバイダーのキーは送信されません。自分の LibreTranslate サーバーかこの端末のモデルなら、すべて手元に留まります。</string>
     <string name="translation_data_notice_accept">わかりました</string>
     <string name="translation_provider_create_title">翻訳サービスを追加</string>
     <string name="translation_provider_edit_title">翻訳サービスを編集</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">チャットのテキストはこのアドレスの LibreTranslate サーバーに送られます。</string>
     <string name="translation_provider_sends_deepl">チャットのテキストは DeepL のサーバーに送られます。</string>
     <string name="translation_provider_sends_google">チャットのテキストは Google のサーバーに送られます。</string>
-    <string name="translation_provider_sends_llm">チャットのテキストは選んだ AI プロバイダーに送られます。この端末上のモデルなら、スマホの外には出ません。</string>
+    <string name="translation_provider_sends_llm">チャットの本文は選んだ AI プロバイダーに送られます。メッセージごとに 1 回のリクエストで、そのプロバイダーの料金がかかり、トークン使用量に数えられ、デバッグモードがオンの間は暗号化されたリクエスト記録に残ります。この端末のモデルなら、スマホの外には出ません。</string>
     <string name="translation_provider_base_url_server">サーバーのアドレス</string>
     <string name="translation_provider_base_url_server_desc">暗号化されていない HTTP は自分のネットワーク内でのみ安全です</string>
     <string name="translation_provider_base_url_optional">カスタムアドレス（任意）</string>

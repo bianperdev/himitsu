@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Servizio di traduzione eliminato</string>
     <string name="translation_providers_delete_failed">Impossibile eliminare il servizio di traduzione</string>
     <string name="translation_data_notice_title">Cosa invia la traduzione</string>
-    <string name="translation_data_notice_text">Finché la traduzione è attiva, il testo dei messaggi delle tue chat viene inviato al servizio di traduzione scelto, e chi lo gestisce può leggerlo. Le immagini e le chiavi dei tuoi provider di IA non vengono mai inviate. Un server LibreTranslate tuo o un modello su questo dispositivo mantiene tutto privato.</string>
+    <string name="translation_data_notice_text">Mentre la traduzione è attiva, ogni chat il cui personaggio scrive in un\'altra lingua viene tradotta automaticamente (puoi disattivarla in ogni chat). Il testo dei suoi messaggi, anche quelli più vecchi che scorri, e ciò che scrivi vengono inviati al servizio di traduzione scelto, e chi lo gestisce può leggerli. Su Android 8 e 9 può essere inviato una volta anche un breve campione per rilevare la lingua di una chat. Le immagini e le chiavi dei tuoi provider di IA non vengono mai inviate. Un tuo server LibreTranslate o un modello su questo dispositivo mantengono tutto privato.</string>
     <string name="translation_data_notice_accept">Ho capito</string>
     <string name="translation_provider_create_title">Aggiungi servizio di traduzione</string>
     <string name="translation_provider_edit_title">Modifica servizio di traduzione</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">Il testo della chat va al server LibreTranslate a questo indirizzo.</string>
     <string name="translation_provider_sends_deepl">Il testo della chat va ai server di DeepL.</string>
     <string name="translation_provider_sends_google">Il testo della chat va ai server di Google.</string>
-    <string name="translation_provider_sends_llm">Il testo della chat va al provider di IA scelto. Con un modello su questo dispositivo, non lascia mai il tuo telefono.</string>
+    <string name="translation_provider_sends_llm">Il testo della chat va al provider di IA scelto: una richiesta per messaggio, fatturata da quel provider, conteggiata nell\'uso dei token e conservata nel registro delle richieste cifrato finché la modalità debug è attiva. Con un modello su questo dispositivo, non lascia mai il tuo telefono.</string>
     <string name="translation_provider_base_url_server">Indirizzo del server</string>
     <string name="translation_provider_base_url_server_desc">L\'HTTP non cifrato è sicuro solo sulla tua rete</string>
     <string name="translation_provider_base_url_optional">Indirizzo personalizzato (facoltativo)</string>

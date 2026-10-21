@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Übersetzungsdienst gelöscht</string>
     <string name="translation_providers_delete_failed">Der Übersetzungsdienst konnte nicht gelöscht werden</string>
     <string name="translation_data_notice_title">Was die Übersetzung sendet</string>
-    <string name="translation_data_notice_text">Solange die Übersetzung an ist, wird der Text deiner Chatnachrichten an den gewählten Übersetzungsdienst gesendet, und wer ihn betreibt, kann ihn lesen. Bilder und die Schlüssel deiner KI-Anbieter werden nie gesendet. Ein eigener LibreTranslate-Server oder ein Modell auf diesem Gerät hält alles privat.</string>
+    <string name="translation_data_notice_text">Solange die Übersetzung aktiv ist, wird jeder Chat, in dem die Figur in einer anderen Sprache schreibt, automatisch übersetzt (du kannst das in jedem Chat ausschalten). Der Text seiner Nachrichten, auch älterer, zu denen du scrollst, und was du schreibst, werden an den gewählten Übersetzungsdienst gesendet, und dessen Betreiber kann sie lesen. Unter Android 8 und 9 kann außerdem einmal eine kurze Probe gesendet werden, um die Sprache eines Chats zu erkennen. Bilder und die Schlüssel deiner KI-Anbieter werden nie gesendet. Ein eigener LibreTranslate-Server oder ein Modell auf diesem Gerät hält alles privat.</string>
     <string name="translation_data_notice_accept">Verstanden</string>
     <string name="translation_provider_create_title">Übersetzungsdienst hinzufügen</string>
     <string name="translation_provider_edit_title">Übersetzungsdienst bearbeiten</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">Der Chattext geht an den LibreTranslate-Server unter dieser Adresse.</string>
     <string name="translation_provider_sends_deepl">Der Chattext geht an die Server von DeepL.</string>
     <string name="translation_provider_sends_google">Der Chattext geht an die Server von Google.</string>
-    <string name="translation_provider_sends_llm">Der Chattext geht an den gewählten KI-Anbieter. Mit einem Modell auf diesem Gerät verlässt er nie dein Handy.</string>
+    <string name="translation_provider_sends_llm">Der Chattext geht an den gewählten KI-Anbieter: eine Anfrage pro Nachricht, von diesem Anbieter abgerechnet, in der Token-Nutzung gezählt und im verschlüsselten Anfrageprotokoll gespeichert, solange der Debug-Modus an ist. Mit einem Modell auf diesem Gerät verlässt er dein Handy nie.</string>
     <string name="translation_provider_base_url_server">Serveradresse</string>
     <string name="translation_provider_base_url_server_desc">Unverschlüsseltes HTTP ist nur in deinem eigenen Netz sicher</string>
     <string name="translation_provider_base_url_optional">Eigene Adresse (optional)</string>

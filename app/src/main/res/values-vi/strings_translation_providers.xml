@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Đã xóa dịch vụ dịch</string>
     <string name="translation_providers_delete_failed">Không thể xóa dịch vụ dịch</string>
     <string name="translation_data_notice_title">Tính năng dịch gửi những gì</string>
-    <string name="translation_data_notice_text">Khi bật dịch, văn bản tin nhắn trò chuyện của bạn được gửi đến dịch vụ dịch bạn chọn, và người vận hành dịch vụ có thể đọc được. Hình ảnh và khóa của các nhà cung cấp AI không bao giờ được gửi. Máy chủ LibreTranslate của riêng bạn hoặc mô hình trên thiết bị này giữ mọi thứ riêng tư.</string>
+    <string name="translation_data_notice_text">Khi bật dịch, mọi cuộc trò chuyện mà nhân vật viết bằng ngôn ngữ khác đều được dịch tự động (bạn có thể tắt trong từng cuộc trò chuyện). Nội dung tin nhắn, kể cả tin cũ bạn cuộn tới, và những gì bạn viết được gửi tới dịch vụ dịch bạn chọn, và người vận hành có thể đọc được. Trên Android 8 và 9, một mẫu ngắn cũng có thể được gửi một lần để nhận diện ngôn ngữ của cuộc trò chuyện. Hình ảnh và khóa của các nhà cung cấp AI không bao giờ được gửi. Máy chủ LibreTranslate của riêng bạn hoặc mô hình trên thiết bị này giữ mọi thứ riêng tư.</string>
     <string name="translation_data_notice_accept">Tôi đã hiểu</string>
     <string name="translation_provider_create_title">Thêm dịch vụ dịch</string>
     <string name="translation_provider_edit_title">Sửa dịch vụ dịch</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">Văn bản trò chuyện được gửi đến máy chủ LibreTranslate ở địa chỉ này.</string>
     <string name="translation_provider_sends_deepl">Văn bản trò chuyện được gửi đến máy chủ của DeepL.</string>
     <string name="translation_provider_sends_google">Văn bản trò chuyện được gửi đến máy chủ của Google.</string>
-    <string name="translation_provider_sends_llm">Văn bản trò chuyện được gửi đến nhà cung cấp AI đã chọn. Với mô hình trên thiết bị này, nó không bao giờ rời khỏi điện thoại của bạn.</string>
+    <string name="translation_provider_sends_llm">Nội dung trò chuyện được gửi tới nhà cung cấp AI đã chọn: mỗi tin nhắn một yêu cầu, do nhà cung cấp đó tính phí, được tính vào lượng token và lưu trong nhật ký yêu cầu được mã hóa khi chế độ gỡ lỗi đang bật. Với mô hình trên thiết bị này, nội dung không bao giờ rời khỏi điện thoại.</string>
     <string name="translation_provider_base_url_server">Địa chỉ máy chủ</string>
     <string name="translation_provider_base_url_server_desc">HTTP không mã hóa chỉ an toàn trong mạng của riêng bạn</string>
     <string name="translation_provider_base_url_optional">Địa chỉ tùy chỉnh (không bắt buộc)</string>

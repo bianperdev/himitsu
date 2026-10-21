@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Service de traduction supprimé</string>
     <string name="translation_providers_delete_failed">Impossible de supprimer le service de traduction</string>
     <string name="translation_data_notice_title">Ce que la traduction envoie</string>
-    <string name="translation_data_notice_text">Tant que la traduction est activée, le texte de vos messages est envoyé au service de traduction choisi, et la personne qui le gère peut le lire. Les images et les clés de vos fournisseurs d\'IA ne sont jamais envoyées. Un serveur LibreTranslate personnel ou un modèle sur cet appareil garde tout privé.</string>
+    <string name="translation_data_notice_text">Tant que la traduction est activée, chaque conversation dont le personnage écrit dans une autre langue est traduite automatiquement (vous pouvez la désactiver dans chaque conversation). Le texte de ses messages, y compris les plus anciens que vous faites défiler, et ce que vous écrivez sont envoyés au service de traduction choisi, et son exploitant peut les lire. Sous Android 8 et 9, un court extrait peut aussi être envoyé une fois pour détecter la langue d\'une conversation. Les images et les clés de vos fournisseurs d\'IA ne sont jamais envoyées. Un serveur LibreTranslate à vous ou un modèle sur cet appareil garde tout privé.</string>
     <string name="translation_data_notice_accept">J\'ai compris</string>
     <string name="translation_provider_create_title">Ajouter un service de traduction</string>
     <string name="translation_provider_edit_title">Modifier le service de traduction</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">Le texte des discussions part vers le serveur LibreTranslate à cette adresse.</string>
     <string name="translation_provider_sends_deepl">Le texte des discussions part vers les serveurs de DeepL.</string>
     <string name="translation_provider_sends_google">Le texte des discussions part vers les serveurs de Google.</string>
-    <string name="translation_provider_sends_llm">Le texte des discussions part vers le fournisseur d\'IA choisi. Avec un modèle sur cet appareil, il ne quitte jamais votre téléphone.</string>
+    <string name="translation_provider_sends_llm">Le texte de la conversation va au fournisseur d\'IA choisi : une requête par message, facturée par ce fournisseur, comptée dans l\'utilisation des jetons et conservée dans le journal des requêtes chiffré tant que le mode débogage est activé. Avec un modèle sur cet appareil, il ne quitte jamais votre téléphone.</string>
     <string name="translation_provider_base_url_server">Adresse du serveur</string>
     <string name="translation_provider_base_url_server_desc">Le HTTP non chiffré n\'est sûr que sur votre propre réseau</string>
     <string name="translation_provider_base_url_optional">Adresse personnalisée (facultatif)</string>

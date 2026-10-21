@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">翻譯服務已刪除</string>
     <string name="translation_providers_delete_failed">無法刪除翻譯服務</string>
     <string name="translation_data_notice_title">翻譯會傳送什麼</string>
-    <string name="translation_data_notice_text">翻譯開啟時，聊天訊息的文字會傳送到你選擇的翻譯服務，其營運者可以讀取。圖片和 AI 服務商的金鑰永遠不會被傳送。自架的 LibreTranslate 伺服器或本裝置上的模型能讓一切保持私密。</string>
+    <string name="translation_data_notice_text">開啟翻譯後，凡是角色使用其他語言的聊天都會自動翻譯（你可以在每個聊天中關閉）。其訊息文字（包括你捲動查看的較早訊息）以及你寫的內容會傳送到你選擇的翻譯服務，營運該服務的人可以讀取。在 Android 8 和 9 上，還可能傳送一次簡短樣本來偵測聊天的語言。圖片和你的 AI 供應商金鑰永遠不會傳送。使用自己的 LibreTranslate 伺服器或本裝置上的模型可讓一切保持私密。</string>
     <string name="translation_data_notice_accept">我知道了</string>
     <string name="translation_provider_create_title">新增翻譯服務</string>
     <string name="translation_provider_edit_title">編輯翻譯服務</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">聊天文字會傳送到此位址的 LibreTranslate 伺服器。</string>
     <string name="translation_provider_sends_deepl">聊天文字會傳送到 DeepL 的伺服器。</string>
     <string name="translation_provider_sends_google">聊天文字會傳送到 Google 的伺服器。</string>
-    <string name="translation_provider_sends_llm">聊天文字會傳送到所選的 AI 服務商。若使用本裝置上的模型，內容永遠不會離開你的手機。</string>
+    <string name="translation_provider_sends_llm">聊天文字會傳送到所選的 AI 供應商：每則訊息一次請求，由該供應商計費，計入 token 用量，並在偵錯模式開啟時儲存在加密的請求記錄中。使用本裝置上的模型時，內容不會離開你的手機。</string>
     <string name="translation_provider_base_url_server">伺服器位址</string>
     <string name="translation_provider_base_url_server_desc">未加密的 HTTP 僅在你自己的網路中安全</string>
     <string name="translation_provider_base_url_optional">自訂位址（選填）</string>

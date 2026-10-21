@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Layanan terjemahan dihapus</string>
     <string name="translation_providers_delete_failed">Layanan terjemahan tidak dapat dihapus</string>
     <string name="translation_data_notice_title">Apa yang dikirim terjemahan</string>
-    <string name="translation_data_notice_text">Selama terjemahan aktif, teks pesan obrolanmu dikirim ke layanan terjemahan yang kamu pilih, dan pengelolanya dapat membacanya. Gambar dan kunci penyedia AI-mu tidak pernah dikirim. Server LibreTranslate milikmu sendiri atau model di perangkat ini menjaga semuanya tetap pribadi.</string>
+    <string name="translation_data_notice_text">Selama terjemahan aktif, setiap chat yang karakternya menulis dalam bahasa lain diterjemahkan otomatis (Anda dapat menonaktifkannya di setiap chat). Teks pesannya, termasuk pesan lama yang Anda gulir, dan yang Anda tulis dikirim ke layanan terjemahan yang Anda pilih, dan pengelolanya dapat membacanya. Di Android 8 dan 9, sampel singkat juga bisa dikirim sekali untuk mendeteksi bahasa chat. Gambar dan kunci penyedia AI Anda tidak pernah dikirim. Server LibreTranslate milik sendiri atau model di perangkat ini menjaga semuanya tetap pribadi.</string>
     <string name="translation_data_notice_accept">Saya mengerti</string>
     <string name="translation_provider_create_title">Tambah layanan terjemahan</string>
     <string name="translation_provider_edit_title">Edit layanan terjemahan</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">Teks obrolan dikirim ke server LibreTranslate di alamat ini.</string>
     <string name="translation_provider_sends_deepl">Teks obrolan dikirim ke server DeepL.</string>
     <string name="translation_provider_sends_google">Teks obrolan dikirim ke server Google.</string>
-    <string name="translation_provider_sends_llm">Teks obrolan dikirim ke penyedia AI yang dipilih. Dengan model di perangkat ini, teks tidak pernah keluar dari ponselmu.</string>
+    <string name="translation_provider_sends_llm">Teks chat dikirim ke penyedia AI yang dipilih: satu permintaan per pesan, ditagih oleh penyedia itu, dihitung dalam penggunaan token, dan disimpan di log permintaan terenkripsi selama mode debug aktif. Dengan model di perangkat ini, teks tidak pernah meninggalkan ponsel Anda.</string>
     <string name="translation_provider_base_url_server">Alamat server</string>
     <string name="translation_provider_base_url_server_desc">HTTP tanpa enkripsi hanya aman di jaringanmu sendiri</string>
     <string name="translation_provider_base_url_optional">Alamat khusus (opsional)</string>

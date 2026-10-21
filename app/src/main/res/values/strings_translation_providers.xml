@@ -36,7 +36,7 @@
     <string name="translation_providers_deleted">Translation service deleted</string>
     <string name="translation_providers_delete_failed">The translation service could not be deleted</string>
     <string name="translation_data_notice_title">What translation sends</string>
-    <string name="translation_data_notice_text">While translation is on, the text of your chat messages is sent to the translation service you choose, and whoever runs it can read it. Images and the keys of your AI providers are never sent. A LibreTranslate server of your own or a model on this device keeps everything private.</string>
+    <string name="translation_data_notice_text">While translation is on, every chat whose character writes in another language is translated automatically (you can turn it off in each chat). The text of its messages, including older ones you scroll to, and what you write are sent to the translation service you choose, and whoever runs it can read it. On Android 8 and 9, a short sample may also be sent once to detect a chat\'s language. Images and the keys of your AI providers are never sent. A LibreTranslate server of your own or a model on this device keeps everything private.</string>
     <string name="translation_data_notice_accept">I understand</string>
     <string name="translation_provider_create_title">Add translation service</string>
     <string name="translation_provider_edit_title">Edit translation service</string>
@@ -45,7 +45,7 @@
     <string name="translation_provider_sends_libre">Chat text goes to the LibreTranslate server at this address.</string>
     <string name="translation_provider_sends_deepl">Chat text goes to DeepL\'s servers.</string>
     <string name="translation_provider_sends_google">Chat text goes to Google\'s servers.</string>
-    <string name="translation_provider_sends_llm">Chat text goes to the chosen AI provider. With a model on this device, it never leaves your phone.</string>
+    <string name="translation_provider_sends_llm">Chat text goes to the chosen AI provider: one request per message, billed by that provider, counted in token usage and kept in the encrypted request log while debug mode is on. With a model on this device, it never leaves your phone.</string>
     <string name="translation_provider_base_url_server">Server address</string>
     <string name="translation_provider_base_url_server_desc">Plain HTTP is only safe on your own network</string>
     <string name="translation_provider_base_url_optional">Custom address (optional)</string>

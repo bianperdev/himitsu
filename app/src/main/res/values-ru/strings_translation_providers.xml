@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Служба перевода удалена</string>
     <string name="translation_providers_delete_failed">Не удалось удалить службу перевода</string>
     <string name="translation_data_notice_title">Что отправляет перевод</string>
-    <string name="translation_data_notice_text">Пока перевод включён, текст сообщений ваших чатов отправляется в выбранную службу перевода, и её владелец может его прочитать. Изображения и ключи ваших ИИ-провайдеров никогда не отправляются. Собственный сервер LibreTranslate или модель на этом устройстве сохраняют всё в тайне.</string>
+    <string name="translation_data_notice_text">Пока перевод включён, каждый чат, где персонаж пишет на другом языке, переводится автоматически (это можно отключить в каждом чате). Текст его сообщений, включая старые, до которых вы прокручиваете, и то, что вы пишете, отправляются в выбранный сервис перевода, и его владелец может их прочитать. На Android 8 и 9 для определения языка чата также может один раз отправляться короткий образец. Изображения и ключи ваших ИИ-провайдеров никогда не отправляются. Собственный сервер LibreTranslate или модель на этом устройстве сохраняют всё в тайне.</string>
     <string name="translation_data_notice_accept">Понятно</string>
     <string name="translation_provider_create_title">Добавить службу перевода</string>
     <string name="translation_provider_edit_title">Изменить службу перевода</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">Текст чата отправляется на сервер LibreTranslate по этому адресу.</string>
     <string name="translation_provider_sends_deepl">Текст чата отправляется на серверы DeepL.</string>
     <string name="translation_provider_sends_google">Текст чата отправляется на серверы Google.</string>
-    <string name="translation_provider_sends_llm">Текст чата отправляется выбранному ИИ-провайдеру. С моделью на этом устройстве он никогда не покидает телефон.</string>
+    <string name="translation_provider_sends_llm">Текст чата отправляется выбранному ИИ-провайдеру: один запрос на сообщение, который оплачивается у этого провайдера, учитывается в расходе токенов и сохраняется в зашифрованном журнале запросов, пока включён режим отладки. С моделью на этом устройстве он никогда не покидает телефон.</string>
     <string name="translation_provider_base_url_server">Адрес сервера</string>
     <string name="translation_provider_base_url_server_desc">Незашифрованный HTTP безопасен только в вашей сети</string>
     <string name="translation_provider_base_url_optional">Свой адрес (необязательно)</string>

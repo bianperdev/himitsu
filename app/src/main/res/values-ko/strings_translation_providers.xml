@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">번역 서비스를 삭제했습니다</string>
     <string name="translation_providers_delete_failed">번역 서비스를 삭제할 수 없습니다</string>
     <string name="translation_data_notice_title">번역이 보내는 내용</string>
-    <string name="translation_data_notice_text">번역이 켜져 있는 동안 채팅 메시지의 텍스트는 선택한 번역 서비스로 전송되며, 운영자가 읽을 수 있습니다. 이미지와 AI 제공자의 키는 절대 전송되지 않습니다. 직접 운영하는 LibreTranslate 서버나 이 기기의 모델을 쓰면 모든 것이 비공개로 유지됩니다.</string>
+    <string name="translation_data_notice_text">번역이 켜져 있는 동안 캐릭터가 다른 언어로 쓰는 모든 채팅은 자동으로 번역됩니다(채팅마다 끌 수 있습니다). 메시지 본문(스크롤해서 본 이전 메시지 포함)과 내가 쓴 내용은 선택한 번역 서비스로 전송되며, 서비스 운영자가 읽을 수 있습니다. Android 8과 9에서는 채팅 언어를 감지하기 위해 짧은 샘플이 한 번 전송될 수도 있습니다. 이미지와 AI 공급자 키는 절대 전송되지 않습니다. 직접 운영하는 LibreTranslate 서버나 이 기기의 모델을 쓰면 모든 내용이 비공개로 유지됩니다.</string>
     <string name="translation_data_notice_accept">이해했습니다</string>
     <string name="translation_provider_create_title">번역 서비스 추가</string>
     <string name="translation_provider_edit_title">번역 서비스 편집</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">채팅 텍스트는 이 주소의 LibreTranslate 서버로 전송됩니다.</string>
     <string name="translation_provider_sends_deepl">채팅 텍스트는 DeepL 서버로 전송됩니다.</string>
     <string name="translation_provider_sends_google">채팅 텍스트는 Google 서버로 전송됩니다.</string>
-    <string name="translation_provider_sends_llm">채팅 텍스트는 선택한 AI 제공자로 전송됩니다. 이 기기의 모델이라면 휴대폰 밖으로 나가지 않습니다.</string>
+    <string name="translation_provider_sends_llm">채팅 텍스트는 선택한 AI 공급자로 전송됩니다. 메시지마다 요청 한 번이며, 해당 공급자가 요금을 부과하고, 토큰 사용량에 포함되며, 디버그 모드가 켜져 있는 동안 암호화된 요청 기록에 저장됩니다. 이 기기의 모델을 쓰면 휴대전화 밖으로 나가지 않습니다.</string>
     <string name="translation_provider_base_url_server">서버 주소</string>
     <string name="translation_provider_base_url_server_desc">암호화되지 않은 HTTP는 내 네트워크에서만 안전합니다</string>
     <string name="translation_provider_base_url_optional">사용자 지정 주소(선택)</string>

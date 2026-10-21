@@ -32,7 +32,7 @@
     <string name="translation_providers_deleted">Serviço de tradução excluído</string>
     <string name="translation_providers_delete_failed">Não foi possível excluir o serviço de tradução</string>
     <string name="translation_data_notice_title">O que a tradução envia</string>
-    <string name="translation_data_notice_text">Enquanto a tradução está ativada, o texto das mensagens dos seus chats é enviado ao serviço de tradução escolhido, e quem o administra pode lê-lo. Imagens e as chaves dos seus provedores de IA nunca são enviadas. Um servidor LibreTranslate próprio ou um modelo neste aparelho mantém tudo privado.</string>
+    <string name="translation_data_notice_text">Enquanto a tradução está ativada, toda conversa em que o personagem escreve em outro idioma é traduzida automaticamente (você pode desativá-la em cada conversa). O texto das mensagens, inclusive as antigas que você rolar até ver, e o que você escreve são enviados ao serviço de tradução que você escolher, e quem o administra pode lê-los. No Android 8 e 9, uma amostra curta também pode ser enviada uma vez para detectar o idioma de uma conversa. Imagens e as chaves dos seus provedores de IA nunca são enviadas. Um servidor LibreTranslate próprio ou um modelo neste dispositivo mantém tudo privado.</string>
     <string name="translation_data_notice_accept">Entendi</string>
     <string name="translation_provider_create_title">Adicionar serviço de tradução</string>
     <string name="translation_provider_edit_title">Editar serviço de tradução</string>
@@ -41,7 +41,7 @@
     <string name="translation_provider_sends_libre">O texto do chat vai para o servidor LibreTranslate neste endereço.</string>
     <string name="translation_provider_sends_deepl">O texto do chat vai para os servidores da DeepL.</string>
     <string name="translation_provider_sends_google">O texto do chat vai para os servidores do Google.</string>
-    <string name="translation_provider_sends_llm">O texto do chat vai para o provedor de IA escolhido. Com um modelo neste aparelho, ele nunca sai do seu celular.</string>
+    <string name="translation_provider_sends_llm">O texto da conversa vai para o provedor de IA escolhido: uma solicitação por mensagem, cobrada por esse provedor, contada no uso de tokens e guardada no registro de solicitações criptografado enquanto o modo de depuração estiver ativado. Com um modelo neste dispositivo, nunca sai do seu celular.</string>
     <string name="translation_provider_base_url_server">Endereço do servidor</string>
     <string name="translation_provider_base_url_server_desc">HTTP sem criptografia só é seguro na sua própria rede</string>
     <string name="translation_provider_base_url_optional">Endereço personalizado (opcional)</string>
