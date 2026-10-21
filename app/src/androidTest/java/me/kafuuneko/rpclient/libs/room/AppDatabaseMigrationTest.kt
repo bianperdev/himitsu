@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -262,7 +263,28 @@ class AppDatabaseMigrationTest {
         }
     }
 
+    /** Himitsu (translation): version 5 only adds tables, so existing data is untouched. */
+    @Test
+    fun migrate4To5_addsTranslationTables() {
+        migrationHelper.createDatabase(TranslationDatabaseName, 4).close()
+
+        val migrated = migrationHelper.runMigrationsAndValidate(TranslationDatabaseName, 5, true)
+
+        val tables = migrated.query("SELECT name FROM sqlite_master WHERE type = 'table'").use { cursor ->
+            buildSet { while (cursor.moveToNext()) add(cursor.getString(0)) }
+        }
+        listOf(
+            "translation_providers",
+            "chat_message_translations",
+            "group_chat_message_translations",
+            "chat_translation_settings",
+            "group_chat_translation_settings"
+        ).forEach { assertTrue(it, it in tables) }
+        migrated.close()
+    }
+
     private companion object {
+        const val TranslationDatabaseName = "app-translation-migration-test"
         const val DatabaseName = "app-migration-test"
         const val RegexDatabaseName = "app-regex-migration-test"
         const val TokenUsageDatabaseName = "app-token-usage-migration-test"
