@@ -65,7 +65,9 @@ data class TranslationProvider(
     val llmProviderId: Long? = null,
     val customHeadersJson: String = "",
     val createTime: Long
-)
+) {
+    override fun toString(): String = "TranslationProvider(id=$id, type=$type, [REDACTED])"
+}
 
 /**
  * The text a user reads for one chat message, in the user's language. The message's own content
