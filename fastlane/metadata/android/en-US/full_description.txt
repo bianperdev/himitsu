@@ -19,6 +19,9 @@ ROLE-PLAY FEATURES (from RPClient)
 - Import and export chats as SillyTavern .jsonl.
 - Connect to OpenAI-compatible APIs, Gemini, Claude, DeepSeek, OpenRouter, xAI or your own server.
 
+READ AND WRITE IN YOUR LANGUAGE (OPTIONAL)
+When a character writes in another language, Himitsu shows their messages translated into yours and translates what you write, so the model keeps the conversation in the character's language. Off by default; it uses a translation service you configure: LibreTranslate on your own server (most private), DeepL, Google Cloud Translation or one of your AI providers. Chat text goes only to the service you choose.
+
 OPTIONAL DISGUISE
 Himitsu can change its icon and name to look like a working calculator, compass or unit converter. A secret code or gesture in the decoy opens the system authentication prompt; it never skips the app lock. Disguise is off by default and needs the app lock and a screen lock.
 Disguise is discretion, not security. Android's Settings (Apps, notifications, battery, storage) still show Himitsu, as do the package name, your app store's history, the system fingerprint or PIN prompt, the header of some notifications and tools such as adb. The app explains these limits before you turn it on.

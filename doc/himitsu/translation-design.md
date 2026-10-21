@@ -1,6 +1,6 @@
 # Translation design (`feat/translation-*`)
 
-Status: approved by the maintainer (2026-10-21). Groundwork on `main`; the three tracks build on it.
+Status: implemented (2026-10-21): groundwork and the three tracks merged in `feat/translation`. After the privacy review, the provider only detects languages on API 26-28 and at most once per chat while the app runs, and the LibreTranslate link is left out of the `play` build.
 
 ## Goal
 

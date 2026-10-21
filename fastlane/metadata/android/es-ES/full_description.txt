@@ -19,6 +19,9 @@ FUNCIONES DE ROL (de RPClient)
 - Importa y exporta chats en formato .jsonl de SillyTavern.
 - Conéctate a APIs compatibles con OpenAI, Gemini, Claude, DeepSeek, OpenRouter, xAI o tu propio servidor.
 
+LEE Y ESCRIBE EN TU IDIOMA (OPCIONAL)
+Cuando un personaje escribe en otro idioma, Himitsu te muestra sus mensajes traducidos y traduce lo que escribes, para que el modelo mantenga la conversación en el idioma del personaje. Viene desactivado y usa un servicio de traducción que tú configuras: LibreTranslate en tu propio servidor (lo más privado), DeepL, Google Cloud Translation o uno de tus proveedores de IA. El texto del chat solo va al servicio que elijas.
+
 CAMUFLAJE OPCIONAL
 Himitsu puede cambiar su icono y su nombre para parecer una calculadora, una brújula o un conversor de unidades que funcionan de verdad. Un código o gesto secreto en la app señuelo abre la autenticación del sistema; nunca se salta el bloqueo de la app. El camuflaje viene desactivado y necesita el bloqueo de la app y un bloqueo de pantalla.
 El camuflaje es discreción, no seguridad. Los Ajustes de Android (Aplicaciones, notificaciones, batería, almacenamiento) siguen mostrando Himitsu, igual que el nombre del paquete, el historial de tu tienda de apps, el aviso del sistema de huella o PIN, la cabecera de algunas notificaciones y herramientas como adb. La app te explica estos límites antes de que lo actives.
