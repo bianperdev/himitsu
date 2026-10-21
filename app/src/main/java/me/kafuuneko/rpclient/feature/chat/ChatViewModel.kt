@@ -32,6 +32,9 @@ import me.kafuuneko.rpclient.feature.chat.presentation.ChatUiIntent
 import me.kafuuneko.rpclient.feature.chat.presentation.ChatUiState
 import me.kafuuneko.rpclient.feature.chat.presentation.ChatViewEvent
 import me.kafuuneko.rpclient.feature.chat.presentation.resolveExportDialogState
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationController
+import me.kafuuneko.rpclient.feature.chat.translation.reasonResId
+import me.kafuuneko.rpclient.feature.chat.translation.toTranslatableMessages
 import me.kafuuneko.rpclient.feature.chat.utils.ChatLorebookEntryData
 import me.kafuuneko.rpclient.feature.chat.utils.replaceStreamingMessage
 import me.kafuuneko.rpclient.feature.chat.utils.toChatCharacterItem
@@ -89,6 +92,9 @@ import me.kafuuneko.rpclient.libs.room.repository.ChatSummaryGenerationContext
 import me.kafuuneko.rpclient.libs.room.repository.FileRepository
 import me.kafuuneko.rpclient.libs.room.repository.LLMRepository
 import me.kafuuneko.rpclient.libs.room.repository.LorebookRepository
+import me.kafuuneko.rpclient.libs.translation.ChatTranslator
+import me.kafuuneko.rpclient.libs.translation.TranslationPrefs
+import me.kafuuneko.rpclient.libs.translation.TranslationSessionKey
 import me.kafuuneko.rpclient.utils.filterLorebookGroups
 import me.kafuuneko.rpclient.utils.formatTimestamp
 import me.kafuuneko.rpclient.utils.toDefaultChatTitle
@@ -213,6 +219,16 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
     private val mChatArchiveRepository by inject<ChatArchiveRepository>()
     private val mContext by inject<Context>()
 
+    // Himitsu (translation): display and send through ChatTranslator; inert while translation is off.
+    private val mChatTranslator by inject<ChatTranslator>()
+    private val mTranslation by lazy {
+        ChatTranslationController(mChatTranslator, viewModelScope, { TranslationPrefs.enabled }) {
+            applyTranslations()
+        }
+    }
+    /** Himitsu (translation): the display text a user message's edit started from, if any. */
+    private var mEditingDisplayText: String? = null
+
     /** 当前页面绑定的会话 ID，初始化成功后在页面生命周期内保持不变。 */
     private var mSessionId: Long? = null
     /** 当前大模型生成任务协程 Job，用于防止并发重复请求及响应用户的停止生成操作。 */
@@ -251,6 +267,8 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
             return
         }
         mSessionId = sessionId
+        // Himitsu (translation)
+        mTranslation.attach(TranslationSessionKey.Chat(sessionId))
         val loaded = withContext(Dispatchers.IO) { loadNormalState(sessionId, inputDraft = "") }
         if (loaded == null) {
             finishWithToast(R.string.session_not_found)
@@ -298,6 +316,8 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
                 isExportActive = mChatExportJob?.isActive == true
             )
         ).setup()
+        // Himitsu (translation): the translation settings may have changed while away.
+        mTranslation.onResume()
     }
 
     /**
@@ -330,6 +350,11 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
                     beforeCreateTime = cursor.createTime,
                     beforeMessageId = cursor.messageId,
                     pageSize = MESSAGE_PAGE_SIZE
+                )
+                // Himitsu (translation)
+                mTranslation.onMessagesLoaded(
+                    page.messages.toTranslatableMessages(displayContext.translationNames(), mActiveStreamingGeneration?.messageId),
+                    older = true
                 )
                 LoadedChatMessagePage(
                     items = page.messages.toDisplayMessageItems(
@@ -400,7 +425,13 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
     private suspend fun onChangeInputDraft(intent: ChatUiIntent.ChangeInputDraft) {
         val uiState = getOrNull<ChatUiState.Normal>() ?: return
         uiState.copy(
-            conversationState = uiState.conversationState.copy(inputDraft = intent.value)
+            conversationState = uiState.conversationState.copy(inputDraft = intent.value),
+            // Himitsu (translation): a changed draft drops the "send again as written" notice.
+            translationState = if (mTranslation.onDraftChanged(intent.value)) {
+                mTranslation.uiState()
+            } else {
+                uiState.translationState
+            }
         ).setup()
     }
 
@@ -461,18 +492,33 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
                     val character = mCharacterRepository.getCharacterById(uiState.character.id) ?: return@runCatching
                     mImageCapabilities.requireImages(mProviderSelectionResolver.requireCharacterProvider(character).toConfig())
                 }
+                // Himitsu (translation): what the user typed becomes conversation-language content.
+                val typedInput = uiState.conversationState.inputDraft.trim()
+                val outgoing = if (typedInput.isNotBlank()) {
+                    translateOutgoing(typedInput, uiState)
+                } else {
+                    ChatTranslationController.Outgoing.Ready(rawInput, null)
+                }
+                if (outgoing !is ChatTranslationController.Outgoing.Ready) return@runCatching
                 // 执行用户输入端 Source 正则
                 val input = withContext(Dispatchers.IO) {
-                    applyUserRegex(sessionId, rawInput)
+                    applyUserRegex(sessionId, outgoing.content)
                 }
                 // 将用户消息写入数据库
+                var sentMessageId: Long? = null
                 mImageCoordinator.submit { finalInputs ->
                     mChatRepository.createUserMessageWithImages(
                         sessionId, input, finalInputs.filterIsInstance<MessageImageInput.Prepared>()
                     ).also {
                         mRetryUserMessageId = it.key.messageId
+                        sentMessageId = it.key.messageId
                         committed = true
                     }
+                }
+                // Himitsu (translation): the message shows what the user typed.
+                val sentId = sentMessageId
+                if (sentId != null && outgoing.displayText != null) {
+                    mTranslation.rememberOutgoing(sentId, input, outgoing.displayText)
                 }
                 // 清空草稿并将 UI 切换至“请求中”状态
                 refreshUiState(
@@ -1204,7 +1250,9 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
         val uiState = getOrNull<ChatUiState.Normal>() ?: return
         val message = uiState.conversationState.messages
             .firstOrNull { it.id == intent.messageId } ?: return
-        val copyText = message.content.toMessageCopyText(
+        // Himitsu (translation): copy the text the user is reading.
+        val shownText = message.translation?.takeUnless { it.showingOriginal }?.displayText ?: message.content
+        val copyText = shownText.toMessageCopyText(
             includeThinkBlocks = AppModel.includeThinkInContext
         )
         if (copyText.isBlank()) return
@@ -1235,12 +1283,14 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
                 ?.content
         } ?: return
         mImageCoordinator.startEditing(message.imageUuids)
+        // Himitsu (translation): a translated user message is edited in the user's language.
+        mEditingDisplayText = mTranslation.editableDisplayText(messageId, rawContent)
         // 将 UI 切换至消息编辑状态并填入原始草稿
         uiState.copy(
             imageState = mImageCoordinator.state,
             conversationState = uiState.conversationState.copy(
                 editingMessageId = message.id,
-                editingMessageDraft = rawContent
+                editingMessageDraft = mEditingDisplayText ?: rawContent
             )
         ).setup()
     }
@@ -1277,12 +1327,15 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
             val messageId = uiState.conversationState.editingMessageId?.toLongOrNull() ?: return
             val message = mChatRepository.getMessageById(messageId)
                 ?.takeIf { it.sessionId == sessionId } ?: return
+            // Himitsu (translation): an edited display text is translated again into content.
+            val userEdit = translateUserEdit(message, uiState) ?: return
+            var savedContent = ""
             mImageCoordinator.submit(editing = true) { finalInputs ->
                 // 只处理新增附件；文字与附件在同一事务保存，已有文件不会重复压缩。
                 val content = withContext(Dispatchers.IO) {
                     when (message.source) {
                         ChatMessage.Source.User -> applyUserRegex(
-                            sessionId, uiState.conversationState.editingMessageDraft, isEdit = true
+                            sessionId, userEdit.content, isEdit = true
                         )
                         ChatMessage.Source.Char -> applyAiRegex(
                             sessionId, uiState.conversationState.editingMessageDraft, isEdit = true
@@ -1291,10 +1344,14 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
                         ChatMessage.Source.Summary -> uiState.conversationState.editingMessageDraft
                     }
                 }
+                savedContent = content
                 if (message.source != ChatMessage.Source.Summary) {
                     mChatRepository.editMessageWithImages(sessionId, messageId, content, finalInputs)
                 } else mChatRepository.updateMessageContent(messageId, content)
             }
+            // Himitsu (translation): keep showing what the user wrote for the edited message.
+            mEditingDisplayText = null
+            userEdit.displayText?.let { mTranslation.rememberOutgoing(messageId, savedContent, it) }
             // 刷新 UI 状态并重置编辑态草稿
             refreshUiState(
                 sessionId = sessionId,
@@ -1319,6 +1376,8 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
         if (mImageCoordinator.state.submitting) return
         mImageCoordinator.cancelProcessing()
         mImageCoordinator.cancelEditing()
+        // Himitsu (translation)
+        mEditingDisplayText = null
         val uiState = getOrNull<ChatUiState.Normal>() ?: return
         uiState.copy(
             conversationState = uiState.conversationState.copy(
@@ -2224,6 +2283,10 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
         val pageData = mChatRepository.getChatPageData(sessionId, messageLimit)
         val messagePage = pageData.page
         val displayContext = ChatMessageDisplayContext(session, character)
+        // Himitsu (translation): hand the stored window to the translator before mapping it.
+        mTranslation.onMessagesLoaded(
+            messagePage.messages.toTranslatableMessages(displayContext.translationNames(), mActiveStreamingGeneration?.messageId)
+        )
         val displayMessages = messagePage.messages.toDisplayMessageItems(displayContext, messageImages = messagePage.messageImages)
         mMessageDisplayContext = displayContext
         mOldestLoadedMessageCursor = messagePage.messages.firstOrNull()?.toChatMessageCursor()
@@ -2278,7 +2341,9 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
             streamEnabled = AppModel.streamEnabled,
             hasPromptInspection = mLastPromptInspection != null,
             hasAvailableProvider = hasAvailableProvider,
-            dialogState = dialogState
+            dialogState = dialogState,
+            // Himitsu (translation)
+            translationState = mTranslation.uiState()
         )
     }
 
@@ -2336,7 +2401,13 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
             userName = context.session.userName,
             systemSpeaker = mContext.getString(R.string.system_speaker),
             streamingMessageId = mActiveStreamingGeneration?.messageId
-        ).map { it.copy(imageUuids = imageMap[it.id].orEmpty()) }
+        ).map {
+            it.copy(
+                imageUuids = imageMap[it.id].orEmpty(),
+                // Himitsu (translation)
+                translation = it.id.toLongOrNull()?.let { id -> mTranslation.translationFor(id, it.isStreaming) }
+            )
+        }
     }
 
     /**
@@ -2421,6 +2492,110 @@ class ChatViewModel : CoreViewModelWithEvent<ChatUiIntent, ChatUiState>(
     private fun ChatMessage.toChatMessageCursor(): ChatMessageCursor {
         return ChatMessageCursor(createTime = createTime, messageId = id)
     }
+
+    // Himitsu (translation): intents and helpers of the chat translation; see ChatTranslationController.
+
+    /** Switches one message between its translation and its original. */
+    @UiIntentObserver(ChatUiIntent.ToggleMessageOriginal::class)
+    private fun onToggleMessageOriginal(intent: ChatUiIntent.ToggleMessageOriginal) {
+        val messageId = intent.messageId.toLongOrNull() ?: return
+        mTranslation.toggleOriginal(messageId)
+        applyTranslations()
+    }
+
+    /** The banner's toggle: shows every original, or every translation again. */
+    @UiIntentObserver(ChatUiIntent.ToggleShowOriginal::class)
+    private fun onToggleShowOriginal() {
+        mTranslation.toggleShowAllOriginal()
+        applyTranslations()
+    }
+
+    /** Stores the chat's translation mode and resolves the chat again. */
+    @UiIntentObserver(ChatUiIntent.SelectTranslationMode::class)
+    private suspend fun onSelectTranslationMode(intent: ChatUiIntent.SelectTranslationMode) {
+        if (!isStateOf<ChatUiState.Normal>()) return
+        mTranslation.setMode(intent.mode)
+        applyTranslations()
+    }
+
+    /** Re-renders the current messages and banner from the translation snapshot, without reloading. */
+    private fun applyTranslations() {
+        val uiState = getOrNull<ChatUiState.Normal>() ?: return
+        uiState.copy(
+            translationState = mTranslation.uiState(),
+            conversationState = uiState.conversationState.copy(
+                messages = uiState.conversationState.messages.map { message ->
+                    message.copy(
+                        translation = message.id.toLongOrNull()?.let {
+                            mTranslation.translationFor(it, message.isStreaming)
+                        }
+                    )
+                }
+            )
+        ).setup()
+    }
+
+    /**
+     * Translates what the user typed before it is stored.
+     *
+     * - Shows the request state while the translation service answers.
+     * - On failure, restores the composer with the draft and the quiet notice; sending the same
+     *   draft again sends it as written.
+     */
+    private suspend fun translateOutgoing(
+        typed: String,
+        uiState: ChatUiState.Normal
+    ): ChatTranslationController.Outgoing {
+        val names = listOf(uiState.character.name, uiState.session.userName)
+        if (!mTranslation.translatesOutgoing(typed)) return mTranslation.prepareOutgoing(typed, names)
+        getOrNull<ChatUiState.Normal>()?.let {
+            it.copy(conversationState = it.conversationState.copy(generationState = ChatGenerationState.Requesting)).setup()
+        }
+        val outgoing = mTranslation.prepareOutgoing(typed, names)
+        if (outgoing is ChatTranslationController.Outgoing.Failed) {
+            getOrNull<ChatUiState.Normal>()?.let {
+                it.copy(
+                    conversationState = it.conversationState.copy(generationState = ChatGenerationState.Idle),
+                    translationState = mTranslation.uiState()
+                ).setup()
+            }
+        }
+        return outgoing
+    }
+
+    /**
+     * The text to store for an edited message, or null when its translation failed (a notice is
+     * shown and the editor stays open; saving the same text again keeps it as written).
+     *
+     * Only a user message edited in the user's language is translated; an unchanged display text
+     * keeps the stored content. Other edits change the content, which makes the stored
+     * translation stale, and the next display sync translates it again.
+     */
+    private suspend fun translateUserEdit(
+        message: ChatMessage,
+        uiState: ChatUiState.Normal
+    ): ChatTranslationController.Outgoing.Ready? {
+        val draft = uiState.conversationState.editingMessageDraft
+        val startedFrom = mEditingDisplayText
+        if (message.source != ChatMessage.Source.User || startedFrom == null) {
+            return ChatTranslationController.Outgoing.Ready(draft, null)
+        }
+        if (draft.trim() == startedFrom.trim()) return ChatTranslationController.Outgoing.Ready(message.content, null)
+        val names = listOf(uiState.character.name, uiState.session.userName)
+        return when (val outgoing = mTranslation.prepareOutgoing(draft.trim(), names, ChatTranslationController.Purpose.Edit)) {
+            is ChatTranslationController.Outgoing.Ready -> outgoing
+            is ChatTranslationController.Outgoing.Failed -> {
+                AppViewEvent.PopupToastMessage(
+                    mContext.getString(R.string.translation_chat_edit_failed, mContext.getString(outgoing.failure.reasonResId()))
+                ).tryEmit()
+                null
+            }
+        }
+    }
+
+    /** The names the translator protects in this chat: the character's and the user's. */
+    private fun ChatMessageDisplayContext.translationNames(): List<String> =
+        listOf(character.name, session.userName)
 
     private companion object {
         /** 聊天页面首次和后续向前加载的单页消息数量。 */
