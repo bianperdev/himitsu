@@ -41,7 +41,8 @@ class ChatTranslatorImplTest {
         detector = detector,
         protector = RegexTextProtector(),
         settings = settings,
-        clock = { 42L }
+        clock = { 42L },
+        providerDetects = true
     )
 
     private fun character(id: Long, content: String = "The rain kept falling over the quiet old town all night long.") =
@@ -165,6 +166,30 @@ class ChatTranslatorImplTest {
         // The device still re-detects in Auto mode when it can
         detector.answer = "it"
         assertEquals("it", translator.resolve(chat, listOf(character(1))).conversationLanguage)
+        assertEquals(1, clients.detectCalls)
+    }
+
+    @Test
+    fun providerNeverDetectsWhereTheDeviceCan() = runBlocking {
+        // API 29+: a device that is unsure sends no sample to the provider
+        val onDevice = ChatTranslatorImpl(
+            providers, chatMessages, groupMessages, chatSettings, groupSettings, clients,
+            detector = { null }, protector = RegexTextProtector(), settings = settings,
+            providerDetects = false
+        )
+        clients.detectAnswer = "de"
+        val state = onDevice.resolve(chat, listOf(character(1)))
+        assertEquals(null, state.conversationLanguage)
+        assertFalse(state.active)
+        assertEquals(0, clients.detectCalls)
+    }
+
+    @Test
+    fun failedProviderDetectionIsNotRetried() = runBlocking {
+        detector.answer = null
+        clients.detectAnswer = null
+        translator.resolve(chat, listOf(character(1)))
+        translator.resolve(chat, listOf(character(1), character(2)))
         assertEquals(1, clients.detectCalls)
     }
 

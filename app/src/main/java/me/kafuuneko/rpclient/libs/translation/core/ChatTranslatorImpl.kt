@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.kafuuneko.rpclient.libs.translation.core
 
+import android.os.Build
 import java.io.IOException
 import java.security.MessageDigest
 import kotlin.coroutines.cancellation.CancellationException
@@ -33,9 +34,10 @@ import me.kafuuneko.rpclient.libs.translation.model.TranslationProviderType
  *   the default). Mode Off never translates; On translates from the stored conversation
  *   language; Auto detects the language of the latest character messages and translates when it
  *   differs from the user's.
- * - Detection runs on the device first; the provider's detection is only asked when the device
- *   cannot tell, translation is already on with a provider, and the chat has no stored
- *   language yet (once stored, it is reused instead of sending samples again).
+ * - Detection runs on the device. The provider's detection is only asked on devices without
+ *   on-device detection (API 26-28, [providerDetects]), with translation already on and a
+ *   provider, while the chat has no stored language, and at most once per chat while the app
+ *   runs, so a failed detection never resends the sample on every resolve.
  * - Display texts are cached per message with the SHA-256 of the content; a different hash
  *   means the content changed, so the row is stale and translated again.
  * - Text is protected with [TextProtector] before it is sent, and a translation whose tokens
@@ -52,10 +54,15 @@ class ChatTranslatorImpl(
     private val detector: LanguageDetector,
     private val protector: TextProtector,
     private val settings: TranslationCoreSettings,
-    private val clock: () -> Long = System::currentTimeMillis
+    private val clock: () -> Long = System::currentTimeMillis,
+    /** Whether the provider may detect languages: only where the device cannot (API 26-28). */
+    private val providerDetects: Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
 ) : ChatTranslator {
 
     private val store = TranslationStore(chatMessageDao, groupMessageDao, chatSettingDao, groupSettingDao)
+
+    // Chats whose sample the provider already received in this process; guarded by itself
+    private val providerDetectionTried = mutableSetOf<TranslationSessionKey>()
 
     /** Everything one call needs about a chat. */
     private class ChatContext(
@@ -194,7 +201,11 @@ class ChatTranslatorImpl(
         // The provider only detects a chat whose language is still unknown, so devices without
         // on-device detection (API 26-28) do not send a sample on every resolve
         val detected = if (shouldDetect) {
-            detectConversation(recent, provider, askProvider = setting.conversationLanguage == null)
+            val askProvider = providerDetects && setting.conversationLanguage == null &&
+                synchronized(providerDetectionTried) { session !in providerDetectionTried }
+            detectConversation(recent, provider, askProvider) {
+                synchronized(providerDetectionTried) { providerDetectionTried += session }
+            }
         } else {
             null
         }
@@ -228,11 +239,13 @@ class ChatTranslatorImpl(
      * names, macros and markup removed; null when there is not enough text or nobody can tell.
      *
      * @param askProvider whether the provider may detect when the device cannot.
+     * @param onProviderAsked called right before the sample goes to the provider
      */
     private suspend fun detectConversation(
         recent: List<TranslatableMessage>,
         provider: TranslationProvider,
-        askProvider: Boolean
+        askProvider: Boolean,
+        onProviderAsked: () -> Unit
     ): String? {
         // Build a sample from the newest substantial character messages
         val parts = recent.asSequence()
@@ -246,6 +259,7 @@ class ChatTranslatorImpl(
         // On the device first; the provider only when the device cannot tell
         val local = runCatchingNotCancelled { normalizeLanguage(detector.detect(sample)) }
         if (local != null || !askProvider) return local
+        onProviderAsked()
         return runCatchingNotCancelled { normalizeLanguage(clientFor(provider).detect(sample)) }
     }
 
