@@ -138,6 +138,11 @@ import me.kafuuneko.rpclient.ui.message.DraftAttachmentTray
 import me.kafuuneko.rpclient.ui.message.MessageImageEditButton
 import me.kafuuneko.rpclient.ui.message.MessageImageGallery
 import me.kafuuneko.rpclient.ui.dialog.MessageImageViewerDialog
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationBanner
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationModeSelector
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationUiState
+import me.kafuuneko.rpclient.feature.chat.translation.MessageTranslationMark
+import me.kafuuneko.rpclient.feature.chat.translation.OutgoingTranslationNotice
 import me.kafuuneko.rpclient.ui.theme.HimitsuMonoFamily
 import me.kafuuneko.rpclient.ui.theme.HimitsuPhonePreviews
 import me.kafuuneko.rpclient.ui.theme.getMacaronColor
@@ -183,7 +188,7 @@ private fun GroupChatNormalView(
     emitIntent: (GroupChatUiIntent) -> Unit
 ) {
     if (state.page == GroupChatPage.Settings) {
-        GroupChatSettingsView(state.settingsState, state.members, emitIntent)
+        GroupChatSettingsView(state.settingsState, state.members, emitIntent, state.translationState)
         return
     }
     val generating = state.conversationState.generationState is GroupChatGenerationState.Generating
@@ -243,6 +248,8 @@ private fun GroupChatNormalView(
                     }
                 }
                 MessageImageViewerDialog(state.imageState) { emitIntent(GroupChatUiIntent.ImageAction(it)) }
+                // Himitsu (translation): quiet notice when the typed message could not be translated.
+                OutgoingTranslationNotice(failure = state.translationState.outgoingFailure)
                 Composer(
                     draft = state.conversationState.inputDraft,
                     generating = generating,
@@ -270,6 +277,11 @@ private fun GroupChatNormalView(
                     onClick = { emitIntent(GroupChatUiIntent.OpenProviderSettings) }
                 )
             }
+            // Himitsu (translation): slim banner while the chat is translated.
+            ChatTranslationBanner(
+                state = state.translationState,
+                onToggleOriginal = { emitIntent(GroupChatUiIntent.ToggleShowOriginal) }
+            )
             GroupHeader(
                 strategy = state.activeActivationStrategy,
                 generationState = state.conversationState.generationState,
@@ -308,7 +320,8 @@ private fun GroupChatNormalView(
 private fun GroupChatSettingsView(
     state: GroupChatSettingsState,
     members: List<GroupChatMemberItem>,
-    emitIntent: (GroupChatUiIntent) -> Unit
+    emitIntent: (GroupChatUiIntent) -> Unit,
+    translationState: ChatTranslationUiState = ChatTranslationUiState()
 ) {
     Column(
         modifier = Modifier
@@ -536,6 +549,17 @@ private fun GroupChatSettingsView(
                                 }
                             )
                         }
+                }
+            }
+            // Himitsu (translation): the chat's mode, only while the master switch is on.
+            if (translationState.available) {
+                item {
+                    GroupSettingsSection(title = stringResource(R.string.translation_chat_section)) {
+                        ChatTranslationModeSelector(
+                            state = translationState,
+                            onModeSelected = { emitIntent(GroupChatUiIntent.SelectTranslationMode(it)) }
+                        )
+                    }
                 }
             }
             item {
@@ -1194,6 +1218,8 @@ private fun MessageList(
     // - 内容流式生成或思考块折叠变动时，若处于跟随状态则自动跟随到底部
     LaunchedEffect(
         messages.lastOrNull()?.content,
+        // Himitsu (translation): the swap to the translation also changes the last message's size.
+        messages.lastOrNull()?.translation,
         expandedThinkBlockIds
     ) {
         if (messages.isNotEmpty()) {
@@ -1470,6 +1496,15 @@ private fun MessageBubble(
                             expandedThinkBlockIds = expandedThinkBlockIds,
                             onToggleThinkBlock = onToggleThinkBlock
                         )
+                        // Himitsu (translation): small mark; tapping it shows the original.
+                        message.translation?.let { translation ->
+                            MessageTranslationMark(
+                                translation = translation,
+                                color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
+                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f),
+                                onToggle = { emitIntent(GroupChatUiIntent.ToggleMessageOriginal(message.id)) }
+                            )
+                        }
                     }
                     AnimatedVisibility(
                         visible = showActions && !editing && !message.isStreaming,
@@ -1517,7 +1552,9 @@ private fun GroupMessageContent(
                 indicatorColor = accent
             )
         }
-        message.parts.forEach { part ->
+        // Himitsu (translation): render the translation unless the original was asked for.
+        val parts = message.translation?.takeUnless { it.showingOriginal }?.parts ?: message.parts
+        parts.forEach { part ->
             when (part) {
                 is MessageContentPart.Text -> {
                     if (part.content.isNotBlank()) {
