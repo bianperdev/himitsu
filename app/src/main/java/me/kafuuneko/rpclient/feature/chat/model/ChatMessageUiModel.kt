@@ -1,5 +1,6 @@
 package me.kafuuneko.rpclient.feature.chat.model
 
+import me.kafuuneko.rpclient.feature.chat.translation.MessageTranslationUi
 import me.kafuuneko.rpclient.model.MessageContentPart
 
 /** 单聊消息的最终 UI 模型，正文已拆分为普通文本和可折叠推理块。 */
@@ -20,5 +21,7 @@ data class ChatMessageUiModel(
     val tokenCount: Int,
     /** 当前消息或请求是否处于流式生成状态。 */
     val imageUuids: List<String> = emptyList(),
-    val isStreaming: Boolean = false
+    val isStreaming: Boolean = false,
+    // Himitsu (translation): what the user reads instead of [parts]; null when not translated.
+    val translation: MessageTranslationUi? = null
 )

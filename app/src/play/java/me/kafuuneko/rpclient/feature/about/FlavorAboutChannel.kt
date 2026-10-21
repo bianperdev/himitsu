@@ -13,6 +13,7 @@ import androidx.core.net.toUri
 object FlavorAboutChannel : AboutChannel {
     override val repositoryUrl: String? = null
     override val upstreamUrl: String? = null
+    override val linksExternalProjects: Boolean = false
     override val ratesInStore: Boolean = true
 
     /** Opens the Play Store app, then any store app, then the web page. */

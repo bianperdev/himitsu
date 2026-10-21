@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Strings of the feat/translation-chat track: the translation pieces of the chat screens. -->
+<resources>
+    <string name="translation_chat_banner_from">Menerjemahkan dari %1$s</string>
+    <string name="translation_chat_banner_generic">Menerjemahkan pesan</string>
+    <string name="translation_chat_show_original">Lihat asli</string>
+    <string name="translation_chat_show_translation">Lihat terjemahan</string>
+    <string name="translation_chat_mark_translated">Diterjemahkan</string>
+    <string name="translation_chat_mark_original">Asli</string>
+    <string name="translation_chat_section">Terjemahan</string>
+    <string name="translation_chat_mode_auto">Otomatis</string>
+    <string name="translation_chat_mode_auto_desc">Terjemahkan saat karakter menulis dalam bahasa lain</string>
+    <string name="translation_chat_mode_on">Selalu</string>
+    <string name="translation_chat_mode_on_desc">Selalu terjemahkan obrolan ini</string>
+    <string name="translation_chat_mode_off">Tidak pernah</string>
+    <string name="translation_chat_mode_off_desc">Jangan pernah terjemahkan obrolan ini</string>
+    <string name="translation_chat_send_failed">Pesanmu tidak dapat diterjemahkan (%1$s). Kirim lagi untuk mengirimnya apa adanya.</string>
+    <string name="translation_chat_edit_failed">Suntinganmu tidak dapat diterjemahkan (%1$s). Simpan lagi untuk menyimpannya apa adanya.</string>
+    <string name="translation_chat_failure_network">tidak ada koneksi ke layanan terjemahan</string>
+    <string name="translation_chat_failure_auth">layanan terjemahan menolak kunci</string>
+    <string name="translation_chat_failure_quota">batas terjemahan tercapai</string>
+    <string name="translation_chat_failure_unsupported">bahasa tidak didukung</string>
+    <string name="translation_chat_failure_invalid">balasan tak terduga dari layanan</string>
+</resources>

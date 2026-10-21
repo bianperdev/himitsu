@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- feat/translation-providers: Translation settings and the translation service editor. -->
+<resources>
+    <string name="translation_provider_type_libretranslate" translatable="false">LibreTranslate</string>
+    <string name="translation_provider_type_deepl" translatable="false">DeepL</string>
+    <string name="translation_provider_type_google" translatable="false">Google Cloud Translation</string>
+    <string name="translation_provider_base_url_server_hint" translatable="false">https://translate.example.org</string>
+    <string name="translation_settings_title">Translation</string>
+    <string name="translation_settings_desc">Role-play in any language and read it in yours</string>
+    <string name="translation_settings_about_title">Role-play in any language</string>
+    <string name="translation_settings_about_text">When a character writes in another language, Himitsu shows their messages in yours and translates what you write before sending it. The model always sees the chat in the character\'s language.</string>
+    <string name="translation_settings_enabled">Translate chats</string>
+    <string name="translation_settings_enabled_off">Off: nothing is sent to a translation service</string>
+    <string name="translation_settings_enabled_on">On: chats in another language are translated</string>
+    <string name="translation_settings_no_provider_hint">Add a translation service below to start</string>
+    <string name="translation_settings_language">Your language</string>
+    <string name="translation_settings_language_desc">Messages are shown in this language, and what you write is translated from it.</string>
+    <string name="translation_settings_language_app">App language (%1$s)</string>
+    <string name="translation_settings_default_provider">Default service</string>
+    <string name="translation_settings_default_provider_none">None</string>
+    <string name="translation_settings_own_messages">Translate my messages</string>
+    <string name="translation_settings_own_messages_desc">Write in your language; the character receives theirs</string>
+    <string name="translation_settings_no_browser">No browser is available to open the link</string>
+    <string name="translation_providers_section">Translation services</string>
+    <string name="translation_providers_add">Add</string>
+    <string name="translation_providers_empty">No translation services yet</string>
+    <string name="translation_providers_empty_desc">Add LibreTranslate, DeepL, Google Cloud or one of your AI providers</string>
+    <string name="translation_providers_default_badge">Default</string>
+    <string name="translation_providers_unencrypted_badge">HTTP</string>
+    <string name="translation_providers_libre_title">Keep your chats private</string>
+    <string name="translation_providers_libre_note">If you have a server, LibreTranslate keeps your chats private: nothing leaves your server.</string>
+    <string name="translation_providers_libre_link">Open the LibreTranslate project page</string>
+    <string name="translation_providers_delete_title">Delete translation service</string>
+    <string name="translation_providers_delete_message">Delete \"%1$s\"? Translations already saved stay in your chats.</string>
+    <string name="translation_providers_deleted">Translation service deleted</string>
+    <string name="translation_providers_delete_failed">The translation service could not be deleted</string>
+    <string name="translation_data_notice_title">What translation sends</string>
+    <string name="translation_data_notice_text">While translation is on, every chat whose character writes in another language is translated automatically (you can turn it off in each chat). The text of its messages, including older ones you scroll to, and what you write are sent to the translation service you choose, and whoever runs it can read it. On Android 8 and 9, a short sample may also be sent once to detect a chat\'s language. Images and the keys of your AI providers are never sent. A LibreTranslate server of your own or a model on this device keeps everything private.</string>
+    <string name="translation_data_notice_accept">I understand</string>
+    <string name="translation_provider_create_title">Add translation service</string>
+    <string name="translation_provider_edit_title">Edit translation service</string>
+    <string name="translation_provider_type">Service</string>
+    <string name="translation_provider_type_llm">AI provider</string>
+    <string name="translation_provider_sends_libre">Chat text goes to the LibreTranslate server at this address.</string>
+    <string name="translation_provider_sends_deepl">Chat text goes to DeepL\'s servers.</string>
+    <string name="translation_provider_sends_google">Chat text goes to Google\'s servers.</string>
+    <string name="translation_provider_sends_llm">Chat text goes to the chosen AI provider: one request per message, billed by that provider, counted in token usage and kept in the encrypted request log while debug mode is on. With a model on this device, it never leaves your phone.</string>
+    <string name="translation_provider_base_url_server">Server address</string>
+    <string name="translation_provider_base_url_server_desc">Plain HTTP is only safe on your own network</string>
+    <string name="translation_provider_base_url_optional">Custom address (optional)</string>
+    <string name="translation_provider_base_url_default_hint">Leave empty for the official one</string>
+    <string name="translation_provider_base_url_deepl_desc">Empty: chosen from your key (free keys end in :fx)</string>
+    <string name="translation_provider_base_url_google_desc">Empty: translation.googleapis.com</string>
+    <string name="translation_provider_cleartext_hint">Unencrypted HTTP: anyone on the same network can read your chats and key.</string>
+    <string name="translation_provider_api_key_optional">Optional: only if your server asks for one</string>
+    <string name="translation_provider_llm">AI provider</string>
+    <string name="translation_provider_llm_choose">Choose</string>
+    <string name="translation_provider_llm_desc">Uses that provider\'s address, key and model, with a strict translation prompt.</string>
+    <string name="translation_provider_llm_none">You have no AI providers yet. Add one in the model settings first.</string>
+    <string name="translation_provider_llm_local">On this device</string>
+    <string name="translation_provider_llm_required">Choose an AI provider</string>
+    <string name="translation_provider_base_url_required">Enter the server address</string>
+    <string name="translation_provider_base_url_invalid">The address must start with http:// or https://</string>
+    <string name="translation_provider_test_title">Test connection</string>
+    <string name="translation_provider_test_desc">Translates a short sample sentence, never your chats</string>
+    <string name="translation_provider_test_success">It works: %1$s</string>
+    <string name="translation_provider_test_failed_network">Could not reach the service. Check the address and your connection.</string>
+    <string name="translation_provider_test_failed_auth">The service rejected the API key.</string>
+    <string name="translation_provider_test_failed_quota">The service\'s limit was reached. Try again later.</string>
+    <string name="translation_provider_test_failed_unsupported">The service does not support your language.</string>
+    <string name="translation_provider_test_failed_invalid">The service gave an unexpected answer. Check the settings.</string>
+    <string name="translation_provider_saved">Translation service saved</string>
+    <string name="translation_provider_created">Translation service added</string>
+    <string name="translation_provider_save_failed">The translation service could not be saved</string>
+</resources>

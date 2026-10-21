@@ -563,6 +563,22 @@ Before every merge: rebase onto `main`, build every flavor, run the unit tests, 
 
 ---
 
+## Feature: chat translation (`feat/translation`)
+
+**Status:** implemented on 2026-10-21 (design: [doc/himitsu/translation-design.md](doc/himitsu/translation-design.md)). Groundwork on `main`, then three tracks in parallel worktrees (`feat/translation-providers`, `feat/translation-core`, `feat/translation-chat`), merged in that order. Verified: every flavor builds, 475 unit tests per flavor and 149 instrumented tests pass, an end-to-end run on the emulator against a LibreTranslate-compatible test server (on-device detection, banner, both directions, "Show original", protected names and action markers), and a privacy review (fit to merge; its Medium findings fixed: provider detection only on API 26-28 and once per chat, a complete consent notice, the LibreTranslate link left out of `play`).
+
+Follow-ups (none blocks a release):
+- Low: "start over" does not reset `TranslationPrefs` and `TranslationProviderPrefs` (plain switches, language, default provider id, notice accepted); reset them, or move the user language to sealed preferences.
+- Low: `Source.System` messages are translated and sent like the character's; decide whether to exclude them.
+- Low: changing a provider's address keeps its stored key, so "Test" sends it to the new host (same as the AI provider editor); consider clearing the key when the host changes.
+- Low: branching a chat does not copy its translations, so the branch translates everything again and the user's messages show in the conversation language.
+- A quiet failure notice on the message itself (needs a result type in `displayTexts`), choosing the provider per chat (`setProvider`), and a progress indicator while a group chat message is translated before sending.
+- Language tags are primary only (`zh`, `pt`): Simplified and Traditional Chinese, or Brazilian and European Portuguese, are not told apart.
+- Later: stories, translating character cards and lorebooks, on-device translators (Bergamot or an LLM through llama.cpp), per-character glossaries.
+- Google Play Data safety: declare the optional transfer of messages to a third-party service the user chooses, when translation is on.
+
+---
+
 ## Phase: Release (`chore/release-readiness`)
 
 Starts when every track, including disguise, is merged (true since 2026-10-20, `3e337b1`). Version 0.1.0 (versionCode 30000100; scheme `30000000 + major * 10000 + minor * 100 + patch`, maintainer decision 2026-10-20), tags `v<version>`.

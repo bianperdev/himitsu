@@ -1,6 +1,6 @@
 # Himitsu privacy policy
 
-Last updated: 2026-10-20. Applies to Himitsu 0.1.0 and later, in every distribution channel (F-Droid, GitHub Releases and Google Play), until this file says otherwise.
+Last updated: 2026-10-21. Applies to Himitsu 0.1.0 and later, in every distribution channel (F-Droid, GitHub Releases and Google Play), until this file says otherwise.
 
 Himitsu is a free and open source Android app for AI role-play. It is developed by volunteers and has no server of its own. **The Himitsu developers do not collect, receive or store any of your data.** Everything below describes what the app does on your device, and the only network connections it makes, which are the ones you set up.
 
@@ -9,7 +9,7 @@ This policy describes the code in this repository. If you build Himitsu yourself
 ## Summary
 
 - Your chats, characters, lorebooks, provider settings and API keys stay on your device, encrypted, as do personal text settings such as your persona; other settings, such as the theme, are stored as plain values.
-- Himitsu connects only to the AI endpoint you configure, and to Hugging Face when you start a model download. Nothing else.
+- Himitsu connects only to the AI endpoint you configure, to Hugging Face when you start a model download, and, if you turn translation on, to the translation service you choose. Nothing else.
 - No analytics, no telemetry, no crash reporting, no ads, no Google Play Services, no third-party SDK that makes network calls.
 - Android backups and device-to-device transfers export nothing from Himitsu.
 - Uninstalling Himitsu deletes everything it stored, except files you exported yourself.
@@ -55,6 +55,10 @@ Model files you import or download are stored in the app's no-backup directory (
 
 If you enable the optional disguise, the secret code (or compass tap sequence) is never stored. Himitsu keeps only a salted hash, computed with PBKDF2-HMAC-SHA256 (310,000 iterations, 16-byte random salt), plus a count of failed attempts and the time the next attempt is allowed, in a preferences file of its own. It is kept outside the encrypted storage on purpose, so the decoy keeps working and leads to the recovery screen even if the Keystore fails. The code is never written to logs. Turning disguise off deletes the hash.
 
+### Chat translations (optional)
+
+If you set up chat translation, its data stays in the encrypted `primary.sqlite`: the translation services you add (with their API keys, masked in the editor and never logged), the translated text of each message, what you typed before it was translated, and each chat's language and translation mode. Translations are deleted with their message or chat, and they follow "start over", set-aside data and exports of set-aside data like the rest of that database. The switch for translation, your language, the default service and whether you accepted the notice below are plain settings.
+
 ### Logs
 
 Himitsu never writes chat content, prompts, responses, characters or API keys to Android's system log (Logcat). Release builds strip the logging calls entirely, and the native logs of the database library (SQLite error messages and SQLCipher's own log) are turned off at startup.
@@ -75,6 +79,16 @@ That provider receives this data under its own privacy policy, which Himitsu doe
 ### Model downloads you start
 
 The model screen lists a few suggested models. The list is built into the app, so browsing it makes no network request. When you tap download, Himitsu fetches that file from a pinned commit on Hugging Face (`huggingface.co` and its download servers). Hugging Face sees your IP address, which file you download and the default user agent of the network library; no cookies or account are used. The file is accepted only if its size and SHA-256 match the values built into the app. Before a download starts while disguise is active, Himitsu warns you that its notification shows the app name.
+
+### Translation services you choose (optional)
+
+Chat translation is **off by default**. It only works after you turn it on in Settings › Translation and add a service, and Himitsu first shows what will be sent. You can use LibreTranslate on your own server (recommended: then nothing leaves your server), DeepL, Google Cloud Translation, or one of your AI providers as a translator.
+
+- While it is on, every chat whose character writes in another language than yours is translated automatically; you can choose Never in each chat.
+- What is sent: the text of the character's messages you see in that chat (including older ones you scroll to) and the text you write, before it is sent or when you edit it. Character and user names, `{{macros}}`, URLs, code and formatting marks are replaced by placeholders before sending. Images, other chats and the keys of your AI providers are never sent.
+- The language of a chat is detected on your phone (Android 10 and later). On Android 8 and 9, which cannot do that, a short sample of the character's latest messages (at most 2,000 characters) is sent once to the service to detect it. With DeepL, which has no detection endpoint, that uses a little of your quota.
+- The service's key travels in a request header (LibreTranslate: in the request body, as its API defines). Requests do not follow redirects, and plain HTTP is accepted only with a warning, for servers on your own network.
+- DeepL and Google process the text under their own privacy policies. An AI provider used as a translator receives one request per message, billed by that provider, counted in token usage and kept in the encrypted debug request log while debug mode is on; with a model on your phone, nothing leaves it.
 
 ### Nothing else
 

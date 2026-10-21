@@ -123,6 +123,11 @@ import me.kafuuneko.rpclient.feature.chat.presentation.ChatLorebookState
 import me.kafuuneko.rpclient.feature.chat.presentation.ChatPage
 import me.kafuuneko.rpclient.feature.chat.presentation.ChatUiIntent
 import me.kafuuneko.rpclient.feature.chat.presentation.ChatUiState
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationBanner
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationModeSelector
+import me.kafuuneko.rpclient.feature.chat.translation.ChatTranslationUiState
+import me.kafuuneko.rpclient.feature.chat.translation.MessageTranslationMark
+import me.kafuuneko.rpclient.feature.chat.translation.OutgoingTranslationNotice
 import me.kafuuneko.rpclient.libs.media.MessageImageAction
 import me.kafuuneko.rpclient.libs.media.MessageImageState
 import me.kafuuneko.rpclient.model.MessageContentPart
@@ -185,6 +190,7 @@ fun ChatLayout(
                     session = uiState.session,
                     lorebookState = uiState.lorebookState,
                     loadState = uiState.loadState,
+                    translationState = uiState.translationState,
                     emit = emit
                 )
             }
@@ -264,6 +270,8 @@ private fun ChatNormal(
     // - 内容流式生成或思考块折叠变动时，若处于跟随状态则自动跟随到底部
     LaunchedEffect(
         state.conversationState.messages.lastOrNull()?.content,
+        // Himitsu (translation): the swap to the translation also changes the last message's size.
+        state.conversationState.messages.lastOrNull()?.translation,
         state.conversationState.expandedThinkBlockIds
     ) {
         if (state.conversationState.messages.isNotEmpty()) {
@@ -302,6 +310,11 @@ private fun ChatNormal(
                 onClick = { ChatUiIntent.OpenProviderSettings.emit() }
             )
         }
+        // Himitsu (translation): slim banner while the chat is translated.
+        ChatTranslationBanner(
+            state = state.translationState,
+            onToggleOriginal = { ChatUiIntent.ToggleShowOriginal.emit() }
+        )
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -388,6 +401,8 @@ private fun ChatNormal(
             }
         }
         MessageImageViewerDialog(state.imageState) { ChatUiIntent.ImageAction(it).emit() }
+        // Himitsu (translation): quiet notice when the typed message could not be translated.
+        OutgoingTranslationNotice(failure = state.translationState.outgoingFailure)
         ChatInputBar(
             draft = state.conversationState.inputDraft,
             isGenerating = state.conversationState.generationState.isGenerating(),
@@ -877,6 +892,15 @@ private fun MessageBubble(
                             isUser = isUser,
                             emit = emit
                         )
+                        // Himitsu (translation): small mark; tapping it shows the original.
+                        message.translation?.let { translation ->
+                            MessageTranslationMark(
+                                translation = translation,
+                                color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f)
+                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f),
+                                onToggle = { ChatUiIntent.ToggleMessageOriginal(message.id).emit() }
+                            )
+                        }
                     }
                 }
             }
@@ -923,7 +947,9 @@ private fun MessageContent(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.64f)
             )
         }
-        message.parts.forEach { part ->
+        // Himitsu (translation): render the translation unless the original was asked for.
+        val parts = message.translation?.takeUnless { it.showingOriginal }?.parts ?: message.parts
+        parts.forEach { part ->
             when (part) {
                 is MessageContentPart.Text -> {
                     if (part.content.isNotBlank()) {
@@ -1388,6 +1414,7 @@ private fun ChatSettingsPage(
     session: ChatSessionItem,
     lorebookState: ChatLorebookState,
     loadState: ChatLoadState,
+    translationState: ChatTranslationUiState = ChatTranslationUiState(),
     emit: ChatUiIntent.() -> Unit
 ) {
     Column(
@@ -1506,6 +1533,17 @@ private fun ChatSettingsPage(
                         maxLines = 8,
                         onSave = { ChatUiIntent.SaveCreatorNotes(it).emit() }
                     )
+                }
+            }
+            // Himitsu (translation): the chat's mode, only while the master switch is on.
+            if (translationState.available) {
+                item {
+                    SettingsSection(title = stringResource(R.string.translation_chat_section)) {
+                        ChatTranslationModeSelector(
+                            state = translationState,
+                            onModeSelected = { ChatUiIntent.SelectTranslationMode(it).emit() }
+                        )
+                    }
                 }
             }
             item {

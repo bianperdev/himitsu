@@ -7,11 +7,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.TheaterComedy
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.ui.graphics.vector.ImageVector
 import me.kafuuneko.rpclient.R
 import me.kafuuneko.rpclient.feature.disguise.settings.DisguiseSettingsActivity
 import me.kafuuneko.rpclient.feature.localmodels.LocalModelsActivity
 import me.kafuuneko.rpclient.feature.lock.settings.SecuritySettingsActivity
+import me.kafuuneko.rpclient.feature.translationsettings.TranslationSettingsActivity
 
 /**
  * A settings entry contributed by a Himitsu work track.
@@ -46,4 +48,10 @@ internal val himitsuSettingsEntries: List<HimitsuSettingsEntry> = listOf(
         icon = Icons.Rounded.TheaterComedy,
         activity = DisguiseSettingsActivity::class.java
     ), // feat/disguise
+    HimitsuSettingsEntry(
+        titleRes = R.string.translation_settings_title,
+        subtitleRes = R.string.translation_settings_desc,
+        icon = Icons.Rounded.Translate,
+        activity = TranslationSettingsActivity::class.java
+    ), // feat/translation-providers
 )

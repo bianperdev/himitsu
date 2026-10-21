@@ -2,6 +2,7 @@ package me.kafuuneko.rpclient.feature.chat.presentation
 
 import android.net.Uri
 import me.kafuuneko.rpclient.libs.media.MessageImageAction
+import me.kafuuneko.rpclient.libs.translation.model.TranslationMode
 
 /** 单聊页面可接收的全部用户意图和生命周期事件。 */
 sealed class ChatUiIntent {
@@ -112,4 +113,12 @@ sealed class ChatUiIntent {
     data class ConfirmDeleteMessage(val messageId: String) : ChatUiIntent()
 
     data object OpenProviderSettings : ChatUiIntent()
+
+    // Himitsu (translation): switch one message, or the whole chat, between translation and original.
+    data class ToggleMessageOriginal(val messageId: String) : ChatUiIntent()
+
+    data object ToggleShowOriginal : ChatUiIntent()
+
+    // Himitsu (translation): the chat's mode (Auto, Always, Never).
+    data class SelectTranslationMode(val mode: TranslationMode) : ChatUiIntent()
 }
