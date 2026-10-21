@@ -196,6 +196,15 @@
             android:exported="false"
             android:theme="@style/Theme.RPClient"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".feature.translationsettings.TranslationSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient" />
+        <activity
+            android:name=".feature.translationsettings.provideredit.TranslationProviderEditActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RPClient"
+            android:windowSoftInputMode="adjustResize" />
         <activity-alias
             android:name=".launcher.HimitsuLauncher"
             android:enabled="true"
