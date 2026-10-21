@@ -34,8 +34,8 @@ android {
         // stays above every inherited RPClient code (20260301): installed builds update, and the
         // inherited data upgrade steps keyed by versionCode still run. Literal values on purpose,
         // so F-Droid's update checker can read them.
-        versionCode = 30000100
-        versionName = "0.1.0"
+        versionCode = 30000200
+        versionName = "0.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

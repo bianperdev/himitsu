@@ -1,0 +1,5 @@
+Himitsu 0.2.0
+
+- Chat translation (optional, off by default): read and write in your language while the model keeps the conversation in the character's. Use LibreTranslate on your own server (most private), DeepL, Google Cloud Translation or one of your AI providers.
+- Language detected on the phone; names and formatting protected before sending; translations stored encrypted.
+- The About entry no longer mentions an e-mail address.

@@ -25,7 +25,20 @@ Builds:
       - third_party/llama.cpp/models
     ndk: 30.0.16248370
 
+  - versionName: 0.2.0
+    versionCode: 30000200
+    commit: v0.2.0
+    subdir: app
+    submodules: true
+    gradle:
+      - fdroid
+    prebuild: sdkmanager 'cmake;3.31.6'
+    scandelete:
+      - third_party/llama.cpp/examples/llama.android
+      - third_party/llama.cpp/models
+    ndk: 30.0.16248370
+
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
-CurrentVersion: 0.1.0
-CurrentVersionCode: 30000100
+CurrentVersion: 0.2.0
+CurrentVersionCode: 30000200
