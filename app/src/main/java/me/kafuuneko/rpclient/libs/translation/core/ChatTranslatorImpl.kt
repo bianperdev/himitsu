@@ -34,7 +34,8 @@ import me.kafuuneko.rpclient.libs.translation.model.TranslationProviderType
  *   language; Auto detects the language of the latest character messages and translates when it
  *   differs from the user's.
  * - Detection runs on the device first; the provider's detection is only asked when the device
- *   cannot tell and translation is already on with a provider.
+ *   cannot tell, translation is already on with a provider, and the chat has no stored
+ *   language yet (once stored, it is reused instead of sending samples again).
  * - Display texts are cached per message with the SHA-256 of the content; a different hash
  *   means the content changed, so the row is stale and translated again.
  * - Text is protected with [TextProtector] before it is sent, and a translation whose tokens
@@ -190,7 +191,13 @@ class ChatTranslatorImpl(
         }
         // Language: stored, or detected from the latest character messages
         val shouldDetect = setting.conversationLanguage == null || (redetect && setting.mode == TranslationMode.Auto)
-        val detected = if (shouldDetect) detectConversation(recent, provider) else null
+        // The provider only detects a chat whose language is still unknown, so devices without
+        // on-device detection (API 26-28) do not send a sample on every resolve
+        val detected = if (shouldDetect) {
+            detectConversation(recent, provider, askProvider = setting.conversationLanguage == null)
+        } else {
+            null
+        }
         val language = detected ?: setting.conversationLanguage
         if (detected != null && detected != setting.conversationLanguage) {
             store.saveSetting(session, setting.copy(conversationLanguage = detected))
@@ -219,8 +226,14 @@ class ChatTranslatorImpl(
     /**
      * The language of the latest character messages: several joined, short ones ignored, with
      * names, macros and markup removed; null when there is not enough text or nobody can tell.
+     *
+     * @param askProvider whether the provider may detect when the device cannot.
      */
-    private suspend fun detectConversation(recent: List<TranslatableMessage>, provider: TranslationProvider): String? {
+    private suspend fun detectConversation(
+        recent: List<TranslatableMessage>,
+        provider: TranslationProvider,
+        askProvider: Boolean
+    ): String? {
         // Build a sample from the newest substantial character messages
         val parts = recent.asSequence()
             .filter { !it.fromUser }
@@ -232,7 +245,7 @@ class ChatTranslatorImpl(
         if (sample.length < MIN_DETECTION_SAMPLE_CHARS) return null
         // On the device first; the provider only when the device cannot tell
         val local = runCatchingNotCancelled { normalizeLanguage(detector.detect(sample)) }
-        if (local != null) return local
+        if (local != null || !askProvider) return local
         return runCatchingNotCancelled { normalizeLanguage(clientFor(provider).detect(sample)) }
     }
 

@@ -142,7 +142,29 @@ class ChatTranslatorImplTest {
         assertEquals(0, clients.detectCalls)
 
         detector.answer = null
+        val other = TranslationSessionKey.Chat(8L)
+        assertEquals("de", translator.resolve(other, listOf(character(1))).conversationLanguage)
+        assertEquals(1, clients.detectCalls)
+    }
+
+    @Test
+    fun providerDetectsOnlyWhileTheLanguageIsUnknown() = runBlocking {
+        // Like API 26-28: the device never detects
+        detector.answer = null
+        clients.detectAnswer = "de"
         assertEquals("de", translator.resolve(chat, listOf(character(1))).conversationLanguage)
+        assertEquals(1, clients.detectCalls)
+
+        // Stored now: further resolves reuse it and send no sample
+        clients.detectAnswer = "fr"
+        val again = translator.resolve(chat, listOf(character(1), character(2)))
+        assertEquals("de", again.conversationLanguage)
+        assertTrue(again.active)
+        assertEquals(1, clients.detectCalls)
+
+        // The device still re-detects in Auto mode when it can
+        detector.answer = "it"
+        assertEquals("it", translator.resolve(chat, listOf(character(1))).conversationLanguage)
         assertEquals(1, clients.detectCalls)
     }
 
