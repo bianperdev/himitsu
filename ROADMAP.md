@@ -594,6 +594,7 @@ Done (2026-10-20):
 - [x] O-03 (per-device `.idea` files untracked and ignored), `.gitignore` (`/HANDOFF/`, `.kotlin/`, signing material), EmojiCompat initializer removed.
 
 - [x] Himitsu 0.1.0 published on 2026-10-21 as a GitHub pre-release (tag `v0.1.0` on `378d0a7`, `github` flavor, signed, SHA-256 published): https://github.com/bianperdev/himitsu/releases/tag/v0.1.0
+- [x] Himitsu 0.2.0 (chat translation) published on 2026-10-21 as a GitHub pre-release (tag `v0.2.0`, versionCode 30000200): https://github.com/bianperdev/himitsu/releases/tag/v0.2.0
 
 Still open:
 - [ ] Donations: no platform chosen yet (maintainer, 2026-10-20). Then `.github/FUNDING.yml`, the "Support Himitsu" screen in `app/src/donations/` and the F-Droid `Donate`/`Liberapay` fields. The `play` build must stay without any link to the repository.
