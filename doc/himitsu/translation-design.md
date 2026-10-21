@@ -1,6 +1,6 @@
 # Translation design (`feat/translation-*`)
 
-Status: proposal, waiting for the maintainer's approval (2026-10-21).
+Status: approved by the maintainer (2026-10-21). Groundwork on `main`; the three tracks build on it.
 
 ## Goal
 
@@ -57,15 +57,23 @@ group_chat_message_translations
   same columns, messageId FK group_chat_messages.id CASCADE
 
 chat_translation_settings
-  sessionKind TEXT (Chat | GroupChat), sessionId INTEGER, PK(sessionKind, sessionId),
-  mode TEXT (Auto | On | Off), conversationLanguage TEXT NULL, providerId INTEGER NULL
+  sessionId INTEGER PK (FK chat_sessions.id, CASCADE),
+  mode TEXT (Auto | On | Off), conversationLanguage TEXT NULL,
+  providerId INTEGER NULL (FK translation_providers, SET NULL)
+
+group_chat_translation_settings
+  same columns, sessionId FK group_chat_sessions.id CASCADE
 ```
 
 Device-level settings (not sensitive, Kotpref `TranslationPrefs`): `enabled` (master switch, default false), `userLanguage` (default: the app language), `defaultProviderId`, `translateOwnMessages` (default true).
 
+Two settings tables (one per session kind) let each row cascade with its chat. Edit `translation_providers` rows with `update`, never `insertOrReplace`: SQLite's REPLACE deletes the row first, which would detach every translation and setting that points to it.
+
 Editing a message: editing `content` makes `contentHash` stale, so the display text is translated again; editing the display text of a user message translates it again into `content`.
 
 ## Contracts (package `me.kafuuneko.rpclient.libs.translation`)
+
+The code in `TranslationContracts.kt` is the reference; the sketch below is its outline.
 
 ```kotlin
 enum class TranslationProviderType { LibreTranslate, DeepL, GoogleCloud, LlmProvider }
