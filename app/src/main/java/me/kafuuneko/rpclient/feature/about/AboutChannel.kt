@@ -17,6 +17,12 @@ interface AboutChannel {
     /** RPClient's repository, for the credit; null in `play` for the same reason. */
     val upstreamUrl: String?
 
+    /**
+     * Whether pages of other projects (for example LibreTranslate's) may be linked. False in
+     * `play`: such pages may hold donation links, which Google Play forbids even indirectly.
+     */
+    val linksExternalProjects: Boolean
+
     /** Whether the "rate the app" card is shown; only the store build has one. */
     val ratesInStore: Boolean
 

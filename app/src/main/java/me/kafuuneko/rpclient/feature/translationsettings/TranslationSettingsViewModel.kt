@@ -5,6 +5,7 @@ import android.os.Bundle
 import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.about.FlavorAboutChannel
 import me.kafuuneko.rpclient.feature.translationsettings.model.TranslationLanguageOption
 import me.kafuuneko.rpclient.feature.translationsettings.model.TranslationProviderListItem
 import me.kafuuneko.rpclient.feature.translationsettings.presentation.TranslationDataNoticeAction
@@ -186,6 +187,7 @@ class TranslationSettingsViewModel :
 
     @UiIntentObserver(TranslationSettingsUiIntent.OpenLibreTranslate::class)
     private fun onOpenLibreTranslate() {
+        if (!FlavorAboutChannel.linksExternalProjects) return
         TranslationSettingsViewEvent.OpenExternalLink(LIBRETRANSLATE_URL).tryEmit()
     }
 

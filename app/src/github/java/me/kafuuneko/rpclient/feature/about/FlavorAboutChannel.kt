@@ -5,5 +5,6 @@ package me.kafuuneko.rpclient.feature.about
 object FlavorAboutChannel : AboutChannel {
     override val repositoryUrl: String = "https://github.com/bianperdev/himitsu"
     override val upstreamUrl: String = "https://github.com/KafuuNeko/RPClient"
+    override val linksExternalProjects: Boolean = true
     override val ratesInStore: Boolean = false
 }

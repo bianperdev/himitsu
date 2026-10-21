@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.kafuuneko.rpclient.R
+import me.kafuuneko.rpclient.feature.about.FlavorAboutChannel
 import me.kafuuneko.rpclient.feature.translationsettings.model.TranslationLanguageOption
 import me.kafuuneko.rpclient.feature.translationsettings.model.TranslationProviderListItem
 import me.kafuuneko.rpclient.feature.translationsettings.presentation.TranslationSettingsDialogState
@@ -204,14 +205,19 @@ private fun LibreTranslateNote(emit: TranslationSettingsUiIntent.() -> Unit) {
         icon = Icons.Rounded.Shield,
         title = stringResource(R.string.translation_providers_libre_title),
         subtitle = stringResource(R.string.translation_providers_libre_note),
-        trailing = {
-            IconButton(onClick = { TranslationSettingsUiIntent.OpenLibreTranslate.emit() }) {
-                Icon(
-                    Icons.AutoMirrored.Rounded.OpenInNew,
-                    contentDescription = stringResource(R.string.translation_providers_libre_link),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+        // The link to another project's page is left out of the play build (see AboutChannel)
+        trailing = if (FlavorAboutChannel.linksExternalProjects) {
+            {
+                IconButton(onClick = { TranslationSettingsUiIntent.OpenLibreTranslate.emit() }) {
+                    Icon(
+                        Icons.AutoMirrored.Rounded.OpenInNew,
+                        contentDescription = stringResource(R.string.translation_providers_libre_link),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
+        } else {
+            null
         }
     )
 }
